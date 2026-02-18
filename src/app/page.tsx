@@ -8,9 +8,9 @@ export default function Home() {
 
   return (
     <main>
-      {loading && <Preloader setComplete={setLoading} />}
+      {loading && <Preloader setComplete={() => setLoading(false)} />}
 
-      <div className={`bg-red-500 transition-all duration-1400 opacity-100 ${loading ? "opacity-0" : "opacity-100"}`}>
+      <div className={`bg-red-500 transition-all duration-1400 ${loading ? "opacity-0" : "opacity-100"}`}>
         {/* Your actual website content goes here */}
         <nav className="flex justify-between items-center p-4">
           <Link href="/">Home</Link>

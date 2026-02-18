@@ -24,3 +24,15 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@utility flex-center {
+  @apply flex justify-center items-center;
+}
+
+/* .active_column {
+  @apply translate-y-15;
+} */
+
+/* .active_column span {
+  @apply absolute h-15 -translate-y-full inset-0 flex-center opacity-100;
+} */

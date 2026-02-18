@@ -1,19 +1,24 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import gsap from "gsap";
+import { useGSAP } from '@gsap/react';
+import { tips } from "../constants/tips"
+
 
 interface PreloaderProps {
     setComplete: (value: boolean) => void;
 }
 
-const progressSteps = [0, 12, 25, 37, 50, 62, 75, 87, 100];
-const columnCount = 17;
+const progressSteps = [12, 25, 37, 50, 62, 75, 87, 100, ""];
+const columnCount = 16;
 
-export default function Preloader({ setComplete }: PreloaderProps) {
+export default function Preloader3({ setComplete }: PreloaderProps) {
     const [stepIndex, setStepIndex] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
+    const sloganRef = useRef<HTMLSpanElement>(null);
+    const logoRef = useRef<SVGSVGElement>(null);
 
-    // 1. Progress Step Logic
+    // Progress Step Logic (Slower for 1200ms per step to show quotes)
     useEffect(() => {
         const interval = setInterval(() => {
             setStepIndex((prev) => {
@@ -23,82 +28,161 @@ export default function Preloader({ setComplete }: PreloaderProps) {
                 }
                 return prev + 1;
             });
-        }, 1200); // Speed of the "jump" between bars
+        }, 1800);
         return () => clearInterval(interval);
-    }, [progressSteps.length]);
+    }, []);
+
+
+
+    const glitchScramble = (newText: string) => {
+        const chars = "!<>-_\\/[]{}—=+*^?#________";
+        const target = sloganRef.current;
+        if (!target) return;
+
+        const tl = gsap.timeline();
+        const oldText = target.innerText;
+        // We iterate over the longest of the two strings to ensure the 'tail' is cleared
+        const maxLen = Math.max(oldText.length, newText.length);
+
+        tl.to([target, logoRef.current], {
+            skewX: 15,
+            x: 4,
+            opacity: 0.8,
+            duration: 0.08,
+            repeat: 3,
+            yoyo: true,
+            ease: "power3.inOut"
+        })
+            .set([target, logoRef.current], { x: 0, skewX: 0, opacity: 1 })
+            .to({}, {
+                duration: 1.4,
+                onUpdate: function () {
+                    const progress = this.progress();
+                    let output = "";
+
+                    for (let i = 0; i < maxLen; i++) {
+                        // Determine if we reveal the new char or a scramble char
+                        if (progress > (i / maxLen)) {
+                            // Show the new character. If i > newText.length, 
+                            // this adds an empty string, effectively clearing the old tail.
+                            output += newText[i] || "";
+                        } else {
+                            // While scrambling, only show gibberish for indices 
+                            // that were occupied by old text or will be by new text.
+                            if (i < newText.length || i < oldText.length) {
+                                output += chars[Math.floor(Math.random() * chars.length)];
+                            }
+                        }
+                    }
+                    target.innerText = output;
+                }
+            });
+    };
+
+    useEffect(() => {
+        if (stepIndex % 3 === 0 && stepIndex !== 0) {
+            const nextTip = tips[Math.floor(Math.random() * tips.length)];
+            glitchScramble(nextTip);
+        }
+    }, [stepIndex]);
 
     const currentProgress = progressSteps[stepIndex];
 
-    // 2. GSAP Animation Sequence
-    useEffect(() => {
+    // Grid Column Animation
+    useGSAP(() => {
+        gsap.set(".progress-text", { opacity: 0 });
+        gsap.set(".progress-line", { opacity: 0, x: -40 });
+
+        const tl = gsap.timeline();
+        tl.to(".shutter", { y: 0, duration: 1.4, ease: "power2.inOut" });
+
+        tl.to(`.shutter-${stepIndex - 1}, .shutter-${stepIndex}`, {
+            y: 60,
+            duration: 1.4,
+            ease: "expo.inOut"
+        }, 0);
+
+        tl.to(`.line-${stepIndex}`, {
+            opacity: 1,
+            x: 12,
+            scaleX: 1.4,
+            duration: 1.4,
+            ease: "power4.inOut"
+        }, "-=0.3")
+            .to(`.line-${stepIndex}`, { x: 12, opacity: 0.3, duration: 0.8 });
+
+        tl.to(`.text-${stepIndex}`, {
+            opacity: 1,
+            duration: 1.2,
+            ease: "power2.inOut"
+        }, "-=1")
+            .to(`.text-${stepIndex}`, { opacity: 0.4, duration: 0.4 });
+
+    }, { dependencies: [stepIndex], scope: containerRef });
+
+    // EXIT ANIMATION
+    useGSAP(() => {
         if (currentProgress === 100) {
             const tl = gsap.timeline({
-                delay: 1.2,
+                delay: 2.2,
                 onComplete: () => setComplete(true),
             });
 
-            // Step A: Expand from 50% to 100% height (Full Screen)
-            tl.to(".preloader-column", {
+            tl.to(".column-wrapper", {
                 height: "100vh",
-                y: 0,
-                duration: 0.6,
+                duration: 1.5,
                 ease: "expo.inOut",
             })
-                // Step B: Staggered exit to the top
-                .to(".preloader-column", {
+                .to(".shutter", { y: 0, duration: 0.2 }, "<")
+                .to(".column-wrapper", {
                     yPercent: -100,
-                    duration: 0.6,
+                    duration: 1.4,
                     ease: "power4.inOut",
                     stagger: {
-                        //     amount: 0.5,
-                        //     from: "random",
-                        // },  stagger: {
                         grid: [1, columnCount],
-                        from: "center", // Mimics the middle-out disappearance in your video
-                        amount: 0.5,
+                        from: "center",
+                        amount: 0.9,
                     },
-                }, "+=0.2") // slight delay after expansion
+                }, "-=0.2")
                 .to(containerRef.current, {
+                    opacity: 0,
                     display: "none",
-                    duration: 1.4,
+                    duration: 0.8
                 });
         }
-    }, [currentProgress, setComplete, columnCount]);
-
-
+    }, { dependencies: [currentProgress], scope: containerRef });
 
     return (
         <div ref={containerRef} className="fixed inset-0 z-99 flex flex-col bg-white overflow-hidden">
-            {/* Percentage Counter - Centered in viewport */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
-                <span className="font-mono text-6xl font-bold mix-blend-difference text-white">
-                    {currentProgress}%
-                </span>
-            </div>
+            {/* Scrambling Slogan Container */}
+            <div className="absolute inset-x-0 bottom-1/12 flex items-center justify-center z-50 px-10">
+                {/* Custom Lawal Precision Logo */}
+                <svg ref={logoRef} width="60" height="60" viewBox="0 0 100 100" fill="none" className="mix-blend-difference text-white">
+                    <path d="M20 20V80H80" stroke="currentColor" strokeWidth="8" strokeLinecap="square" />
+                    <rect x="40" y="40" width="10" height="10" fill="currentColor" />
+                </svg>
 
-            {/* Text Container */}
-            <div className="absolute inset-x-0 bottom-1/12 flex items-center justify-center pointer-events-none z-50">
-                <span className="font-mono text-6xl font-bold mix-blend-difference text-white capitalize">
+                <span
+                    ref={sloganRef}
+                    className="font-mono text-xl md:text-3xl font-bold mix-blend-difference text-white uppercase text-center leading-tight max-w-4xl"
+                >
                     Engineering isn't just about writing code
                 </span>
             </div>
 
-
+            {/* Main Progress Grid */}
             <div className="absolute inset-0 flex items-end">
-                {[...Array(columnCount)].map((_, i) => {
-                    const isActive = i === stepIndex;
-
-                    return (
-                        <div
-                            key={i}
-                            className="preloader-column h-1/2 flex-1 bg-[#1a1a1a] transition-all duration-1200"
-                            style={{
-                                transform: isActive ? "translateY(60px)" : "translateY(0px)",
-                            }}
-                        />
-                    )
-                }
-                )}
+                {[...Array(columnCount)].map((_, i) => (
+                    <div key={i} className="column-wrapper relative h-1/2 flex-1 overflow-hidden">
+                        <div className="absolute inset-x-0 top-0 h-15 flex items-center justify-center gap-1">
+                            <div className={`line-${i} progress-line h-px bg-[#1a1a1a] w-full`}></div>
+                            <span className={`text-${i} progress-text font-mono text-sm font-bold text-[#1a1a1a] opacity-0`}>
+                                {progressSteps[i] ?? currentProgress}%
+                            </span>
+                        </div>
+                        <div className={`shutter shutter-${i} absolute inset-0 bg-[#1a1a1a] z-10`} />
+                    </div>
+                ))}
             </div>
         </div>
     );
