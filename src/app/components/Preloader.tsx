@@ -2,7 +2,8 @@
 import { useEffect, useState, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from '@gsap/react';
-import { tips } from "../constants/tips"
+import { TIPS } from "../constants/tips"
+import { BRAND } from "../constants/brand";
 
 
 interface PreloaderProps {
@@ -12,7 +13,9 @@ interface PreloaderProps {
 const progressSteps = [12, 25, 37, 50, 62, 75, 87, 100, ""];
 const columnCount = 16;
 
-export default function Preloader3({ setComplete }: PreloaderProps) {
+const brand_name = BRAND.name
+
+export default function Preloader({ setComplete }: PreloaderProps) {
     const [stepIndex, setStepIndex] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
     const sloganRef = useRef<HTMLSpanElement>(null);
@@ -32,7 +35,14 @@ export default function Preloader3({ setComplete }: PreloaderProps) {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        if (stepIndex % 3 === 0 && stepIndex !== 0) {
+            const nextTip = TIPS[Math.floor(Math.random() * TIPS.length)];
+            glitchScramble(nextTip);
+        }
+    }, [stepIndex]);
 
+    const currentProgress = progressSteps[stepIndex];
 
     const glitchScramble = (newText: string) => {
         const chars = "!<>-_\\/[]{}—=+*^?#________";
@@ -79,14 +89,31 @@ export default function Preloader3({ setComplete }: PreloaderProps) {
             });
     };
 
-    useEffect(() => {
-        if (stepIndex % 3 === 0 && stepIndex !== 0) {
-            const nextTip = tips[Math.floor(Math.random() * tips.length)];
-            glitchScramble(nextTip);
-        }
-    }, [stepIndex]);
+    useGSAP(() => {
+        const tl = gsap.timeline({
+            repeat: 0,
+            delay: 0.1
+        });
 
-    const currentProgress = progressSteps[stepIndex];
+        tl.to(".char", {
+            scaleX: -1,
+            ease: "expo.inOut",
+            duration: 1.2,
+            stagger: { amount: 0.8, from: "start" }
+        })
+            .to(".char", {
+                scaleX: 1,
+                ease: "expo.inOut",
+                duration: 1.2,
+                stagger: { amount: 0.8, from: "end" }
+            })
+            .to(".char", {
+                scaleX: -1,
+                ease: "expo.inOut",
+                duration: 1.2,
+                stagger: { amount: 0.8, from: "start" }
+            });
+    }, { scope: containerRef });
 
     // Grid Column Animation
     useGSAP(() => {
@@ -153,7 +180,14 @@ export default function Preloader3({ setComplete }: PreloaderProps) {
     }, { dependencies: [currentProgress], scope: containerRef });
 
     return (
-        <div ref={containerRef} className="fixed inset-0 z-99 flex flex-col bg-white overflow-hidden">
+        <div ref={containerRef} className="fixed inset-0 z-99 flex-center flex-col bg-white overflow-hidden">
+            {/* Brand Name */}
+            <h1 aria-label="Lawal, written backwards" className="z-99999 inline-block mix-blend-difference font-bold text-9xl pb-100 uppercase">
+                {brand_name.split("").map((char, i) => (
+                    <span key={i} className="char inline-block">{char}</span>
+                ))}
+            </h1>
+
             {/* Scrambling Slogan Container */}
             <div className="absolute inset-x-0 bottom-1/12 flex items-center justify-center z-50 px-10">
                 {/* Custom Lawal Precision Logo */}

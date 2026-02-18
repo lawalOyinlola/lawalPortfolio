@@ -1,4 +1,4 @@
-export const tips = [
+export const TIPS = [
   "LAWAL: Precision is the difference between a product that works and a system that lasts.",
   "Engineering isn't about choosing the easiest path; it's about architecting the most reliable one.",
   "LAWAL: Every line of code should make technology feel effortless.",
