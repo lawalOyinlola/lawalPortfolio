@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Preloader from "./components/Preloader";
+import Preloader from "../components/Preloader";
 import { ComponentExample } from "@/components/component-example";
 
 export default function Home() {
