@@ -119,15 +119,6 @@
   --sidebar-ring: #737373;
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50 caret-primary selection:bg-accent/15;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
 @layer components {
   .title {
     @apply text-5xl tracking-tight font-semibold uppercase;
@@ -138,6 +129,14 @@
   }
 }
 
+@layer base {
+  * {
+    @apply border-border outline-ring/50 caret-primary selection:bg-accent/15;
+  }
+  body {
+    @apply bg-red-500 text-foreground font-mori;
+  }
+}
 @utility flex-center {
   @apply flex justify-center items-center;
 }

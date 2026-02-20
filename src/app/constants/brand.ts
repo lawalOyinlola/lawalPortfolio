@@ -6,7 +6,6 @@ export const BRAND = {
     "Senior Frontend Engineer specializing in high-performance Web & Mobile Interfaces, animations, accessibility and scalable AI-powered platforms. Bridging the gap between complex infrastructure and pixel-perfect user experiences.",
   url: "https://lawaloyinlola.com",
   ogImage: "/og-image.png",
-  // Add icons here. Paths are relative to the /public folder.
   icons: {
     icon: "/icons/favicon.png",
     apple: "/icons/favicon.png",
@@ -16,7 +15,7 @@ export const BRAND = {
   socials: {
     github: "https://github.com/lawalOyinlola",
     linkedin: "https://www.linkedin.com/in/lawaloyinlola",
-    twitter: "https://x.com/honeyzrich",
+    twitter: "@honeyzrich",
   },
   keywords: [
     "Oyinlola Lawal",
