@@ -13,9 +13,12 @@ const Hero = () => {
             {/* Hero Content */}
             <div className="max-w-206 z-10">
                 <h1 className="header text-primary ">
-                    Engineering isn’t just about writing code — it’s about building systems people can depend on.
+                    Engineering isn’t just about writing code — it’s about building systems people can depend on. {" "}
                     <span className="text-accent font-normal">
-                        {" "}{BRAND.shortName} represents a commitment to precision, performance, and reliability. Every line of code is written with the intent to make technology feel effortless —
+                        <span className="-scale-x-100 inline-block">
+                            {BRAND.shortName}
+                        </span>
+                        {" "} represents a commitment to precision, performance, and reliability. Every line of code is written with the intent to make technology feel effortless —
                     </span>
                     {" "}stable under pressure, scalable by design, and secure by default.
                 </h1>
