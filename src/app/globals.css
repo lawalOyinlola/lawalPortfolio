@@ -142,7 +142,7 @@
     @apply border-border outline-ring/50 caret-primary selection:bg-accent/15;
   }
   body {
-    @apply bg-red-500 text-foreground font-mori text-base;
+    @apply bg-background text-foreground font-mori text-base;
   }
 }
 @utility flex-center {

@@ -1,11 +1,15 @@
 "use client";
-
 import { useState } from "react";
 import Image from "next/image";
 import { FEATURED_PROJECTS } from "@/app/constants";
 
 function Projects() {
     const [activeIndex, setActiveIndex] = useState(0);
+
+    if (FEATURED_PROJECTS.length === 0) {
+        return null;
+    }
+
     const project = FEATURED_PROJECTS[activeIndex];
 
     return (
