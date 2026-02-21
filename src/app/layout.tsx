@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { ppMori } from "./fonts";
-import { BRAND } from "./constants/brand";
+import { BRAND } from "./constants";
 import JsonLd from "@/components/JsonLd";
 import "./globals.css";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: {
@@ -67,7 +69,10 @@ export default function RootLayout({
       <body
         className={`${ppMori.variable} antialiased min-h-screen bg-background text-foreground`}
       >
-        {children}
+        <TooltipProvider>
+          {children}
+          <Toaster richColors position="bottom-right" />
+        </TooltipProvider>
       </body>
     </html>
   );
