@@ -1,11 +1,9 @@
 "use client";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from '@gsap/react'; ``
-import { BRAND } from "@/app/constants/brand";
+import { BRAND_LETTERS } from "@/app/constants";
 import { Button } from "./ui/button";
-import Image from "next/image";
-
-const brandName = BRAND.shortName;
 
 const LogoButton = () => {
     useGSAP(() => {
@@ -23,7 +21,7 @@ const LogoButton = () => {
         <Button variant="outline" size="lg" className="text-lg gap-2.5">
             <Image src="/icons/menuLogo.svg" alt="Menu Icon" width={20} height={20} />
             <p aria-label="My brand logo - Lawal, written backwards" className="text-base font-semibold">
-                {brandName.split("").map((char, i) => (
+                {BRAND_LETTERS.map((char, i) => (
                     <span key={i} className="char inline-block">{char}</span>
                 ))}
             </p>

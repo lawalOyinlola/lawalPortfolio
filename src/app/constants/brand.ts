@@ -29,4 +29,7 @@ export const BRAND = {
     "Web Accessibility (WCAG)",
     "TypeScript Expert",
   ],
+  tagline: ["Logic", "Architecture", "Workmanship", "Agility", "Longevity"],
 };
+
+export const BRAND_LETTERS = BRAND.shortName.split("");
