@@ -128,6 +128,8 @@
     @apply text-[3.125rem] tracking-tight font-semibold uppercase;
   }
 
+  /* text-[clamp(1.75rem,5vw,4.5rem)]  */
+
   .header {
     @apply text-2xl font-semibold uppercase;
   }
