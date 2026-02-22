@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: BRAND.name,
     description: BRAND.description,
     images: [BRAND.ogImage],
-    creator: BRAND.socials.twitter,
+    creator: BRAND.socials.twitter.username || "Yero",
   },
   robots: {
     index: true,
@@ -49,9 +49,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
 };
@@ -77,6 +77,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-
-

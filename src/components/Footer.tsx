@@ -11,6 +11,7 @@ import { BRAND, BRAND_LETTERS } from "@/app/constants";
 gsap.registerPlugin(ScrollTrigger);
 
 const TAGLINE_WORDS = BRAND.tagline;
+const SOCIAL_LINKS = Object.values(BRAND.socials);
 
 const EXPLORE_LINKS = [
   { label: "Home", href: "#" },
@@ -19,12 +20,6 @@ const EXPLORE_LINKS = [
   { label: "Clients", href: "#clients" },
   { label: "Work", href: "#work" },
   { label: "Contact", href: "#contact" },
-];
-
-const SOCIAL_LINKS = [
-  { label: "LinkedIn", href: BRAND.socials.linkedin },
-  { label: "Instagram", href: `https://instagram.com/${BRAND.socials.twitter.replace("@", "")}` },
-  { label: "GitHub", href: BRAND.socials.github },
 ];
 
 function Footer() {
@@ -39,6 +34,7 @@ function Footer() {
         {
           scaleX: -1,
           ease: "expo.inOut",
+          delay: 1,
           duration: 1.6,
           stagger: { amount: 0.8, from: "start" },
           scrollTrigger: {
@@ -47,14 +43,17 @@ function Footer() {
             end: "top 20%",
             toggleActions: "play reverse play reverse",
           },
-        }
+        },
       );
     },
-    { scope: footerRef }
+    { scope: footerRef },
   );
 
   return (
-    <footer ref={footerRef} className="sticky bottom-0 inset-0 bg-foreground text-background overflow-hidden flex-center z-999">
+    <footer
+      ref={footerRef}
+      className="bg-foreground text-background overflow-hidden flex-center z-999"
+    >
       <div className="wrapper min-h-screen pb-1 flex justify-between flex-col">
         {/* Top Section */}
         <div className="flex flex-col lg:flex-row justify-between gap-16 w-full">
@@ -73,10 +72,10 @@ function Footer() {
               <span className="font-semibold text-background -scale-x-100 inline-block">
                 {BRAND.shortName}
               </span>{" "}
-              represents a commitment to precision, performance, and reliability.
-              Every line of code is written with the intent to make technology{" "}
-              <em>feel</em> effortless — stable under pressure, scalable by
-              design, and secure by default.
+              represents a commitment to precision, performance, and
+              reliability. Every line of code is written with the intent to make
+              technology <em>feel</em> effortless — stable under pressure,
+              scalable by design, and secure by default.
             </p>
           </div>
 

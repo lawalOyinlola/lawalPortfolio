@@ -13,9 +13,25 @@ export const BRAND = {
   email: "oyinlolalawal1705@gmail.com",
   address: ["Lagos, Nigeria", "Freetown, Sierra Leone"],
   socials: {
-    github: "https://github.com/lawalOyinlola",
-    linkedin: "https://www.linkedin.com/in/lawaloyinlola",
-    twitter: "@honeyzrich",
+    github: {
+      label: "GitHub",
+      href: "https://github.com/lawalOyinlola",
+      username: "lawalOyinlola",
+    },
+    linkedin: {
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/lawaloyinlola",
+    },
+    twitter: {
+      label: "Twitter",
+      href: "https://twitter.com/honeyzrich",
+      username: "@honeyzrich",
+    },
+    instagram: {
+      label: "Instagram",
+      href: "https://instagram.com/honeyzrich",
+      username: "@honeyzrich",
+    },
   },
   keywords: [
     "Oyinlola Lawal",
