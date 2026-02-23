@@ -36,60 +36,51 @@ export default function Preloader({ setComplete }: PreloaderProps) {
 
   useEffect(() => {
     if (stepIndex % 3 === 0 && stepIndex !== 0) {
-      const nextTip = TIPS[Math.floor(Math.random() * TIPS.length)];
-      glitchScramble(nextTip);
+      const chars = "!<>-_\\/+*^?#____";
+      const target = sloganRef.current;
+      if (!target) return;
+
+      const newText = TIPS[Math.floor(Math.random() * TIPS.length)];
+      const oldText = target.innerText;
+      const maxLen = Math.max(oldText.length, newText.length);
+
+      const tl = gsap.timeline();
+
+      tl.to([target, logoRef.current], {
+        skewX: 15,
+        x: 4,
+        opacity: 0.8,
+        duration: 0.08,
+        repeat: 3,
+        yoyo: true,
+        ease: "power3.inOut",
+      })
+        .set([target, logoRef.current], { x: 0, skewX: 0, opacity: 1 })
+        .to(
+          {},
+          {
+            duration: 1.4,
+            onUpdate: function () {
+              const progress = this.progress();
+              let output = "";
+
+              for (let i = 0; i < maxLen; i++) {
+                if (progress > i / maxLen) {
+                  output += newText[i] || "";
+                } else {
+                  if (i < newText.length || i < oldText.length) {
+                    output += chars[Math.floor(Math.random() * chars.length)];
+                  }
+                }
+              }
+              target.innerText = output;
+            },
+          },
+        );
     }
   }, [stepIndex]);
 
   const currentProgress = progressSteps[stepIndex];
-
-  const glitchScramble = (newText: string) => {
-    const chars = "!<>-_\\/+*^?#____";
-    const target = sloganRef.current;
-    if (!target) return;
-
-    const tl = gsap.timeline();
-    const oldText = target.innerText;
-    // We iterate over the longest of the two strings to ensure the 'tail' is cleared
-    const maxLen = Math.max(oldText.length, newText.length);
-
-    tl.to([target, logoRef.current], {
-      skewX: 15,
-      x: 4,
-      opacity: 0.8,
-      duration: 0.08,
-      repeat: 3,
-      yoyo: true,
-      ease: "power3.inOut",
-    })
-      .set([target, logoRef.current], { x: 0, skewX: 0, opacity: 1 })
-      .to(
-        {},
-        {
-          duration: 1.4,
-          onUpdate: function () {
-            const progress = this.progress();
-            let output = "";
-
-            for (let i = 0; i < maxLen; i++) {
-              // Determine if we reveal the new char or a scramble char
-              if (progress > i / maxLen) {
-                // Show the new character. If i > newText.length,
-                // this adds an empty string, effectively clearing the old tail.
-                output += newText[i] || "";
-              } else {
-                // While scrambling, only show gibberish for indices
-                // that were occupied by old text or will be by new text.
-                if (i < newText.length || i < oldText.length) {
-                  output += chars[Math.floor(Math.random() * chars.length)];
-                }
-              }
-            }
-            target.innerText = output;
-          },
-        },
-      );
-  };
 
   useGSAP(
     () => {
@@ -211,7 +202,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
       {/* Brand Name */}
       <h1
         aria-label="Lawal, written backwards"
-        className="title text-accent text-9xl z-99999 flex-center h-1/2 mix-blend-difference"
+        className="title text-foreground text-9xl z-999 flex-center h-1/2 mix-blend-difference"
       >
         {brandName.split("").map((char, i) => (
           <span key={i} className="char inline-block">

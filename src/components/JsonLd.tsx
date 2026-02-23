@@ -12,7 +12,7 @@ export default function JsonLd() {
       BRAND.socials.github.href,
       BRAND.socials.linkedin.href,
       BRAND.socials.instagram.href,
-      BRAND.socials.twitter.username,
+      BRAND.socials.twitter.href,
     ],
     description: BRAND.description,
     address: {

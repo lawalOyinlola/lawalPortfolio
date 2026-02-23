@@ -150,3 +150,20 @@
 @utility flex-center {
   @apply flex justify-center items-center;
 }
+
+@utility animate-marquee {
+  animation: marquee 30s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
