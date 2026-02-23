@@ -21,7 +21,7 @@ export const PARTNERS: Partner[] = [
   {
     name: "Tech N' GoodWill Limited",
     shortName: "TechN'GoodWill",
-    role: "LeadSoftware Engineer",
+    role: "Lead Software Engineer",
     logo: "/partner-logos/logo_techengoodwill.png",
   },
   {

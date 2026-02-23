@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ListIcon } from "@phosphor-icons/react";
 
 export default function Home() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   return (
     <main className="relative min-h-screen bg-background text-foreground overflow-x-clip">
@@ -21,10 +21,10 @@ export default function Home() {
         className={`transition-opacity duration-1000 ${loading ? "opacity-0 invisible" : "opacity-100 visible"}`}
       >
         <div className="fixed top-4.5 left-4.5 z-9999">
-          <LogoButton />
+          <LogoButton ready={!loading} />
         </div>
 
-        <Hero />
+        <Hero ready={!loading} />
         <Product />
         <Partners />
         <Projects />

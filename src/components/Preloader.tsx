@@ -202,7 +202,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
       {/* Brand Name */}
       <h1
         aria-label="Lawal, written backwards"
-        className="title text-accent text-9xl z-99999 flex-center h-1/2 mix-blend-difference"
+        className="title text-foreground text-9xl z-999 flex-center h-1/2 mix-blend-difference"
       >
         {brandName.split("").map((char, i) => (
           <span key={i} className="char inline-block">
