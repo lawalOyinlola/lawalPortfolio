@@ -1,19 +1,24 @@
 "use client";
+
 import HeroAnimation from "./HeroAnimation";
 import { BRAND } from "@/app/constants/brand";
 
-const Hero = () => {
+interface HeroProps {
+  ready?: boolean;
+}
+
+const Hero = ({ ready = true }: HeroProps) => {
   return (
-    <section className="relative h-screen w-full flex flex-col justify-end items-center py-20 overflow-hidden">
-      {/* Background Animation Layer */}
+    <section className="relative h-screen w-full flex-center items-end overflow-hidden">
+      {/* V-shape grid animation — full height behind everything */}
       <div className="absolute inset-0 z-2">
-        <HeroAnimation />
+        <HeroAnimation ready={ready} />
       </div>
 
-      {/* Hero Content */}
-      <div className="max-w-206 z-10">
+      {/* Hero copy — bottom-left, above the grid */}
+      <div className="wrapper relative z-10 max-w-206">
         <h1 className="header text-accent font-normal">
-          Engineering isn’t just about writing code — it’s about building
+          Engineering isn't just about writing code — it's about building
           systems people can depend on.{" "}
           <span className="text-primary font-semibold">
             <span className="-scale-x-100 inline-block">{BRAND.shortName}</span>{" "}
