@@ -9,7 +9,7 @@ interface HeroProps {
 
 const Hero = ({ ready = true }: HeroProps) => {
   return (
-    <section className="relative h-screen w-full flex-center items-end overflow-hidden">
+    <section className="relative h-screen w-full flex-center items-end overflow-hidden bg-background z-1">
       {/* V-shape grid animation — full height behind everything */}
       <div className="absolute inset-0 z-2">
         <HeroAnimation ready={ready} />
@@ -18,8 +18,8 @@ const Hero = ({ ready = true }: HeroProps) => {
       {/* Hero copy — bottom-left, above the grid */}
       <div className="wrapper relative z-10 max-w-206">
         <h1 className="header text-accent font-normal">
-          Engineering isn't just about writing code — it's about building
-          systems people can depend on.{" "}
+          Engineering isn&apos;t just about writing code — it&apos;s about
+          building systems people can depend on.{" "}
           <span className="text-primary font-semibold">
             <span className="-scale-x-100 inline-block">{BRAND.shortName}</span>{" "}
             represents a commitment to precision, performance, and reliability.

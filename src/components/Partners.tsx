@@ -6,8 +6,8 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-  TooltipProvider,
 } from "@/components/ui/tooltip";
+import { InfiniteSlider } from "./ui/infinite-slider";
 
 function PartnerLogo({ partner }: { partner: (typeof PARTNERS)[number] }) {
   return (
@@ -23,56 +23,45 @@ function PartnerLogo({ partner }: { partner: (typeof PARTNERS)[number] }) {
   );
 }
 
+function PartnerTooltipItems({ loopIndex }: { loopIndex: number }) {
+  return (
+    <>
+      {PARTNERS.map((partner) => (
+        <Tooltip key={`${loopIndex}-${partner.shortName}`}>
+          <TooltipTrigger className="cursor-pointer brightness-40 grayscale transition-all duration-300 hover:grayscale-0 hover:brightness-100">
+            <PartnerLogo partner={partner} />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="font-semibold mb-1">{partner.name}</p>
+            <p className="text-background/60">{partner.role}</p>
+          </TooltipContent>
+        </Tooltip>
+      ))}
+    </>
+  );
+}
+
 function Partners() {
   return (
     <section className="flex-center">
-      <div className="wrapper max-w-screen flex-col flex-center gap-13.5 overflow-hidden">
+      <div className="wrapper max-w-screen flex-col flex-center gap-13.5 overflow-hidden bg-background z-1">
         <p>Proud to have worked with...</p>
 
-        <TooltipProvider>
-          <div className="group relative w-full">
-            {/* Fade edges */}
-            {/* <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-linear-to-r from-background to-transparent" /> */}
-            {/* <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-linear-to-l from-background to-transparent" /> */}
+        <div className="group relative w-full">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-2 w-30 bg-linear-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-2 w-30 bg-linear-to-l from-background to-transparent" />
 
-            <div className="flex w-max animate-marquee gap-20 group-hover:paused">
-              {/* Real items — focusable with tooltips */}
-              {PARTNERS.map((partner) => (
-                <Tooltip key={partner.shortName}>
-                  <TooltipTrigger className="shrink-0 cursor-pointer brightness-40 grayscale transition-all duration-300 hover:grayscale-0 hover:brightness-100">
-                    <PartnerLogo partner={partner} />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="font-semibold mb-1">{partner.name}</p>
-                    <p className="text-background/60">{partner.role}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
-              {PARTNERS.map((partner) => (
-                <Tooltip key={partner.shortName}>
-                  <TooltipTrigger className="shrink-0 cursor-pointer brightness-40 grayscale transition-all duration-300 hover:grayscale-0 hover:brightness-100">
-                    <PartnerLogo partner={partner} />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="font-semibold mb-1">{partner.name}</p>
-                    <p className="text-background/60">{partner.role}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
-              {PARTNERS.map((partner) => (
-                <Tooltip key={partner.shortName}>
-                  <TooltipTrigger className="shrink-0 cursor-pointer brightness-40 grayscale transition-all duration-300 hover:grayscale-0 hover:brightness-100">
-                    <PartnerLogo partner={partner} />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="font-semibold mb-1">{partner.name}</p>
-                    <p className="text-background/60">{partner.role}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
-            </div>
-          </div>
-        </TooltipProvider>
+          <InfiniteSlider
+            gap={80}
+            speedOnHover={0.1}
+            speed={30}
+            className="group-hover:paused"
+          >
+            {Array.from({ length: 3 }, (_, loopIndex) => (
+              <PartnerTooltipItems key={loopIndex} loopIndex={loopIndex} />
+            ))}
+          </InfiniteSlider>
+        </div>
       </div>
     </section>
   );

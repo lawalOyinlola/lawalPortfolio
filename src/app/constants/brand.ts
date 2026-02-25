@@ -3,12 +3,12 @@ export const BRAND = {
   shortName: "LAWAL",
   title: "Frontend Engineer & UI Architect",
   description:
-    "Senior Frontend Engineer specializing in high-performance Web & Mobile Interfaces, animations, accessibility and scalable AI-powered platforms. Bridging the gap between complex infrastructure and pixel-perfect user experiences.",
+    "Frontend Engineer specializing in high-performance Web & Mobile Interfaces, animations, accessibility and scalable AI-powered platforms. Bridging the gap between complex infrastructure and pixel-perfect user experiences.",
   url: "https://lawaloyinlola.com",
-  ogImage: "/og-image.png",
+  ogImage: "/og-image.jpg",
   icons: {
-    icon: "/icons/favicon.png",
-    apple: "/icons/favicon.png",
+    icon: "/icons/favicon-32.png",
+    apple: "/icons/apple-touch-icon.png",
   },
   email: "oyinlolalawal1705@gmail.com",
   address: ["Lagos, Nigeria", "Freetown, Sierra Leone"],
@@ -46,6 +46,7 @@ export const BRAND = {
     "TypeScript Expert",
   ],
   tagline: ["Logic", "Architecture", "Workmanship", "Agility", "Longevity"],
+  yearFounded: 2023,
 };
 
 export const BRAND_LETTERS = BRAND.shortName.split("");

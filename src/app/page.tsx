@@ -1,48 +1,19 @@
 "use client";
-import { useState } from "react";
-import Preloader from "@/components/Preloader";
-import LogoButton from "@/components/LogoButton";
+import { useLoading } from "@/components/providers/LoadingContext";
 import Hero from "@/components/Hero";
 import Product from "@/components/Product";
 import Partners from "@/components/Partners";
 import Projects from "@/components/Projects";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { ListIcon } from "@phosphor-icons/react";
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
+  const { loading } = useLoading();
 
   return (
-    <main className="relative min-h-screen bg-background text-foreground overflow-x-clip">
-      {loading && <Preloader setComplete={() => setLoading(false)} />}
-
-      <div
-        className={`transition-opacity duration-1000 ${loading ? "opacity-0 invisible" : "opacity-100 visible"}`}
-      >
-        <div className="fixed top-4.5 left-4.5 z-9999">
-          <LogoButton ready={!loading} />
-        </div>
-
-        <Hero ready={!loading} />
-        <Product />
-        <Partners />
-        <Projects />
-        <Footer />
-
-        {/* Minimal Nav at bottom of the page */}
-        <div className="fixed inset-x-0 bottom-0 p-4.5 flex justify-between items-center z-99">
-          <Button variant="outline" size="icon-lg" aria-label="Open menu">
-            <ListIcon weight="bold" />
-          </Button>
-          <div className="flex gap-2 *:basis-1/2 w-64">
-            <Button variant="outline" size="lg">
-              Contact Me
-            </Button>
-            <Button size="lg">Got a Project?</Button>
-          </div>
-        </div>
-      </div>
-    </main>
+    <div>
+      <Hero ready={!loading} />
+      <Product />
+      <Partners />
+      <Projects />
+    </div>
   );
 }

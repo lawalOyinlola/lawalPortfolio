@@ -25,7 +25,7 @@ function getColumnConfig(i: number) {
   const speed = 2.2 + Math.random() * 2.3;
   const delay = Math.random() * 1.5;
 
-  let lo = base - oscillation;
+  const lo = base - oscillation;
   let hi = base + oscillation;
 
   if (FULL_HEIGHT_INDICES.has(i)) {
@@ -34,6 +34,8 @@ function getColumnConfig(i: number) {
 
   return { lo, hi, speed, delay };
 }
+
+const COLUMN_CONFIGS = V_HEIGHTS.map((_, i) => getColumnConfig(i));
 
 interface HeroAnimationProps {
   ready?: boolean;
@@ -55,7 +57,7 @@ const HeroAnimation = ({ ready = true }: HeroAnimationProps) => {
       const intro = gsap.timeline();
 
       shutters.forEach((shutter, i) => {
-        const { hi } = getColumnConfig(i);
+        const { hi } = COLUMN_CONFIGS[i];
         const dist = Math.abs(i - CENTER) / CENTER;
 
         intro.to(
@@ -77,7 +79,7 @@ const HeroAnimation = ({ ready = true }: HeroAnimationProps) => {
       // Phase 2: Once the intro lands, kick off the continuous oscillation.
       intro.call(() => {
         shutters.forEach((shutter, i) => {
-          const { lo, hi, speed, delay } = getColumnConfig(i);
+          const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
 
           gsap.fromTo(
             shutter,
