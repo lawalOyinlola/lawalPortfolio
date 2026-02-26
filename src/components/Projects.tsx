@@ -10,178 +10,247 @@ gsap.registerPlugin(ScrollToPlugin);
 
 const COUNT = FEATURED_PROJECTS.length;
 const TRANSITION = 0.8;
-const HOLD = 0.6;
+const WHEEL_STEP_THRESHOLD = 250;
+const WHEEL_STEP_COOLDOWN_MS = 250;
 
 function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
   const indexRef = useRef(0);
-  const lockedRef = useRef(false);
+  const transitioningRef = useRef(false);
+  const transitionTokenRef = useRef(0);
+  const wheelAccumulatorRef = useRef(0);
+  const lastStepAtRef = useRef(0);
+  const lastStepDirectionRef = useRef(0);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const reducedMotionRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const goTo = useCallback((target: number) => {
-    if (target < 0 || target >= COUNT) return;
-    if (target === indexRef.current) return;
-    if (lockedRef.current) return;
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    reducedMotionRef.current = mql.matches;
+    const onChange = (e: MediaQueryListEvent) => {
+      reducedMotionRef.current = e.matches;
+    };
+    mql.addEventListener("change", onChange);
+    return () => {
+      mql.removeEventListener("change", onChange);
+      tlRef.current?.kill();
+      gsap.killTweensOf(window);
+    };
+  }, []);
 
-    lockedRef.current = true;
-    const prev = indexRef.current;
-    const dir = target > prev ? 1 : -1;
-    indexRef.current = target;
-    setActiveIndex(target);
-
-    if (sectionRef.current) {
-      const sectionTop = sectionRef.current.offsetTop;
-      const dur = Math.min(TRANSITION + Math.abs(target - prev) * 0.15, 1.2);
-      gsap.to(window, {
-        scrollTo: {
-          y: sectionTop + target * window.innerHeight,
-          autoKill: false,
-        },
-        duration: dur,
-        ease: "power3.inOut",
-        overwrite: true,
-      });
-    }
-
-    const exitLabel = "exit";
-    const enterLabel = "enter";
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        gsap.delayedCall(HOLD, () => {
-          lockedRef.current = false;
-        });
-      },
+  const settleToIndex = useCallback((index: number) => {
+    const safeIndex = Math.min(Math.max(index, 0), COUNT - 1);
+    const panels = document.querySelectorAll<HTMLDivElement>(".project-panel");
+    panels.forEach((p, i) => {
+      gsap.set(p, { autoAlpha: i === safeIndex ? 1 : 0 });
     });
 
-    // ── EXIT: animate each element out ──
-
-    tl.addLabel(exitLabel);
-
-    // Name: flip characters out
-    tl.to(
-      `.name-char-${prev}`,
-      {
-        scaleX: -1,
-        opacity: 0,
-        duration: 0.5,
-        ease: "expo.inOut",
-        stagger: { amount: 0.3, from: dir > 0 ? "start" : "end" },
-      },
-      exitLabel,
-    );
-
-    // Image: clip-path wipe out in the direction of travel
-    tl.to(
-      `.img-${prev}`,
-      {
-        clipPath: dir > 0 ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)",
-        duration: 0.55,
-        ease: "power3.inOut",
-      },
-      exitLabel,
-    );
-
-    // Category: fade up and out
-    tl.to(
-      `.cat-${prev}`,
-      { opacity: 0, y: -12, duration: 0.3, ease: "power2.in" },
-      exitLabel,
-    );
-
-    // Description: fade down and out
-    tl.to(
-      `.desc-${prev}`,
-      { opacity: 0, y: 15, duration: 0.35, ease: "power2.in" },
-      `${exitLabel}+=0.05`,
-    );
-
-    // Tags: stagger fade out
-    tl.to(
-      `.tag-${prev}`,
-      {
-        opacity: 0,
-        y: 10,
-        duration: 0.25,
-        ease: "power2.in",
-        stagger: 0.04,
-      },
-      `${exitLabel}+=0.05`,
-    );
-
-    // Hide the outgoing panel after all exit animations
-    tl.set(`.panel-${prev}`, { autoAlpha: 0 });
-
-    // ── ENTER: reveal the incoming panel, then animate each element in ──
-    tl.addLabel(enterLabel, "-=0.2");
-
-    // Show the panel container
-    tl.set(`.panel-${target}`, { autoAlpha: 1 }, enterLabel);
-
-    // Image: clip-path wipe in from the opposite side
-    tl.fromTo(
-      `.img-${target}`,
-      {
-        clipPath: dir > 0 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)",
-      },
-      {
-        clipPath: "inset(0 0 0 0)",
-        duration: 0.6,
-        ease: "power3.inOut",
-      },
-      enterLabel,
-    );
-
-    // Category: fade in from below
-    tl.fromTo(
-      `.cat-${target}`,
-      { opacity: 0, y: 12 },
-      { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
-      `${enterLabel}+=0.1`,
-    );
-
-    // Name: flip characters in
-    tl.fromTo(
-      `.name-char-${target}`,
-      { scaleX: -1, opacity: 0.5 },
-      {
-        scaleX: 1,
-        opacity: 1,
-        duration: 0.6,
-        ease: "expo.inOut",
-        stagger: { amount: 0.3, from: dir > 0 ? "end" : "start" },
-      },
-      `${enterLabel}+=0.1`,
-    );
-
-    // Description: rise up into place
-    tl.fromTo(
-      `.desc-${target}`,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
-      `${enterLabel}+=0.2`,
-    );
-
-    // Tags: stagger in from left
-    tl.fromTo(
-      `.tag-${target}`,
-      { opacity: 0, y: 12 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.3,
-        ease: "power2.out",
-        stagger: 0.06,
-      },
-      `${enterLabel}+=0.25`,
-    );
+    for (let idx = 0; idx < COUNT; idx++) {
+      document
+        .querySelectorAll(`.name-char-${idx}`)
+        .forEach((el) => gsap.set(el, { scaleX: 1, opacity: 1 }));
+      document
+        .querySelectorAll(`.img-${idx}`)
+        .forEach((el) => gsap.set(el, { clipPath: "inset(0 0 0 0)" }));
+      document
+        .querySelectorAll(`.cat-${idx}, .desc-${idx}`)
+        .forEach((el) => gsap.set(el, { opacity: 1, y: 0 }));
+      document
+        .querySelectorAll(`.tag-${idx}`)
+        .forEach((el) => gsap.set(el, { opacity: 1, y: 0 }));
+    }
   }, []);
+
+  const goTo = useCallback(
+    (target: number) => {
+      if (target < 0 || target >= COUNT) return;
+      if (target === indexRef.current) return;
+
+      transitionTokenRef.current += 1;
+      const transitionToken = transitionTokenRef.current;
+      const prev = indexRef.current;
+
+      // Kill any in-flight transition, then normalize to a clean baseline.
+      tlRef.current?.kill();
+      gsap.killTweensOf(window);
+      if (transitioningRef.current) {
+        settleToIndex(prev);
+      }
+
+      transitioningRef.current = true;
+      const dir = target > prev ? 1 : -1;
+      indexRef.current = target;
+      setActiveIndex(target);
+
+      const reduced = reducedMotionRef.current;
+
+      if (sectionRef.current) {
+        const sectionTop = sectionRef.current.offsetTop;
+        const dur = reduced
+          ? 0
+          : Math.min(TRANSITION + Math.abs(target - prev) * 0.15, 1.2);
+        gsap.to(window, {
+          scrollTo: {
+            y: sectionTop + target * window.innerHeight,
+            autoKill: false,
+          },
+          duration: dur,
+          ease: "power3.inOut",
+          overwrite: true,
+        });
+      }
+
+      if (reduced) {
+        settleToIndex(target);
+        if (transitionTokenRef.current === transitionToken) {
+          transitioningRef.current = false;
+        }
+        return;
+      }
+
+      const exitLabel = "exit";
+      const enterLabel = "enter";
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          if (transitionTokenRef.current === transitionToken) {
+            transitioningRef.current = false;
+          }
+        },
+      });
+      tlRef.current = tl;
+
+      // ── EXIT: animate each element out ──
+
+      tl.addLabel(exitLabel);
+
+      // Name: flip characters out
+      tl.to(
+        `.name-char-${prev}`,
+        {
+          scaleX: -1,
+          opacity: 0,
+          duration: 0.5,
+          ease: "expo.inOut",
+          stagger: { amount: 0.3, from: dir > 0 ? "start" : "end" },
+        },
+        exitLabel,
+      );
+
+      // Image: clip-path wipe out in the direction of travel
+      tl.to(
+        `.img-${prev}`,
+        {
+          clipPath: dir > 0 ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)",
+          duration: 0.55,
+          ease: "power3.inOut",
+        },
+        exitLabel,
+      );
+
+      // Category: fade up and out
+      tl.to(
+        `.cat-${prev}`,
+        { opacity: 0, y: -12, duration: 0.3, ease: "power2.in" },
+        exitLabel,
+      );
+
+      // Description: fade down and out
+      tl.to(
+        `.desc-${prev}`,
+        { opacity: 0, y: 15, duration: 0.35, ease: "power2.in" },
+        `${exitLabel}+=0.05`,
+      );
+
+      // Tags: stagger fade out
+      tl.to(
+        `.tag-${prev}`,
+        {
+          opacity: 0,
+          y: 10,
+          duration: 0.25,
+          ease: "power2.in",
+          stagger: 0.04,
+        },
+        `${exitLabel}+=0.05`,
+      );
+
+      // Hide the outgoing panel after all exit animations
+      tl.set(`.panel-${prev}`, { autoAlpha: 0 });
+
+      // ── ENTER: reveal the incoming panel, then animate each element in ──
+      tl.addLabel(enterLabel, "-=0.2");
+
+      // Show the panel container
+      tl.set(`.panel-${target}`, { autoAlpha: 1 }, enterLabel);
+
+      // Image: clip-path wipe in from the opposite side
+      tl.fromTo(
+        `.img-${target}`,
+        {
+          clipPath: dir > 0 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)",
+        },
+        {
+          clipPath: "inset(0 0 0 0)",
+          duration: 0.6,
+          ease: "power3.inOut",
+        },
+        enterLabel,
+      );
+
+      // Category: fade in from below
+      tl.fromTo(
+        `.cat-${target}`,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
+        `${enterLabel}+=0.1`,
+      );
+
+      // Name: flip characters in
+      tl.fromTo(
+        `.name-char-${target}`,
+        { scaleX: -1, opacity: 0.5 },
+        {
+          scaleX: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "expo.inOut",
+          stagger: { amount: 0.3, from: dir > 0 ? "end" : "start" },
+        },
+        `${enterLabel}+=0.1`,
+      );
+
+      // Description: rise up into place
+      tl.fromTo(
+        `.desc-${target}`,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        `${enterLabel}+=0.2`,
+      );
+
+      // Tags: stagger in from left
+      tl.fromTo(
+        `.tag-${target}`,
+        { opacity: 0, y: 12 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          ease: "power2.out",
+          stagger: 0.06,
+        },
+        `${enterLabel}+=0.25`,
+      );
+    },
+    [settleToIndex],
+  );
 
   // Sync project index with scroll position for natural/fast scrolling
   useEffect(() => {
     const sync = () => {
       const section = sectionRef.current;
-      if (!section || lockedRef.current) return;
+      if (!section || transitioningRef.current) return;
 
       const scrollIn = window.scrollY - section.offsetTop;
       const expected = Math.min(
@@ -190,25 +259,7 @@ function Projects() {
       );
 
       if (expected !== indexRef.current) {
-        const panels =
-          document.querySelectorAll<HTMLDivElement>(".project-panel");
-        panels.forEach((p, i) => {
-          gsap.set(p, { autoAlpha: i === expected ? 1 : 0 });
-        });
-        for (let idx = 0; idx < COUNT; idx++) {
-          document
-            .querySelectorAll(`.name-char-${idx}`)
-            .forEach((el) => gsap.set(el, { scaleX: 1 }));
-          document
-            .querySelectorAll(`.img-${idx}`)
-            .forEach((el) => gsap.set(el, { clipPath: "inset(0 0 0 0)" }));
-          document
-            .querySelectorAll(`.cat-${idx}, .desc-${idx}`)
-            .forEach((el) => gsap.set(el, { opacity: 1, y: 0 }));
-          document
-            .querySelectorAll(`.tag-${idx}`)
-            .forEach((el) => gsap.set(el, { opacity: 1, y: 0 }));
-        }
+        settleToIndex(expected);
         indexRef.current = expected;
         setActiveIndex(expected);
       }
@@ -216,7 +267,7 @@ function Projects() {
 
     window.addEventListener("scroll", sync, { passive: true });
     return () => window.removeEventListener("scroll", sync);
-  }, []);
+  }, [settleToIndex]);
 
   // Intercept wheel events for discrete project switching
   useEffect(() => {
@@ -229,17 +280,49 @@ function Projects() {
 
       if (!stickyEngaged) return;
 
-      if (lockedRef.current) {
-        e.preventDefault();
+      const direction = Math.sign(e.deltaY);
+      if (direction === 0) return;
+
+      const current = indexRef.current;
+      const movingOutOfRange =
+        (direction > 0 && current >= COUNT - 1) ||
+        (direction < 0 && current <= 0);
+
+      if (movingOutOfRange) {
+        wheelAccumulatorRef.current = 0;
         return;
       }
 
-      if (e.deltaY > 0 && indexRef.current < COUNT - 1) {
-        e.preventDefault();
-        goTo(indexRef.current + 1);
-      } else if (e.deltaY < 0 && indexRef.current > 0) {
-        e.preventDefault();
-        goTo(indexRef.current - 1);
+      // Keep snap pagination but allow interruption by a new wheel intent.
+      e.preventDefault();
+
+      if (Math.sign(wheelAccumulatorRef.current) !== direction) {
+        wheelAccumulatorRef.current = 0;
+      }
+
+      wheelAccumulatorRef.current += e.deltaY;
+
+      if (Math.abs(wheelAccumulatorRef.current) >= WHEEL_STEP_THRESHOLD) {
+        const stepDirection = wheelAccumulatorRef.current > 0 ? 1 : -1;
+        const now = performance.now();
+        const reversing = stepDirection !== lastStepDirectionRef.current;
+        const cooldownPassed =
+          now - lastStepAtRef.current >= WHEEL_STEP_COOLDOWN_MS;
+
+        if (reversing || cooldownPassed) {
+          const next = Math.min(
+            Math.max(indexRef.current + stepDirection, 0),
+            COUNT - 1,
+          );
+
+          if (next !== indexRef.current) {
+            goTo(next);
+            lastStepAtRef.current = now;
+            lastStepDirectionRef.current = stepDirection;
+          }
+        }
+
+        wheelAccumulatorRef.current = 0;
       }
     };
 
@@ -252,11 +335,11 @@ function Projects() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-muted"
+      className="relative bg-muted flex justify-center z-1"
       style={{ height: `${COUNT * 100}vh` }}
       aria-label="Featured projects"
     >
-      <div className="sticky top-0 h-screen flex flex-col justify-center gap-4.5 px-4.5 py-20 max-w-400 w-full">
+      <div className="sticky top-0 h-screen flex flex-col justify-center gap-4.5 wrapper max-w-400 w-full">
         <h2 className="font-semibold tracking-tight uppercase text-sm">
           Projects
         </h2>
@@ -268,6 +351,8 @@ function Projects() {
               key={project.name}
               role="tab"
               aria-selected={activeIndex === index}
+              aria-controls={`panel-${index}`}
+              id={`tab-${index}`}
               aria-label={`Project ${index + 1}: ${project.name}`}
               onClick={() => goTo(index)}
               className={`title transition-all cursor-pointer min-h-19 ${
@@ -280,11 +365,7 @@ function Projects() {
         </div>
 
         {/* Stacked Project Panels */}
-        <div
-          className="relative flex-1 min-h-0"
-          role="tabpanel"
-          aria-live="polite"
-        >
+        <div className="relative flex-1 min-h-0">
           {FEATURED_PROJECTS.map((project, i) => (
             <div
               key={project.name}
@@ -293,10 +374,15 @@ function Projects() {
                 visibility: i === 0 ? "visible" : "hidden",
                 opacity: i === 0 ? 1 : 0,
               }}
+              role="tabpanel"
+              id={`panel-${i}`}
+              aria-labelledby={`tab-${i}`}
+              aria-hidden={activeIndex !== i}
+              aria-live="polite"
             >
-              <div className="flex gap-10">
+              <div className="flex flex-1 gap-10">
                 <div
-                  className={`img-${i} relative w-1/2 aspect-4/3 rounded-lg overflow-hidden bg-foreground/5`}
+                  className={`img-${i} relative w-3/5 overflow-hidden bg-foreground/5`}
                   style={{ clipPath: "inset(0 0 0 0)" }}
                 >
                   <Image
@@ -304,10 +390,10 @@ function Projects() {
                     alt={project.name}
                     fill
                     className="object-cover"
-                    sizes="50vw"
+                    sizes="57vw"
                   />
                 </div>
-                <div className="flex flex-col justify-between w-1/2 py-2">
+                <div className="w-2/5 flex flex-col justify-between py-2">
                   <div className="flex flex-col gap-5">
                     <p className={`cat-${i}`}>{project.category}</p>
                     <h3 className="bold-title" aria-label={project.name}>
@@ -322,7 +408,7 @@ function Projects() {
                       ))}
                     </h3>
                   </div>
-                  <p className={`desc-${i} max-w-lg`}>{project.description}</p>
+                  <p className={`desc-${i}`}>{project.description}</p>
                 </div>
               </div>
 

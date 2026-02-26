@@ -166,7 +166,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
 
         tl.to(".column-wrapper", {
           height: "100vh",
-          duration: 1.5,
+          duration: 1.4,
           ease: "expo.inOut",
         })
           .to(".shutter", { y: 0, duration: 0.2 }, "<")
@@ -187,7 +187,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
           .to(containerRef.current, {
             opacity: 0,
             display: "none",
-            duration: 0.8,
+            duration: 0.6,
           });
       }
     },

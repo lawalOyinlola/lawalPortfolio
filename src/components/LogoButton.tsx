@@ -4,8 +4,13 @@ import { useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { BRAND_LETTERS } from "@/app/constants";
 import { Button } from "./ui/button";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollToPlugin);
+}
 
 interface LogoButtonProps {
   ready?: boolean;
@@ -13,6 +18,13 @@ interface LogoButtonProps {
 
 const LogoButton = ({ ready = true }: LogoButtonProps) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const scrollToTop = () => {
+    gsap.to(window, {
+      scrollTo: { y: 0, autoKill: true },
+      duration: 2,
+      ease: "power3.out",
+    });
+  };
 
   useGSAP(
     () => {
@@ -34,6 +46,8 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
       variant="outline"
       size="lg"
       className="text-lg gap-2.5"
+      aria-label="Back to home"
+      onClick={() => scrollToTop()}
     >
       <Image src="/icons/menuLogo.svg" alt="Menu Icon" width={20} height={20} />
       <p

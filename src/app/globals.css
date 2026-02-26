@@ -154,7 +154,7 @@
 @utility animate-marquee {
   animation: marquee 30s linear infinite;
 
-  @media (prefers-reduced-motion: reduce) {
+  @variant motion-reduce {
     animation: none;
   }
 }
@@ -166,4 +166,14 @@
   100% {
     transform: translateX(-50%);
   }
+}
+
+html[data-hide-mini-nav="true"] .app-mini-nav {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html[data-hide-logo="true"] .logo-btn {
+  opacity: 0;
+  pointer-events: none;
 }
