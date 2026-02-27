@@ -4,8 +4,8 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
-const COLUMN_COUNT = 16;
-const CENTER = (COLUMN_COUNT - 1) / 2;
+// const COLUMN_COUNT = 16;
+
 const FULL_HEIGHT_INDICES = new Set([0, 7, 8]);
 
 // V-shape profile: percentage of container height each column covers.
@@ -13,6 +13,8 @@ const FULL_HEIGHT_INDICES = new Set([0, 7, 8]);
 const V_HEIGHTS = [
   28, 34, 40, 48, 55, 63, 72, 82, 80, 70, 60, 50, 42, 35, 28, 22,
 ];
+const COLUMN_COUNT = V_HEIGHTS.length;
+const CENTER = (COLUMN_COUNT - 1) / 2;
 
 function getColumnConfig(i: number) {
   const height = V_HEIGHTS[i];

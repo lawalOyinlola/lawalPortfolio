@@ -46,7 +46,7 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
       variant="outline"
       size="lg"
       className="text-lg gap-2.5"
-      aria-label="Back to home"
+      aria-label="Scroll to top"
       onClick={() => scrollToTop()}
     >
       <Image src="/icons/menuLogo.svg" alt="Menu Icon" width={20} height={20} />
