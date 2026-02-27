@@ -125,7 +125,7 @@
   }
 
   .title {
-    @apply text-[3.125rem] tracking-tight font-semibold uppercase;
+    @apply text-[3.125rem] tracking-tight leading-none font-semibold uppercase;
   }
 
   /* text-[clamp(1.75rem,5vw,4.5rem)]  */
@@ -151,29 +151,14 @@
   @apply flex justify-center items-center;
 }
 
-@utility animate-marquee {
-  animation: marquee 30s linear infinite;
-
-  @variant motion-reduce {
-    animation: none;
-  }
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
 html[data-hide-mini-nav="true"] .app-mini-nav {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }
 
 html[data-hide-logo="true"] .logo-btn {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
 }

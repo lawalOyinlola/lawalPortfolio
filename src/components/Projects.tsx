@@ -47,18 +47,18 @@ function Projects() {
     });
 
     for (let idx = 0; idx < COUNT; idx++) {
-      document
-        .querySelectorAll(`.name-char-${idx}`)
-        .forEach((el) => gsap.set(el, { scaleX: 1, opacity: 1 }));
-      document
-        .querySelectorAll(`.img-${idx}`)
-        .forEach((el) => gsap.set(el, { clipPath: "inset(0 0 0 0)" }));
-      document
-        .querySelectorAll(`.cat-${idx}, .desc-${idx}`)
-        .forEach((el) => gsap.set(el, { opacity: 1, y: 0 }));
-      document
-        .querySelectorAll(`.tag-${idx}`)
-        .forEach((el) => gsap.set(el, { opacity: 1, y: 0 }));
+      document.querySelectorAll(`.name-char-${idx}`).forEach((el) => {
+        gsap.set(el, { scaleX: 1, opacity: 1 });
+      });
+      document.querySelectorAll(`.img-${idx}`).forEach((el) => {
+        gsap.set(el, { clipPath: "inset(0 0 0 0)" });
+      });
+      document.querySelectorAll(`.cat-${idx}, .desc-${idx}`).forEach((el) => {
+        gsap.set(el, { opacity: 1, y: 0 });
+      });
+      document.querySelectorAll(`.tag-${idx}`).forEach((el) => {
+        gsap.set(el, { opacity: 1, y: 0 });
+      });
     }
   }, []);
 
@@ -365,7 +365,7 @@ function Projects() {
         </div>
 
         {/* Stacked Project Panels */}
-        <div className="relative flex-1 min-h-0">
+        <div aria-live="polite" className="relative flex-1 min-h-0">
           {FEATURED_PROJECTS.map((project, i) => (
             <div
               key={project.name}
@@ -378,7 +378,6 @@ function Projects() {
               id={`panel-${i}`}
               aria-labelledby={`tab-${i}`}
               aria-hidden={activeIndex !== i}
-              aria-live="polite"
             >
               <div className="flex flex-1 gap-10">
                 <div

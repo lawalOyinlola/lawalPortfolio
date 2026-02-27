@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -21,6 +21,18 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const textPanelRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(
+      "(max-width: 768px), (hover: none) and (pointer: coarse)",
+    );
+    const updateMobile = () => setIsMobile(mediaQuery.matches);
+    updateMobile();
+    mediaQuery.addEventListener("change", updateMobile);
+
+    return () => mediaQuery.removeEventListener("change", updateMobile);
+  }, []);
 
   useGSAP(
     () => {
@@ -84,31 +96,9 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
         </div>
 
         {/* Phase 2: full-screen text panel over pinned image */}
-        {/* <div
-          ref={textPanelRef}
-          className="text-panel absolute inset-0 z-10 flex-center bg-foreground will-change-transform"
-        >
-          <div className="wrapper flex justify-end">
-            <h2
-              aria-label={STATEMENT}
-              className="max-w-175 title leading-none text-white"
-            >
-              {wordsArray.map((word, i) => (
-                <span
-                  key={i}
-                  aria-hidden="true"
-                  className="reveal-word mr-[0.25em] inline-block"
-                >
-                  {word}
-                </span>
-              ))}
-            </h2>
-          </div>
-        </div> */}
-
         <div
           ref={textPanelRef}
-          className="text-panel absolute inset-0 z-10 flex items-center justify-center bg-black will-change-transform"
+          className="text-panel absolute inset-0 z-10 flex items-center justify-center bg-foreground will-change-transform"
         >
           <div className="wrapper flex justify-end w-full px-12">
             <h2 aria-label={STATEMENT} className="max-w-175 title leading-none">
@@ -116,8 +106,16 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
                 <span
                   key={i}
                   aria-hidden="true"
-                  className="reveal-word inline-block mr-[0.25em] text-transparent bg-clip-text bg-fixed bg-cover bg-top bg-no-repeat"
-                  style={{ backgroundImage: `url(${imageSrc})` }}
+                  className={`reveal-word inline-block mr-[0.25em] ${
+                    isMobile
+                      ? "text-white"
+                      : "text-transparent bg-clip-text bg-fixed bg-cover bg-top bg-no-repeat"
+                  }`}
+                  style={
+                    isMobile
+                      ? undefined
+                      : { backgroundImage: `url(${imageSrc})` }
+                  }
                 >
                   {word}
                 </span>

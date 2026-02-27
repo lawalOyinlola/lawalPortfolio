@@ -51,12 +51,7 @@ function Partners() {
           <div className="pointer-events-none absolute inset-y-0 left-0 z-2 w-30 bg-linear-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 z-2 w-30 bg-linear-to-l from-background to-transparent" />
 
-          <InfiniteSlider
-            gap={80}
-            speedOnHover={0.1}
-            speed={30}
-            className="group-hover:paused"
-          >
+          <InfiniteSlider gap={80} speed={30} pauseOnHover>
             {Array.from({ length: 3 }, (_, loopIndex) => (
               <PartnerTooltipItems key={loopIndex} loopIndex={loopIndex} />
             ))}
