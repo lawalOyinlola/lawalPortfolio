@@ -339,7 +339,7 @@ function Projects() {
       style={{ height: `${COUNT * 100}vh` }}
       aria-label="Featured projects"
     >
-      <div className="sticky top-0 h-screen flex flex-col justify-center gap-4.5 wrapper max-w-400 w-full">
+      <div className="wrapper sticky top-0 h-screen flex flex-col justify-center gap-4.5">
         <h2 className="font-semibold tracking-tight uppercase text-sm">
           Projects
         </h2>
