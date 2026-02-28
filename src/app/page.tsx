@@ -6,6 +6,7 @@ import Product from "@/components/Product";
 import Partners from "@/components/Partners";
 import Projects from "@/components/Projects";
 import BrandStats from "@/components/BrandStats";
+import ContactsRef from "@/components/ContactsRef";
 
 export default function Home() {
   const { loading } = useLoading();
@@ -16,7 +17,9 @@ export default function Home() {
       <Product />
       <Partners />
       <Projects />
-      <BrandStats />
+      <BrandStats>
+        <ContactsRef />
+      </BrandStats>
     </div>
   );
 }
