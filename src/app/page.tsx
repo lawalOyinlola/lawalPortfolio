@@ -7,6 +7,7 @@ import Partners from "@/components/Partners";
 import Projects from "@/components/Projects";
 import BrandStats from "@/components/BrandStats";
 import ContactsRef from "@/components/ContactsRef";
+import PartnersAnimation from "@/components/PartnersAnimation";
 
 export default function Home() {
   const { loading } = useLoading();
@@ -16,6 +17,7 @@ export default function Home() {
       <Hero ready={!loading} />
       <Product />
       <Partners />
+      <PartnersAnimation ready={!loading} />
       <Projects />
       <BrandStats>
         <ContactsRef />

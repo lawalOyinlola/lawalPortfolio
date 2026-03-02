@@ -19,7 +19,7 @@ export const BRAND_STATS: Stat[] = [
   },
   {
     name: "Client's Loyalty",
-    value: "99%",
+    value: "96%",
     description:
       "Our clients trust us with their projects and keep coming back.",
   },

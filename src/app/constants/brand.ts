@@ -11,6 +11,7 @@ export const BRAND = {
     apple: "/icons/apple-touch-icon.png",
   },
   email: "oyinlolalawal1705@gmail.com",
+  phone: "+2348165341317",
   address: ["Lagos, Nigeria", "Freetown, Sierra Leone"],
   socials: {
     github: {
@@ -31,6 +32,11 @@ export const BRAND = {
       label: "Instagram",
       href: "https://instagram.com/honeyzrich",
       username: "@honeyzrich",
+    },
+    whatsapp: {
+      label: "Whatsapp",
+      href: "https://wa.me/2348165341317",
+      username: "+2348165341317",
     },
   },
   keywords: [

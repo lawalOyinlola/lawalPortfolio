@@ -198,7 +198,7 @@ html[data-hide-logo="true"] .logo-btn {
 .tv-static {
   background: url("/shimmer.png") repeat #dcdcdc;
   filter: grayscale(1) contrast(1.1);
-  animation: tvStaticShift 220ms steps(8) infinite;
+  animation: tvStaticShift 220ms steps(2) infinite;
 }
 
 .tv-static-overlay {
