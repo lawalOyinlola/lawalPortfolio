@@ -17,9 +17,9 @@ const PartnersAnimation = ({ ready = true }: PartnersAnimationProps) => {
     >
       {/* V-shape grid animation — full height behind everything */}
       <div className="absolute inset-0 z-2">
-        <GridAnimation 
-          ready={ready} 
-          triggerRef={partnerRef} 
+        <GridAnimation
+          ready={ready}
+          triggerRef={partnerRef}
           invertDirection={true}
           scrubStart={true}
         />
