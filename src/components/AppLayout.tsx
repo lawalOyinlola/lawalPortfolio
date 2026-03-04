@@ -13,7 +13,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const { loading, setLoading } = useLoading();
 
   return (
-    <main className="relative min-h-screen overflow-x-clip bg-background">
+    <main
+      className={`relative min-h-screen overflow-x-clip bg-background ${loading ? "overflow-hidden h-screen" : ""}`}
+    >
       {loading && <Preloader setComplete={() => setLoading(false)} />}
 
       <div
