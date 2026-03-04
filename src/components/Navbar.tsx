@@ -12,12 +12,20 @@ const Navbar = ({ ready = true }: NavbarProps) => {
   return (
     <div>
       {/* Logo Button */}
-      <div className="logo-btn fixed top-4.5 left-4.5 z-20 transition-opacity duration-200">
+      <div
+        className={`logo-btn fixed top-4.5 left-4.5 z-20 transition-opacity duration-200 ${
+          ready ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
         <LogoButton ready={ready} />
       </div>
 
       {/* Minimal Nav at bottom of the page */}
-      <div className="app-mini-nav fixed bottom-0 inset-x-0 w-full p-4.5 flex justify-between items-center gap-2 *:not-first:px-6 z-20 transition-opacity duration-200">
+      <div
+        className={`app-mini-nav fixed bottom-0 inset-x-0 w-full p-4.5 flex justify-between items-center gap-2 *:not-first:px-6 z-20 transition-opacity duration-200 ${
+          ready ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      >
         <Button
           variant="outline"
           size="icon-lg"
