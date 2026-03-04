@@ -7,7 +7,9 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BRAND_STATS } from "@/app/constants";
 
-gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP, ScrollTrigger);
+}
 
 const INTRO_TEXT = "Where passion meets precision";
 const OUTRO_TEXT = "Get in touch with us to learn more...";
@@ -46,7 +48,6 @@ function BrandStats({ children }: { children: React.ReactNode }) {
       const prefersReducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
-      if (prefersReducedMotion) return;
 
       gsap.set(contactOverlayEl, { autoAlpha: 0, pointerEvents: "none" });
       gsap.set(handoffOverlayEl, { autoAlpha: 0 });
@@ -56,13 +57,37 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         autoAlpha: 1,
       });
 
+      const frameWidth = imageFrameEl.offsetWidth;
+      const frameHeight = imageFrameEl.offsetHeight;
+
+      if (!frameWidth || !frameHeight) return;
+
       const targetScale =
         Math.max(
-          window.innerWidth / imageFrameEl.offsetWidth,
-          window.innerHeight / imageFrameEl.offsetHeight,
+          window.innerWidth / frameWidth,
+          window.innerHeight / frameHeight,
         ) * 1.04;
 
       gsap.set(cornerChildren, { autoAlpha: 1 });
+
+      if (prefersReducedMotion) {
+        ScrollTrigger.create({
+          trigger: handoffEl,
+          start: "top 78%",
+          end: "bottom 40%",
+          onEnter: () => {
+            gsap.set(statsContentEl, { autoAlpha: 0 });
+            gsap.set(imageFrameEl, { autoAlpha: 0 });
+            gsap.set(contactOverlayEl, { autoAlpha: 1, pointerEvents: "auto" });
+          },
+          onLeaveBack: () => {
+            gsap.set(statsContentEl, { autoAlpha: 1 });
+            gsap.set(imageFrameEl, { autoAlpha: 1 });
+            gsap.set(contactOverlayEl, { autoAlpha: 0, pointerEvents: "none" });
+          },
+        });
+        return;
+      }
 
       const handoffTl = gsap.timeline({
         scrollTrigger: {
@@ -91,7 +116,6 @@ function BrandStats({ children }: { children: React.ReactNode }) {
           0.05,
         )
         .to(statsContentEl, { autoAlpha: 0, ease: "none", duration: 0.4 }, 0.22)
-        // Keep shimmer hidden until image reaches fullscreen.
         .to(
           handoffOverlayEl,
           { autoAlpha: 0.8, ease: "none", duration: 0.16 },
