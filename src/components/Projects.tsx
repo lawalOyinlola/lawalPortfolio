@@ -3,10 +3,14 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FEATURED_PROJECTS } from "@/app/constants";
 
-gsap.registerPlugin(ScrollToPlugin);
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger);
+}
 
 const COUNT = FEATURED_PROJECTS.length;
 const TRANSITION = 0.8;
@@ -38,6 +42,50 @@ function Projects() {
       gsap.killTweensOf(window);
     };
   }, []);
+
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
+
+      const miniNavTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom 85%",
+        onEnter: () => {
+          document.documentElement.dataset.hideMiniNav = "true";
+        },
+        onLeaveBack: () => {
+          document.documentElement.dataset.hideMiniNav = "false";
+        },
+        onEnterBack: () => {
+          document.documentElement.dataset.hideMiniNav = "true";
+        },
+        onLeave: () => {
+          document.documentElement.dataset.hideMiniNav = "false";
+        },
+      });
+
+      const snapTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom bottom",
+        snap: {
+          snapTo: 1 / (COUNT - 1),
+          duration: { min: 0.1, max: 0.3 },
+          delay: 0,
+          ease: "power1.inOut",
+        },
+      });
+
+      return () => {
+        miniNavTrigger.kill();
+        snapTrigger.kill();
+        delete document.documentElement.dataset.hideMiniNav;
+      };
+    },
+    { scope: sectionRef },
+  );
 
   const settleToIndex = useCallback((index: number) => {
     const safeIndex = Math.min(Math.max(index, 0), COUNT - 1);
@@ -253,8 +301,11 @@ function Projects() {
       if (!section || transitioningRef.current) return;
 
       const scrollIn = window.scrollY - section.offsetTop;
+
+      // Switch items at a 30% scroll threshold instead of 50%
+      const rawScrollProgress = scrollIn / window.innerHeight;
       const expected = Math.min(
-        Math.max(Math.round(scrollIn / window.innerHeight), 0),
+        Math.max(Math.floor(rawScrollProgress + 0.7), 0),
         COUNT - 1,
       );
 
@@ -339,13 +390,16 @@ function Projects() {
       style={{ height: `${COUNT * 100}vh` }}
       aria-label="Featured projects"
     >
-      <div className="wrapper sticky top-0 h-screen flex flex-col justify-center gap-4.5">
+      <div className="wrapper sticky top-0 h-screen flex flex-col justify-center gap-2 md:gap-4.5 max-sm:py-10">
         <h2 className="font-semibold tracking-tight uppercase text-sm">
           Projects
         </h2>
 
         {/* Numbered Tabs */}
-        <div className="flex items-center gap-10" role="tablist">
+        <div
+          className="flex items-center gap-8 md:gap-10 max-sm:hidden"
+          role="tablist"
+        >
           {FEATURED_PROJECTS.map((project, index) => (
             <button
               key={project.name}
@@ -355,8 +409,10 @@ function Projects() {
               id={`tab-${index}`}
               aria-label={`Project ${index + 1}: ${project.name}`}
               onClick={() => goTo(index)}
-              className={`title transition-all cursor-pointer min-h-19 ${
-                activeIndex !== index ? "text-4xl text-muted-foreground" : ""
+              className={`title transition-all cursor-pointer min-h-10 md:min-h-19 ${
+                activeIndex !== index
+                  ? "text-[clamp(1.5rem,4vw,2.25rem)] text-muted-foreground"
+                  : ""
               }`}
             >
               {String(index + 1).padStart(2, "0")}.
@@ -379,9 +435,9 @@ function Projects() {
               aria-labelledby={`tab-${i}`}
               aria-hidden={activeIndex !== i}
             >
-              <div className="flex flex-1 gap-10">
+              <div className="flex flex-col md:flex-row flex-1 gap-4 md:gap-10">
                 <div
-                  className={`img-${i} relative w-3/5 overflow-hidden bg-foreground/5`}
+                  className={`img-${i} relative w-full md:w-3/5 min-h-[35vh] md:min-h-0 overflow-hidden bg-foreground/5`}
                   style={{ clipPath: "inset(0 0 0 0)" }}
                 >
                   <Image
@@ -389,13 +445,18 @@ function Projects() {
                     alt={project.name}
                     fill
                     className="object-cover"
-                    sizes="57vw"
+                    sizes="(max-width: 768px) 100vw, 57vw"
                   />
                 </div>
-                <div className="w-2/5 flex flex-col justify-between py-2">
-                  <div className="flex flex-col gap-5">
-                    <p className={`cat-${i}`}>{project.category}</p>
-                    <h3 className="bold-title" aria-label={project.name}>
+                <div className="w-full md:w-2/5 flex flex-col justify-between py-0 md:py-2 sm:flex-1">
+                  <div className="flex flex-col gap-2 md:gap-5">
+                    <p className={`cat-${i} text-xs md:text-base`}>
+                      {project.category}
+                    </p>
+                    <h3
+                      className="bold-title md:text-auto max-sm:-mt-2"
+                      aria-label={project.name}
+                    >
                       {project.name.split("").map((char, c) => (
                         <span
                           key={c}
@@ -407,18 +468,20 @@ function Projects() {
                       ))}
                     </h3>
                   </div>
-                  <p className={`desc-${i}`}>{project.description}</p>
+                  <p className={`desc-${i} text-sm md:text-base mt-2 md:mt-0`}>
+                    {project.description}
+                  </p>
                 </div>
               </div>
 
-              <div className="flex gap-2.5">
+              <div className="flex flex-wrap gap-x-4 md:gap-x-2.5 gap-y-2 mt-4 md:mt-0">
                 {project.tags.map((tag, j) => (
                   <div
                     key={j}
-                    className={`tag-${i} flex flex-col gap-4 max-w-43.5 py-4.5 pr-4`}
+                    className={`tag-${i} flex items-center md:items-start md:flex-col gap-2 md:gap-4 max-w-full md:max-w-43.5 md:py-4.5 md:pr-4`}
                   >
-                    <div className="size-2.5 bg-foreground" />
-                    <p className="text-xs leading-snug">{tag}</p>
+                    <div className="size-1.5 md:size-2.5 bg-foreground shrink-0" />
+                    <p className="text-[10px] md:text-xs leading-snug">{tag}</p>
                   </div>
                 ))}
               </div>
