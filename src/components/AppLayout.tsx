@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Preloader from "./Preloader";
 import Footer from "./Footer";
@@ -11,10 +12,23 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const { loading, setLoading } = useLoading();
+  const [forceUnlock, setForceUnlock] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (loading) {
+      timeoutId = setTimeout(() => {
+        setForceUnlock(true);
+      }, 10000); // 10s fallback
+    } else {
+      setForceUnlock(false);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [loading]);
 
   return (
     <main
-      className={`relative min-h-screen overflow-x-clip bg-background ${loading ? "overflow-hidden h-screen" : ""}`}
+      className={`relative min-h-screen overflow-x-clip bg-background ${loading && !forceUnlock ? "overflow-hidden h-screen" : ""}`}
     >
       {loading && <Preloader setComplete={() => setLoading(false)} />}
 

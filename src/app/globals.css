@@ -132,8 +132,6 @@
     @apply text-[clamp(1.75rem,5vw,3.125rem)] tracking-tight leading-none font-semibold uppercase;
   }
 
-  /* text-[clamp(1.75rem,5vw,4.5rem)]  */
-
   .header {
     @apply text-[clamp(1.25rem,3vw,1.5rem)] font-semibold uppercase;
   }
