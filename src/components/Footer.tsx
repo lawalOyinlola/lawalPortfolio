@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { BRAND, BRAND_LETTERS } from "@/app/constants";
+import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 
 interface FooterProps {
   className?: string;
@@ -30,6 +31,7 @@ const EXPLORE_LINKS = [
 
 function Footer({ className }: FooterProps) {
   const footerRef = useRef<HTMLElement>(null);
+  const { isSE } = useWindowDimensions();
 
   useGSAP(
     () => {
@@ -134,9 +136,13 @@ function Footer({ className }: FooterProps) {
       ref={footerRef}
       className={`h-full bg-foreground text-background overflow-hidden flex-center ${className ?? ""}`}
     >
-      <div className="wrapper min-h-screen pb-1 flex justify-between flex-col">
+      <div
+        className={`wrapper min-h-screen pb-1 flex justify-between flex-col ${isSE ? "py-4" : ""}`}
+      >
         {/* Top Section */}
-        <div className="flex flex-col lg:flex-row justify-between gap-16 w-full">
+        <div
+          className={`flex flex-col lg:flex-row justify-between w-full ${isSE ? "gap-12" : "gap-16"}`}
+        >
           {/* Left: Logo + Description */}
           <div className="flex flex-col gap-6 max-w-sm">
             <Image
@@ -162,7 +168,9 @@ function Footer({ className }: FooterProps) {
           {/* Right: Nav Columns */}
           <div className="flex gap-16 sm:gap-24 sm:pr-20">
             <nav aria-label="Site navigation">
-              <h3 className="text-[10px] font-semibold uppercase tracking-[3px] text-background/50 mb-7.5">
+              <h3
+                className={`text-[10px] font-semibold uppercase tracking-[3px] text-background/50 ${isSE ? "mb-4" : "mb-7.5"}`}
+              >
                 Explore
               </h3>
               <ul className="flex flex-col gap-2.5">
@@ -180,7 +188,9 @@ function Footer({ className }: FooterProps) {
             </nav>
 
             <nav aria-label="Social links">
-              <h3 className="text-[10px] font-semibold uppercase tracking-[3px] text-background/50 mb-7.5">
+              <h3
+                className={`text-[10px] font-semibold uppercase tracking-[3px] text-background/50 ${isSE ? "mb-4" : "mb-7.5"}`}
+              >
                 Socials
               </h3>
               <ul className="flex flex-col gap-2.5">
@@ -202,22 +212,22 @@ function Footer({ className }: FooterProps) {
         </div>
 
         {/* Bottom: Large Brand Letters */}
-        <div className="flex">
-          <div className="relative flex gap-1 w-full mr-20">
+        <div className="flex w-full mt-12 sm:mt-0">
+          <div className="relative flex gap-0.5 sm:gap-1 w-full pr-12 md:pr-20">
             {BRAND_LETTERS.map((letter, i) => (
               <div key={i} className="flex-1 flex flex-col">
-                <span className="text-xs sm:text-sm font-semibold tracking-tight px-4 pb-2">
+                <span className="text-[min(2.5vw,14px)] md:text-sm font-semibold tracking-tighter md:tracking-tight px-0.5 sm:px-2 md:px-4 pb-1 md:pb-2 text-center md:text-left overflow-visible">
                   {TAGLINE_WORDS[i] ?? ""}
                 </span>
-                <div className="relative aspect-square border border-background/20 bg-background flex-center">
-                  <span className="footer-letter text-foreground font-semibold text-[min(18vw,12rem)] leading-none select-none inline-block">
+                <div className="relative w-full aspect-square border border-background/20 bg-background flex-center">
+                  <span className="footer-letter text-foreground font-semibold text-[clamp(4rem,15vw,12rem)] leading-none select-none inline-block">
                     {letter}
                   </span>
                 </div>
               </div>
             ))}
             {/* Fade-out gradient on the right edge */}
-            <div className="absolute right-0 top-0 bottom-0 w-1/7 bg-linear-to-l from-foreground via-foreground/70 to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-24 md:w-52 bg-linear-to-l from-foreground via-foreground/80 to-transparent pointer-events-none z-10" />
           </div>
         </div>
       </div>
