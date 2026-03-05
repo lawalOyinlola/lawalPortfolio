@@ -4,6 +4,7 @@ import { RefObject, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -17,13 +18,7 @@ const V_HEIGHTS = [
 const COLUMN_COUNT = V_HEIGHTS.length;
 const CENTER = (COLUMN_COUNT - 1) / 2;
 
-function getColumnConfig(i: number) {
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  const isSE =
-    typeof window !== "undefined" &&
-    window.innerHeight < 670 &&
-    window.innerWidth < 400;
-
+function getColumnConfig(i: number, isMobile: boolean, isSE: boolean) {
   const rawHeight = V_HEIGHTS[i];
   // On mobile, reduce the base height so it doesn't take up too much vertical space
   const height = isSE
@@ -53,8 +48,6 @@ function getColumnConfig(i: number) {
   return { lo, hi, speed, delay };
 }
 
-// COLUMN_CONFIGS removed from module level to avoid hydration mismatches.
-
 interface GridAnimationProps {
   ready?: boolean;
   triggerRef?: RefObject<HTMLElement | null>;
@@ -69,6 +62,7 @@ const GridAnimation = ({
   scrubStart = false,
 }: GridAnimationProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { isMobile, isSE, width, height } = useWindowDimensions();
 
   useGSAP(
     () => {
@@ -77,7 +71,9 @@ const GridAnimation = ({
         containerRef.current,
       );
 
-      const COLUMN_CONFIGS = V_HEIGHTS.map((_, i) => getColumnConfig(i));
+      const COLUMN_CONFIGS = V_HEIGHTS.map((_, i) =>
+        getColumnConfig(i, isMobile, isSE),
+      );
 
       const oscillationTweens: gsap.core.Tween[] = [];
       let introTimeline: gsap.core.Timeline | null = null;
@@ -86,61 +82,75 @@ const GridAnimation = ({
       const triggerEl = triggerRef?.current ?? containerRef.current;
       if (!triggerEl) return;
 
+      const oscTargets = scrubStart
+        ? COLUMN_CONFIGS.map((c) => ({ y: c.hi }))
+        : shutters;
+
       const setOscillationPaused = (paused: boolean) => {
         oscillationTweens.forEach((tween) => tween.paused(paused));
       };
 
-      // 1. Setup continuous oscillation tweens (always initially paused)
-      shutters.forEach((shutter, i) => {
+      // Setup oscillation tweens
+      oscTargets.forEach((target, i) => {
         const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
         const tween = gsap.fromTo(
-          shutter,
-          { yPercent: hi },
+          target,
+          scrubStart ? { y: hi } : { yPercent: hi },
           {
-            yPercent: lo,
+            ...(scrubStart ? { y: lo } : { yPercent: lo }),
             duration: speed,
             repeat: -1,
             yoyo: true,
             ease: "sine.inOut",
             delay,
-            paused: true,
+            paused: !scrubStart,
             overwrite: "auto",
           },
         );
         oscillationTweens.push(tween);
       });
 
+      let tickerUpdater: (() => void) | null = null;
+
       if (scrubStart) {
         // --- PARTNERS SECTION MODE (Scrub to Open) ---
-        gsap.set(shutters, { yPercent: 0 }); // Start fully closed
-        setOscillationPaused(true);
-        if (!ready) return;
+        const mProxy = { m: 0 };
 
-        // Scrub timeline gradually moves the shutters to their `hi` target config
+        // This ticker continuously applies the scrub scale to the running oscillation,
+        // allowing flawless synchronization when scrubbing backwards from the current position!
+        tickerUpdater = () => {
+          shutters.forEach((shutter, i) => {
+            gsap.set(shutter, {
+              yPercent: (oscTargets[i] as any).y * mProxy.m,
+            });
+          });
+        };
+        gsap.ticker.add(tickerUpdater);
+
+        if (!ready) {
+          return () => {
+            if (tickerUpdater) gsap.ticker.remove(tickerUpdater);
+            oscillationTweens.forEach((tween) => tween.kill());
+          };
+        }
+
         scrubTimeline = gsap.timeline({
           scrollTrigger: {
             trigger: triggerEl,
             start: "top bottom",
             end: "10% top",
             scrub: true,
-            onEnter: () => setOscillationPaused(true),
-            onLeave: () => setOscillationPaused(false), // Resume oscillation when fully opened
-            onEnterBack: () => setOscillationPaused(true),
-            // if we scroll all the way back up, it stays closed
           },
         });
 
-        shutters.forEach((shutter, i) => {
-          const { hi } = COLUMN_CONFIGS[i];
-          scrubTimeline?.to(
-            shutter,
-            {
-              yPercent: hi,
-              ease: "none",
-            },
-            0,
-          );
-        });
+        scrubTimeline.fromTo(mProxy, { m: 0 }, { m: 1, ease: "none" }, 0);
+
+        return () => {
+          scrubTimeline?.scrollTrigger?.kill();
+          scrubTimeline?.kill();
+          if (tickerUpdater) gsap.ticker.remove(tickerUpdater);
+          oscillationTweens.forEach((tween) => tween.kill());
+        };
       } else {
         // --- HERO SECTION MODE (Normal Intro) ---
         let capturedHeights: number[] = [];
@@ -244,7 +254,10 @@ const GridAnimation = ({
         };
       }
     },
-    { scope: containerRef, dependencies: [ready, triggerRef, scrubStart] },
+    {
+      scope: containerRef,
+      dependencies: [ready, triggerRef, scrubStart, width, height],
+    },
   );
 
   return (
