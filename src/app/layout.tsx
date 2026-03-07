@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: BRAND.name,
     description: BRAND.description,
     images: [BRAND.ogImage],
-    creator: BRAND.socials.twitter.username || "Yero",
+    creator: BRAND.socials.twitter.username || `@${BRAND.name}`,
   },
   robots: {
     index: true,

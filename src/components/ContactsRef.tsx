@@ -13,7 +13,7 @@ function ContactsRef() {
           <div className="tv-static-overlay" />
           <h2 className="contact-title">
             <span className="inline-block bg-background px-2 py-1">
-              LET'S EXECUTE
+              LET&apos;S EXECUTE
             </span>
             <br />
             <span className="inline-block bg-background px-2 py-1">
@@ -32,7 +32,11 @@ function ContactsRef() {
               aria-label={whatsapp.label}
               className="group inline-flex items-center justify-center"
             >
-              <WhatsappLogoIcon size={24} weight="duotone" className="group-hover:text-[#075E54] transition-colors duration-300 ease-in-out" />
+              <WhatsappLogoIcon
+                size={24}
+                weight="duotone"
+                className="group-hover:text-[#075E54] transition-colors duration-300 ease-in-out"
+              />
             </a>
             <a
               href={linkedin.href}
@@ -41,7 +45,11 @@ function ContactsRef() {
               aria-label={linkedin.label}
               className="group inline-flex items-center justify-center"
             >
-              <LinkedinLogoIcon size={24} weight="duotone" className="group-hover:text-[#0A66C2] transition-colors duration-300 ease-in-out" />
+              <LinkedinLogoIcon
+                size={24}
+                weight="duotone"
+                className="group-hover:text-[#0A66C2] transition-colors duration-300 ease-in-out"
+              />
             </a>
           </div>
         </div>

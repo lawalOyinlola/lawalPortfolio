@@ -9,7 +9,7 @@ import { BRAND_LETTERS } from "@/app/constants";
 import { Button } from "./ui/button";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollToPlugin);
+  gsap.registerPlugin(useGSAP, ScrollToPlugin);
 }
 
 interface LogoButtonProps {
@@ -49,8 +49,8 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
       aria-label="Scroll to top"
       onClick={() => scrollToTop()}
     >
-      <Image src="/icons/menuLogo.svg" alt="Menu Icon" width={20} height={20} />
-      <p
+      <Image src="/icons/menuLogo.svg" alt="Logo Icon" width={20} height={20} />
+      <span
         aria-label="My brand logo - Lawal, written backwards"
         className="text-base font-semibold"
       >
@@ -59,7 +59,7 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
             {char}
           </span>
         ))}
-      </p>
+      </span>
     </Button>
   );
 };

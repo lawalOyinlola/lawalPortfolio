@@ -32,16 +32,18 @@ export function InfiniteSlider({
   const [key, setKey] = useState(0);
 
   useEffect(() => {
-    let controls;
+    if (currentSpeed <= 0) return;
+
     const size = direction === "horizontal" ? width : height;
+    if (size <= 0) return;
+
+    let controls;
     const contentSize = size + gap;
     const from = reverse ? -contentSize / 2 : 0;
     const to = reverse ? 0 : -contentSize / 2;
 
     const distanceToTravel = Math.abs(to - from);
-    const duration = currentSpeed > 0 ? distanceToTravel / currentSpeed : 0;
-
-    if (currentSpeed <= 0) return;
+    const duration = distanceToTravel / currentSpeed;
 
     if (isTransitioning) {
       const remainingDistance = Math.abs(translation.get() - to);
@@ -82,7 +84,7 @@ export function InfiniteSlider({
   ]);
 
   const shouldHandleHover = pauseOnHover || speedOnHover !== undefined;
-  const hoverSpeed = pauseOnHover ? 0 : speedOnHover ?? speed;
+  const hoverSpeed = pauseOnHover ? 0 : (speedOnHover ?? speed);
 
   const hoverProps = shouldHandleHover
     ? {

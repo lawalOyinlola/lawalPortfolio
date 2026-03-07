@@ -7,10 +7,12 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BRAND_STATS } from "@/app/constants";
 
-gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP, ScrollTrigger);
+}
 
 const INTRO_TEXT = "Where passion meets precision";
-const OUTRO_TEXT = "Get in touch with us to learn more...";
+const OUTRO_TEXT = "Get in touch with Lawal to learn more...";
 
 function BrandStats({ children }: { children: React.ReactNode }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -46,7 +48,6 @@ function BrandStats({ children }: { children: React.ReactNode }) {
       const prefersReducedMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
-      if (prefersReducedMotion) return;
 
       gsap.set(contactOverlayEl, { autoAlpha: 0, pointerEvents: "none" });
       gsap.set(handoffOverlayEl, { autoAlpha: 0 });
@@ -56,20 +57,49 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         autoAlpha: 1,
       });
 
+      const frameWidth = imageFrameEl.offsetWidth;
+      const frameHeight = imageFrameEl.offsetHeight;
+
+      if (!frameWidth || !frameHeight) return;
+
       const targetScale =
         Math.max(
-          window.innerWidth / imageFrameEl.offsetWidth,
-          window.innerHeight / imageFrameEl.offsetHeight,
+          window.innerWidth / frameWidth,
+          window.innerHeight / frameHeight,
         ) * 1.04;
 
       gsap.set(cornerChildren, { autoAlpha: 1 });
+
+      if (prefersReducedMotion) {
+        ScrollTrigger.create({
+          trigger: handoffEl,
+          start: "top 78%",
+          end: "bottom 40%",
+          onEnter: () => {
+            gsap.set(statsContentEl, { autoAlpha: 0 });
+            gsap.set(imageFrameEl, { autoAlpha: 0 });
+            gsap.set(contactOverlayEl, { autoAlpha: 1, pointerEvents: "auto" });
+          },
+          onLeaveBack: () => {
+            gsap.set(statsContentEl, { autoAlpha: 1 });
+            gsap.set(imageFrameEl, { autoAlpha: 1 });
+            gsap.set(contactOverlayEl, { autoAlpha: 0, pointerEvents: "none" });
+          },
+        });
+        return;
+      }
 
       const handoffTl = gsap.timeline({
         scrollTrigger: {
           trigger: handoffEl,
           start: "top 78%",
           end: "bottom 40%",
-          scrub: 0.55,
+          scrub: true,
+          snap: {
+            snapTo: [0, 1],
+            duration: { min: 0.5, max: 2 },
+            ease: "power2.inOut",
+          },
           onUpdate: (self) => {
             contactOverlayEl.style.pointerEvents =
               self.progress > 0.62 ? "auto" : "none";
@@ -91,7 +121,6 @@ function BrandStats({ children }: { children: React.ReactNode }) {
           0.05,
         )
         .to(statsContentEl, { autoAlpha: 0, ease: "none", duration: 0.4 }, 0.22)
-        // Keep shimmer hidden until image reaches fullscreen.
         .to(
           handoffOverlayEl,
           { autoAlpha: 0.8, ease: "none", duration: 0.16 },
@@ -122,14 +151,14 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         <div className="sticky top-0 h-screen pointer-events-none">
           <div
             ref={imageFrameRef}
-            className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-130 h-75 mx-auto overflow-hidden bg-foreground will-change-transform"
+            className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] sm:w-[60vw] md:w-130 aspect-4/5 sm:aspect-square md:aspect-auto md:h-75 max-h-[60vh] mx-auto overflow-hidden bg-foreground will-change-transform"
           >
             <Image
-              src="/projects/my_projects.jpeg"
+              src="/stats_image.png"
               alt="Stats showcase visual"
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 90vw, 480px"
+              sizes="(max-width: 768px) 100vw, 520px"
               priority={false}
             />
           </div>
@@ -138,12 +167,12 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         {/* CORNERS BACKGROUND BLUR EFFECT */}
         <div
           ref={cornersRef}
-          className="sticky inset-0 top-0 h-screen pointer-events-none z-15 *:bg-background *:blur-lg *:h-3/7 *:w-84"
+          className="sticky max-w-400 mx-auto inset-0 top-0 h-screen pointer-events-none z-15 *:bg-background *:blur-lg *:h-[35%] md:*:h-3/7 *:w-[60vw] md:*:w-84 max-sm:max-w-screen"
         >
-          <div className="absolute -top-10 right-0" />
-          <div className="absolute -top-10 left-0" />
-          <div className="absolute -bottom-10 left-0" />
-          <div className="absolute -bottom-10 right-0" />
+          <div className="absolute -top-10 right-0 max-sm:w-4xl max-sm:translate-x-1/2 max-sm:right-1/2" />
+          <div className="absolute -top-10 left-0 max-sm:hidden" />
+          <div className="absolute -bottom-10 left-0 max-sm:hidden" />
+          <div className="absolute -bottom-10 right-0  max-sm:w-4xl max-sm:translate-x-1/2 max-sm:right-1/2" />
         </div>
 
         {/* Handoff shimmer overlay: visual layer only */}
@@ -162,31 +191,31 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         {/* CONTENT SECTION */}
         <div
           ref={statsContentRef}
-          className="relative z-10 flex flex-col gap-[18vh] -mt-[220vh] pb-[50vh] *:not-last:px-8"
+          className="relative max-w-400 mx-auto z-10 flex flex-col gap-[28vh] md:gap-[18vh] -mt-[220vh] pb-[50vh] px-4 md:px-0 *:not-last:px-2 md:*:not-last:px-8 mix-blend-difference text-background"
         >
-          <p className="self-center text-lg text-center font-semibold text-muted-foreground leading-[100%] max-w-[12ch]">
+          <p className="self-center text-[clamp(1.25rem,4vw,1.5rem)] text-center font-semibold text-zinc-200 leading-tight max-w-[20ch] md:max-w-[16ch]">
             {INTRO_TEXT}
           </p>
 
           {BRAND_STATS.map((stat) => (
             <div key={stat.name}>
-              <div className="grid grid-cols-12 items-center gap-4 sm:gap-6 md:gap-8 *:not-even:max-w-72">
-                <h2 className="col-span-12 md:col-span-4 title -tracking-[2px] capitalize text-left">
+              <div className="flex flex-col md:grid md:grid-cols-12 items-center gap-1 sm:gap-4 md:gap-8 md:*:not-even:max-w-72">
+                <h2 className="md:col-span-4 title text-3xl md:text-5xl -tracking-[1px] md:-tracking-[2px] capitalize text-center md:text-left">
                   {stat.name}
                 </h2>
 
-                <p className="col-span-12 md:col-span-4 text-center font-semibold leading-none text-muted-foreground text-[clamp(4rem,12vw,9rem)]">
+                <p className="md:col-span-4 text-center font-semibold leading-none text-zinc-200 text-[clamp(5.5rem,20vw,9rem)] max-md:-mt-2">
                   {stat.value}
                 </p>
 
-                <p className="col-span-12 md:col-span-4 text-left md:text-right text-base sm:text-lg leading-tight md:justify-self-end">
+                <p className="md:col-span-4 text-center md:text-right text-sm sm:text-lg leading-relaxed md:leading-tight md:justify-self-end mt-2 md:mt-0 max-w-[280px] md:max-w-none mx-auto md:mx-0">
                   {stat.description}
                 </p>
               </div>
             </div>
           ))}
 
-          <p className="self-center text-lg text-center font-semibold text-muted-foreground leading-[100%] max-w-[20ch]">
+          <p className="self-center text-[clamp(1.25rem,4vw,1.5rem)] text-center font-semibold text-zinc-200 leading-tight max-w-[24ch] md:max-w-[22ch]">
             {OUTRO_TEXT}
           </p>
 

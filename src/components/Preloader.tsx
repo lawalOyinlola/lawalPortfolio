@@ -5,6 +5,10 @@ import { useGSAP } from "@gsap/react";
 import { TIPS } from "../app/constants/tips";
 import { BRAND } from "../app/constants/brand";
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP);
+}
+
 interface PreloaderProps {
   setComplete: (value: boolean) => void;
 }
@@ -35,6 +39,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
   }, []);
 
   useEffect(() => {
+    let tl: gsap.core.Timeline | null = null;
     if (stepIndex % 3 === 0 && stepIndex !== 0) {
       const chars = "!<>-_\\/+*^?#____";
       const target = sloganRef.current;
@@ -44,7 +49,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
       const oldText = target.innerText;
       const maxLen = Math.max(oldText.length, newText.length);
 
-      const tl = gsap.timeline();
+      tl = gsap.timeline();
 
       tl.to([target, logoRef.current], {
         skewX: 15,
@@ -78,6 +83,9 @@ export default function Preloader({ setComplete }: PreloaderProps) {
           },
         );
     }
+    return () => {
+      tl?.kill();
+    };
   }, [stepIndex]);
 
   const currentProgress = progressSteps[stepIndex];

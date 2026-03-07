@@ -121,21 +121,19 @@
 
 @layer components {
   .bold-title {
-    @apply text-[5rem] font-semibold -tracking-[2px] leading-17.5 uppercase;
+    @apply text-[clamp(2.5rem,6vw,5rem)] font-semibold tracking-tighter md:-tracking-[2px] leading-tight md:leading-17.5 uppercase;
   }
 
   .contact-title {
-    @apply text-[6.25rem] font-semibold -tracking-[4px] leading-25 uppercase;
+    @apply text-[clamp(3rem,8vw,6.25rem)] font-semibold tracking-tighter md:-tracking-[4px] leading-none md:leading-25 uppercase;
   }
 
   .title {
-    @apply text-[3.125rem] tracking-tight leading-none font-semibold uppercase;
+    @apply text-[clamp(1.75rem,5vw,3.125rem)] tracking-tight leading-none font-semibold uppercase;
   }
 
-  /* text-[clamp(1.75rem,5vw,4.5rem)]  */
-
   .header {
-    @apply text-2xl font-semibold uppercase;
+    @apply text-[clamp(1.25rem,3vw,1.5rem)] font-semibold uppercase;
   }
 
   .wrapper {
@@ -154,6 +152,7 @@
     @apply cursor-pointer;
   }
 }
+
 @utility flex-center {
   @apply flex justify-center items-center;
 }
@@ -170,7 +169,7 @@ html[data-hide-logo="true"] .logo-btn {
   pointer-events: none;
 }
 
-@keyframes tvStaticShift {
+@keyframes tv-static-shift {
   0% {
     background-position: 0 0;
   }
@@ -179,7 +178,7 @@ html[data-hide-logo="true"] .logo-btn {
   }
 }
 
-@keyframes tvJitter {
+@keyframes tv-jitter {
   0%,
   100% {
     transform: translate(0, 0);
@@ -198,7 +197,7 @@ html[data-hide-logo="true"] .logo-btn {
 .tv-static {
   background: url("/shimmer.png") repeat #dcdcdc;
   filter: grayscale(1) contrast(1.1);
-  animation: tvStaticShift 220ms steps(2) infinite;
+  animation: tv-static-shift 220ms steps(2) infinite;
 }
 
 .tv-static-overlay {
@@ -210,7 +209,7 @@ html[data-hide-logo="true"] .logo-btn {
     rgba(255, 255, 255, 0.04) 0 1px,
     rgba(0, 0, 0, 0.06) 1px 2px
   );
-  animation: tvJitter 90ms steps(2) infinite;
+  animation: tv-jitter 90ms steps(2) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

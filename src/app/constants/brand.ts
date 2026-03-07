@@ -1,3 +1,6 @@
+const PHONE_E164 = "+2348165341317";
+const PHONE_DIGITS = PHONE_E164.replace(/\D/g, "");
+
 export const BRAND = {
   name: "Oyinlola Lawal",
   shortName: "LAWAL",
@@ -11,7 +14,7 @@ export const BRAND = {
     apple: "/icons/apple-touch-icon.png",
   },
   email: "oyinlolalawal1705@gmail.com",
-  phone: "+2348165341317",
+  phone: PHONE_E164,
   address: ["Lagos, Nigeria", "Freetown, Sierra Leone"],
   socials: {
     github: {
@@ -34,9 +37,9 @@ export const BRAND = {
       username: "@honeyzrich",
     },
     whatsapp: {
-      label: "Whatsapp",
-      href: "https://wa.me/2348165341317",
-      username: "+2348165341317",
+      label: "WhatsApp",
+      href: `https://wa.me/${PHONE_DIGITS}`,
+      username: PHONE_E164,
     },
   },
   keywords: [

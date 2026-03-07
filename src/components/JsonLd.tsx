@@ -3,6 +3,7 @@ import { BRAND } from "@/app/constants/brand";
 export default function JsonLd() {
   const personSchema = {
     "@context": "https://schema.org",
+    "@id": BRAND.url,
     "@type": "Person",
     name: BRAND.name,
     alternateName: BRAND.shortName,

@@ -8,6 +8,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { InfiniteSlider } from "./ui/infinite-slider";
+import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 
 function PartnerLogo({ partner }: { partner: (typeof PARTNERS)[number] }) {
   return (
@@ -42,17 +43,19 @@ function PartnerTooltipItems({ loopIndex }: { loopIndex: number }) {
 }
 
 function Partners() {
+  const { isMobile } = useWindowDimensions();
+
   return (
     <section className="flex-center">
-      <div className="wrapper max-w-screen flex-col flex-center gap-13.5 overflow-hidden bg-background z-1">
+      <div className="wrapper max-w-screen flex-col flex-center gap-13.5 overflow-hidden bg-background z-1 px-0">
         <p>Proud to have worked with...</p>
 
         <div className="group relative w-full">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-2 w-30 bg-linear-to-r from-background to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-2 w-30 bg-linear-to-l from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-2 sm:w-30 w-8 bg-linear-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-2 sm:w-30 w-8 bg-linear-to-l from-background to-transparent" />
 
-          <InfiniteSlider gap={80} speed={30} pauseOnHover>
-            {Array.from({ length: 3 }, (_, loopIndex) => (
+          <InfiniteSlider gap={isMobile ? 20 : 60} speed={30} pauseOnHover>
+            {Array.from({ length: isMobile ? 2 : 3 }, (_, loopIndex) => (
               <PartnerTooltipItems key={loopIndex} loopIndex={loopIndex} />
             ))}
           </InfiniteSlider>

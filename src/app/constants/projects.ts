@@ -114,7 +114,7 @@ export const PROJECTS: Project[] = [
       "A goal-tracking and resolution management application designed to help users set, monitor, and achieve their personal and professional goals through structured planning and progress visualization.",
     image: "/projects/my_projects.jpeg",
     github: "https://github.com/lawalOyinlola/lawal-portfolio",
-    live: "https://lawaloyinlola.com",
+    live: "https://resolve.vote",
     tags: [
       "Goal Tracking & Planning",
       "Progress Visualization System",
