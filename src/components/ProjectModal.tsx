@@ -1,24 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { BRAND } from "@/app/constants";
+import ContactButtons from "./ui/ContactButtons";
 
-interface MenuOverlayProps {
+export interface ProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const LINKS = ["HOME", "COMPETENCE", "PROJECTS", "ADAPTABILITY", "CONTACT"];
-
-export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
+export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const blocksRef = useRef<HTMLDivElement[]>([]);
   const contentRef = useRef<HTMLDivElement>(null);
-  const { shortName: BrandName } = BRAND;
 
+  const [slideSide, setSlideSide] = useState<"left" | "right">("left");
+
+  // Reset slide state when modal closes
+  useEffect(() => {
+    if (!isOpen) setSlideSide("left");
+  }, [isOpen]);
+
+  // Scroll lock + keyboard trapping
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -62,6 +67,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
     }
   }, [isOpen, onClose]);
 
+  // GSAP animations — scoped to containerRef
   useGSAP(
     () => {
       if (isOpen) {
@@ -75,7 +81,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
         tl.to(bgRef.current, { opacity: 1, duration: 0.3, ease: "power2.out" })
           .fromTo(
             blocksRef.current.slice(0, 3),
-            { scale: 0, opacity: 0, transformOrigin: "bottom left" },
+            { scale: 0, opacity: 0, transformOrigin: "bottom right" },
             {
               scale: 1,
               opacity: 1,
@@ -114,7 +120,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
               opacity: 0,
               duration: 0.5,
               stagger: -0.2,
-              transformOrigin: "bottom left",
+              transformOrigin: "bottom right",
               ease: "power2.inOut",
             },
             "-=0.4",
@@ -128,6 +134,16 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
     },
     { scope: overlayRef, dependencies: [isOpen] },
   );
+
+  const handleBoxMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xPercent = (e.clientX - rect.left) / rect.width;
+    if (xPercent < 0.49) {
+      setSlideSide("left");
+    } else if (xPercent > 0.51) {
+      setSlideSide("right");
+    }
+  };
 
   return (
     <div
@@ -145,95 +161,109 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
         className="relative w-full h-full pointer-events-none"
         style={
           {
-            "--sq1-size": "2.75rem",
+            "--sq1-height": "2.75rem",
+            "--sq1-width": "7rem",
             "--sq-pos": "1.125rem",
-            "--sq2-pos": "calc(var(--sq-pos) + var(--sq1-size))",
-            "--sq2-size": "max(5vw, 2.75rem)",
-            "--sq3-pos": "calc(var(--sq2-pos) + var(--sq2-size))",
-            "--sq3-size": "max(10vw, 5.5rem)",
-            "--main-pos": "calc(var(--sq3-pos) + var(--sq3-size))",
+            "--sq2-bottom": "calc(var(--sq-pos) + var(--sq1-height))",
+            "--sq2-right": "calc(var(--sq-pos) + var(--sq1-width))",
+            "--sq2-width": "11vw",
+            "--sq2-height": "max(90px, 10vh)",
+            "--sq3-bottom": "calc(var(--sq2-bottom) + var(--sq2-height))",
+            "--sq3-right": "calc(var(--sq2-right) + var(--sq2-width))",
+            "--sq3-width": "22vw",
+            "--sq3-height": "max(180px, 20vh)",
+            "--main-bottom": "calc(var(--sq3-bottom) + var(--sq3-height))",
+            "--main-right": "calc(var(--sq3-right) + var(--sq3-width))",
           } as React.CSSProperties
         }
       >
-        {/* Decorative Square 1 (First Connector) */}
+        {/* Decorative Rectangle 1 (First Connector) */}
         <div
           ref={(el) => {
             if (el) blocksRef.current[0] = el;
           }}
-          className="absolute aspect-square bg-white z-20 pointer-events-none"
+          className="absolute bg-background shadow-xl z-20 pointer-events-none"
           style={{
-            width: "var(--sq2-size)",
-            left: "var(--sq2-pos)",
-            bottom: "var(--sq2-pos)",
+            width: "var(--sq2-width)",
+            height: "var(--sq2-height)",
+            right: "var(--sq2-right)",
+            bottom: "var(--sq2-bottom)",
           }}
         />
 
-        {/* Decorative Square 2 (Second Connector) */}
+        {/* Decorative Rectangle 2 (Second Connector) */}
         <div
           ref={(el) => {
             if (el) blocksRef.current[1] = el;
           }}
-          className="absolute aspect-square bg-white z-20 pointer-events-none"
+          className="absolute bg-background shadow-xl z-20 pointer-events-none"
           style={{
-            width: "var(--sq3-size)",
-            left: "var(--sq3-pos)",
-            bottom: "var(--sq3-pos)",
+            width: "var(--sq3-width)",
+            height: "var(--sq3-height)",
+            right: "var(--sq3-right)",
+            bottom: "var(--sq3-bottom)",
           }}
         />
 
-        {/* Main White Box */}
+        {/* Main Box — 60% clip-path viewport */}
         <div
           ref={(el) => {
-            if (el) blocksRef.current[2] = el;
+            if (el) blocksRef.current[2] = el as HTMLDivElement;
           }}
-          className="absolute bg-background p-6 md:p-12.5 shadow-2xl overflow-hidden z-10 flex flex-col pointer-events-auto"
+          className="absolute bg-background text-foreground shadow-2xl overflow-visible z-10 flex flex-row pointer-events-auto rounded-none p-6 md:p-12.5"
+          onMouseMove={handleBoxMouseMove}
           style={{
-            left: "var(--main-pos)",
-            bottom: "var(--main-pos)",
+            left: "var(--sq-pos)",
+            bottom: "var(--main-bottom)",
             top: "var(--sq-pos)",
             right: "var(--sq-pos)",
+            clipPath:
+              slideSide === "left"
+                ? "inset(0 42.8% 0 0 round 0px)"
+                : "inset(0 0 0 42.8% round 0px)",
+            transition: "clip-path 0.7s cubic-bezier(0.25,1,0.5,1)",
           }}
         >
           <div
             ref={contentRef}
-            className="flex flex-col h-full justify-between gap-6 md:gap-10"
+            className="flex w-full h-full p-0 gap-12.5 *:basis-1/2"
           >
-            <div className="flex flex-col md:flex-row justify-between items-start gap-8 h-full">
-              {/* Links */}
-              <nav className="flex flex-col justify-start md:justify-center gap-2 md:gap-4 flex-1">
-                {LINKS.map((link) => (
-                  <a
-                    key={link}
-                    href={`#${link.toLowerCase()}`}
-                    onClick={onClose}
-                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black"
-                  >
-                    {link}
-                  </a>
-                ))}
-              </nav>
-
-              {/* Top Right Text */}
-              <div className="md:w-1/4 flex-none hidden md:block">
-                <p className="text-xs md:text-base italic font-extralight leading-relaxed max-w-sm">
-                  As Your Engineering Reliability Operator, {BrandName} bridges
-                  creativity with engineering discipline — transforming complex
-                  ideas into dependable digital products that work flawlessly
-                  every time.
+            {/* Left Panel */}
+            <div className="h-full flex flex-col justify-end relative z-10">
+              <div className="w-full flex flex-col justify-center gap-2.5">
+                <h3 className="text-[clamp(1.75rem,5vw,2.5rem)] md:text-5xl font-semibold tracking-tight leading-none">
+                  Got a big vision?
+                  <br />
+                  or a big idea?
+                </h3>
+                <p className="text-xs max-w-[28ch]">
+                  We'll get you started — or help you dream bigger.
                 </p>
+
+                <ContactButtons
+                  text="Contact me!"
+                  className="text-xs max-w-88"
+                />
               </div>
             </div>
 
-            {/* Bottom Text */}
-            <div className="mt-auto max-w-4xl pt-4">
-              <p className="text-xs md:text-base opacity-90">
-                Engineering isn't just about writing code — it's about building
-                systems people can depend on. {BrandName} represents a
-                commitment to precision, performance, and reliability. Every
-                line of code is written with the intent to make technology feel
-                effortless — stable under pressure, scalable by design, and
-                secure by default.
-              </p>
+            {/* Right Panel */}
+            <div className="h-full flex flex-col justify-start relative z-0">
+              <div className="w-full flex flex-col justify-center gap-2.5 text-xs">
+                <span>Get a quote</span>
+                <h3 className="text-[clamp(1.75rem,5vw,2.5rem)] md:text-5xl font-semibold tracking-tight leading-none">
+                  Have a project
+                  <br />
+                  in mind?
+                </h3>
+                <p>
+                  Let's get you accurate numbers,
+                  <br />
+                  strategic ideas, and let's co-create your project-today.
+                </p>
+
+                <ContactButtons className="text-xs max-w-88" />
+              </div>
             </div>
           </div>
         </div>
