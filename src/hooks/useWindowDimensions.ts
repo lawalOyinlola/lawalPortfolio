@@ -4,25 +4,27 @@ import { useState, useEffect } from "react";
 
 export function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
+    width: 0,
+    height: 0,
   });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    let timer: NodeJS.Timeout;
-    const handleResize = () => {
-      // Debounce resize updates
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        setWindowDimensions({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }, 150);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const updateDimensions = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     };
 
+    const handleResize = () => {
+      clearTimeout(timer);
+      timer = setTimeout(updateDimensions, 150);
+    };
+
+    updateDimensions();
     window.addEventListener("resize", handleResize);
     window.addEventListener("orientationchange", handleResize);
 

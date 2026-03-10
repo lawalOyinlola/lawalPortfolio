@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { PARTNERS } from "@/app/constants";
 import {
@@ -44,6 +45,13 @@ function PartnerTooltipItems({ loopIndex }: { loopIndex: number }) {
 
 function Partners() {
   const { isMobile } = useWindowDimensions();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const currentIsMobile = isMounted ? isMobile : false;
 
   return (
     <section className="flex-center">
@@ -54,8 +62,12 @@ function Partners() {
           <div className="pointer-events-none absolute inset-y-0 left-0 z-2 sm:w-30 w-8 bg-linear-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 z-2 sm:w-30 w-8 bg-linear-to-l from-background to-transparent" />
 
-          <InfiniteSlider gap={isMobile ? 20 : 60} speed={30} pauseOnHover>
-            {Array.from({ length: isMobile ? 2 : 3 }, (_, loopIndex) => (
+          <InfiniteSlider
+            gap={currentIsMobile ? 20 : 60}
+            speed={30}
+            pauseOnHover
+          >
+            {Array.from({ length: currentIsMobile ? 2 : 3 }, (_, loopIndex) => (
               <PartnerTooltipItems key={loopIndex} loopIndex={loopIndex} />
             ))}
           </InfiniteSlider>
