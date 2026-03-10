@@ -7,8 +7,10 @@ export function useWindowDimensions() {
     width: 0,
     height: 0,
   });
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     if (typeof window === "undefined") return;
 
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -35,11 +37,13 @@ export function useWindowDimensions() {
     };
   }, []);
 
-  const isMobile = windowDimensions.width > 0 && windowDimensions.width < 768;
+  const isMobile =
+    isMounted && windowDimensions.width > 0 && windowDimensions.width < 768;
   const isSE =
+    isMounted &&
     windowDimensions.width > 0 &&
     windowDimensions.height < 670 &&
     windowDimensions.width < 400;
 
-  return { ...windowDimensions, isMobile, isSE };
+  return { ...windowDimensions, isMobile, isSE, isMounted };
 }

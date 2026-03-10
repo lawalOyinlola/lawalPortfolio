@@ -82,16 +82,15 @@ const GridAnimation = ({
       const triggerEl = triggerRef?.current ?? containerRef.current;
       if (!triggerEl) return;
 
-      const oscTargets = scrubStart
-        ? COLUMN_CONFIGS.map((c) => ({ y: c.hi }))
-        : shutters;
+      const scrubTargets = COLUMN_CONFIGS.map((c) => ({ y: c.hi }));
+      const activeTargets = scrubStart ? scrubTargets : shutters;
 
       const setOscillationPaused = (paused: boolean) => {
         oscillationTweens.forEach((tween) => tween.paused(paused));
       };
 
       // Setup oscillation tweens
-      oscTargets.forEach((target, i) => {
+      activeTargets.forEach((target, i) => {
         const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
         const tween = gsap.fromTo(
           target,
@@ -121,7 +120,7 @@ const GridAnimation = ({
         tickerUpdater = () => {
           shutters.forEach((shutter, i) => {
             gsap.set(shutter, {
-              yPercent: (oscTargets[i] as any).y * mProxy.m,
+              yPercent: scrubTargets[i].y * mProxy.m,
             });
           });
         };

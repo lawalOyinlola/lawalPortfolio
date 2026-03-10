@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { BRAND } from "@/app/constants";
+import { useWindowDimensions } from "@/hooks/useWindowDimensions";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface MenuOverlayProps {
   isOpen: boolean;
@@ -17,16 +19,55 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
   const bgRef = useRef<HTMLDivElement>(null);
   const blocksRef = useRef<HTMLDivElement[]>([]);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { width } = useWindowDimensions();
+  const isMobileView = width > 0 && width < 600;
   const { shortName: BrandName } = BRAND;
+
+  useScrollLock(isOpen);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      const prevFocus = document.activeElement as HTMLElement;
+
+      // Force initial focus
+      const timer = setTimeout(() => {
+        const firstFocusable = contentRef.current?.querySelector<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        if (firstFocusable) {
+          firstFocusable.focus();
+        } else {
+          contentRef.current?.focus();
+        }
+      }, 100);
 
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
           onClose();
           return;
+        }
+
+        if (
+          ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)
+        ) {
+          const focusable = contentRef.current?.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          );
+          if (focusable && focusable.length) {
+            const index = Array.from(focusable).indexOf(
+              document.activeElement as HTMLElement,
+            );
+            if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+              const next = focusable[(index + 1) % focusable.length];
+              next.focus();
+              e.preventDefault();
+            } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+              const prev =
+                focusable[(index - 1 + focusable.length) % focusable.length];
+              prev.focus();
+              e.preventDefault();
+            }
+          }
         }
 
         if (e.key === "Tab") {
@@ -56,8 +97,9 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
 
       window.addEventListener("keydown", handleKeyDown);
       return () => {
-        document.body.style.overflow = "";
+        clearTimeout(timer);
         window.removeEventListener("keydown", handleKeyDown);
+        prevFocus?.focus();
       };
     }
   }, [isOpen, onClose]);
@@ -139,6 +181,10 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
         ref={bgRef}
         className="absolute inset-0 bg-foreground/65 opacity-0 backdrop-blur-md"
         onClick={onClose}
+        onKeyDown={(e) => e.key === "Enter" && onClose()}
+        role="button"
+        tabIndex={-1}
+        aria-label="Close menu"
       />
 
       <div
@@ -149,26 +195,30 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
             "--sq-pos": "1.125rem",
             "--sq2-pos": "calc(var(--sq-pos) + var(--sq1-size))",
             "--sq2-size": "max(5vw, 2.75rem)",
-            "--sq3-pos": "calc(var(--sq2-pos) + var(--sq2-size))",
-            "--sq3-size": "max(10vw, 5.5rem)",
+            "--sq3-pos": isMobileView
+              ? "var(--sq2-pos)"
+              : "calc(var(--sq2-pos) + var(--sq2-size))",
+            "--sq3-size": isMobileView ? "max(8vw, 4rem)" : "max(10vw, 5.5rem)",
             "--main-pos": "calc(var(--sq3-pos) + var(--sq3-size))",
           } as React.CSSProperties
         }
       >
         {/* Decorative Square 1 (First Connector) */}
-        <div
-          ref={(el) => {
-            if (el) blocksRef.current[0] = el;
-          }}
-          className="absolute aspect-square bg-white z-20 pointer-events-none"
-          style={{
-            width: "var(--sq2-size)",
-            left: "var(--sq2-pos)",
-            bottom: "var(--sq2-pos)",
-          }}
-        />
+        {!isMobileView && (
+          <div
+            ref={(el) => {
+              if (el) blocksRef.current[0] = el;
+            }}
+            className="absolute aspect-square bg-white z-20 pointer-events-none"
+            style={{
+              width: "var(--sq2-size)",
+              left: "var(--sq2-pos)",
+              bottom: "var(--sq2-pos)",
+            }}
+          />
+        )}
 
-        {/* Decorative Square 2 (Second Connector) */}
+        {/* Decorative Square 2 (Second Connector) - Maintained on mobile */}
         <div
           ref={(el) => {
             if (el) blocksRef.current[1] = el;
@@ -186,7 +236,11 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
           ref={(el) => {
             if (el) blocksRef.current[2] = el;
           }}
-          className="absolute bg-background p-6 md:p-12.5 shadow-2xl overflow-hidden z-10 flex flex-col pointer-events-auto"
+          role="dialog"
+          aria-modal="true"
+          className={`absolute bg-background p-6 md:p-12.5 shadow-2xl z-10 flex flex-col pointer-events-auto ${
+            isMobileView ? "overflow-y-auto" : "overflow-hidden"
+          }`}
           style={{
             left: "var(--main-pos)",
             bottom: "var(--main-pos)",
@@ -227,8 +281,8 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
             {/* Bottom Text */}
             <div className="mt-auto max-w-4xl pt-4">
               <p className="text-xs md:text-base opacity-90">
-                Engineering isn't just about writing code — it's about building
-                systems people can depend on. {BrandName} represents a
+                Engineering isn&apos;t just about writing code — it&apos;s about
+                building systems people can depend on. {BrandName} represents a
                 commitment to precision, performance, and reliability. Every
                 line of code is written with the intent to make technology feel
                 effortless — stable under pressure, scalable by design, and
