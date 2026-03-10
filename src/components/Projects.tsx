@@ -70,19 +70,20 @@ function Projects() {
         "(prefers-reduced-motion: reduce)",
       ).matches;
 
-      const snapTrigger = prefersReducedMotion
-        ? null
-        : ScrollTrigger.create({
-            trigger: section,
-            start: "top top",
-            end: "bottom bottom",
-            snap: {
-              snapTo: 1 / (COUNT - 1),
-              duration: { min: 0.1, max: 0.3 },
-              delay: 0,
-              ease: "power1.inOut",
-            },
-          });
+      const snapTrigger =
+        prefersReducedMotion || COUNT < 2
+          ? null
+          : ScrollTrigger.create({
+              trigger: section,
+              start: "top top",
+              end: "bottom bottom",
+              snap: {
+                snapTo: 1 / (COUNT - 1),
+                duration: { min: 0.1, max: 0.3 },
+                delay: 0,
+                ease: "power1.inOut",
+              },
+            });
 
       return () => {
         miniNavTrigger.kill();
