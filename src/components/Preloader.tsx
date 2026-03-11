@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { TIPS } from "../app/constants/tips";
 import { BRAND } from "../app/constants/brand";
+import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP);
@@ -13,193 +13,119 @@ interface PreloaderProps {
   setComplete: (value: boolean) => void;
 }
 
-const progressSteps = [12, 25, 37, 50, 62, 75, 87, 100, ""];
-const columnCount = 16;
-
+const PROGRESS_DURATION = 9.0;
 const brandName = BRAND.shortName;
 
+// Sweep covers the left half of columns; at p=1 the front sits at grid center.
+const colCentre = (i: number, halfCols: number) => (i + 0.5) / halfCols;
+
 export default function Preloader({ setComplete }: PreloaderProps) {
-  const [stepIndex, setStepIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const sloganRef = useRef<HTMLSpanElement>(null);
-  const logoRef = useRef<SVGSVGElement>(null);
+  const progressProxy = useRef({ value: 0 });
+  const { isMobile, isMounted } = useWindowDimensions();
 
-  // Progress Step Logic (Slower for 1200ms per step to show quotes)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setStepIndex((prev) => {
-        if (prev >= progressSteps.length - 1) {
-          clearInterval(interval);
-          return progressSteps.length - 1;
-        }
-        return prev + 1;
-      });
-    }, 1800);
-    return () => clearInterval(interval);
-  }, []);
+  // Responsive column count: fewer columns on mobile for clarity
+  const columnCount = isMounted ? (isMobile ? 8 : 16) : 16;
+  const halfCols = columnCount / 2;
+  const waveHalf = 1 / halfCols;
 
-  useEffect(() => {
-    let tl: gsap.core.Timeline | null = null;
-    if (stepIndex % 3 === 0 && stepIndex !== 0) {
-      const chars = "!<>-_\\/+*^?#____";
-      const target = sloganRef.current;
-      if (!target) return;
-
-      const newText = TIPS[Math.floor(Math.random() * TIPS.length)];
-      const oldText = target.innerText;
-      const maxLen = Math.max(oldText.length, newText.length);
-
-      tl = gsap.timeline();
-
-      tl.to([target, logoRef.current], {
-        skewX: 15,
-        x: 4,
-        opacity: 0.8,
-        duration: 0.08,
-        repeat: 3,
-        yoyo: true,
-        ease: "power3.inOut",
-      })
-        .set([target, logoRef.current], { x: 0, skewX: 0, opacity: 1 })
-        .to(
-          {},
-          {
-            duration: 1.4,
-            onUpdate: function () {
-              const progress = this.progress();
-              let output = "";
-
-              for (let i = 0; i < maxLen; i++) {
-                if (progress > i / maxLen) {
-                  output += newText[i] || "";
-                } else {
-                  if (i < newText.length || i < oldText.length) {
-                    output += chars[Math.floor(Math.random() * chars.length)];
-                  }
-                }
-              }
-              target.innerText = output;
-            },
-          },
-        );
-    }
-    return () => {
-      tl?.kill();
-    };
-  }, [stepIndex]);
-
-  const currentProgress = progressSteps[stepIndex];
-
+  // Brand-name flip
   useGSAP(
     () => {
-      const tl = gsap.timeline({
-        repeat: 0,
-        delay: 0.1,
-      });
-
-      tl.to(".char", {
+      gsap.to(".char", {
         scaleX: -1,
         ease: "expo.inOut",
         duration: 1.2,
         stagger: { amount: 0.8, from: "start" },
-      })
-        .to(".char", {
-          scaleX: 1,
-          ease: "expo.inOut",
-          duration: 1.2,
-          stagger: { amount: 0.8, from: "end" },
-        })
-        .to(".char", {
-          scaleX: -1,
-          ease: "expo.inOut",
-          duration: 1.2,
-          stagger: { amount: 0.8, from: "start" },
-        });
+        repeat: 2,
+        yoyo: true,
+      });
     },
     { scope: containerRef },
   );
 
-  // Grid Column Animation
+  // Main time-based progress + exit
   useGSAP(
     () => {
-      gsap.set(".progress-text", { opacity: 0 });
-      gsap.set(".progress-line", { opacity: 0, x: -40 });
+      gsap.set(".progress-trail", { width: "0%" });
+      gsap.set(".pct-tip", { left: "0%" });
+      gsap.set(".slogan-foreground", { opacity: 0 });
 
-      const tl = gsap.timeline();
-      tl.to(".shutter", { y: 0, duration: 1.4, ease: "power2.inOut" });
+      const exitTl = gsap.timeline({
+        paused: true,
+        delay: 0.5,
+        onComplete: () => setComplete(true),
+      });
 
-      tl.to(
-        `.shutter-${stepIndex - 1}, .shutter-${stepIndex}`,
-        {
-          y: 60,
-          duration: 1.4,
-          ease: "expo.inOut",
-        },
-        0,
-      );
-
-      tl.to(
-        `.line-${stepIndex}`,
-        {
-          opacity: 1,
-          x: 12,
-          scaleX: 1.4,
-          duration: 1.4,
-          ease: "power4.inOut",
-        },
-        "-=0.3",
-      ).to(`.line-${stepIndex}`, { x: 12, opacity: 0.3, duration: 0.8 });
-
-      tl.to(
-        `.text-${stepIndex}`,
-        {
-          opacity: 1,
-          duration: 1.2,
-          ease: "power2.inOut",
-        },
-        "-=1",
-      ).to(`.text-${stepIndex}`, { opacity: 0.4, duration: 0.4 });
-    },
-    { dependencies: [stepIndex], scope: containerRef },
-  );
-
-  // EXIT ANIMATION
-  useGSAP(
-    () => {
-      if (currentProgress === 100) {
-        const tl = gsap.timeline({
-          delay: 2.2,
-          onComplete: () => setComplete(true),
-        });
-
-        tl.to(".column-wrapper", {
+      exitTl
+        .to(".progress-indicator-wrap", { opacity: 0, duration: 0.3 })
+        .to(".column-wrapper", {
           height: "100vh",
-          duration: 1.4,
+          duration: 1.2,
           ease: "expo.inOut",
         })
-          .to(".shutter", { y: 0, duration: 0.2 }, "<")
-          .to(
-            ".column-wrapper",
-            {
-              yPercent: -100,
-              duration: 1.4,
-              ease: "power4.inOut",
-              stagger: {
-                grid: [1, columnCount],
-                from: "center",
-                amount: 0.9,
-              },
-            },
-            "-=0.2",
-          )
-          .to(containerRef.current, {
-            opacity: 0,
-            display: "none",
-            duration: 0.6,
-          });
-      }
+        .to(".shutter", { y: 0, duration: 0.2 }, "<")
+        .to(
+          ".column-wrapper",
+          {
+            yPercent: -100,
+            duration: 1.4,
+            ease: "power4.inOut",
+            stagger: { grid: [1, columnCount], from: "center", amount: 0.9 },
+          },
+          "-=0.2",
+        )
+        .to(".slogan-accent", { opacity: 0, duration: 0.3 }, "<0.4")
+        .to(".slogan-foreground", { opacity: 1, duration: 0.2 }, "<")
+        .to(containerRef.current, {
+          opacity: 0,
+          display: "none",
+          duration: 0.4,
+        });
+
+      gsap
+        .timeline({
+          delay: 0.3,
+          onComplete: () => {
+            exitTl.play();
+          },
+        })
+        .to(progressProxy.current, {
+          value: 1,
+          duration: PROGRESS_DURATION,
+          ease: "power1.inOut",
+          onUpdate: function () {
+            const p = progressProxy.current.value;
+
+            // Shutter wave
+            for (let i = 0; i < columnCount; i++) {
+              const colWidth = 1 / halfCols;
+              const peakHalf = colWidth / 2;
+              const rampHalf = colWidth;
+              const dist = p - colCentre(i, halfCols);
+              let shutterY = 0;
+
+              if (Math.abs(dist) <= peakHalf) {
+                shutterY = 50;
+              } else if (dist >= -(peakHalf + rampHalf) && dist < -peakHalf) {
+                shutterY = ((dist + peakHalf + rampHalf) / rampHalf) * 50;
+              } else if (dist > peakHalf && dist <= peakHalf + rampHalf) {
+                shutterY = ((peakHalf + rampHalf - dist) / rampHalf) * 50;
+              }
+              gsap.set(`.shutter-${i}`, { y: shutterY });
+            }
+
+            // Trail + label
+            const trailWidth = p * 50;
+            gsap.set(".progress-trail", { width: `${trailWidth}%` });
+            gsap.set(".pct-tip", { left: `${trailWidth}%` });
+            const pctLabel = document.querySelector(".pct-tip .pct-label");
+            if (pctLabel) pctLabel.textContent = `${Math.round(p * 100)}%`;
+          },
+        });
     },
-    { dependencies: [currentProgress], scope: containerRef },
+    { scope: containerRef, dependencies: [columnCount] },
   );
 
   return (
@@ -209,8 +135,8 @@ export default function Preloader({ setComplete }: PreloaderProps) {
     >
       {/* Brand Name */}
       <h1
-        aria-label="Lawal, written backwards"
-        className="title text-foreground text-9xl z-999 flex-center h-1/2 mix-blend-difference"
+        aria-label={brandName}
+        className="relative title text-foreground text-[clamp(3rem,15vw,9rem)] flex-center h-1/2 select-none pointer-events-none"
       >
         {brandName.split("").map((char, i) => (
           <span key={i} className="char inline-block">
@@ -219,15 +145,14 @@ export default function Preloader({ setComplete }: PreloaderProps) {
         ))}
       </h1>
 
-      {/* Scrambling Slogan Container */}
-      <div className="absolute inset-x-0 bottom-1/12 text-accent mix-blend-difference flex items-center justify-center z-50 px-10">
-        {/* Custom Lawal Precision Logo */}
+      {/* Slogan + logo — bottom quarter, above grid but below brand name */}
+      <div className="slogan-accent absolute inset-x-0 bottom-8 z-50 text-accent flex items-center justify-center gap-3 px-6 pointer-events-none">
         <svg
-          ref={logoRef}
-          width="60"
-          height="60"
+          width="24"
+          height="24"
           viewBox="0 0 100 100"
           fill="none"
+          className="shrink-0"
         >
           <path
             d="M20 20V80H80"
@@ -237,31 +162,67 @@ export default function Preloader({ setComplete }: PreloaderProps) {
           />
           <rect x="40" y="40" width="10" height="10" fill="currentColor" />
         </svg>
-
-        <span ref={sloganRef} className="header text-center max-w-4xl">
-          Engineering isn't just about writing code
+        <span
+          ref={sloganRef}
+          className="text-xs sm:text-sm text-center max-w-sm leading-relaxed"
+        >
+          Engineering isn&apos;t just about writing code
         </span>
       </div>
 
-      {/* Main Progress Grid */}
+      {/* Duplicated Slogan + logo */}
+      <div className="slogan-foreground absolute inset-x-0 bottom-8 z-50 text-foreground flex items-center justify-center gap-3 px-6 pointer-events-none">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 100 100"
+          fill="none"
+          className="shrink-0"
+        >
+          <path
+            d="M20 20V80H80"
+            stroke="currentColor"
+            strokeWidth="8"
+            strokeLinecap="square"
+          />
+          <rect x="40" y="40" width="10" height="10" fill="currentColor" />
+        </svg>
+        <span className="text-xs sm:text-sm text-center max-w-sm leading-relaxed">
+          Engineering isn&apos;t just about writing code
+        </span>
+      </div>
+
+      {/* Progress grid */}
       <div className="absolute inset-0 flex items-end">
+        {/* Horizontal progress trail — positioned relative to this container */}
+        <div
+          className="progress-indicator-wrap absolute inset-x-0 z-20 pointer-events-none"
+          style={{ top: "50%" }}
+        >
+          {/* Trail line */}
+          <div
+            className="progress-trail absolute left-0 top-0 h-px translate-y-5.5 -translate-x-6 bg-primary/70"
+            style={{ width: "0%" }}
+          />
+          {/* Floating % tip */}
+          <div
+            className="pct-tip absolute top-0 translate-y-2 -translate-x-1/2"
+            style={{ left: "0%" }}
+          >
+            <span className="pct-label font-mono text-xs font-bold text-foreground/60 tabular-nums">
+              0%
+            </span>
+          </div>
+        </div>
+
+        {/* Columns */}
         {[...Array(columnCount)].map((_, i) => (
           <div
             key={i}
             className="column-wrapper relative h-1/2 flex-1 overflow-hidden"
           >
-            <div className="absolute inset-x-0 top-0 h-15 flex items-center justify-center gap-1">
-              <div
-                className={`line-${i} progress-line h-px bg-primary w-full`}
-              ></div>
-              <span
-                className={`text-${i} progress-text font-mono text-sm font-bold text-primary opacity-0`}
-              >
-                {progressSteps[i] ?? currentProgress}%
-              </span>
-            </div>
             <div
-              className={`shutter shutter-${i} absolute inset-0 bg-primary z-10`}
+              className={`shutter shutter-${i} absolute inset-0 bg-foreground`}
             />
           </div>
         ))}
