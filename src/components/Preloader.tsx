@@ -48,8 +48,9 @@ export default function Preloader({ setComplete }: PreloaderProps) {
   // Main time-based progress + exit
   useGSAP(
     () => {
-      gsap.set(".progress-trail", { width: "0%" });
-      gsap.set(".pct-tip", { left: "0%" });
+      const startProgress = progressProxy.current.value;
+      gsap.set(".progress-trail", { width: `${startProgress * 50}%` });
+      gsap.set(".pct-tip", { left: `${startProgress * 50}%` });
       gsap.set(".slogan-foreground", { opacity: 0 });
 
       const exitTl = gsap.timeline({
@@ -93,7 +94,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
         })
         .to(progressProxy.current, {
           value: 1,
-          duration: PROGRESS_DURATION,
+          duration: PROGRESS_DURATION * (1 - startProgress),
           ease: "power1.inOut",
           onUpdate: function () {
             const p = progressProxy.current.value;
@@ -125,7 +126,11 @@ export default function Preloader({ setComplete }: PreloaderProps) {
           },
         });
     },
-    { scope: containerRef, dependencies: [columnCount] },
+    {
+      scope: containerRef,
+      dependencies: [columnCount],
+      revertOnUpdate: true,
+    },
   );
 
   return (
@@ -153,6 +158,8 @@ export default function Preloader({ setComplete }: PreloaderProps) {
           viewBox="0 0 100 100"
           fill="none"
           className="shrink-0"
+          aria-hidden="true"
+          focusable="false"
         >
           <path
             d="M20 20V80H80"
@@ -171,8 +178,13 @@ export default function Preloader({ setComplete }: PreloaderProps) {
       </div>
 
       {/* Duplicated Slogan + logo */}
-      <div className="slogan-foreground absolute inset-x-0 bottom-8 z-50 text-foreground flex items-center justify-center gap-3 px-6 pointer-events-none">
+      <div
+        aria-hidden="true"
+        className="slogan-foreground absolute inset-x-0 bottom-8 z-50 text-foreground flex items-center justify-center gap-3 px-6 pointer-events-none"
+      >
         <svg
+          aria-hidden="true"
+          focusable="false"
           width="24"
           height="24"
           viewBox="0 0 100 100"

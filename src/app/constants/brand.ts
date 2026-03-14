@@ -1,4 +1,4 @@
-const PHONE_E164 = "+2348165341317";
+const PHONE_E164 = "+2348163992628";
 const PHONE_DIGITS = PHONE_E164.replace(/\D/g, "");
 
 export const BRAND = {
@@ -33,8 +33,8 @@ export const BRAND = {
     },
     instagram: {
       label: "Instagram",
-      href: "https://instagram.com/honeyzrich",
-      username: "@honeyzrich",
+      href: "https://instagram.com/honeyz_rich",
+      username: "@honeyz_rich",
     },
     whatsapp: {
       label: "WhatsApp",

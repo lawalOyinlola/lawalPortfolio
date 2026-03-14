@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { ListIcon, XIcon } from "@phosphor-icons/react";
 import LogoButton from "./LogoButton";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { MenuOverlay } from "./MenuOverlay";
 import { ProjectModal } from "./ProjectModal";
+import { BRAND } from "../app/constants/brand";
 
 interface NavbarProps {
   ready?: boolean;
@@ -61,13 +62,18 @@ const Navbar = ({ ready = true }: NavbarProps) => {
             />
           </Button>
 
-          <Button
-            variant="outline"
-            size="lg"
-            className={`w-34 ${!isMenuOpen && !isProjectOpen ? "z-21" : ""}`}
+          <a
+            href={BRAND.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants({
+              variant: "outline",
+              size: "lg",
+              className: `w-34 ${!isMenuOpen && !isProjectOpen ? "z-21" : ""}`,
+            })}
           >
             View Resume
-          </Button>
+          </a>
 
           <Button
             onClick={() => setIsProjectOpen((prev) => !prev)}

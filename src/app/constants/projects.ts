@@ -65,8 +65,8 @@ export const PROJECTS: Project[] = [
     description:
       "LinkedIn Intelligent Assistant — an AI-powered tool designed to supercharge your LinkedIn presence. LIA automates content creation, engagement strategies, and networking outreach, helping professionals build meaningful connections and grow their personal brand effortlessly.",
     image: "/projects/my_projects.jpeg",
-    github: "https://github.com/lawalOyinlola/LIA-linkedin-ai-assistant",
-    live: "https://lawaloyinlola.com",
+    github: "https://github.com/TenacityVentures/Lia",
+    live: "https://www.getlia.live",
     tags: [
       "AI Content Generation Pipeline",
       "Engagement Automation & Scheduling",
@@ -113,7 +113,7 @@ export const PROJECTS: Project[] = [
     description:
       "A goal-tracking and resolution management application designed to help users set, monitor, and achieve their personal and professional goals through structured planning and progress visualization.",
     image: "/projects/my_projects.jpeg",
-    github: "https://github.com/lawalOyinlola/lawal-portfolio",
+    github: "https://github.com/hngprojects/E-Vote-FE",
     live: "https://resolve.vote",
     tags: [
       "Goal Tracking & Planning",
@@ -130,7 +130,7 @@ export const PROJECTS: Project[] = [
       "A professional web platform for WCI Goderich, delivering a polished online presence with comprehensive information about services, team, and community engagement initiatives.",
     image: "/projects/my_projects.jpeg",
     github: "https://github.com/lawalOyinlola/wci_goderich",
-    live: "https://wcigoderich.com",
+    live: "https://wcigoderich.org",
     tags: [
       "Corporate Website Development",
       "Content Management System",
@@ -161,8 +161,8 @@ export const PROJECTS: Project[] = [
     description:
       "A task management application that helps teams and individuals organize, prioritize, and track their work efficiently with intuitive drag-and-drop interfaces and real-time collaboration features.",
     image: "/projects/my_projects.jpeg",
-    github: "https://github.com/lawalOyinlola/lawal-portfolio",
-    live: "https://lawaloyinlola.com",
+    github: "https://github.com/lawalOyinlola/vue_todo",
+    live: "https://altschool-taskpilot.netlify.app/",
     tags: [
       "Task Organization & Prioritization",
       "Real-time Collaboration Features",
