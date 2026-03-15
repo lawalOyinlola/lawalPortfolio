@@ -144,7 +144,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-background flex-center z-1"
+      className="bg-background flex-center"
       aria-label="Stats highlights"
     >
       <div className="wrapper max-w-screen relative px-0">

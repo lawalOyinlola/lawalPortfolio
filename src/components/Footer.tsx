@@ -25,7 +25,7 @@ const EXPLORE_LINKS = [
   { label: "Competence", href: "#competence" },
   { label: "Adaptability", href: "#adaptability" },
   { label: "Clients", href: "#clients" },
-  { label: "Work", href: "#work" },
+  { label: "Work", href: "/projects" },
   { label: "Contact", href: "#contact" },
 ];
 
