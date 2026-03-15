@@ -393,7 +393,7 @@ function Projects() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-muted flex justify-center z-1"
+      className="bg-muted flex justify-center"
       style={{ height: `${COUNT * 100}vh` }}
       aria-label="Featured projects"
     >
@@ -482,13 +482,15 @@ function Projects() {
               </div>
 
               <div className="flex flex-wrap gap-x-4 md:gap-x-2.5 gap-y-2 mt-4 md:mt-0">
-                {project.tags.map((tag, j) => (
+                {project.keypoints.map((keypoint, j) => (
                   <div
                     key={j}
                     className={`tag-${i} flex items-center md:items-start md:flex-col gap-2 md:gap-4 max-w-full md:max-w-43.5 md:py-4.5 md:pr-4`}
                   >
                     <div className="size-1.5 md:size-2.5 bg-foreground shrink-0" />
-                    <p className="text-[10px] md:text-xs leading-snug">{tag}</p>
+                    <p className="text-[10px] md:text-xs leading-snug">
+                      {keypoint}
+                    </p>
                   </div>
                 ))}
               </div>

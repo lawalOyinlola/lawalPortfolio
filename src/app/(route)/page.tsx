@@ -13,7 +13,7 @@ export default function Home() {
   const { loading } = useLoading();
 
   return (
-    <div>
+    <div className="*:relative *:z-1">
       <Hero ready={!loading} />
       <Product />
       <Partners />

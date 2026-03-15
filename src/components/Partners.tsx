@@ -47,7 +47,7 @@ function Partners() {
 
   return (
     <section className="flex-center">
-      <div className="wrapper max-w-screen flex-col flex-center gap-13.5 overflow-hidden bg-background z-1 px-0">
+      <div className="wrapper max-w-screen flex-col flex-center gap-13.5 overflow-hidden bg-background px-0">
         <p>Proud to have worked with...</p>
 
         <div className="group relative w-full">

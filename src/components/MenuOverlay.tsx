@@ -258,7 +258,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
                 {LINKS.map((link) => (
                   <a
                     key={link}
-                    href={`#${link.toLowerCase()}`}
+                    href={`/${link.toLowerCase()}`}
                     onClick={onClose}
                     className="title tracking-tighter hover:text-chart-3 transition-colors text-black"
                   >

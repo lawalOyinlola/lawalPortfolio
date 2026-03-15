@@ -14,14 +14,14 @@ const Hero = ({ ready = true }: HeroProps) => {
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen w-full flex-center items-end overflow-hidden bg-background z-1"
+      className="h-screen w-full flex-center items-end overflow-hidden bg-background"
     >
-      {/* V-shape grid animation — full height behind everything */}
+      {/* V-shape grid animation */}
       <div className="absolute inset-0 z-2">
         <GridAnimation ready={ready} triggerRef={sectionRef} />
       </div>
 
-      {/* Hero copy — bottom-left, above the grid */}
+      {/* Hero texts */}
       <div className="wrapper relative z-10 max-w-206">
         <h1 className="header">
           Engineering isn&apos;t just about writing code — it&apos;s about

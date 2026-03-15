@@ -79,7 +79,7 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
   const wordsArray = STATEMENT.split(" ");
 
   return (
-    <section ref={sectionRef} className="relative h-[260vh] bg-foreground z-1">
+    <section ref={sectionRef} className="h-[260vh] bg-foreground">
       <div className="sticky top-0 h-screen overflow-hidden will-change-transform">
         {/* Phase 1: full-screen image */}
         <div
@@ -98,7 +98,7 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
         {/* Phase 2: full-screen text panel over pinned image */}
         <div
           ref={textPanelRef}
-          className="text-panel absolute inset-0 z-10 flex items-center justify-center bg-foreground will-change-transform"
+          className="text-panel absolute inset-0 z-10 flex-center bg-foreground will-change-transform"
         >
           <div className="wrapper flex justify-end w-full px-12">
             <h2 aria-label={STATEMENT} className="max-w-175 title leading-none">
