@@ -1,5 +1,9 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { PROJECTS } from "@/app/constants/projects";
+
+const defaultProject = PROJECTS.find((p) => p.featured) ?? PROJECTS[0];
 
 export default function ProjectsIndexPage() {
-  redirect("/projects/safulpay");
+  if (!defaultProject) notFound();
+  redirect(`/projects/${defaultProject.slug}`);
 }
