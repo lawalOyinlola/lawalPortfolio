@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import {
-  ArrowArcRightIcon,
   ArrowUpRightIcon,
   GithubLogoIcon,
   ListIcon,
@@ -33,7 +32,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
 
   // Handle smooth scrolling for anchor links
   const scrollToAnchor = (
-    e: React.MouseEvent<HTMLAnchorElement>,
+    e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
     id: string,
   ) => {
     e.preventDefault();
@@ -101,6 +100,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   href={currentProject.github}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Open project source code on GitHub"
                   className={buttonVariants({
                     size: "icon-lg",
                   })}
@@ -108,33 +108,30 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   <GithubLogoIcon />
                 </a>
               )}
-              <a
+              <Button
+                type="button"
+                variant="ghost"
+                size="lg"
                 onClick={(e) => scrollToAnchor(e, "introduction")}
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "lg",
-                })}
               >
                 Introduction
-              </a>
-              <a
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="lg"
                 onClick={(e) => scrollToAnchor(e, "key-points")}
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "lg",
-                })}
               >
                 4 points
-              </a>
-              <a
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="lg"
                 onClick={(e) => scrollToAnchor(e, "deeper-details")}
-                className={buttonVariants({
-                  variant: "ghost",
-                  size: "lg",
-                })}
               >
                 Deeper Details
-              </a>
+              </Button>
               {currentProject?.live && (
                 <a
                   href={currentProject.live}

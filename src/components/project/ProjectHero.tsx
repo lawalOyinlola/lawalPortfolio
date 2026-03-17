@@ -10,8 +10,11 @@ export default function ProjectHero({ project }: { project: Project }) {
         </p>
         {(project.startDate || project.endDate) && (
           <p className="text-xs uppercase tracking-widest text-muted-foreground">
-            {project.startDate || "Unknown Start"} -{" "}
-            {project.endDate || "Present"}
+            {project.startDate && project.endDate
+              ? `${project.startDate} - ${project.endDate}`
+              : project.startDate
+                ? `${project.startDate} - Present`
+                : project.endDate}
           </p>
         )}
         <h1 className="bold-title mb-3.75 uppercase">{project.name}</h1>

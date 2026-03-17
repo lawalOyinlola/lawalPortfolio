@@ -79,7 +79,7 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
   const wordsArray = STATEMENT.split(" ");
 
   return (
-    <section ref={sectionRef} className="h-[260vh] bg-foreground">
+    <section ref={sectionRef} className="relative z-1 h-[260vh] bg-foreground">
       <div className="sticky top-0 h-screen overflow-hidden will-change-transform">
         {/* Phase 1: full-screen image */}
         <div

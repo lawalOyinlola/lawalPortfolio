@@ -8,6 +8,7 @@ export const BRAND = {
   description:
     "Frontend Engineer specializing in high-performance Web & Mobile Interfaces, animations, accessibility and scalable AI-powered platforms. Bridging the gap between complex infrastructure and pixel-perfect user experiences.",
   url: "https://lawaloyinlola.com",
+  // resumeUrl: "https://<actual-resume-url>",
   ogImage: "/og-image.jpg",
   icons: {
     icon: "/icons/favicon-32.png",

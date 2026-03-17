@@ -13,7 +13,7 @@ const PartnersAnimation = ({ ready = true }: PartnersAnimationProps) => {
   return (
     <section
       ref={partnerRef}
-      className="h-screen w-full flex-center items-end overflow-hidden bg-background"
+      className="relative z-1 h-screen w-full flex-center items-end overflow-hidden bg-background"
     >
       {/* V-shape grid animation — full height behind everything */}
       <div className="absolute inset-0 z-2">

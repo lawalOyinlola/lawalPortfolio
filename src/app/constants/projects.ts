@@ -35,9 +35,9 @@ const placeholderDetails = [
   },
   {
     image: "/projects/my_projects.jpeg",
-    title: "Development & Engineering",
+    title: "Testing & Launch",
     description:
-      "The application was built using modern web technologies, focusing on performance, scalability, and maintainability for future iterations.",
+      "Rigorous quality assurance testing was performed to ensure a bug-free experience before smoothly deploying the application to production environments.",
   },
 ];
 

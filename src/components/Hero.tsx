@@ -14,7 +14,7 @@ const Hero = ({ ready = true }: HeroProps) => {
   return (
     <section
       ref={sectionRef}
-      className="h-screen w-full flex-center items-end overflow-hidden bg-background"
+      className="relative z-1 h-screen w-full flex-center items-end overflow-hidden bg-background"
     >
       {/* V-shape grid animation */}
       <div className="absolute inset-0 z-2">
