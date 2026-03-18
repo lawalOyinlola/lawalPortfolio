@@ -46,9 +46,6 @@ export default async function ProjectPage({
       <ProjectPoints project={project} />
       <ProjectDetails project={project} />
 
-      {/* Spacer to give room before Explore and Contact */}
-      <div className="h-16 md:h-32 bg-background"></div>
-
       <ExploreProjects currentProjectSlug={project.slug} />
 
       {/* Z-Index logic: We make ContactRef sit above the transparent hole that reveals footer */}
