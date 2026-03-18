@@ -13,7 +13,6 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import AutoScroll from "embla-carousel-auto-scroll";
-import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 
 function PartnerLogo({ partner }: { partner: (typeof PARTNERS)[number] }) {
   return (
@@ -47,48 +46,35 @@ function PartnerTooltipItem({
   );
 }
 function Partners() {
-  const { isMobile } = useWindowDimensions();
-
   return (
-    <section className="flex-center relative z-1">
-      <div className="wrapper max-w-screen flex-col flex-center gap-13.5 overflow-hidden bg-background px-0">
-        <p>Proud to have worked with...</p>
-
-        <div className="group relative w-full">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-2 sm:w-30 w-8 bg-linear-to-r from-background to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-2 sm:w-30 w-8 bg-linear-to-l from-background to-transparent" />
-
-          <Carousel
-            opts={{
-              loop: true,
-              align: "start",
-              dragFree: true,
-            }}
-            plugins={[
-              AutoScroll({
-                playOnInit: true,
-                speed: 1.2,
-                stopOnInteraction: false,
-                stopOnMouseEnter: true,
-                stopOnFocusIn: false,
-              }),
-            ]}
-            className="w-full"
+    <Carousel
+      opts={{
+        loop: true,
+        align: "start",
+        dragFree: true,
+      }}
+      plugins={[
+        AutoScroll({
+          playOnInit: true,
+          speed: 1.2,
+          stopOnInteraction: false,
+          stopOnMouseEnter: true,
+          stopOnFocusIn: true,
+        }),
+      ]}
+      className="w-full"
+    >
+      <CarouselContent className="ml-0">
+        {[...PARTNERS, ...PARTNERS, ...PARTNERS].map((partner, index) => (
+          <CarouselItem
+            key={`${partner.shortName}-${index}`}
+            className="pl-0 basis-auto"
           >
-            <CarouselContent className="ml-0">
-              {[...PARTNERS, ...PARTNERS, ...PARTNERS].map((partner, index) => (
-                <CarouselItem
-                  key={`${partner.shortName}-${index}`}
-                  className="pl-0 basis-auto"
-                >
-                  <PartnerTooltipItem partner={partner} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </div>
-      </div>
-    </section>
+            <PartnerTooltipItem partner={partner} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
   );
 }
 
