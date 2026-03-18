@@ -1,12 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TOOL_CATEGORIES } from "@/app/constants/competencies";
 import TargetCursor from "../TargetCursor";
+
+type ToolChipStyle = CSSProperties & {
+  "--tool-color": string;
+  "--tool-color-fade": string;
+};
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -85,10 +90,11 @@ export default function Tools() {
                     className="group cursor-target flex items-center gap-2.5 border border-background/10 bg-background/5 hover:bg-(--tool-color-fade) px-3.5 py-2 transition-all duration-500 cursor-default hover:border-(--tool-color) hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-sm"
                     style={
                       {
-                        "--tool-color": tool.color || "currentColor",
-                        "--tool-color-fade":
-                          `${tool.color}15` || "rgba(255,255,255,0.05)",
-                      } as any
+                        "--tool-color": tool.color ?? "currentColor",
+                        "--tool-color-fade": tool.color
+                          ? `${tool.color}15`
+                          : "rgba(255,255,255,0.05)",
+                      } as ToolChipStyle
                     }
                   >
                     {/* Icon */}
