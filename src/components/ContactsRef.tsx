@@ -1,10 +1,19 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import ContactButtons from "./ui/ContactButtons";
+import { Button } from "./ui/button";
+
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -15,14 +24,50 @@ function ContactsRef() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const [ambientAudioEnabled, setAmbientAudioEnabled] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const saved = localStorage.getItem("ambientAudioEnabled");
+    return saved !== null ? saved === "true" : true;
+  });
+
+  // Persist preference
+  useEffect(() => {
+    localStorage.setItem("ambientAudioEnabled", String(ambientAudioEnabled));
+
+    if (!ambientAudioEnabled || prefersReducedMotion) {
+      if (gainNodeRef.current) {
+        gsap.to(gainNodeRef.current.gain, {
+          value: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      }
+    } else {
+      // If we're enabling audio and the section is active, start playing
+      const trigger = ScrollTrigger.getById("contact-audio-trigger");
+      if (trigger?.isActive) {
+        initAudio();
+        if (gainNodeRef.current) {
+          gsap.to(gainNodeRef.current.gain, {
+            value: 0.1,
+            duration: 1,
+            ease: "power2.inOut",
+          });
+        }
+      }
+    }
+  }, [ambientAudioEnabled, prefersReducedMotion]);
 
   const initAudio = () => {
+    if (prefersReducedMotion || !ambientAudioEnabled) return;
+
     // If context exists and is running/suspended, we're good. If it's closed, we need a new one.
     if (audioContextRef.current && audioContextRef.current.state !== "closed")
       return;
 
-    const AudioContextClass =
-      window.AudioContext || (window as any).webkitAudioContext;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioContextClass();
     audioContextRef.current = ctx;
 
@@ -57,7 +102,11 @@ function ContactsRef() {
 
   useEffect(() => {
     const handleGlobalInteraction = () => {
-      if (audioContextRef.current?.state === "suspended") {
+      if (
+        !prefersReducedMotion &&
+        ambientAudioEnabled &&
+        audioContextRef.current?.state === "suspended"
+      ) {
         audioContextRef.current.resume();
       }
     };
@@ -74,11 +123,12 @@ function ContactsRef() {
       initAudio();
 
       ScrollTrigger.create({
+        id: "contact-audio-trigger",
         trigger: contactRef.current,
         start: "top center",
         end: "bottom center",
         onToggle: (self) => {
-          if (self.isActive) {
+          if (self.isActive && !prefersReducedMotion && ambientAudioEnabled) {
             if (audioContextRef.current?.state === "suspended") {
               audioContextRef.current.resume();
             }
@@ -115,7 +165,9 @@ function ContactsRef() {
         if (sourceRef.current) {
           try {
             sourceRef.current.stop();
-          } catch (e) {}
+          } catch {
+            // Ignore - source may already be stopped
+          }
           sourceRef.current.disconnect();
           sourceRef.current = null;
         }
@@ -148,7 +200,20 @@ function ContactsRef() {
           </h2>
         </div>
 
-        <div className="mt-auto w-full flex justify-end pb-4">
+        <div className="mt-auto w-full flex justify-between items-end pb-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setAmbientAudioEnabled(!ambientAudioEnabled)}
+            className="rounded-full bg-background/5 border border-background/10 text-background/40 hover:text-background/90"
+            title={ambientAudioEnabled ? "Mute audio" : "Unmute audio"}
+          >
+            {ambientAudioEnabled && !prefersReducedMotion ? (
+              <SpeakerHigh weight="bold" />
+            ) : (
+              <SpeakerSlash weight="bold" />
+            )}
+          </Button>
           <ContactButtons />
         </div>
       </div>
