@@ -7,7 +7,7 @@ export default function ProjectPoints({ project }: { project: Project }) {
     <section id="key-points" className="flex-center">
       <div className="wrapper py-4.5 flex flex-col gap-6 md:gap-9">
         <div>
-          <p className="text-sm text-muted-foreground mb-3.75">Points</p>
+          <p className="text-sm text-muted-foreground mb-2">Points</p>
           <h2 className="header lowercase leading-none max-w-[11ch]">
             {project.keypoints.length} main points of this project
           </h2>
