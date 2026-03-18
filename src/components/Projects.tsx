@@ -111,7 +111,7 @@ function Projects() {
       document.querySelectorAll(`.cat-${idx}, .desc-${idx}`).forEach((el) => {
         gsap.set(el, { opacity: 1, y: 0 });
       });
-      document.querySelectorAll(`.tag-${idx}`).forEach((el) => {
+      document.querySelectorAll(`.tag-p${idx}`).forEach((el) => {
         gsap.set(el, { opacity: 1, y: 0 });
       });
     }
@@ -220,7 +220,7 @@ function Projects() {
 
       // Tags: stagger fade out
       tl.to(
-        `.tag-${prev}`,
+        `.tag-p${prev}`,
         {
           opacity: 0,
           y: 10,
@@ -286,7 +286,7 @@ function Projects() {
 
       // Tags: stagger in from left
       tl.fromTo(
-        `.tag-${target}`,
+        `.tag-p${target}`,
         { opacity: 0, y: 12 },
         {
           opacity: 1,
@@ -482,10 +482,10 @@ function Projects() {
               </div>
 
               <div className="flex flex-wrap gap-x-4 md:gap-x-2.5 gap-y-2 mt-4 md:mt-0">
-                {project.keypoints.map((keypoint) => (
+                {project.keypoints.map((keypoint, ki) => (
                   <div
-                    key={`${project.slug}-${keypoint}`}
-                    className={`tag-${i} flex items-center md:items-start md:flex-col gap-2 md:gap-4 max-w-full md:max-w-43.5 md:py-4.5 md:pr-4`}
+                    key={`${project.slug}-${keypoint}-${ki}`}
+                    className={`tag-p${i} flex items-center md:items-start md:flex-col gap-2 md:gap-4 max-w-full md:max-w-43.5 md:py-4.5 md:pr-4`}
                   >
                     <div className="size-1.5 md:size-2.5 bg-foreground shrink-0" />
                     <p className="text-[10px] md:text-xs leading-snug">
