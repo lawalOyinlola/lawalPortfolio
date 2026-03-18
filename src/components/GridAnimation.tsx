@@ -53,6 +53,8 @@ interface GridAnimationProps {
   triggerRef?: RefObject<HTMLElement | null>;
   invertDirection?: boolean;
   scrubStart?: boolean;
+  shutterClassName?: string;
+  className?: string;
 }
 
 const GridAnimation = ({
@@ -60,6 +62,8 @@ const GridAnimation = ({
   triggerRef,
   invertDirection = false,
   scrubStart = false,
+  shutterClassName = "bg-foreground",
+  className = "",
 }: GridAnimationProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { isMobile, isSE, width, height } = useWindowDimensions();
@@ -262,7 +266,7 @@ const GridAnimation = ({
   return (
     <div
       ref={containerRef}
-      className={`flex h-full w-full ${invertDirection ? "rotate-180" : ""}`}
+      className={`flex h-full w-full ${invertDirection ? "rotate-180" : ""} ${className}`}
     >
       {[...Array(COLUMN_COUNT)].map((_, i) => (
         <div
@@ -271,7 +275,9 @@ const GridAnimation = ({
             i % 2 !== 0 ? "max-md:hidden" : ""
           }`}
         >
-          <div className="grid-shutter absolute inset-0 bg-foreground" />
+          <div
+            className={`grid-shutter absolute inset-0 ${shutterClassName}`}
+          />
         </div>
       ))}
     </div>
