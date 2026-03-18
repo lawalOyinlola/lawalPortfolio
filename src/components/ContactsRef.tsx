@@ -1,8 +1,139 @@
+"use client";
+
+import { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ContactButtons from "./ui/ContactButtons";
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
+
 function ContactsRef() {
+  const contactRef = useRef<HTMLDivElement>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+
+  const initAudio = () => {
+    // If context exists and is running/suspended, we're good. If it's closed, we need a new one.
+    if (audioContextRef.current && audioContextRef.current.state !== "closed")
+      return;
+
+    const AudioContextClass =
+      window.AudioContext || (window as any).webkitAudioContext;
+    const ctx = new AudioContextClass();
+    audioContextRef.current = ctx;
+
+    // Create white noise buffer
+    const bufferSize = 2 * ctx.sampleRate;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const output = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+
+    // Create a low-pass filter to make it sound more like "shhhhhh" and less harsh
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.value = 1500;
+    filter.Q.value = 0.5;
+
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = 0; // Start muted
+    gainNodeRef.current = gainNode;
+
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    sourceRef.current = source;
+
+    source.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    source.start();
+  };
+
+  useEffect(() => {
+    const handleGlobalInteraction = () => {
+      if (audioContextRef.current?.state === "suspended") {
+        audioContextRef.current.resume();
+      }
+    };
+    window.addEventListener("touchstart", handleGlobalInteraction);
+    window.addEventListener("mousedown", handleGlobalInteraction);
+    return () => {
+      window.removeEventListener("touchstart", handleGlobalInteraction);
+      window.removeEventListener("mousedown", handleGlobalInteraction);
+    };
+  }, []);
+
+  useGSAP(
+    () => {
+      initAudio();
+
+      ScrollTrigger.create({
+        trigger: contactRef.current,
+        start: "top center",
+        end: "bottom center",
+        onToggle: (self) => {
+          if (self.isActive) {
+            if (audioContextRef.current?.state === "suspended") {
+              audioContextRef.current.resume();
+            }
+            if (gainNodeRef.current) {
+              gsap.to(gainNodeRef.current.gain, {
+                value: 0.1,
+                duration: 1.2,
+                ease: "power2.inOut",
+              });
+            }
+          } else {
+            if (gainNodeRef.current) {
+              gsap.to(gainNodeRef.current.gain, {
+                value: 0,
+                duration: 0.8,
+                ease: "power2.out",
+              });
+            }
+          }
+        },
+        onUpdate: (self) => {
+          // If we are scrolling very fast and somehow leave the range, double check gain
+          if (
+            !self.isActive &&
+            gainNodeRef.current &&
+            gainNodeRef.current.gain.value > 0
+          ) {
+            gsap.set(gainNodeRef.current.gain, { value: 0 });
+          }
+        },
+      });
+
+      return () => {
+        if (sourceRef.current) {
+          try {
+            sourceRef.current.stop();
+          } catch (e) {}
+          sourceRef.current.disconnect();
+          sourceRef.current = null;
+        }
+        if (audioContextRef.current) {
+          audioContextRef.current.close().catch(() => {});
+          audioContextRef.current = null;
+        }
+        gainNodeRef.current = null;
+      };
+    },
+    { scope: contactRef },
+  );
+
   return (
-    <div className="sticky top-0 h-screen bg-background flex-center">
+    <div
+      ref={contactRef}
+      className="sticky top-0 h-screen bg-background flex-center"
+    >
       <div className="wrapper max-w-screen w-full min-h-screen pt-4.5 flex flex-col gap-19">
         <div className="relative mt-2 grow w-full flex justify-end items-end overflow-hidden tv-static">
           <div className="tv-static-overlay" />
