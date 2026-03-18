@@ -2,12 +2,22 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { usePathname, useRouter } from "next/navigation";
 import { BRAND, BRAND_LETTERS } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
+import { handleNavigation } from "@/lib/navigation";
+import {
+  GithubLogoIcon,
+  LinkedinLogoIcon,
+  TwitterLogoIcon,
+  InstagramLogoIcon,
+  WhatsappLogoIcon,
+} from "@phosphor-icons/react";
+import { Button, buttonVariants } from "./ui/button";
+import Magnetic from "./ui/Magnetic";
 
 interface FooterProps {
   className?: string;
@@ -18,20 +28,41 @@ if (typeof window !== "undefined") {
 }
 
 const TAGLINE_WORDS = BRAND.tagline;
-const SOCIAL_LINKS = Object.values(BRAND.socials);
-
 const EXPLORE_LINKS = [
-  { label: "Home", href: "#" },
-  { label: "Competence", href: "#competence" },
-  { label: "Adaptability", href: "#adaptability" },
-  { label: "Clients", href: "#clients" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  {
+    label: "Competence",
+    href: "/about",
+    anchor: "competence",
+  },
+  {
+    label: "Adaptability",
+    href: "/about",
+    anchor: "adaptability",
+  },
+  { label: "Clients", href: "/about", anchor: "clients" },
   { label: "Work", href: "/projects" },
-  { label: "Contact", href: "#contact" },
+  {
+    label: "Contact",
+    href: "/about",
+    anchor: "contact",
+  },
 ];
+
+const SOCIAL_ICON_MAP: Record<string, any> = {
+  GitHub: GithubLogoIcon,
+  LinkedIn: LinkedinLogoIcon,
+  Twitter: TwitterLogoIcon,
+  Instagram: InstagramLogoIcon,
+  WhatsApp: WhatsappLogoIcon,
+};
 
 function Footer({ className }: FooterProps) {
   const footerRef = useRef<HTMLElement>(null);
   const { isSE } = useWindowDimensions();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useGSAP(
     () => {
@@ -176,12 +207,21 @@ function Footer({ className }: FooterProps) {
               <ul className="flex flex-col gap-2.5">
                 {EXPLORE_LINKS.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm hover:text-background/70 transition-colors"
+                    <Button
+                      type="button"
+                      variant="link"
+                      onClick={() =>
+                        handleNavigation(
+                          link.href,
+                          link.anchor,
+                          pathname,
+                          router,
+                        )
+                      }
+                      className="text-background font-normal text-sm p-0 py-1 h-fit"
                     >
                       {link.label}
-                    </Link>
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -194,18 +234,34 @@ function Footer({ className }: FooterProps) {
                 Socials
               </h3>
               <ul className="flex flex-col gap-2.5">
-                {SOCIAL_LINKS.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm hover:text-background/70 transition-colors"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
+                {Object.values(BRAND.socials).map((link) => {
+                  const Icon = SOCIAL_ICON_MAP[link.label];
+                  return (
+                    <li key={link.label}>
+                      <Magnetic strength={0.1} radius={80}>
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={buttonVariants({
+                            variant: "link",
+                            className:
+                              "group text-background! text-sm! font-normal! p-0! py-1! h-fit",
+                          })}
+                        >
+                          {Icon && (
+                            <Icon
+                              size={16}
+                              weight="bold"
+                              className="text-background/30 group-hover:text-background/70 transition-colors"
+                            />
+                          )}
+                          {link.label}
+                        </a>
+                      </Magnetic>
+                    </li>
+                  );
+                })}
               </ul>
             </nav>
           </div>

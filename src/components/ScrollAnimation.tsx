@@ -3,11 +3,11 @@
 import { useRef } from "react";
 import GridAnimation from "./GridAnimation";
 
-interface PartnersAnimationProps {
+interface ScrollAnimationProps {
   ready?: boolean;
 }
 
-const PartnersAnimation = ({ ready = true }: PartnersAnimationProps) => {
+const ScrollAnimation = ({ ready = true }: ScrollAnimationProps) => {
   const partnerRef = useRef<HTMLElement>(null);
 
   return (
@@ -28,4 +28,4 @@ const PartnersAnimation = ({ ready = true }: PartnersAnimationProps) => {
   );
 };
 
-export default PartnersAnimation;
+export default ScrollAnimation;

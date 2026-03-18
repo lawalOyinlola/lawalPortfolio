@@ -1,18 +1,26 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { BRAND } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { handleNavigation } from "@/lib/navigation";
 
 interface MenuOverlayProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const LINKS = ["HOME", "COMPETENCE", "PROJECTS", "ADAPTABILITY", "CONTACT"];
+const NAV_LINKS: { label: string; href: string; anchor?: string }[] = [
+  { label: "HOME", href: "/" },
+  { label: "COMPETENCE", href: "/about", anchor: "competence" },
+  { label: "PROJECTS", href: "/projects" },
+  { label: "ADAPTABILITY", href: "/about", anchor: "adaptability" },
+  { label: "CONTACT", href: "/about", anchor: "contact" },
+];
 
 export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -21,6 +29,16 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const { width } = useWindowDimensions();
   const isMobileView = width > 0 && width < 600;
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleNavClick = useCallback(
+    (href: string, anchor?: string) => {
+      handleNavigation(href, anchor, pathname, router, onClose);
+    },
+    [pathname, router, onClose],
+  );
+
   const { shortName: BrandName } = BRAND;
 
   useScrollLock(isOpen);
@@ -255,15 +273,15 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
             <div className="flex flex-col md:flex-row justify-between items-start gap-8 h-full">
               {/* Links */}
               <nav className="flex flex-col justify-start md:justify-center gap-2 md:gap-4 flex-1">
-                {LINKS.map((link) => (
-                  <a
-                    key={link}
-                    href={`/${link.toLowerCase()}`}
-                    onClick={onClose}
-                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black"
+                {NAV_LINKS.map(({ label, href, anchor }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => handleNavClick(href, anchor)}
+                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black text-left"
                   >
-                    {link}
-                  </a>
+                    {label}
+                  </button>
                 ))}
               </nav>
 

@@ -22,6 +22,10 @@
     ·
     <a href="https://x.com/honeyzrich">X (Twitter)</a>
   </p>
+  
+  <!-- <p align="center">
+    <strong>🏆 Proudly part of the <a href="https://devcareer.io">DevCareer</a> × <a href="https://raenest.com">Raenest</a> Freelancer Hackathon (March 2026)</strong>
+  </p> -->
 </div>
 
 <div align="center">
@@ -45,9 +49,12 @@ The focus here is on **performance**, **clean architecture**, and advanced **ani
 ### Key Features
 
 - **Next.js 16 App Router:** Utilizing the latest React Server Components (RSC) architecture for optimal initial page loads and SEO.
+- **Magnetic Micro-interactions:** Custom-built `Magnetic` component using GSAP for a premium, physically reactive UI.
+- **Advanced Cursor Orchestration:** A specialized `TargetCursor` that morphs and reacts to interactive zones in real-time.
+- **"Antigravity" Hero Motion:** Mouse-reactive parallax effects and staggered branding entry for a cinematic user experience.
 - **Advanced Animations:** Complex, staggered animations and page transitions powered by **GSAP** and **Framer Motion**, engineered for 60fps performance.
 - **Clean Architecture:** A highly structured, scalable codebase emphasizing reusable components and centralized configuration (brand identity, constants).
-- **SEO & RAO Optimized:** Implements advanced Metadata API and JSON-LD Schema structured data for maximum visibility across search engines and AI models (RAO: Retrieval-Augmented Optimization).
+- **SEO & RAO Optimized:** Implements advanced Metadata API and JSON-LD Schema structured data for maximum visibility across search engines and AI models.
 - **Accessible Design:** Built with WCAG guidelines in mind, ensuring a usable experience for all visitors.
 - **Responsive & Adaptive:** A pixel-perfect, fluid layout that adapts seamlessly from large desktops to mobile devices using **Tailwind CSS**.
 

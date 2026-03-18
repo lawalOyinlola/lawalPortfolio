@@ -9,11 +9,20 @@ export default function ProjectDetails({ project }: { project: Project }) {
 
   return (
     <section id="deeper-details" className="bg-muted flex-center">
-      <div className="wrapper pt-6 pb-20 sm:pb-40 md:pb-60">
-        <div className="py-3.75">
+      <div className="wrapper">
+        {/* <div className="py-3.75">
           <p className="text-sm text-muted-foreground mb-3.75">Details</p>
           <h2 className="header normal-case leading-none">
             Project views & more details
+          </h2>
+        </div> */}
+
+        <div className="py-3.75">
+          <p className="text-sm uppercase tracking-widest text-foreground/40 mb-2">
+            Views & details
+          </p>
+          <h2 className="bold-title uppercase leading-none max-w-[13ch]">
+            Project views
           </h2>
         </div>
 
