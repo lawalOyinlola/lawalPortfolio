@@ -8,6 +8,7 @@ import { BRAND } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { handleNavigation } from "@/lib/navigation";
+import { HoverFlipText } from "./ui/hover-flip-text";
 
 interface MenuOverlayProps {
   isOpen: boolean;
@@ -274,14 +275,17 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
               {/* Links */}
               <nav className="flex flex-col justify-start md:justify-center gap-2 md:gap-4 flex-1">
                 {NAV_LINKS.map(({ label, href, anchor }) => (
-                  <button
+                  <a
                     key={label}
-                    type="button"
-                    onClick={() => handleNavClick(href, anchor)}
-                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black text-left"
+                    href={href + (anchor ? `#${anchor}` : "")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(href, anchor);
+                    }}
+                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black text-left block"
                   >
-                    {label}
-                  </button>
+                    <HoverFlipText text={label} />
+                  </a>
                 ))}
               </nav>
 
