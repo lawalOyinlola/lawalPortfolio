@@ -40,6 +40,7 @@ export default function ExploreProjects({
 
   useEffect(() => {
     return () => {
+      autoplayRef.current?.stop?.();
       autoplayRef.current = null;
     };
   }, []);

@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -67,6 +68,7 @@ const GridAnimation = ({
 }: GridAnimationProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { isMobile, isSE, width, height } = useWindowDimensions();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useGSAP(
     () => {
@@ -74,6 +76,14 @@ const GridAnimation = ({
         ".grid-shutter",
         containerRef.current,
       );
+
+      if (prefersReducedMotion) {
+        shutters.forEach((shutter, i) => {
+          const { hi } = getColumnConfig(i, isMobile, isSE);
+          gsap.set(shutter, { yPercent: hi });
+        });
+        return;
+      }
 
       const COLUMN_CONFIGS = V_HEIGHTS.map((_, i) =>
         getColumnConfig(i, isMobile, isSE),

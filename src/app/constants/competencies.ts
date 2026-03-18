@@ -67,8 +67,6 @@ export const COMPETENCIES: Competency[] = [
 const si = (slug: string) => `https://cdn.simpleicons.org/${slug}`;
 const iconify = (set: string, name: string) =>
   `https://api.iconify.design/${set}:${name}.svg`;
-const placeholder = (name: string) =>
-  `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=1a1a1a&fontColor=ffffff&fontSize=40`;
 
 export const TOOL_CATEGORIES: ToolCategory[] = [
   {
@@ -142,7 +140,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
         icon: "https://uploadthing.com/favicon.ico",
         color: "#782606",
       },
-      { name: "Mapbox", icon: si("mapbox"), color: "#fffff" },
+      { name: "Mapbox", icon: si("mapbox"), color: "#f1ffff" },
       { name: "React Leaflet", icon: si("leaflet"), color: "#199900" },
     ],
   },

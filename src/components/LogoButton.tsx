@@ -4,9 +4,11 @@ import { useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { usePathname, useRouter } from "next/navigation";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { BRAND_LETTERS } from "@/app/constants";
-import { Button } from "./ui/button";
+import { buttonVariants } from "./ui/button";
+import { HoverFlipText } from "./ui/hover-flip-text";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollToPlugin);
@@ -17,13 +19,21 @@ interface LogoButtonProps {
 }
 
 const LogoButton = ({ ready = true }: LogoButtonProps) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const scrollToTop = () => {
-    gsap.to(window, {
-      scrollTo: { y: 0, autoKill: true },
-      duration: 2,
-      ease: "power3.out",
-    });
+  const buttonRef = useRef<HTMLAnchorElement>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (pathname === "/") {
+      gsap.to(window, {
+        scrollTo: { y: 0, autoKill: true },
+        duration: 2,
+        ease: "power3.out",
+      });
+    } else {
+      router.push("/");
+    }
   };
 
   useGSAP(
@@ -41,26 +51,25 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
   );
 
   return (
-    <Button
+    <a
       ref={buttonRef}
-      variant="outline"
-      size="lg"
-      className="text-lg gap-2.5"
-      aria-label="Scroll to top"
-      onClick={() => scrollToTop()}
+      href="/"
+      aria-label={pathname === "/" ? "Scroll to top" : "Go to home"}
+      onClick={handleLogoClick}
+      className={buttonVariants({
+        variant: "outline",
+        size: "lg",
+        className: "text-lg gap-2.5 cursor-pointer",
+      })}
     >
       <Image src="/icons/menuLogo.svg" alt="Logo Icon" width={20} height={20} />
       <span
         aria-label="My brand logo - Lawal, written backwards"
         className="text-base font-semibold"
       >
-        {BRAND_LETTERS.map((char, i) => (
-          <span key={i} className="char inline-block">
-            {char}
-          </span>
-        ))}
+        <HoverFlipText text={BRAND_LETTERS} charClassName="char" />
       </span>
-    </Button>
+    </a>
   );
 };
 

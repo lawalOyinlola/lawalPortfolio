@@ -16,6 +16,7 @@ import {
   InstagramLogoIcon,
   WhatsappLogoIcon,
 } from "@phosphor-icons/react";
+import type { Icon } from "@phosphor-icons/react";
 import { Button, buttonVariants } from "./ui/button";
 import Magnetic from "./ui/Magnetic";
 
@@ -50,7 +51,7 @@ const EXPLORE_LINKS = [
   },
 ];
 
-const SOCIAL_ICON_MAP: Record<string, any> = {
+const SOCIAL_ICON_MAP: Record<string, Icon> = {
   GitHub: GithubLogoIcon,
   LinkedIn: LinkedinLogoIcon,
   Twitter: TwitterLogoIcon,
@@ -207,21 +208,25 @@ function Footer({ className }: FooterProps) {
               <ul className="flex flex-col gap-2.5">
                 {EXPLORE_LINKS.map((link) => (
                   <li key={link.label}>
-                    <Button
-                      type="button"
-                      variant="link"
-                      onClick={() =>
+                    <a
+                      href={link.href + (link.anchor ? `#${link.anchor}` : "")}
+                      onClick={(e) => {
+                        e.preventDefault();
                         handleNavigation(
                           link.href,
                           link.anchor,
                           pathname,
                           router,
-                        )
-                      }
-                      className="text-background font-normal text-sm p-0 py-1 h-fit"
+                        );
+                      }}
+                      className={buttonVariants({
+                        variant: "link",
+                        className:
+                          "group text-background! text-sm! font-normal! p-0! py-1! h-fit",
+                      })}
                     >
                       {link.label}
-                    </Button>
+                    </a>
                   </li>
                 ))}
               </ul>

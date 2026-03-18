@@ -8,18 +8,18 @@ interface ScrollAnimationProps {
 }
 
 const ScrollAnimation = ({ ready = true }: ScrollAnimationProps) => {
-  const partnerRef = useRef<HTMLElement>(null);
+  const scrollRef = useRef<HTMLElement>(null);
 
   return (
     <section
-      ref={partnerRef}
+      ref={scrollRef}
       className="relative z-1 h-screen w-full flex-center items-end overflow-hidden bg-background"
     >
       {/* V-shape grid animation — full height behind everything */}
       <div className="absolute inset-0 z-2">
         <GridAnimation
           ready={ready}
-          triggerRef={partnerRef}
+          triggerRef={scrollRef}
           invertDirection={true}
           scrubStart={true}
         />

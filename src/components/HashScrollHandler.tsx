@@ -19,15 +19,29 @@ export default function HashScrollHandler() {
 
     if (!targetAnchor) return;
 
-    // Give the page a moment to hydrate before scrolling
-    const timer = setTimeout(() => {
-      scrollToAnchor(targetAnchor);
-      if (pendingAnchor) {
-        sessionStorage.removeItem("pendingAnchor");
-      }
-    }, 150);
+    let attempts = 0;
+    const maxAttempts = 10;
 
-    return () => clearTimeout(timer);
+    const retryTimer = setInterval(() => {
+      const element = document.getElementById(targetAnchor);
+      if (element) {
+        scrollToAnchor(targetAnchor);
+        if (pendingAnchor) {
+          sessionStorage.removeItem("pendingAnchor");
+        }
+        clearInterval(retryTimer);
+      } else {
+        attempts++;
+        if (attempts >= maxAttempts) {
+          if (pendingAnchor) {
+            sessionStorage.removeItem("pendingAnchor");
+          }
+          clearInterval(retryTimer);
+        }
+      }
+    }, 100);
+
+    return () => clearInterval(retryTimer);
   }, [pathname]);
 
   return null;

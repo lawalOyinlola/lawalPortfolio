@@ -14,6 +14,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { MenuOverlay } from "./MenuOverlay";
 import { ProjectModal } from "./ProjectModal";
 import Magnetic from "./ui/Magnetic";
+import { HoverPushText } from "./ui/hover-push-text";
 import { BRAND } from "../app/constants/brand";
 import { PROJECTS } from "../app/constants/projects";
 
@@ -107,7 +108,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                 size="lg"
                 onClick={() => scrollToAnchor("introduction")}
               >
-                Introduction
+                <HoverPushText>Introduction</HoverPushText>
               </Button>
               <Button
                 type="button"
@@ -115,7 +116,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                 size="lg"
                 onClick={() => scrollToAnchor("key-points")}
               >
-                4 points
+                <HoverPushText>4 points</HoverPushText>
               </Button>
               <Button
                 type="button"
@@ -123,7 +124,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                 size="lg"
                 onClick={() => scrollToAnchor("deeper-details")}
               >
-                Deeper Details
+                <HoverPushText>Deeper Details</HoverPushText>
               </Button>
               {currentProject?.live && (
                 <a
@@ -135,13 +136,14 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                     className: "w-30",
                   })}
                 >
-                  Visit site
+                  <HoverPushText>Visit site</HoverPushText>
                   <ArrowUpRightIcon className="group-hover:translate-x-0.5 transition-transform" />
                 </a>
               )}
             </div>
           )}
 
+          {/* CTA Bttons */}
           <div className="flex justify-end max-w-70 w-full">
             <div className="flex-center justify-end gap-1 bg-background border-2 border-background shadow-sm">
               <a
@@ -154,7 +156,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   className: `w-32 ${!isMenuOpen && !isProjectOpen ? "z-21" : ""}`,
                 })}
               >
-                View Resume
+                <HoverPushText>View Resume</HoverPushText>
               </a>
 
               <Magnetic
@@ -182,7 +184,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                         : "scale-100 opacity-100 delay-800"
                     }`}
                   >
-                    Got a Project?
+                    <HoverPushText>Got a Project?</HoverPushText>
                   </span>
                 </Button>
               </Magnetic>

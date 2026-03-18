@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 interface MagneticProps {
   children: React.ReactNode;
@@ -18,23 +19,27 @@ export default function Magnetic({
   className,
 }: MagneticProps) {
   const magnetic = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    const xTo = gsap.quickTo(magnetic.current, "x", {
+    const el = magnetic.current;
+    if (!el || prefersReducedMotion) {
+      if (el) gsap.set(el, { x: 0, y: 0, clearProps: "transform" });
+      return;
+    }
+
+    const xTo = gsap.quickTo(el, "x", {
       duration: 1,
       ease: "elastic.out(1, 0.3)",
     });
-    const yTo = gsap.quickTo(magnetic.current, "y", {
+    const yTo = gsap.quickTo(el, "y", {
       duration: 1,
       ease: "elastic.out(1, 0.3)",
     });
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!magnetic.current) return;
-
       const { clientX, clientY } = e;
-      const { height, width, left, top } =
-        magnetic.current.getBoundingClientRect();
+      const { height, width, left, top } = el.getBoundingClientRect();
       const x = clientX - (left + width / 2);
       const y = clientY - (top + height / 2);
 
@@ -56,13 +61,14 @@ export default function Magnetic({
     };
 
     window.addEventListener("mousemove", handleMouseMove);
-    magnetic.current?.addEventListener("mouseleave", handleMouseLeave);
+    el.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      magnetic.current?.removeEventListener("mouseleave", handleMouseLeave);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+      gsap.set(el, { x: 0, y: 0, clearProps: "transform" });
     };
-  }, [strength, radius]);
+  }, [strength, radius, prefersReducedMotion]);
 
   // Using React.cloneElement to apply the ref to the child directly if it's a single element
   // But for safety and generic use, wrapping in a div with display: contents or inline-block

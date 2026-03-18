@@ -36,7 +36,10 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
       "ontouchstart" in window || navigator.maxTouchPoints > 0;
     const isSmallScreen = window.innerWidth <= 768;
     const userAgent =
-      navigator.userAgent || navigator.vendor || (window as any).opera;
+      navigator.userAgent ||
+      navigator.vendor ||
+      (window as unknown as { opera?: string }).opera ||
+      "";
     const mobileRegex =
       /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
     const isMobileUserAgent = mobileRegex.test(userAgent.toLowerCase());
