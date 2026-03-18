@@ -1,9 +1,13 @@
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-
+type RouterLike = {
+  push: (href: string) => void;
+};
 /**
  * Scrolls the page to the element with the specified ID.
  */
-export const scrollToAnchor = (id: string, behavior: ScrollBehavior = "smooth") => {
+export const scrollToAnchor = (
+  id: string,
+  behavior: ScrollBehavior = "smooth",
+) => {
   const element = document.getElementById(id);
   if (element) {
     element.scrollIntoView({ behavior });
@@ -17,8 +21,8 @@ export const handleNavigation = (
   href: string,
   anchor: string | undefined,
   currentPathname: string,
-  router: AppRouterInstance,
-  onComplete?: () => void
+  router: RouterLike,
+  onComplete?: () => void,
 ) => {
   if (onComplete) onComplete();
 
@@ -34,7 +38,12 @@ export const handleNavigation = (
     });
   } else {
     // Navigate to new page without hash, passing anchor through session storage
-    sessionStorage.setItem("pendingAnchor", anchor);
+    try {
+      sessionStorage.setItem("pendingAnchor", anchor);
+    } catch {
+      // Storage unavailable; navigate with hash instead
+      return router.push(`${href}#${anchor}`);
+    }
     router.push(href);
   }
 };
