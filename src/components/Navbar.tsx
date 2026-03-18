@@ -143,7 +143,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
             </div>
           )}
 
-          {/* CTA Bttons */}
+          {/* CTA Buttons */}
           <div className="flex justify-end max-w-70 w-full">
             <div className="flex-center justify-end gap-1 bg-background border-2 border-background shadow-sm">
               <a
