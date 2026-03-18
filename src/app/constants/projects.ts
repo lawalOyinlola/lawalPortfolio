@@ -59,8 +59,7 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: placeholderDetails,
     featured: true,
-    startDate: "Jan 2023",
-    endDate: "Oct 2023",
+    startDate: "Mar 2023",
   },
   {
     name: "MarketGist",
