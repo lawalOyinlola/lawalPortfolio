@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ADAPTABILITY_ITEMS } from "@/app/constants/competencies";
 import { BRAND } from "@/app/constants/brand";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -32,6 +33,7 @@ export default function Adaptability() {
           scrollTrigger: {
             trigger: ".adapt-grid",
             start: "top 80%",
+            // toggleActions: "play none none reverse",
           },
         },
       );
@@ -47,6 +49,7 @@ export default function Adaptability() {
           scrollTrigger: {
             trigger: ".adapt-text",
             start: "top 82%",
+            // toggleActions: "play none none reverse",
           },
         },
       );
@@ -62,19 +65,17 @@ export default function Adaptability() {
     >
       <div className="wrapper pb-30 flex flex-col gap-13.5 text-foreground/40">
         {/* Header */}
-        <div className="flex flex-col gap-1 max-w-lg">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">
-            Why it matters
-          </p>
-          <h2 className="bold-title leading-tight text-primary">
-            Adaptability
-          </h2>
-          <p className="text-sm leading-loose mt-2">
-            From academia to production FinTech — {BRAND.shortName} is proof
-            that the best engineers are built by curiosity, shaped by adversity,
-            and measured by impact.
-          </p>
-        </div>
+        <SectionHeader
+          subtitle="Why it matters"
+          title="Adaptability"
+          description={
+            <>
+              From academia to production FinTech — {BRAND.shortName} is proof
+              that the best engineers are built by curiosity, shaped by
+              adversity, and measured by impact.
+            </>
+          }
+        />
 
         {/* Two-column layout — metrics left, narrative right */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
