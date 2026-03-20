@@ -176,12 +176,12 @@ function Footer({ className }: FooterProps) {
           className={`flex flex-col lg:flex-row justify-between w-full ${isSE ? "gap-12" : "gap-16"}`}
         >
           {/* Left: Logo + Description */}
-          <div className="flex flex-col gap-6 max-w-sm">
+          <div className="flex flex-col gap-2 max-w-sm">
             <Image
-              src="/icons/menuLogo.svg"
+              src="/icons/lawal-logo.svg"
               alt={`${BRAND.shortName} logo`}
-              width={40}
-              height={40}
+              width={120}
+              height={120}
               className="invert"
             />
             <p className="text-sm leading-relaxed text-background/70">
@@ -211,13 +211,21 @@ function Footer({ className }: FooterProps) {
                     <a
                       href={link.href + (link.anchor ? `#${link.anchor}` : "")}
                       onClick={(e) => {
-                        e.preventDefault();
-                        handleNavigation(
-                          link.href,
-                          link.anchor,
-                          pathname,
-                          router,
-                        );
+                        if (
+                          e.button === 0 &&
+                          !e.metaKey &&
+                          !e.ctrlKey &&
+                          !e.shiftKey &&
+                          !e.altKey
+                        ) {
+                          e.preventDefault();
+                          handleNavigation(
+                            link.href,
+                            link.anchor,
+                            pathname,
+                            router,
+                          );
+                        }
                       }}
                       className={buttonVariants({
                         variant: "link",

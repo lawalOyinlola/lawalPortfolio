@@ -45,6 +45,7 @@ export function HoverFlipText({
       ref={containerRef}
       onMouseEnter={handleMouseEnter}
       className={`inline-flex ${className}`}
+      role="presentation"
     >
       {charArray.map((char, i) => (
         <span

@@ -7,8 +7,8 @@ interface Stat {
   description: string;
 }
 
-const YEARS_OF_EXPERIENCE = new Date().getFullYear() - BRAND.yearFounded;
-const COUNTRIES_REACHED = 2;
+export const YEARS_OF_EXPERIENCE = new Date().getFullYear() - BRAND.yearFounded;
+export const COUNTRIES_REACHED = 2;
 
 export const BRAND_STATS: Stat[] = [
   {

@@ -5,7 +5,7 @@ interface FluidCursorEffectProps {
   resetKey?: string | number;
 }
 
-const FluidCursorEffect = ({ resetKey }: FluidCursorEffectProps = {}) => {
+const FluidCursorEffect = ({ resetKey }: FluidCursorEffectProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationIdRef = useRef<number | null>(null);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);

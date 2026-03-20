@@ -279,8 +279,16 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
                     key={label}
                     href={href + (anchor ? `#${anchor}` : "")}
                     onClick={(e) => {
-                      e.preventDefault();
-                      handleNavClick(href, anchor);
+                      if (
+                        e.button === 0 &&
+                        !e.metaKey &&
+                        !e.ctrlKey &&
+                        !e.shiftKey &&
+                        !e.altKey
+                      ) {
+                        e.preventDefault();
+                        handleNavClick(href, anchor);
+                      }
                     }}
                     className="title tracking-tighter hover:text-chart-3 transition-colors text-black text-left block"
                   >

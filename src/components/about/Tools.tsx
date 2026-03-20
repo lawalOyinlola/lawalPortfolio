@@ -1,12 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TOOL_CATEGORIES } from "@/app/constants/competencies";
 import TargetCursor from "../TargetCursor";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+
+type ToolChipStyle = CSSProperties & {
+  "--tool-color": string;
+  "--tool-color-fade": string;
+};
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -17,21 +23,49 @@ export default function Tools() {
 
   useGSAP(
     () => {
-      gsap.fromTo(
-        ".tool-category",
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power2.out",
-          stagger: 0.12,
+      const categories = gsap.utils.toArray<HTMLElement>(".tool-category");
+
+      categories.forEach((cat) => {
+        const chars = cat.querySelectorAll(".tool-cat-char");
+        const chips = cat.querySelectorAll(".tool-chip");
+
+        const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".tools-wrapper",
-            start: "top 78%",
+            trigger: cat,
+            start: "top 85%",
+            // toggleActions: "play none none reverse",
           },
-        },
-      );
+        });
+
+        if (chars.length > 0) {
+          tl.fromTo(
+            chars,
+            { opacity: 0, x: -10 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.4,
+              stagger: 0.05,
+              ease: "power2.out",
+            },
+          );
+        }
+
+        if (chips.length > 0) {
+          tl.fromTo(
+            chips,
+            { opacity: 0, x: -20 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.6,
+              stagger: 0.08,
+              ease: "back.out(1.2)",
+            },
+            "-=0.2",
+          );
+        }
+      });
     },
     { scope: sectionRef },
   );
@@ -50,18 +84,14 @@ export default function Tools() {
       />
       <div className="wrapper tools-wrapper flex flex-col gap-13.5">
         {/* Header */}
-        <div className="flex flex-col gap-2 max-w-lg">
-          <p className="text-xs uppercase tracking-widest text-background/40">
-            Stack
-          </p>
-          <h2 className="bold-title text-background leading-tight">
-            Tool &amp; Tech
-          </h2>
-          <p className="text-muted-foreground text-sm leading-loose mt-2">
-            The tools I reach for every day — from AI copilots to databases,
-            animations, and deployment pipelines.
-          </p>
-        </div>
+        <SectionHeader
+          subtitle="Stack"
+          title="Tool &amp; Tech"
+          description="The tools I reach for every day — from AI copilots to databases, animations, and deployment pipelines."
+          titleClassName="text-background"
+          subtitleClassName="text-background/40"
+          descriptionClassName="text-muted-foreground"
+        />
 
         {/* Category list */}
         <div className="flex flex-col divide-y divide-background/10">
@@ -72,8 +102,19 @@ export default function Tools() {
             >
               {/* Category label */}
               <div className="md:w-52 flex-none">
-                <span className="text-xs uppercase tracking-widest text-background/40">
-                  {category}
+                <span className="text-xs uppercase tracking-widest text-background/40 flex">
+                  {category.split("").map((char, charIdx) => (
+                    <span
+                      key={charIdx}
+                      className={
+                        char === " "
+                          ? "w-1"
+                          : "tool-cat-char inline-block opacity-0"
+                      }
+                    >
+                      {char}
+                    </span>
+                  ))}
                 </span>
               </div>
 
@@ -82,13 +123,14 @@ export default function Tools() {
                 {tools.map((tool) => (
                   <div
                     key={tool.name}
-                    className="group cursor-target flex items-center gap-2.5 border border-background/10 bg-background/5 hover:bg-(--tool-color-fade) px-3.5 py-2 transition-all duration-500 cursor-default hover:border-(--tool-color) hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-sm"
+                    className="tool-chip opacity-0 group cursor-target flex items-center gap-2.5 border border-background/10 bg-background/5 hover:bg-(--tool-color-fade) px-3.5 py-2 transition-all duration-500 cursor-default hover:border-(--tool-color) hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-sm"
                     style={
                       {
-                        "--tool-color": tool.color || "currentColor",
-                        "--tool-color-fade":
-                          `${tool.color}15` || "rgba(255,255,255,0.05)",
-                      } as any
+                        "--tool-color": tool.color ?? "currentColor",
+                        "--tool-color-fade": tool.color
+                          ? `${tool.color}15`
+                          : "rgba(255,255,255,0.05)",
+                      } as ToolChipStyle
                     }
                   >
                     {/* Icon */}

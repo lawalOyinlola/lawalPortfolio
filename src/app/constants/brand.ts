@@ -12,7 +12,9 @@ export const BRAND = {
   ogImage: "/og-image.jpg",
   icons: {
     icon: "/icons/favicon-32.png",
+    iconDark: "/icons/dark/favicon-32.png",
     apple: "/icons/apple-touch-icon.png",
+    appleDark: "/icons/dark/apple-touch-icon.png",
   },
   email: "oyinlolalawal1705@gmail.com",
   phone: PHONE_E164,

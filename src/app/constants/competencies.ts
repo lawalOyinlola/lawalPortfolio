@@ -1,3 +1,6 @@
+import { COUNTRIES_REACHED, YEARS_OF_EXPERIENCE } from "./stats";
+import { PROJECTS } from "./projects";
+
 export type Competency = {
   title: string;
   description: string;
@@ -222,14 +225,14 @@ export const ADAPTABILITY_ITEMS: AdaptabilityItem[] = [
       "Achieved through code-splitting, lazy loading, and systematic image optimization across production FinTech applications.",
   },
   {
-    metric: "3+",
+    metric: `${YEARS_OF_EXPERIENCE}+`,
     label: "Years of Engineering",
     detail:
       "From animal nutrition academia to shipping production-grade software — a deliberate, disciplined pivot driven by engineering curiosity.",
   },
   {
-    metric: "2",
-    label: "Countries, 12+ Projects",
+    metric: `${PROJECTS.length}+`,
+    label: `Projects, ${COUNTRIES_REACHED} Countries`,
     detail:
       "Deployed solutions across Sierra Leone and Nigeria, building inclusive digital infrastructure for underserved markets.",
   },

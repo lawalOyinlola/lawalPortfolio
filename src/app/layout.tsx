@@ -11,17 +11,35 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: {
     default: `${BRAND.name} | ${BRAND.title}`,
-    template: `%s | ${BRAND.name}`,
+    template: `${BRAND.name} | %s`,
   },
   description: BRAND.description,
   keywords: BRAND.keywords,
   authors: [{ name: BRAND.name, url: BRAND.url }],
   creator: BRAND.name,
   metadataBase: new URL(BRAND.url),
-  icons: {
-    icon: BRAND.icons.icon,
-    apple: BRAND.icons.apple,
-  },
+  icons: [
+    {
+      rel: "icon",
+      url: BRAND.icons.icon,
+      media: "(prefers-color-scheme: light)",
+    },
+    {
+      rel: "icon",
+      url: BRAND.icons.iconDark,
+      media: "(prefers-color-scheme: dark)",
+    },
+    {
+      rel: "apple-touch-icon",
+      url: BRAND.icons.apple,
+      media: "(prefers-color-scheme: light)",
+    },
+    {
+      rel: "apple-touch-icon",
+      url: BRAND.icons.appleDark,
+      media: "(prefers-color-scheme: dark)",
+    },
+  ],
   openGraph: {
     type: "website",
     locale: "en_US",

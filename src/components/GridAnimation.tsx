@@ -269,7 +269,14 @@ const GridAnimation = ({
     },
     {
       scope: containerRef,
-      dependencies: [ready, triggerRef, scrubStart, width, height],
+      dependencies: [
+        ready,
+        triggerRef,
+        scrubStart,
+        width,
+        height,
+        prefersReducedMotion,
+      ],
     },
   );
 

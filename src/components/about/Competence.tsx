@@ -5,8 +5,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { COMPETENCIES } from "@/app/constants/competencies";
-import { BRAND_STATS } from "@/app/constants/stats";
-import Clients from "./AboutClients";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -14,9 +14,12 @@ if (typeof window !== "undefined") {
 
 export default function Competence() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useGSAP(
     () => {
+      if (prefersReducedMotion) return;
+
       gsap.fromTo(
         ".competency-card",
         { opacity: 0, y: 32 },
@@ -29,27 +32,12 @@ export default function Competence() {
           scrollTrigger: {
             trigger: ".competency-grid",
             start: "top 80%",
-          },
-        },
-      );
-
-      gsap.fromTo(
-        ".stat-pill",
-        { opacity: 0, y: 16 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: "power2.out",
-          stagger: 0.08,
-          scrollTrigger: {
-            trigger: ".stats-strip",
-            start: "top 85%",
+            // toggleActions: "play none none reverse",
           },
         },
       );
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [prefersReducedMotion] },
   );
 
   return (
@@ -57,18 +45,13 @@ export default function Competence() {
       {/* ── Skills Grid ── */}
       <section className="flex-center">
         <div className="wrapper pb-30 flex flex-col gap-13.5 text-foreground/40">
-          <div className="flex flex-col gap-1 max-w-lg">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">
-              What I do
-            </p>
-            <h2 className="bold-title leading-tight text-primary">
-              My&nbsp;Competence
-            </h2>
-            <p className="text-sm leading-loose mt-2">
-              A deliberate stack of skills built to ship robust, performant, and
-              accessible digital products end to end.
-            </p>
-          </div>
+          <SectionHeader
+            subtitle="What I do"
+            title="My Competence"
+            description="A deliberate stack of skills built to ship robust, performant, and accessible digital products end to end."
+            className="max-w-[68ch]"
+            descriptionClassName="max-w-xl"
+          />
 
           {/* Skill cards — Mist aesthetic */}
           <div className="competency-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
