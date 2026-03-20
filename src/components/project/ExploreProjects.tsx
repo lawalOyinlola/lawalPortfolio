@@ -13,6 +13,14 @@ import {
 import { PROJECTS } from "@/app/constants/projects";
 import Autoplay from "embla-carousel-autoplay";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP, ScrollTrigger);
+}
 
 export default function ExploreProjects({
   currentProjectSlug,
@@ -38,6 +46,8 @@ export default function ExploreProjects({
     return [autoplayRef.current];
   }, [prefersReducedMotion]);
 
+  const containerRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     return () => {
       autoplayRef.current?.stop?.();
@@ -45,28 +55,43 @@ export default function ExploreProjects({
     };
   }, []);
 
+  useGSAP(
+    () => {
+      // Don't animate if user prefers reduced motion
+      if (prefersReducedMotion) {
+        gsap.set(".explore-item", { opacity: 1, y: 0 });
+        return;
+      }
+
+      gsap.fromTo(
+        ".explore-item",
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 40%",
+          },
+        },
+      );
+    },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
+  );
+
   if (otherProjects.length === 0) return null;
 
   return (
-    <section className="flex-center">
+    <section ref={containerRef} className="flex-center overflow-hidden">
       <div className="wrapper pb-30">
-        {/* <div className="py-3.75">
-          <p className="text-sm text-muted-foreground mb-3.75">
-            Other projects
-          </p>
-          <h2 className="header normal-case leading-none">
-            Explore more projects
-          </h2>
-        </div> */}
-
-        <div className="py-3.75">
-          <p className="text-sm uppercase tracking-widest text-foreground/40 mb-2">
-            Explore other projects
-          </p>
-          <h2 className="bold-title uppercase leading-none max-w-[13ch]">
-            More projects
-          </h2>
-        </div>
+        <SectionHeader
+          subtitle="Explore other projects"
+          title="More projects"
+          className="max-w-2xl"
+        />
 
         <Carousel
           opts={{
@@ -84,7 +109,7 @@ export default function ExploreProjects({
               >
                 <Link
                   href={`/projects/${project.slug}`}
-                  className="flex flex-col gap-5 group/card w-full"
+                  className="explore-item opacity-0 flex flex-col gap-5 group/card w-full"
                 >
                   <div className="relative w-full aspect-4/3 overflow-hidden bg-foreground/5">
                     <Image

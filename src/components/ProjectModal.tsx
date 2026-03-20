@@ -218,7 +218,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
         className="relative w-full h-full pointer-events-none"
         style={
           {
-            "--sq1-height": "2.75rem",
+            "--sq1-height": "2.6rem",
             "--sq1-width": "8.15rem",
             "--sq-pos": "1.125rem",
             "--sq2-bottom": "calc(var(--sq-pos) + var(--sq1-height))",
