@@ -45,7 +45,6 @@ const Navbar = ({ ready = true }: NavbarProps) => {
       )}
 
       {/* Minimal Nav at bottom of the page */}
-
       {ready && (
         <div className="app-mini-nav fixed bottom-0 inset-x-0 w-full p-4.5 py-3 flex justify-between items-center z-20 transition-opacity duration-200">
           <MenuOverlay
@@ -161,7 +160,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
 
               <Magnetic
                 strength={isProjectOpen ? 0 : 0.5}
-                className={!isMenuOpen ? "z-30" : "z-20"}
+                className={!isMenuOpen ? "z-30 h-11" : "z-20"}
               >
                 <Button
                   onClick={() => setIsProjectOpen((prev) => !prev)}
