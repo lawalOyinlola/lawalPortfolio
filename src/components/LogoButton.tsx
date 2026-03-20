@@ -9,7 +9,6 @@ import { useGSAP } from "@gsap/react";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { BRAND_LETTERS } from "@/app/constants";
 import { buttonVariants } from "./ui/button";
-import { HoverFlipText } from "./ui/hover-flip-text";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollToPlugin);
@@ -67,7 +66,11 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
     >
       <Image src="/icons/menuLogo.svg" alt="Logo Icon" width={20} height={20} />
       <span aria-hidden="true" className="text-base font-semibold">
-        <HoverFlipText text={BRAND_LETTERS} charClassName="char" />
+        {BRAND_LETTERS.map((char, i) => (
+          <span key={i} className="char inline-block">
+            {char}
+          </span>
+        ))}
       </span>
     </Link>
   );
