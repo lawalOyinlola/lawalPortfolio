@@ -6,18 +6,20 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { usePathname, useRouter } from "next/navigation";
-import { BRAND, BRAND_LETTERS } from "@/app/constants";
+import { BRAND } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { handleNavigation } from "@/lib/navigation";
+import { handleEmailClick } from "@/lib/utils";
 import {
   GithubLogoIcon,
   LinkedinLogoIcon,
   TwitterLogoIcon,
   InstagramLogoIcon,
   WhatsappLogoIcon,
+  EnvelopeSimpleIcon,
 } from "@phosphor-icons/react";
 import type { Icon } from "@phosphor-icons/react";
-import { Button, buttonVariants } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import Magnetic from "./ui/Magnetic";
 
 interface FooterProps {
@@ -61,7 +63,7 @@ const SOCIAL_ICON_MAP: Record<string, Icon> = {
 
 function Footer({ className }: FooterProps) {
   const footerRef = useRef<HTMLElement>(null);
-  const { isSE } = useWindowDimensions();
+  const { isSE, zFold } = useWindowDimensions();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -169,7 +171,7 @@ function Footer({ className }: FooterProps) {
       className={`h-full bg-foreground text-background overflow-hidden flex-center ${className ?? ""}`}
     >
       <div
-        className={`wrapper min-h-screen pb-1 flex justify-between flex-col ${isSE ? "py-4" : ""}`}
+        className={`wrapper min-h-screen pb-1 flex justify-between flex-col max-sm:pb-2 max-sm:pt-4.5 ${isSE ? "py-2" : ""}`}
       >
         {/* Top Section */}
         <div
@@ -182,7 +184,7 @@ function Footer({ className }: FooterProps) {
               alt={`${BRAND.shortName} logo`}
               width={120}
               height={120}
-              className="invert"
+              className={`invert ${zFold ? " " : "max-[376px]:hidden"}`}
             />
             <p className="text-sm leading-relaxed text-background/70">
               Engineering isn&apos;t just about writing code — it&apos;s about
@@ -275,6 +277,26 @@ function Footer({ className }: FooterProps) {
                     </li>
                   );
                 })}
+
+                <li>
+                  <Magnetic strength={0.1} radius={80}>
+                    <a
+                      onClick={handleEmailClick}
+                      className={buttonVariants({
+                        variant: "link",
+                        className:
+                          "group text-background! text-sm! font-normal! p-0! py-1! h-fit flex justify-start items-center overflow-hidden max-w-[10ch] min-[320px]:max-w-[148px] min-[392px]:max-w-none",
+                      })}
+                    >
+                      <EnvelopeSimpleIcon
+                        size={16}
+                        weight="bold"
+                        className="shrink-0 text-background/30 group-hover:text-background/70 transition-colors"
+                      />
+                      <span className="truncate">{BRAND.email}</span>
+                    </a>
+                  </Magnetic>
+                </li>
               </ul>
             </nav>
           </div>
@@ -283,7 +305,7 @@ function Footer({ className }: FooterProps) {
         {/* Bottom: Large Brand Letters */}
         <div className="flex w-full mt-12 sm:mt-0">
           <div className="relative flex gap-0.5 sm:gap-1 w-full pr-12 md:pr-20">
-            {BRAND_LETTERS.map((letter, i) => (
+            {BRAND.shortName.split("").map((letter, i) => (
               <div key={i} className="flex-1 flex flex-col">
                 <span className="text-[min(2.5vw,14px)] md:text-sm font-semibold tracking-tighter md:tracking-tight px-0.5 sm:px-2 md:px-4 pb-1 md:pb-2 text-center md:text-left overflow-visible">
                   {TAGLINE_WORDS[i] ?? ""}

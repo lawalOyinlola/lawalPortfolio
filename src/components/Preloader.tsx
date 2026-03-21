@@ -4,9 +4,10 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { BRAND } from "../app/constants/brand";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
+import { SplitText } from "gsap/SplitText";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP);
+  gsap.registerPlugin(useGSAP, SplitText);
 }
 
 interface PreloaderProps {
@@ -21,6 +22,7 @@ const colCentre = (i: number, halfCols: number) => (i + 0.5) / halfCols;
 
 export default function Preloader({ setComplete }: PreloaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const brandRef = useRef<HTMLHeadingElement>(null);
   const sloganRef = useRef<HTMLSpanElement>(null);
   const progressProxy = useRef({ value: 0 });
   const { isMobile, isMounted } = useWindowDimensions();
@@ -33,7 +35,14 @@ export default function Preloader({ setComplete }: PreloaderProps) {
   // Brand-name flip
   useGSAP(
     () => {
-      gsap.to(".char", {
+      if (!brandRef.current) return;
+
+      const split = new SplitText(brandRef.current, {
+        type: "chars",
+        charsClass: "char inline-block",
+      });
+
+      gsap.to(split.chars, {
         scaleX: -1,
         ease: "expo.inOut",
         duration: 1.2,
@@ -41,6 +50,8 @@ export default function Preloader({ setComplete }: PreloaderProps) {
         repeat: 2,
         yoyo: true,
       });
+
+      return () => split.revert();
     },
     { scope: containerRef },
   );
@@ -140,14 +151,11 @@ export default function Preloader({ setComplete }: PreloaderProps) {
     >
       {/* Brand Name */}
       <h1
+        ref={brandRef}
         aria-label={brandName}
         className="relative title text-foreground text-[clamp(3rem,15vw,9rem)] flex-center h-1/2 select-none pointer-events-none"
       >
-        {brandName.split("").map((char, i) => (
-          <span key={i} className="char inline-block">
-            {char}
-          </span>
-        ))}
+        {brandName}
       </h1>
 
       {/* Slogan + logo — bottom quarter, above grid but below brand name */}

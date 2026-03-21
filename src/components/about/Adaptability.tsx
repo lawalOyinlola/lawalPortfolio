@@ -32,8 +32,7 @@ export default function Adaptability() {
           stagger: 0.1,
           scrollTrigger: {
             trigger: ".adapt-grid",
-            start: "top 80%",
-            // toggleActions: "play none none reverse",
+            start: "top 70%",
           },
         },
       );

@@ -45,5 +45,11 @@ export function useWindowDimensions() {
     windowDimensions.height < 670 &&
     windowDimensions.width < 400;
 
-  return { ...windowDimensions, isMobile, isSE, isMounted };
+  const zFold =
+    isMounted &&
+    windowDimensions.width > 0 &&
+    windowDimensions.width < 350 &&
+    windowDimensions.height > 700;
+
+  return { ...windowDimensions, isMobile, isSE, isMounted, zFold };
 }

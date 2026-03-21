@@ -1,30 +1,57 @@
+"use client";
+
+import { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { Project } from "@/app/constants/projects";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP, ScrollTrigger);
+}
 
 export default function ProjectDetails({ project }: { project: Project }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        ".project-detail-item",
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 40%",
+          },
+        },
+      );
+    },
+    { scope: containerRef },
+  );
   if (!project.deeperDetails || project.deeperDetails.length === 0) return null;
 
   const details = project.deeperDetails.slice(0, 4);
   const count = details.length;
 
   return (
-    <section id="deeper-details" className="bg-muted flex-center">
+    <section
+      ref={containerRef}
+      id="deeper-details"
+      className="bg-muted flex-center"
+    >
       <div className="wrapper">
-        {/* <div className="py-3.75">
-          <p className="text-sm text-muted-foreground mb-3.75">Details</p>
-          <h2 className="header normal-case leading-none">
-            Project views & more details
-          </h2>
-        </div> */}
-
-        <div className="py-3.75">
-          <p className="text-sm uppercase tracking-widest text-foreground/40 mb-2">
-            Views & details
-          </p>
-          <h2 className="bold-title uppercase leading-none max-w-[13ch]">
-            Project views
-          </h2>
-        </div>
+        <SectionHeader
+          subtitle="Views & details"
+          title="Project views"
+          className="max-w-2xl"
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-y-9 py-4.5">
           {details.map((detail, index) => {
@@ -35,7 +62,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
             return (
               <div
                 key={`${detail.title}-${detail.image}`}
-                className={`flex flex-col gap-5 ${spanClass}`}
+                className={`project-detail-item opacity-0 flex flex-col gap-5 ${spanClass}`}
               >
                 <div className="relative w-full aspect-4/3 md:aspect-video overflow-hidden bg-muted">
                   <Image

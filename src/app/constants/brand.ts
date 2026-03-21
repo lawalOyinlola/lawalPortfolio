@@ -60,5 +60,3 @@ export const BRAND = {
   tagline: ["Logic", "Architecture", "Workmanship", "Agility", "Longevity"],
   yearFounded: 2023,
 };
-
-export const BRAND_LETTERS = BRAND.shortName.split("");

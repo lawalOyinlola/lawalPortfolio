@@ -5,11 +5,12 @@ import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { SplitText } from "gsap/SplitText";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FEATURED_PROJECTS } from "@/app/constants";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger);
+  gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, SplitText);
 }
 
 const COUNT = FEATURED_PROJECTS.length;
@@ -102,9 +103,9 @@ function Projects() {
     });
 
     for (let idx = 0; idx < COUNT; idx++) {
-      document.querySelectorAll(`.name-char-${idx}`).forEach((el) => {
-        gsap.set(el, { scaleX: 1, opacity: 1 });
-      });
+      const split = new SplitText(`.name-split-${idx}`, { type: "chars" });
+      gsap.set(split.chars, { scaleX: 1, opacity: 1 });
+
       document.querySelectorAll(`.img-${idx}`).forEach((el) => {
         gsap.set(el, { clipPath: "inset(0 0 0 0)" });
       });
@@ -263,8 +264,13 @@ function Projects() {
       );
 
       // Name: flip characters in
+      const nameSplit = new SplitText(`.name-split-${target}`, {
+        type: "chars",
+        charsClass: "inline-block",
+      });
+
       tl.fromTo(
-        `.name-char-${target}`,
+        nameSplit.chars,
         { scaleX: -1, opacity: 0.5 },
         {
           scaleX: 1,
@@ -461,18 +467,10 @@ function Projects() {
                       {project.category}
                     </p>
                     <h3
-                      className="bold-title md:text-auto max-sm:-mt-2"
+                      className={`project-name bold-title md:text-auto max-sm:-mt-2 name-split-${i}`}
                       aria-label={project.name}
                     >
-                      {project.name.split("").map((char, c) => (
-                        <span
-                          key={c}
-                          aria-hidden="true"
-                          className={`name-char-${i} inline-block`}
-                        >
-                          {char === " " ? "\u00A0" : char}
-                        </span>
-                      ))}
+                      {project.name}
                     </h3>
                   </div>
                   <p className={`desc-${i} text-sm md:text-base mt-2 md:mt-0`}>

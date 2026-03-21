@@ -2,7 +2,13 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { SplitText } from "gsap/SplitText";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(SplitText);
+}
 
 interface HoverFlipTextProps {
   text: string | string[];
@@ -23,8 +29,6 @@ export function HoverFlipText({
     const chars = containerRef.current?.querySelectorAll(".hover-flip-char");
     if (chars && chars.length > 0) {
       gsap.killTweensOf(chars, "rotateY");
-      // Force it to start from 0 and spin to 360.
-      // Since 360 visually equals 0, the exit has no 'return' animation needed.
       gsap.fromTo(
         chars,
         { rotateY: 0 },
@@ -38,7 +42,17 @@ export function HoverFlipText({
     }
   };
 
-  const charArray = Array.isArray(text) ? text : text.split("");
+  useGSAP(
+    () => {
+      if (containerRef.current) {
+        new SplitText(containerRef.current, {
+          type: "chars",
+          charsClass: `hover-flip-char inline-block ${charClassName}`,
+        });
+      }
+    },
+    { scope: containerRef },
+  );
 
   return (
     <span
@@ -47,15 +61,7 @@ export function HoverFlipText({
       className={`inline-flex ${className}`}
       role="presentation"
     >
-      {charArray.map((char, i) => (
-        <span
-          key={i}
-          className={`hover-flip-char inline-block ${charClassName}`}
-          style={{ whiteSpace: char === " " ? "pre" : "normal" }}
-        >
-          {char}
-        </span>
-      ))}
+      {text}
     </span>
   );
 }

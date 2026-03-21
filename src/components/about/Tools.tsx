@@ -5,6 +5,7 @@ import { useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { TOOL_CATEGORIES } from "@/app/constants/competencies";
 import TargetCursor from "../TargetCursor";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -15,7 +16,7 @@ type ToolChipStyle = CSSProperties & {
 };
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP, ScrollTrigger);
+  gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 }
 
 export default function Tools() {
@@ -26,20 +27,26 @@ export default function Tools() {
       const categories = gsap.utils.toArray<HTMLElement>(".tool-category");
 
       categories.forEach((cat) => {
-        const chars = cat.querySelectorAll(".tool-cat-char");
+        const label = cat.querySelector(".tool-cat-label");
+        if (!label) return;
+
+        const split = new SplitText(label, {
+          type: "chars",
+          charsClass: "tool-cat-char inline-block opacity-0",
+        });
+
         const chips = cat.querySelectorAll(".tool-chip");
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: cat,
             start: "top 85%",
-            // toggleActions: "play none none reverse",
           },
         });
 
-        if (chars.length > 0) {
+        if (split.chars.length > 0) {
           tl.fromTo(
-            chars,
+            split.chars,
             { opacity: 0, x: -10 },
             {
               opacity: 1,
@@ -86,7 +93,7 @@ export default function Tools() {
         {/* Header */}
         <SectionHeader
           subtitle="Stack"
-          title="Tool &amp; Tech"
+          title={<>Tool &amp; Tech</>}
           description="The tools I reach for every day — from AI copilots to databases, animations, and deployment pipelines."
           titleClassName="text-background"
           subtitleClassName="text-background/40"
@@ -102,19 +109,8 @@ export default function Tools() {
             >
               {/* Category label */}
               <div className="md:w-52 flex-none">
-                <span className="text-xs uppercase tracking-widest text-background/40 flex">
-                  {category.split("").map((char, charIdx) => (
-                    <span
-                      key={charIdx}
-                      className={
-                        char === " "
-                          ? "w-1"
-                          : "tool-cat-char inline-block opacity-0"
-                      }
-                    >
-                      {char}
-                    </span>
-                  ))}
+                <span className="tool-cat-label text-xs uppercase tracking-widest text-background/40 flex">
+                  {category}
                 </span>
               </div>
 

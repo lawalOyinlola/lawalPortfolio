@@ -4,11 +4,12 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { cn } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP, ScrollTrigger);
+  gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 }
 
 export interface SectionHeaderProps extends Omit<
@@ -34,17 +35,16 @@ export function SectionHeader({
   ...props
 }: SectionHeaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useGSAP(
     () => {
       const items = gsap.utils.toArray<HTMLElement>(".sh-item");
-      const titleItem = containerRef.current?.querySelectorAll(".sh-title");
 
       if (prefersReducedMotion) {
         if (items.length > 0) gsap.set(items, { opacity: 1, y: 0 });
-        if (titleItem && titleItem.length > 0)
-          gsap.set(titleItem, { opacity: 1, scaleX: 1 });
+        if (titleRef.current) gsap.set(titleRef.current, { opacity: 1 });
         return;
       }
 
@@ -72,9 +72,14 @@ export function SectionHeader({
         );
       }
 
-      if (titleItem && titleItem.length > 0) {
+      if (titleRef.current && typeof title === "string") {
+        const split = new SplitText(titleRef.current, {
+          type: "chars",
+          charsClass: "sh-title inline-block",
+        });
+
         tl.fromTo(
-          titleItem,
+          split.chars,
           { opacity: 0.4, scaleX: -1 },
           {
             opacity: 1,
@@ -85,9 +90,20 @@ export function SectionHeader({
           },
           0.1, // Let it start slightly after the subtitle starts
         );
+      } else if (titleRef.current) {
+        tl.fromTo(
+          titleRef.current,
+          { opacity: 0, x: -20 },
+          { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" },
+          0.1,
+        );
       }
     },
-    { scope: containerRef, dependencies: [prefersReducedMotion] },
+    {
+      scope: containerRef,
+      dependencies: [prefersReducedMotion, title],
+      revertOnUpdate: true,
+    },
   );
 
   return (
@@ -110,32 +126,13 @@ export function SectionHeader({
       )}
       <div className="w-fit">
         <h2
+          ref={titleRef}
           className={cn(
             "bold-title leading-tight text-primary flex flex-wrap",
             titleClassName,
           )}
         >
-          {typeof title === "string" ? (
-            title.split(" ").map((word, wordIdx) => (
-              <span
-                key={wordIdx}
-                className="inline-block whitespace-nowrap mr-[0.25em] last:mr-0"
-              >
-                {word.split("").map((char, charIdx) => (
-                  <span
-                    key={charIdx}
-                    className="sh-title opacity-0 origin-center inline-block"
-                  >
-                    {char}
-                  </span>
-                ))}
-              </span>
-            ))
-          ) : (
-            <span className="sh-title opacity-0 origin-left inline-block">
-              {title}
-            </span>
-          )}
+          {title}
         </h2>
       </div>
       {description && (

@@ -121,7 +121,7 @@
 
 @layer components {
   .bold-title {
-    @apply text-[clamp(2.5rem,6vw,5rem)] font-semibold tracking-tighter md:-tracking-[2px] leading-tight md:leading-17.5 uppercase;
+    @apply text-[clamp(2.5rem,6vw,5rem)] font-semibold tracking-tighter md:-tracking-[2px] leading-normal md:leading-17.5 uppercase;
   }
 
   .contact-title {

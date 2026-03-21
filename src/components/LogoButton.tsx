@@ -7,11 +7,12 @@ import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import { BRAND_LETTERS } from "@/app/constants";
+import { SplitText } from "gsap/SplitText";
+import { BRAND } from "@/app/constants/brand";
 import { buttonVariants } from "./ui/button";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP, ScrollToPlugin);
+  gsap.registerPlugin(useGSAP, ScrollToPlugin, SplitText);
 }
 
 interface LogoButtonProps {
@@ -20,6 +21,7 @@ interface LogoButtonProps {
 
 const LogoButton = ({ ready = true }: LogoButtonProps) => {
   const buttonRef = useRef<HTMLAnchorElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
   const pathname = usePathname();
 
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -28,26 +30,32 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
 
     if (pathname === "/" && !isModifiedClick) {
       e.preventDefault();
-      if (pathname === "/") {
-        gsap.to(window, {
-          scrollTo: { y: 0, autoKill: true },
-          duration: 2,
-          ease: "power3.out",
-        });
-      }
+      gsap.to(window, {
+        scrollTo: { y: 0, autoKill: true },
+        duration: 2,
+        ease: "power3.out",
+      });
     }
   };
 
   useGSAP(
     () => {
-      if (!ready) return;
-      gsap.to(".char", {
+      if (!ready || !textRef.current) return;
+
+      const split = new SplitText(textRef.current, {
+        type: "chars",
+        charsClass: "char inline-block",
+      });
+
+      gsap.to(split.chars, {
         scaleX: -1,
         ease: "expo.inOut",
         duration: 1.6,
         stagger: { amount: 0.8, from: "start" },
         delay: 1.4,
       });
+
+      return () => split.revert();
     },
     { scope: buttonRef, dependencies: [ready] },
   );
@@ -65,12 +73,12 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
       })}
     >
       <Image src="/icons/menuLogo.svg" alt="Logo Icon" width={20} height={20} />
-      <span aria-hidden="true" className="text-base font-semibold">
-        {BRAND_LETTERS.map((char, i) => (
-          <span key={i} className="char inline-block">
-            {char}
-          </span>
-        ))}
+      <span
+        ref={textRef}
+        aria-hidden="true"
+        className="text-base font-semibold"
+      >
+        {BRAND.shortName}
       </span>
     </Link>
   );

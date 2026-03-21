@@ -4,10 +4,12 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { SpeakerHighIcon, SpeakerSlashIcon } from "@phosphor-icons/react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import ContactButtons from "./ui/ContactButtons";
 import { Button } from "./ui/button";
+import { handleEmailClick } from "@/lib/utils";
 
 declare global {
   interface Window {
@@ -16,11 +18,13 @@ declare global {
 }
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+  gsap.registerPlugin(ScrollTrigger, useGSAP, SplitText);
 }
 
 function ContactsRef() {
   const contactRef = useRef<HTMLDivElement>(null);
+  const title1Ref = useRef<HTMLSpanElement>(null);
+  const title2Ref = useRef<HTMLSpanElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
@@ -35,7 +39,6 @@ function ContactsRef() {
   const initAudio = useCallback(() => {
     if (prefersReducedMotion || !ambientAudioEnabled) return;
 
-    // If context exists and is running/suspended, we're good. If it's closed, we need a new one.
     if (audioContextRef.current && audioContextRef.current.state !== "closed")
       return;
 
@@ -72,7 +75,6 @@ function ContactsRef() {
     source.start();
   }, [prefersReducedMotion, ambientAudioEnabled]);
 
-  // Persist preference
   useEffect(() => {
     localStorage.setItem("ambientAudioEnabled", String(ambientAudioEnabled));
 
@@ -85,7 +87,6 @@ function ContactsRef() {
         });
       }
     } else {
-      // If we're enabling audio and the section is active, start playing
       const trigger = ScrollTrigger.getById("contact-audio-trigger");
       if (trigger?.isActive) {
         initAudio();
@@ -116,16 +117,26 @@ function ContactsRef() {
       window.removeEventListener("touchstart", handleGlobalInteraction);
       window.removeEventListener("mousedown", handleGlobalInteraction);
     };
-  }, []);
+  }, [prefersReducedMotion, ambientAudioEnabled]);
 
   useGSAP(
     () => {
       initAudio();
 
-      const chars = gsap.utils.toArray<HTMLElement>(".contact-char");
-      if (chars.length > 0) {
+      if (title1Ref.current && title2Ref.current) {
+        const split1 = new SplitText(title1Ref.current, {
+          type: "chars",
+          charsClass: "contact-char inline-block origin-center opacity-0",
+        });
+        const split2 = new SplitText(title2Ref.current, {
+          type: "chars",
+          charsClass: "contact-char inline-block origin-center opacity-0",
+        });
+
+        const allChars = [...split1.chars, ...split2.chars];
+
         gsap.fromTo(
-          chars,
+          allChars,
           { opacity: 0.4, scaleX: -1 },
           {
             opacity: 1,
@@ -135,68 +146,69 @@ function ContactsRef() {
             ease: "expo.inOut",
             scrollTrigger: {
               trigger: contactRef.current,
-              start: "top 60%",
+              start: "top center",
               toggleActions: "play none none reverse",
             },
           },
         );
+
+        ScrollTrigger.create({
+          id: "contact-audio-trigger",
+          trigger: contactRef.current,
+          start: "top center",
+          end: "bottom center",
+          onToggle: (self) => {
+            if (self.isActive && !prefersReducedMotion && ambientAudioEnabled) {
+              if (audioContextRef.current?.state === "suspended") {
+                audioContextRef.current.resume();
+              }
+              if (gainNodeRef.current) {
+                gsap.to(gainNodeRef.current.gain, {
+                  value: 0.1,
+                  duration: 1.2,
+                  ease: "power2.inOut",
+                });
+              }
+            } else {
+              if (gainNodeRef.current) {
+                gsap.to(gainNodeRef.current.gain, {
+                  value: 0,
+                  duration: 0.8,
+                  ease: "power2.out",
+                });
+              }
+            }
+          },
+          onUpdate: (self) => {
+            if (
+              !self.isActive &&
+              gainNodeRef.current &&
+              gainNodeRef.current.gain.value > 0
+            ) {
+              gsap.set(gainNodeRef.current.gain, { value: 0 });
+            }
+          },
+        });
+
+        return () => {
+          split1.revert();
+          split2.revert();
+          if (sourceRef.current) {
+            try {
+              sourceRef.current.stop();
+            } catch {
+              // Ignore - source may already be stopped
+            }
+            sourceRef.current.disconnect();
+            sourceRef.current = null;
+          }
+          if (audioContextRef.current) {
+            audioContextRef.current.close().catch(() => {});
+            audioContextRef.current = null;
+          }
+          gainNodeRef.current = null;
+        };
       }
-
-      ScrollTrigger.create({
-        id: "contact-audio-trigger",
-        trigger: contactRef.current,
-        start: "top center",
-        end: "bottom center",
-        onToggle: (self) => {
-          if (self.isActive && !prefersReducedMotion && ambientAudioEnabled) {
-            if (audioContextRef.current?.state === "suspended") {
-              audioContextRef.current.resume();
-            }
-            if (gainNodeRef.current) {
-              gsap.to(gainNodeRef.current.gain, {
-                value: 0.1,
-                duration: 1.2,
-                ease: "power2.inOut",
-              });
-            }
-          } else {
-            if (gainNodeRef.current) {
-              gsap.to(gainNodeRef.current.gain, {
-                value: 0,
-                duration: 0.8,
-                ease: "power2.out",
-              });
-            }
-          }
-        },
-        onUpdate: (self) => {
-          // If we are scrolling very fast and somehow leave the range, double check gain
-          if (
-            !self.isActive &&
-            gainNodeRef.current &&
-            gainNodeRef.current.gain.value > 0
-          ) {
-            gsap.set(gainNodeRef.current.gain, { value: 0 });
-          }
-        },
-      });
-
-      return () => {
-        if (sourceRef.current) {
-          try {
-            sourceRef.current.stop();
-          } catch {
-            // Ignore - source may already be stopped
-          }
-          sourceRef.current.disconnect();
-          sourceRef.current = null;
-        }
-        if (audioContextRef.current) {
-          audioContextRef.current.close().catch(() => {});
-          audioContextRef.current = null;
-        }
-        gainNodeRef.current = null;
-      };
     },
     { scope: contactRef },
   );
@@ -209,34 +221,24 @@ function ContactsRef() {
       <div className="wrapper max-w-screen w-full min-h-screen pt-4.5 flex flex-col gap-19">
         <div className="relative mt-2 grow w-full flex justify-end items-end overflow-hidden tv-static">
           <div className="tv-static-overlay" />
-          <h2 className="contact-title flex flex-col items-start">
-            <span className="inline-flex bg-background px-2 py-1">
-              {"LET'S  EXECUTE".split("").map((char, charIdx) => (
-                <span
-                  key={charIdx}
-                  className={
-                    char === " "
-                      ? "w-3 inline-block"
-                      : "contact-char inline-block origin-center opacity-0"
-                  }
-                >
-                  {char === " " ? "\u00A0" : char}
-                </span>
-              ))}
+          <h2
+            className="contact-title flex flex-col items-start cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={handleEmailClick}
+            role="button"
+            tabIndex={0}
+            aria-label="Send us an email"
+          >
+            <span
+              ref={title1Ref}
+              className="inline bg-background px-2 py-1 box-decoration-clone leading-tight md:leading-snug"
+            >
+              LET&apos;S &nbsp;EXECUTE
             </span>
-            <span className="inline-flex bg-background px-2 py-1">
-              {"YOUR  NEXT PROJECT".split("").map((char, charIdx) => (
-                <span
-                  key={charIdx}
-                  className={
-                    char === " "
-                      ? "w-3 inline-block"
-                      : "contact-char inline-block origin-center opacity-0"
-                  }
-                >
-                  {char === " " ? "\u00A0" : char}
-                </span>
-              ))}
+            <span
+              ref={title2Ref}
+              className="inline bg-background px-2 py-1 box-decoration-clone leading-tight md:leading-snug"
+            >
+              YOUR &nbsp;NEXT &nbsp;PROJECT
             </span>
           </h2>
         </div>
