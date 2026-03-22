@@ -30,11 +30,22 @@ function ContactsRef() {
   const gainNodeRef = useRef<GainNode | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  const [ambientAudioEnabled, setAmbientAudioEnabled] = useState(() => {
-    if (typeof window === "undefined") return true;
+  const [ambientAudioEnabled, setAmbientAudioEnabled] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
     const saved = localStorage.getItem("ambientAudioEnabled");
-    return saved !== null ? saved === "true" : true;
-  });
+    if (saved !== null) {
+      setAmbientAudioEnabled(saved === "true");
+    }
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem("ambientAudioEnabled", String(ambientAudioEnabled));
+    }
+  }, [ambientAudioEnabled, isHydrated]);
 
   const initAudio = useCallback(() => {
     if (prefersReducedMotion || !ambientAudioEnabled) return;
@@ -125,11 +136,11 @@ function ContactsRef() {
 
       if (title1Ref.current && title2Ref.current) {
         const split1 = new SplitText(title1Ref.current, {
-          type: "chars",
+          type: "words,chars",
           charsClass: "contact-char inline-block origin-center opacity-0",
         });
         const split2 = new SplitText(title2Ref.current, {
-          type: "chars",
+          type: "words,chars",
           charsClass: "contact-char inline-block origin-center opacity-0",
         });
 
@@ -221,25 +232,26 @@ function ContactsRef() {
       <div className="wrapper max-w-screen w-full min-h-screen pt-4.5 flex flex-col gap-19">
         <div className="relative mt-2 grow w-full flex justify-end items-end overflow-hidden tv-static">
           <div className="tv-static-overlay" />
-          <h2
-            className="contact-title flex flex-col items-start cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={handleEmailClick}
-            role="button"
-            tabIndex={0}
-            aria-label="Send us an email"
-          >
-            <span
-              ref={title1Ref}
-              className="inline bg-background px-2 py-1 box-decoration-clone leading-tight md:leading-snug"
+          <h2 className="contact-title leading-none">
+            <button
+              type="button"
+              onClick={handleEmailClick}
+              aria-label="Send us an email"
+              className="flex flex-col items-start text-left focus-visible:outline-offset-4"
             >
-              LET&apos;S &nbsp;EXECUTE
-            </span>
-            <span
-              ref={title2Ref}
-              className="inline bg-background px-2 py-1 box-decoration-clone leading-tight md:leading-snug"
-            >
-              YOUR &nbsp;NEXT &nbsp;PROJECT
-            </span>
+              <span
+                ref={title1Ref}
+                className="inline bg-background px-2 py-1 box-decoration-clone leading-tight md:leading-snug"
+              >
+                LET&apos;S &nbsp;EXECUTE
+              </span>
+              <span
+                ref={title2Ref}
+                className="inline bg-background px-2 py-1 box-decoration-clone leading-tight md:leading-snug"
+              >
+                YOUR &nbsp;NEXT &nbsp;PROJECT
+              </span>
+            </button>
           </h2>
         </div>
 
@@ -248,10 +260,10 @@ function ContactsRef() {
             variant="ghost"
             size="icon"
             onClick={() => setAmbientAudioEnabled(!ambientAudioEnabled)}
-            className="rounded-full bg-background/5 border border-background/10 text-background/40 hover:text-background/90"
-            title={ambientAudioEnabled ? "Mute audio" : "Unmute audio"}
+            className="rounded-full"
+            title={!isHydrated || ambientAudioEnabled ? "Mute audio" : "Unmute audio"}
             aria-label={
-              ambientAudioEnabled
+              !isHydrated || ambientAudioEnabled
                 ? "Mute ambient audio"
                 : "Unmute ambient audio"
             }
