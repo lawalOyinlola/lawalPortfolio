@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
 }
 
 interface HoverFlipTextProps {
-  text: string | string[];
+  text: string;
   className?: string;
   charClassName?: string;
 }
@@ -46,19 +46,19 @@ export function HoverFlipText({
     () => {
       if (containerRef.current) {
         new SplitText(containerRef.current, {
-          type: "chars",
+          type: "words,chars",
           charsClass: `hover-flip-char inline-block ${charClassName}`,
         });
       }
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [text, charClassName] },
   );
 
   return (
     <span
       ref={containerRef}
       onMouseEnter={handleMouseEnter}
-      className={`inline-flex ${className}`}
+      className={`inline-block ${className}`}
       role="presentation"
     >
       {text}

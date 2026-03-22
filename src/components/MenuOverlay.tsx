@@ -8,6 +8,7 @@ import { BRAND } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { handleNavigation } from "@/lib/navigation";
+import { handleDirectionalFocus } from "@/lib/utils";
 import { HoverFlipText } from "./ui/hover-flip-text";
 
 interface MenuOverlayProps {
@@ -17,9 +18,9 @@ interface MenuOverlayProps {
 
 const NAV_LINKS: { label: string; href: string; anchor?: string }[] = [
   { label: "HOME", href: "/" },
-  { label: "COMPETENCE", href: "/about", anchor: "competence" },
+  { label: "ABOUT", href: "/about" },
   { label: "PROJECTS", href: "/projects" },
-  { label: "ADAPTABILITY", href: "/about", anchor: "adaptability" },
+  { label: "TOOLS & TECH", href: "/about", anchor: "tools-tech" },
   { label: "CONTACT", href: "/about", anchor: "contact" },
 ];
 
@@ -69,24 +70,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
         if (
           ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)
         ) {
-          const focusable = contentRef.current?.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-          );
-          if (focusable && focusable.length) {
-            const index = Array.from(focusable).indexOf(
-              document.activeElement as HTMLElement,
-            );
-            if (e.key === "ArrowDown" || e.key === "ArrowRight") {
-              const next = focusable[(index + 1) % focusable.length];
-              next.focus();
-              e.preventDefault();
-            } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-              const prev =
-                focusable[(index - 1 + focusable.length) % focusable.length];
-              prev.focus();
-              e.preventDefault();
-            }
-          }
+          handleDirectionalFocus(e, contentRef.current, "both");
         }
 
         if (e.key === "Tab") {

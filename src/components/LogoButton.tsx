@@ -43,7 +43,7 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
       if (!ready || !textRef.current) return;
 
       const split = new SplitText(textRef.current, {
-        type: "chars",
+        type: "words,chars",
         charsClass: "char inline-block",
       });
 

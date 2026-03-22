@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import { gsap } from "gsap";
 
 export interface TargetCursorProps {
@@ -29,6 +29,11 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
   );
   const tickerFnRef = useRef<(() => void) | null>(null);
   const activeStrengthRef = useRef({ current: 0 });
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const isMobile = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -358,7 +363,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     }
   }, [spinDuration, isMobile]);
 
-  if (isMobile) {
+  if (!isHydrated || isMobile) {
     return null;
   }
 

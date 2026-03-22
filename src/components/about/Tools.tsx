@@ -9,6 +9,7 @@ import { SplitText } from "gsap/SplitText";
 import { TOOL_CATEGORIES } from "@/app/constants/competencies";
 import TargetCursor from "../TargetCursor";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 type ToolChipStyle = CSSProperties & {
   "--tool-color": string;
@@ -21,9 +22,15 @@ if (typeof window !== "undefined") {
 
 export default function Tools() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useGSAP(
     () => {
+      if (prefersReducedMotion) {
+        gsap.set(".tool-cat-label", { opacity: 1 });
+        gsap.set(".tool-chip", { opacity: 1, x: 0 });
+        return;
+      }
       const categories = gsap.utils.toArray<HTMLElement>(".tool-category");
 
       categories.forEach((cat) => {
@@ -31,7 +38,7 @@ export default function Tools() {
         if (!label) return;
 
         const split = new SplitText(label, {
-          type: "chars",
+          type: "words,chars",
           charsClass: "tool-cat-char inline-block opacity-0",
         });
 
@@ -74,12 +81,13 @@ export default function Tools() {
         }
       });
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [prefersReducedMotion] },
   );
 
   return (
     <section
       ref={sectionRef}
+      id="tools-tech"
       className="relative z-1 flex-center bg-foreground text-background overflow-hidden"
     >
       <TargetCursor
@@ -93,10 +101,10 @@ export default function Tools() {
         {/* Header */}
         <SectionHeader
           subtitle="Stack"
-          title={<>Tool &amp; Tech</>}
+          title="Tool &amp; Tech"
           description="The tools I reach for every day — from AI copilots to databases, animations, and deployment pipelines."
           titleClassName="text-background"
-          subtitleClassName="text-background/40"
+          subtitleClassName="text-background/50"
           descriptionClassName="text-muted-foreground"
         />
 
@@ -109,7 +117,7 @@ export default function Tools() {
             >
               {/* Category label */}
               <div className="md:w-52 flex-none">
-                <span className="tool-cat-label text-xs uppercase tracking-widest text-background/40 flex">
+                <span className="tool-cat-label text-xs uppercase tracking-widest text-background/50">
                   {category}
                 </span>
               </div>
@@ -141,7 +149,7 @@ export default function Tools() {
                     </div>
 
                     {/* Label */}
-                    <span className="text-xs text-background/40 group-hover:text-(--tool-color) transition-colors duration-300 whitespace-nowrap font-medium">
+                    <span className="text-xs text-background/50 group-hover:text-(--tool-color) transition-colors duration-300 whitespace-nowrap font-medium">
                       {tool.name}
                     </span>
                   </div>

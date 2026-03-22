@@ -46,7 +46,7 @@ export default function Competence() {
         <div className="wrapper pb-30 flex flex-col gap-13.5 text-foreground/40">
           <SectionHeader
             subtitle="What I do"
-            title={<>My Competence</>}
+            title="My Competence"
             description="A deliberate stack of skills built to ship robust, performant, and accessible digital products end to end."
             className="max-w-[68ch]"
             descriptionClassName="max-w-xl"

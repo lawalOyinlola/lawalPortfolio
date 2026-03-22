@@ -7,15 +7,15 @@ import { useState, useEffect } from "react";
  * Uses window.matchMedia('(prefers-reduced-motion: reduce)')
  */
 export function usePrefersReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  });
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mediaQuery.matches);
+    setIsHydrated(true);
 
     const handler = (event: MediaQueryListEvent) => {
       setPrefersReducedMotion(event.matches);

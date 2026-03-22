@@ -69,7 +69,7 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
       className="relative z-1 h-dvh w-full flex-center items-end overflow-hidden bg-foreground text-background"
     >
       {/* Smokey cursor effect */}
-      <FluidCursorEffect />
+      <FluidCursorEffect triggerRef={aboutRef} />
 
       {/* Dusk grid animation in background */}
       <div className="absolute inset-0 z-2 opacity-80">
