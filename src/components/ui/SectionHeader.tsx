@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -37,9 +37,30 @@ export function SectionHeader({
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  // Helper to extract text from ReactNode for aria-label and SplitText check
+  const getTextContent = (node: React.ReactNode): string => {
+    if (typeof node === "string" || typeof node === "number") return String(node);
+    if (!node) return "";
+    if (Array.isArray(node)) return node.map(getTextContent).join("");
+    if (React.isValidElement(node)) {
+      // Cast props to access children safely in TypeScript
+      const element = node as React.ReactElement<{ children?: React.ReactNode }>;
+      return getTextContent(element.props.children);
+    }
+    return "";
+  };
+
+  const titleText = getTextContent(title);
 
   useGSAP(
     () => {
+      if (!isHydrated) return;
       const items = gsap.utils.toArray<HTMLElement>(".sh-item");
 
       if (prefersReducedMotion) {
@@ -72,9 +93,11 @@ export function SectionHeader({
         );
       }
 
-      if (titleRef.current && typeof title === "string") {
+      const hasText = titleRef.current && titleText.trim();
+
+      if (titleRef.current && hasText) {
         const split = new SplitText(titleRef.current, {
-          type: "chars",
+          type: "words,chars",
           charsClass: "sh-title inline-block",
         });
 
@@ -88,7 +111,7 @@ export function SectionHeader({
             stagger: 0.05,
             ease: "expo.inOut",
           },
-          0.1, // Let it start slightly after the subtitle starts
+          0.1,
         );
       } else if (titleRef.current) {
         tl.fromTo(
@@ -101,7 +124,7 @@ export function SectionHeader({
     },
     {
       scope: containerRef,
-      dependencies: [prefersReducedMotion, title],
+      dependencies: [isHydrated, prefersReducedMotion, titleText],
       revertOnUpdate: true,
     },
   );
@@ -127,8 +150,10 @@ export function SectionHeader({
       <div className="w-fit">
         <h2
           ref={titleRef}
+          aria-label={titleText}
           className={cn(
-            "bold-title leading-tight text-primary flex flex-wrap",
+            "bold-title leading-tight text-primary",
+            isHydrated ? "" : "opacity-0",
             titleClassName,
           )}
         >
