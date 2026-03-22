@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import ContactButtons from "./ui/ContactButtons";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { handleDirectionalFocus } from "@/lib/utils";
 
 export interface ProjectModalProps {
   isOpen: boolean;
@@ -19,10 +20,21 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const { width } = useWindowDimensions();
   const isMobileView = width > 0 && width < 600;
-
   const [slideSide, setSlideSide] = useState<"left" | "right">("left");
 
   useScrollLock(isOpen);
+
+  const updateSlideSideForElement = (el: HTMLElement) => {
+    if (isMobileView) return;
+    const rect = el.getBoundingClientRect();
+    const containerRect = contentRef.current?.getBoundingClientRect();
+    if (containerRect) {
+      const xPercent =
+        (rect.left + rect.width / 2 - containerRect.left) / containerRect.width;
+      if (xPercent < 0.49) setSlideSide("left");
+      else if (xPercent > 0.51) setSlideSide("right");
+    }
+  };
 
   // Keyboard trapping
   useEffect(() => {
@@ -36,6 +48,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
         );
         if (firstFocusable) {
           firstFocusable.focus();
+          updateSlideSideForElement(firstFocusable);
         } else {
           contentRef.current?.focus();
         }
@@ -50,39 +63,13 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
         if (
           ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)
         ) {
-          const focusable = contentRef.current?.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          handleDirectionalFocus(
+            e,
+            contentRef.current,
+            "both",
+            true,
+            updateSlideSideForElement,
           );
-          if (focusable && focusable.length) {
-            const index = Array.from(focusable).indexOf(
-              document.activeElement as HTMLElement,
-            );
-            let nextIndex = index;
-
-            if (e.key === "ArrowDown" || e.key === "ArrowRight") {
-              nextIndex = (index + 1) % focusable.length;
-            } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-              nextIndex = (index - 1 + focusable.length) % focusable.length;
-            }
-
-            const nextEl = focusable[nextIndex];
-            nextEl.focus();
-
-            // Auto-switch slideSide based on which panel the element is in
-            if (!isMobileView) {
-              const rect = nextEl.getBoundingClientRect();
-              const containerRect = contentRef.current?.getBoundingClientRect();
-              if (containerRect) {
-                const xPercent =
-                  (rect.left + rect.width / 2 - containerRect.left) /
-                  containerRect.width;
-                if (xPercent < 0.49) setSlideSide("left");
-                else if (xPercent > 0.51) setSlideSide("right");
-              }
-            }
-
-            e.preventDefault();
-          }
         }
 
         if (e.key === "Tab") {
@@ -110,14 +97,23 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
         }
       };
 
+      const handleFocusIn = (e: FocusEvent) => {
+        const target = e.target as HTMLElement;
+        if (contentRef.current?.contains(target)) {
+          updateSlideSideForElement(target);
+        }
+      };
+
       window.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("focusin", handleFocusIn);
       return () => {
         clearTimeout(timer);
         window.removeEventListener("keydown", handleKeyDown);
+        document.removeEventListener("focusin", handleFocusIn);
         prevFocus?.focus();
       };
     }
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, isMobileView]);
 
   // GSAP animations — scoped to containerRef
   useGSAP(
