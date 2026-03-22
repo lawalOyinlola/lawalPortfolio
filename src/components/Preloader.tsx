@@ -2,9 +2,10 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { SplitText } from "gsap/SplitText";
 import { BRAND } from "../app/constants/brand";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
-import { SplitText } from "gsap/SplitText";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, SplitText);
@@ -26,6 +27,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
   const sloganRef = useRef<HTMLSpanElement>(null);
   const progressProxy = useRef({ value: 0 });
   const { isMobile, isMounted } = useWindowDimensions();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   // Responsive column count: fewer columns on mobile for clarity
   const columnCount = isMounted ? (isMobile ? 8 : 16) : 16;
@@ -35,10 +37,10 @@ export default function Preloader({ setComplete }: PreloaderProps) {
   // Brand-name flip
   useGSAP(
     () => {
-      if (!brandRef.current) return;
+      if (!brandRef.current || prefersReducedMotion) return;
 
       const split = new SplitText(brandRef.current, {
-        type: "chars",
+        type: "words,chars",
         charsClass: "char inline-block",
       });
 
@@ -153,7 +155,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
       <h1
         ref={brandRef}
         aria-label={brandName}
-        className="relative title text-foreground text-[clamp(3rem,15vw,9rem)] flex-center h-1/2 select-none pointer-events-none"
+        className="relative title text-foreground text-[clamp(3rem,15vw,9rem)] text-center h-1/2 select-none pointer-events-none"
       >
         {brandName}
       </h1>
