@@ -172,12 +172,14 @@ function Footer({ className }: FooterProps) {
   // Ensure footer is fully revealed when tabbing into it
   useEffect(() => {
     const handleFocusIn = (e: FocusEvent) => {
-      const target = e.target as HTMLElement;
-      if (footerRef.current?.contains(target)) {
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: "smooth",
-        });
+      const target = e.target as HTMLElement | null;
+      const previousTarget = e.relatedTarget as Node | null;
+      if (
+        target &&
+        footerRef.current?.contains(target) &&
+        !footerRef.current.contains(previousTarget)
+      ) {
+        target.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
     };
 
