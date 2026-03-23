@@ -50,9 +50,12 @@ const Navbar = ({ ready = true }: NavbarProps) => {
       {ready && (
         <div
           ref={navRef}
-          onKeyDown={(e) =>
-            handleDirectionalFocus(e, navRef.current, "horizontal")
-          }
+          onKeyDown={(e) => {
+            if (isMenuOpen || isProjectOpen) return;
+            handleDirectionalFocus(e, navRef.current, "horizontal");
+          }}
+          role="toolbar"
+          aria-label="Site navigation"
           className="app-mini-nav fixed bottom-0 inset-x-0 w-full p-4.5 py-3 flex justify-between items-center z-20 transition-opacity duration-200"
         >
           <MenuOverlay
@@ -72,6 +75,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                 size="icon-lg"
                 className="relative px-1!"
                 aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMenuOpen}
                 onClick={() => setIsMenuOpen((prev) => !prev)}
               >
                 <XIcon
@@ -154,7 +158,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
           <div className="flex justify-end max-w-70 w-full">
             <div className="flex-center justify-end gap-1 bg-background border-2 border-background shadow-sm">
               <a
-                href={BRAND.url}
+                href={BRAND.resumeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={buttonVariants({
@@ -178,6 +182,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   aria-label={
                     isProjectOpen ? "Close project modal" : "Open project modal"
                   }
+                  aria-expanded={isProjectOpen}
                 >
                   <XIcon
                     weight="bold"
