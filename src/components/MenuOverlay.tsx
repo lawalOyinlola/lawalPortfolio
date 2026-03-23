@@ -241,6 +241,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
           }}
           role="dialog"
           aria-modal="true"
+          aria-label="Site navigation menu"
           className={`absolute bg-background p-6 md:p-12.5 shadow-2xl z-10 flex flex-col pointer-events-auto ${
             isMobileView ? "overflow-y-auto" : "overflow-hidden"
           }`}
