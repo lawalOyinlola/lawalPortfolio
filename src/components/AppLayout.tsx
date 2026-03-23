@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 import Preloader from "./Preloader";
 import Footer from "./Footer";
@@ -13,6 +14,8 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   const { loading, setLoading } = useLoading();
   const [forceUnlock, setForceUnlock] = useState(false);
+  const pathname = usePathname();
+  const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -26,8 +29,23 @@ export default function AppLayout({ children }: AppLayoutProps) {
     return () => clearTimeout(timeoutId);
   }, [loading]);
 
+  // Accessibility: Reset focus to main container on page change (if no anchor)
+  useEffect(() => {
+    if (!loading && typeof window !== "undefined" && !window.location.hash) {
+      // Small delay to ensure the page has updated its layout
+      const timer = setTimeout(() => {
+        if (mainRef.current) {
+          mainRef.current.setAttribute("tabindex", "-1");
+          mainRef.current.focus({ preventScroll: true });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname, loading]);
+
   return (
     <main
+      ref={mainRef}
       className={`relative min-h-screen overflow-x-clip bg-background ${loading && !forceUnlock ? "overflow-hidden h-screen" : ""}`}
     >
       {loading && <Preloader setComplete={() => setLoading(false)} />}
