@@ -15,7 +15,7 @@ if (typeof window !== "undefined") {
 
 export default function Adaptability() {
   const sectionRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {
@@ -53,7 +53,7 @@ export default function Adaptability() {
         },
       );
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [prefersReducedMotion] },
   );
 
   return (

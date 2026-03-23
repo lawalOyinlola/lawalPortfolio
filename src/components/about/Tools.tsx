@@ -22,7 +22,7 @@ if (typeof window !== "undefined") {
 
 export default function Tools() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {
@@ -47,7 +47,7 @@ export default function Tools() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: cat,
-            start: "top 85%",
+            start: "top 90%",
           },
         });
 
@@ -101,7 +101,7 @@ export default function Tools() {
         {/* Header */}
         <SectionHeader
           subtitle="Stack"
-          title="Tool &amp; Tech"
+          title="Tool & Tech"
           description="The tools I reach for every day — from AI copilots to databases, animations, and deployment pipelines."
           titleClassName="text-background"
           subtitleClassName="text-background/50"

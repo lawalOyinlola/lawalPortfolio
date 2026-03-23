@@ -14,7 +14,7 @@ if (typeof window !== "undefined") {
 
 export default function Competence() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {
