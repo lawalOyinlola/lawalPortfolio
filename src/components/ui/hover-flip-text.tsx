@@ -22,7 +22,7 @@ export function HoverFlipText({
   charClassName = "",
 }: HoverFlipTextProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   const handleMouseEnter = () => {
     if (prefersReducedMotion) return;
