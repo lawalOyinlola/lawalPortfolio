@@ -19,7 +19,7 @@ interface HeroProps {
 const Hero = ({ ready = true }: HeroProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {
