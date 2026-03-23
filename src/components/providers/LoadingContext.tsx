@@ -10,7 +10,7 @@ type LoadingContextValue = {
 const LoadingContext = createContext<LoadingContextValue | null>(null);
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const value = useMemo(() => ({ loading, setLoading }), [loading]);
 
