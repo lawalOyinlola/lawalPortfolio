@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,7 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { BRAND } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { handleNavigation } from "@/lib/navigation";
-import { handleEmailClick } from "@/lib/utils";
+import { handleEmailClick, handleDirectionalFocus } from "@/lib/utils";
 import {
   GithubLogoIcon,
   LinkedinLogoIcon,
@@ -40,17 +40,17 @@ const EXPLORE_LINKS = [
     anchor: "competence",
   },
   {
+    label: "Tools & Tech",
+    href: "/about",
+    anchor: "tools-tech",
+  },
+  {
     label: "Adaptability",
     href: "/about",
     anchor: "adaptability",
   },
   { label: "Clients", href: "/about", anchor: "clients" },
-  { label: "Work", href: "/projects" },
-  {
-    label: "Contact",
-    href: "/about",
-    anchor: "contact",
-  },
+  { label: "Projects", href: "/projects" },
 ];
 
 const SOCIAL_ICON_MAP: Record<string, Icon> = {
@@ -153,6 +153,10 @@ function Footer({ className }: FooterProps) {
         flipTween.progress(0);
       }
 
+      // Final refresh to ensure all triggers have the correct scroll boundaries
+      // especially after page navigation changes layout height.
+      ScrollTrigger.refresh();
+
       return () => {
         flipTrigger.kill();
         logoTrigger.kill();
@@ -162,12 +166,31 @@ function Footer({ className }: FooterProps) {
         delete document.documentElement.dataset.hideLogo;
       };
     },
-    { scope: footerRef },
+    { dependencies: [pathname], scope: footerRef },
   );
+
+  // Ensure footer is fully revealed when tabbing into it
+  useEffect(() => {
+    const handleFocusIn = (e: FocusEvent) => {
+      const target = e.target as HTMLElement;
+      if (footerRef.current?.contains(target)) {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    document.addEventListener("focusin", handleFocusIn);
+    return () => {
+      document.removeEventListener("focusin", handleFocusIn);
+    };
+  }, []);
 
   return (
     <footer
       ref={footerRef}
+      onKeyDown={(e) => handleDirectionalFocus(e, footerRef.current, "both")}
       className={`h-full bg-foreground text-background overflow-hidden flex-center ${className ?? ""}`}
     >
       <div
@@ -280,8 +303,10 @@ function Footer({ className }: FooterProps) {
 
                 <li>
                   <Magnetic strength={0.1} radius={80}>
-                    <a
+                    <button
+                      type="button"
                       onClick={handleEmailClick}
+                      aria-label="Send an email to Lawal"
                       className={buttonVariants({
                         variant: "link",
                         className:
@@ -294,7 +319,7 @@ function Footer({ className }: FooterProps) {
                         className="shrink-0 text-background/30 group-hover:text-background/70 transition-colors"
                       />
                       <span className="truncate">{BRAND.email}</span>
-                    </a>
+                    </button>
                   </Magnetic>
                 </li>
               </ul>

@@ -106,16 +106,7 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
                 <span
                   key={i}
                   aria-hidden="true"
-                  className={`reveal-word inline-block mr-[0.25em] ${
-                    isMobile
-                      ? "text-white"
-                      : "text-transparent bg-clip-text bg-fixed bg-cover bg-top bg-no-repeat"
-                  }`}
-                  style={
-                    isMobile
-                      ? undefined
-                      : { backgroundImage: `url(${imageSrc})` }
-                  }
+                  className="reveal-word inline-block mr-[0.25em] text-white"
                 >
                   {word}
                 </span>

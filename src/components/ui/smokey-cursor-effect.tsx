@@ -3,9 +3,13 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 interface FluidCursorEffectProps {
   resetKey?: string | number;
+  triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
-const FluidCursorEffect = ({ resetKey }: FluidCursorEffectProps) => {
+const FluidCursorEffect = ({
+  resetKey,
+  triggerRef,
+}: FluidCursorEffectProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationIdRef = useRef<number | null>(null);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -1297,16 +1301,24 @@ const FluidCursorEffect = ({ resetKey }: FluidCursorEffectProps) => {
     const setupEventListeners = () => {
       const handleMouseDown = (e: any) => {
         const pointer = pointers[0];
-        const posX = scaleByPixelRatio(e.clientX);
-        const posY = scaleByPixelRatio(e.clientY);
+        const rect = triggerRef?.current?.getBoundingClientRect() || {
+          left: 0,
+          top: 0,
+        };
+        const posX = scaleByPixelRatio(e.clientX - rect.left);
+        const posY = scaleByPixelRatio(e.clientY - rect.top);
         updatePointerDownData(pointer, -1, posX, posY);
         clickSplat(pointer);
       };
 
       const handleMouseMove = (e: any) => {
         const pointer = pointers[0];
-        const posX = scaleByPixelRatio(e.clientX);
-        const posY = scaleByPixelRatio(e.clientY);
+        const rect = triggerRef?.current?.getBoundingClientRect() || {
+          left: 0,
+          top: 0,
+        };
+        const posX = scaleByPixelRatio(e.clientX - rect.left);
+        const posY = scaleByPixelRatio(e.clientY - rect.top);
         const color = pointer.color;
         updatePointerMoveData(pointer, posX, posY, color);
       };
@@ -1314,9 +1326,13 @@ const FluidCursorEffect = ({ resetKey }: FluidCursorEffectProps) => {
       const handleTouchStart = (e: any) => {
         const touches = e.targetTouches;
         const pointer = pointers[0];
+        const rect = triggerRef?.current?.getBoundingClientRect() || {
+          left: 0,
+          top: 0,
+        };
         for (let i = 0; i < touches.length; i++) {
-          const posX = scaleByPixelRatio(touches[i].clientX);
-          const posY = scaleByPixelRatio(touches[i].clientY);
+          const posX = scaleByPixelRatio(touches[i].clientX - rect.left);
+          const posY = scaleByPixelRatio(touches[i].clientY - rect.top);
           updatePointerDownData(pointer, touches[i].identifier, posX, posY);
         }
       };
@@ -1324,9 +1340,13 @@ const FluidCursorEffect = ({ resetKey }: FluidCursorEffectProps) => {
       const handleTouchMove = (e: any) => {
         const touches = e.targetTouches;
         const pointer = pointers[0];
+        const rect = triggerRef?.current?.getBoundingClientRect() || {
+          left: 0,
+          top: 0,
+        };
         for (let i = 0; i < touches.length; i++) {
-          const posX = scaleByPixelRatio(touches[i].clientX);
-          const posY = scaleByPixelRatio(touches[i].clientY);
+          const posX = scaleByPixelRatio(touches[i].clientX - rect.left);
+          const posY = scaleByPixelRatio(touches[i].clientY - rect.top);
           updatePointerMoveData(pointer, posX, posY, pointer.color);
         }
       };
@@ -1336,18 +1356,24 @@ const FluidCursorEffect = ({ resetKey }: FluidCursorEffectProps) => {
         pointer.down = false;
       };
 
-      window.addEventListener("mousedown", handleMouseDown);
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("touchstart", handleTouchStart, false);
-      window.addEventListener("touchmove", handleTouchMove, false);
-      window.addEventListener("touchend", handleTouchEnd);
+      const target = triggerRef?.current || window;
+
+      target.addEventListener("mousedown", handleMouseDown);
+      target.addEventListener("mousemove", handleMouseMove);
+      target.addEventListener("touchstart", handleTouchStart as any, {
+        passive: false,
+      });
+      target.addEventListener("touchmove", handleTouchMove as any, {
+        passive: false,
+      });
+      target.addEventListener("touchend", handleTouchEnd);
 
       return () => {
-        window.removeEventListener("mousedown", handleMouseDown);
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("touchstart", handleTouchStart);
-        window.removeEventListener("touchmove", handleTouchMove);
-        window.removeEventListener("touchend", handleTouchEnd);
+        target.removeEventListener("mousedown", handleMouseDown);
+        target.removeEventListener("mousemove", handleMouseMove);
+        target.removeEventListener("touchstart", handleTouchStart as any);
+        target.removeEventListener("touchmove", handleTouchMove as any);
+        target.removeEventListener("touchend", handleTouchEnd);
       };
     };
 

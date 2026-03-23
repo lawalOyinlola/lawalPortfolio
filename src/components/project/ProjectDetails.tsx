@@ -7,16 +7,23 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { Project } from "@/app/constants/projects";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
 }
 
 export default function ProjectDetails({ project }: { project: Project }) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useGSAP(
     () => {
+      if (prefersReducedMotion) {
+        gsap.set(".project-detail-item", { opacity: 1, y: 0 });
+        return;
+      }
+
       gsap.fromTo(
         ".project-detail-item",
         { opacity: 0, y: 30 },

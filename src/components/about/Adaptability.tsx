@@ -67,13 +67,10 @@ export default function Adaptability() {
         <SectionHeader
           subtitle="Why it matters"
           title="Adaptability"
-          description={
-            <>
-              From academia to production FinTech — {BRAND.shortName} is proof
+          description={`
+              From academia to production FinTech — ${BRAND.shortName} is proof
               that the best engineers are built by curiosity, shaped by
-              adversity, and measured by impact.
-            </>
-          }
+              adversity, and measured by impact.`}
         />
 
         {/* Two-column layout — metrics left, narrative right */}

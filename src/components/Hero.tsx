@@ -34,7 +34,7 @@ const Hero = ({ ready = true }: HeroProps) => {
         linesClass: "overflow-hidden",
       });
 
-      // Animate characters with a subtle upward 3D-like flip
+      // Animate lines with a subtle upward 3D-like flip
       gsap.from(split.lines, {
         opacity: 0,
         y: 40,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import {
   ArrowUpRightIcon,
@@ -17,6 +17,7 @@ import Magnetic from "./ui/Magnetic";
 import { HoverPushText } from "./ui/hover-push-text";
 import { BRAND } from "../app/constants/brand";
 import { PROJECTS } from "../app/constants/projects";
+import { handleDirectionalFocus } from "@/lib/utils";
 
 interface NavbarProps {
   ready?: boolean;
@@ -25,6 +26,7 @@ interface NavbarProps {
 const Navbar = ({ ready = true }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProjectOpen, setIsProjectOpen] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
   const isProjectPage = pathname?.startsWith("/projects/");
@@ -46,7 +48,13 @@ const Navbar = ({ ready = true }: NavbarProps) => {
 
       {/* Minimal Nav at bottom of the page */}
       {ready && (
-        <div className="app-mini-nav fixed bottom-0 inset-x-0 w-full p-4.5 py-3 flex justify-between items-center z-20 transition-opacity duration-200">
+        <div
+          ref={navRef}
+          onKeyDown={(e) =>
+            handleDirectionalFocus(e, navRef.current, "horizontal")
+          }
+          className="app-mini-nav fixed bottom-0 inset-x-0 w-full p-4.5 py-3 flex justify-between items-center z-20 transition-opacity duration-200"
+        >
           <MenuOverlay
             isOpen={isMenuOpen}
             onClose={() => setIsMenuOpen(false)}
@@ -167,6 +175,9 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   size="lg"
                   className="w-32"
                   variant={isProjectOpen ? "outline" : "default"}
+                  aria-label={
+                    isProjectOpen ? "Close project modal" : "Open project modal"
+                  }
                 >
                   <XIcon
                     weight="bold"
