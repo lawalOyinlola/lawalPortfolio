@@ -145,7 +145,15 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50 caret-primary selection:bg-ring/40 focus:outline-ring/50 focus-visible:outline-ring/50;
+    @apply border-border caret-primary selection:bg-ring/40;
+  }
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role="button"] {
+    @apply focus:outline-ring/50 focus-visible:outline-ring/50;
   }
   body {
     @apply bg-background text-foreground font-mori text-base;
