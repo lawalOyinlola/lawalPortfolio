@@ -20,7 +20,11 @@ export default function Home() {
       <ScrollAnimation ready={!loading} />
       <Projects />
       <BrandStats>
-        <ContactsRef />
+        <ContactsRef
+          scrollTriggerSelector="#stats-contact-section"
+          scrollTriggerStart="84% top"
+          audioTriggerStart="78% top"
+        />
       </BrandStats>
     </div>
   );
