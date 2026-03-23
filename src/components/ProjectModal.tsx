@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ContactButtons from "./ui/ContactButtons";
@@ -24,17 +24,21 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
 
   useScrollLock(isOpen);
 
-  const updateSlideSideForElement = (el: HTMLElement) => {
-    if (isMobileView) return;
-    const rect = el.getBoundingClientRect();
-    const containerRect = contentRef.current?.getBoundingClientRect();
-    if (containerRect) {
-      const xPercent =
-        (rect.left + rect.width / 2 - containerRect.left) / containerRect.width;
-      if (xPercent < 0.49) setSlideSide("left");
-      else if (xPercent > 0.51) setSlideSide("right");
-    }
-  };
+  const updateSlideSideForElement = useCallback(
+    (el: HTMLElement) => {
+      if (isMobileView) return;
+      const rect = el.getBoundingClientRect();
+      const containerRect = contentRef.current?.getBoundingClientRect();
+      if (containerRect) {
+        const xPercent =
+          (rect.left + rect.width / 2 - containerRect.left) /
+          containerRect.width;
+        if (xPercent < 0.49) setSlideSide("left");
+        else if (xPercent > 0.51) setSlideSide("right");
+      }
+    },
+    [isMobileView],
+  );
 
   // Keyboard trapping
   useEffect(() => {
@@ -113,7 +117,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
         prevFocus?.focus();
       };
     }
-  }, [isOpen, onClose, isMobileView]);
+  }, [isOpen, onClose, isMobileView, updateSlideSideForElement]);
 
   // GSAP animations — scoped to containerRef
   useGSAP(
@@ -277,6 +281,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
           }}
           role="dialog"
           aria-modal="true"
+          aria-label="Project inquiry contact"
           className={`absolute bg-background text-foreground shadow-2xl z-10 flex flex-row pointer-events-auto rounded-none p-6 md:p-12.5 ${
             isMobileView ? "overflow-y-auto" : "overflow-visible"
           }`}

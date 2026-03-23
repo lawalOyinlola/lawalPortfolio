@@ -52,7 +52,7 @@ function PartnerTooltipItem({
   );
 }
 function Partners() {
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   return (
     <Carousel
@@ -61,6 +61,7 @@ function Partners() {
         align: "start",
         dragFree: true,
       }}
+      aria-label="Our partners and clients"
       plugins={[
         AutoScroll({
           playOnInit: !prefersReducedMotion,
@@ -80,6 +81,7 @@ function Partners() {
               key={`${partner.shortName}-${index}`}
               className="pl-0 basis-auto"
               aria-hidden={isDuplicate ? "true" : "false"}
+              aria-label={isDuplicate ? undefined : `Partner ${index + 1}: ${partner.name}`}
             >
               <PartnerTooltipItem
                 partner={partner}

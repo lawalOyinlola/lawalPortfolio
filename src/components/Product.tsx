@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -21,24 +22,12 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const textPanelRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(
-      "(max-width: 768px), (hover: none) and (pointer: coarse)",
-    );
-    const updateMobile = () => setIsMobile(mediaQuery.matches);
-    updateMobile();
-    mediaQuery.addEventListener("change", updateMobile);
-
-    return () => mediaQuery.removeEventListener("change", updateMobile);
-  }, []);
+  const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
 
   useGSAP(
     () => {
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
+      if (!isHydrated) return;
       const words = gsap.utils.toArray<HTMLSpanElement>(".reveal-word");
       const imageEl = imageRef.current;
       const textPanelEl = textPanelRef.current;
@@ -73,7 +62,7 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
         0.6,
       );
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [isHydrated, prefersReducedMotion] },
   );
 
   const wordsArray = STATEMENT.split(" ");

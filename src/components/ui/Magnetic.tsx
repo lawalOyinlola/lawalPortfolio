@@ -19,7 +19,7 @@ export default function Magnetic({
   className,
 }: MagneticProps) {
   const magnetic = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useEffect(() => {
     const el = magnetic.current;
@@ -76,7 +76,7 @@ export default function Magnetic({
     <div
       ref={magnetic}
       style={{ display: "inline-block" }}
-      className={cn("cursor-target magnetic", className)}
+      className={cn("cursor-target", className)}
     >
       {children}
     </div>

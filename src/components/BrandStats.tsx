@@ -49,7 +49,12 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         "(prefers-reduced-motion: reduce)",
       ).matches;
 
-      gsap.set(contactOverlayEl, { autoAlpha: 0, pointerEvents: "none" });
+      // Initial states
+      gsap.set(contactOverlayEl, {
+        yPercent: 100,
+        autoAlpha: 1,
+        pointerEvents: "none",
+      });
       gsap.set(handoffOverlayEl, { autoAlpha: 0 });
       gsap.set(imageFrameEl, {
         scale: 1,
@@ -57,86 +62,80 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         autoAlpha: 1,
       });
 
+      if (prefersReducedMotion) {
+        gsap.set(contactOverlayEl, { yPercent: 0, pointerEvents: "auto" });
+        return;
+      }
+
       const frameWidth = imageFrameEl.offsetWidth;
       const frameHeight = imageFrameEl.offsetHeight;
-
       if (!frameWidth || !frameHeight) return;
 
       const targetScale =
         Math.max(
           window.innerWidth / frameWidth,
           window.innerHeight / frameHeight,
-        ) * 1.04;
+        ) * 1.05;
 
-      gsap.set(cornerChildren, { autoAlpha: 1 });
-
-      if (prefersReducedMotion) {
-        ScrollTrigger.create({
-          trigger: handoffEl,
-          start: "top 78%",
-          end: "bottom 40%",
-          onEnter: () => {
-            gsap.set(statsContentEl, { autoAlpha: 0 });
-            gsap.set(imageFrameEl, { autoAlpha: 0 });
-            gsap.set(contactOverlayEl, { autoAlpha: 1, pointerEvents: "auto" });
-          },
-          onLeaveBack: () => {
-            gsap.set(statsContentEl, { autoAlpha: 1 });
-            gsap.set(imageFrameEl, { autoAlpha: 1 });
-            gsap.set(contactOverlayEl, { autoAlpha: 0, pointerEvents: "none" });
-          },
-        });
-        return;
-      }
-
-      const handoffTl = gsap.timeline({
+      const mainTl = gsap.timeline({
         scrollTrigger: {
           trigger: handoffEl,
-          start: "top 78%",
-          end: "bottom 40%",
-          scrub: true,
-          snap: {
-            snapTo: [0, 1],
-            duration: { min: 0.5, max: 2 },
-            ease: "power2.inOut",
-          },
+          start: "top center",
+          end: "bottom bottom",
+          scrub: 0.5,
           onUpdate: (self) => {
             contactOverlayEl.style.pointerEvents =
-              self.progress > 0.62 ? "auto" : "none";
+              self.progress > 0.5 ? "auto" : "none";
           },
         },
       });
 
-      handoffTl
-        .to(cornerChildren, { autoAlpha: 0, ease: "none", duration: 0.22 }, 0)
+      // Fixed corners visibility toggle
+      gsap.set(cornersRef.current, { autoAlpha: 0 });
+      ScrollTrigger.create({
+        trigger: sectionEl,
+        start: "top top",
+        end: "bottom top",
+        onToggle: (self) => {
+          gsap.to(cornersRef.current, {
+            autoAlpha: self.isActive ? 1 : 0,
+            duration: 0.3,
+          });
+        },
+      });
+
+      mainTl
+        // Phase 1: Zoom image completely to fullscreen beforehand
+        .to(cornerChildren, { autoAlpha: 0, duration: 0.3 }, 0)
         .to(
           imageFrameEl,
           {
             scale: targetScale,
-            transformOrigin: "center center",
-            filter: "grayscale(1) brightness(0.58)",
-            ease: "none",
-            duration: 0.68,
+            filter: "grayscale(1) brightness(0.4)",
+            duration: 0.6,
+            ease: "power1.inOut",
           },
-          0.05,
+          0,
         )
-        .to(statsContentEl, { autoAlpha: 0, ease: "none", duration: 0.4 }, 0.22)
-        .to(
-          handoffOverlayEl,
-          { autoAlpha: 0.8, ease: "none", duration: 0.16 },
-          0.74,
-        )
+        // Fade out stats content natively as we scroll
+        .to(statsContentEl, { autoAlpha: 0, duration: 0.3 }, 0)
+
+        // Phase 2: Reveal Contact Overlay (Parallax Slide Up) AFTER zoom
         .to(
           contactOverlayEl,
-          { autoAlpha: 1, ease: "none", duration: 0.28 },
-          0.8,
+          {
+            yPercent: 0,
+            duration: 0.5,
+            ease: "none",
+          },
+          0.6, // Wait for zoom (duration 0.6) to finish before sliding up
         )
-        .to(imageFrameEl, { autoAlpha: 0, ease: "none", duration: 0.2 }, 0.74)
-        .to(
-          handoffOverlayEl,
-          { autoAlpha: 0, ease: "none", duration: 0.14 },
-          0.92,
-        );
+
+        // Phase 3: Shimmer handoff (briefly show tv static)
+        .to(handoffOverlayEl, { autoAlpha: 0.15, duration: 0.1 }, 0.5)
+
+        // Phase 4: Minimum pin hold
+        .to({}, { duration: 0.05 });
     },
     { scope: sectionRef },
   );
@@ -144,11 +143,24 @@ function BrandStats({ children }: { children: React.ReactNode }) {
   return (
     <section
       ref={sectionRef}
-      className="relative z-1 bg-background flex-center"
-      aria-label="Stats highlights"
+      id="stats-contact-section"
+      className="relative z-1 bg-background"
+      aria-label="Stats and Contact"
     >
+      {/* CORNERS BACKGROUND BLUR EFFECT */}
+      <div
+        ref={cornersRef}
+        className="fixed inset-0 max-w-400 mx-auto h-screen pointer-events-none z-60 opacity-0 *:blur-lg *:bg-background *:h-[40%] md:*:h-3/7 *:w-3/5 md:*:w-1/4 max-sm:max-w-screen"
+      >
+        <div className="absolute -top-10 -right-10 max-sm:w-4xl max-sm:translate-x-1/2 max-sm:right-1/2" />
+        <div className="absolute -top-10 -left-10 max-sm:hidden" />
+        <div className="absolute -bottom-10 -left-10 max-sm:hidden" />
+        <div className="absolute -bottom-10 -right-10  max-sm:w-4xl max-sm:translate-x-1/2 max-sm:right-1/2" />
+      </div>
+
       <div className="wrapper max-w-screen relative px-0">
-        <div className="sticky top-0 h-screen pointer-events-none">
+        <div className="sticky top-0 h-screen overflow-hidden pointer-events-none">
+          {/* BACKGROUND IMAGE - PINNED AND ZOOMING */}
           <div
             ref={imageFrameRef}
             className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] sm:w-[60vw] md:w-130 aspect-4/5 sm:aspect-square md:aspect-auto md:h-75 max-h-[60vh] mx-auto overflow-hidden bg-foreground will-change-transform"
@@ -162,65 +174,60 @@ function BrandStats({ children }: { children: React.ReactNode }) {
               priority={false}
             />
           </div>
-        </div>
 
-        {/* CORNERS BACKGROUND BLUR EFFECT */}
-        <div
-          ref={cornersRef}
-          className="sticky max-w-400 mx-auto inset-0 top-0 h-screen pointer-events-none z-15 *:bg-background *:blur-lg *:h-[35%] md:*:h-3/7 *:w-[60vw] md:*:w-84 max-sm:max-w-screen"
-        >
-          <div className="absolute -top-10 right-0 max-sm:w-4xl max-sm:translate-x-1/2 max-sm:right-1/2" />
-          <div className="absolute -top-10 left-0 max-sm:hidden" />
-          <div className="absolute -bottom-10 left-0 max-sm:hidden" />
-          <div className="absolute -bottom-10 right-0  max-sm:w-4xl max-sm:translate-x-1/2 max-sm:right-1/2" />
-        </div>
-
-        {/* Handoff shimmer overlay: visual layer only */}
-        <div className="sticky top-0 h-screen pointer-events-none z-20">
+          {/* HANDOFF STATIC SHIMMER */}
           <div
             ref={handoffOverlayRef}
-            className="absolute inset-0 tv-static"
+            className="absolute inset-0 z-20 tv-static pointer-events-none"
             aria-hidden="true"
           />
+
+          {/* CONTACT REVEAL OVERLAY (SLIDES UP) */}
+          <div
+            ref={contactOverlayRef}
+            className="absolute inset-0 z-30 pointer-events-none"
+          >
+            {children}
+          </div>
         </div>
 
-        <div ref={contactOverlayRef} className="absolute inset-0 z-30">
-          {children}
-        </div>
-
-        {/* CONTENT SECTION */}
+        {/* STATS CONTENT - SCROLLS NORMALLY OVER */}
         <div
           ref={statsContentRef}
-          className="relative max-w-400 mx-auto z-10 flex flex-col gap-[28vh] md:gap-[18vh] -mt-[220vh] pb-[50vh] px-4 md:px-0 *:not-last:px-2 md:*:not-last:px-8 mix-blend-difference text-background"
+          className="relative max-w-400 mx-auto z-10 flex flex-col items-center justify-center gap-[28vh] md:gap-[18vh] -mt-[100vh] pt-[80vh] pb-[10vh] px-4.5 mix-blend-difference text-background pointer-events-none"
         >
-          <p className="self-center text-[clamp(1.25rem,4vw,1.5rem)] text-center font-semibold text-zinc-200 leading-tight max-w-[20ch] md:max-w-[16ch]">
+          <p className="text-[clamp(1.25rem,4vw,1.5rem)] text-center font-semibold text-zinc-200 leading-tight max-w-[20ch] md:max-w-[16ch]">
             {INTRO_TEXT}
           </p>
 
-          {BRAND_STATS.map((stat) => (
-            <div key={stat.name}>
-              <div className="flex flex-col md:grid md:grid-cols-12 items-center gap-1 sm:gap-4 md:gap-8 md:*:not-even:max-w-72">
-                <h2 className="md:col-span-4 title text-3xl md:text-5xl -tracking-[1px] md:-tracking-[2px] capitalize text-center md:text-left">
-                  {stat.name}
-                </h2>
-
-                <p className="md:col-span-4 text-center font-semibold leading-none text-zinc-200 text-[clamp(5.5rem,20vw,9rem)] max-md:-mt-2">
-                  {stat.value}
-                </p>
-
-                <p className="md:col-span-4 text-center md:text-right text-sm sm:text-lg leading-relaxed md:leading-tight md:justify-self-end mt-2 md:mt-0 max-w-[280px] md:max-w-none mx-auto md:mx-0">
-                  {stat.description}
-                </p>
+          <div className="w-full max-w-400 mx-auto flex flex-col gap-[28vh] md:gap-[18vh]">
+            {BRAND_STATS.map((stat) => (
+              <div key={stat.name} className="w-full">
+                <div className="flex flex-col md:grid md:grid-cols-12 items-center gap-1 sm:gap-4 md:gap-8 md:*:not-even:max-w-72">
+                  <h2 className="md:col-span-4 title text-3xl md:text-5xl -tracking-[1px] md:-tracking-[2px] capitalize text-center md:text-left">
+                    {stat.name}
+                  </h2>
+                  <p className="md:col-span-4 text-center font-semibold leading-none text-zinc-200 text-[clamp(5.5rem,20vw,9rem)] max-md:-mt-2">
+                    {stat.value}
+                  </p>
+                  <p className="md:col-span-4 text-center md:text-right text-sm sm:text-lg leading-relaxed md:leading-tight md:justify-self-end mt-2 md:mt-0 max-w-[280px] md:mx-0">
+                    {stat.description}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
-          <p className="self-center text-[clamp(1.25rem,4vw,1.5rem)] text-center font-semibold text-zinc-200 leading-tight max-w-[24ch] md:max-w-[22ch]">
+          <p className="text-[clamp(1.25rem,4vw,1.5rem)] text-center font-semibold text-zinc-200 leading-tight max-w-[24ch] md:max-w-[22ch]">
             {OUTRO_TEXT}
           </p>
 
-          {/* Extra scroll distance to hold the cross-fade transition. */}
-          <div ref={handoffRef} className="h-[190vh]" aria-hidden="true" />
+          {/* Scroll spacer to drive the zoom and slide-reveal timeline */}
+          <div
+            ref={handoffRef}
+            className="h-[250vh] w-full"
+            aria-hidden="true"
+          />
         </div>
       </div>
     </section>

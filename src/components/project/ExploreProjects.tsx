@@ -28,7 +28,7 @@ export default function ExploreProjects({
   currentProjectSlug: string;
 }) {
   const otherProjects = PROJECTS.filter((p) => p.slug !== currentProjectSlug);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
   const autoplayRef = useRef<ReturnType<typeof Autoplay> | null>(null);
 
   const plugins = useMemo(() => {
@@ -79,7 +79,7 @@ export default function ExploreProjects({
         },
       );
     },
-    { scope: containerRef, dependencies: [prefersReducedMotion] },
+    { scope: containerRef, dependencies: [prefersReducedMotion, otherProjects.length] },
   );
 
   if (otherProjects.length === 0) return null;
@@ -98,14 +98,16 @@ export default function ExploreProjects({
             align: "start",
             loop: otherProjects.length > 1,
           }}
+          aria-label="Explore other projects carousel"
           plugins={plugins}
           className="w-full relative group"
         >
           <CarouselContent className="-ml-4 md:-ml-6 py-4.5">
-            {otherProjects.map((project) => (
+            {otherProjects.map((project, index) => (
               <CarouselItem
                 key={`${project.slug}-${project.name}`}
                 className="pl-4 md:pl-6 sm:basis-1/2 lg:basis-1/3"
+                aria-label={`Project ${index + 1} of ${otherProjects.length}: ${project.name}`}
               >
                 <Link
                   href={`/projects/${project.slug}`}

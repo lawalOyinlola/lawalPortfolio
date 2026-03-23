@@ -21,34 +21,84 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP, SplitText);
 }
 
-function ContactsRef() {
+interface ContactsRefProps {
+  scrollTriggerSelector?: string;
+  scrollTriggerStart?: string;
+  audioTriggerStart?: string;
+}
+
+function ContactsRef({
+  scrollTriggerSelector,
+  scrollTriggerStart,
+  audioTriggerStart,
+}: ContactsRefProps = {}) {
   const contactRef = useRef<HTMLDivElement>(null);
   const title1Ref = useRef<HTMLSpanElement>(null);
   const title2Ref = useRef<HTMLSpanElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<AudioBufferSourceNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion, isHydrated: isMotionHydrated } =
+    usePrefersReducedMotion();
+
+  const isVisibleRef = useRef(false);
+  const isAudioEnabledRef = useRef(true);
 
   const [ambientAudioEnabled, setAmbientAudioEnabled] = useState(true);
-  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    isAudioEnabledRef.current = ambientAudioEnabled;
+  }, [ambientAudioEnabled]);
 
   useEffect(() => {
     const saved = localStorage.getItem("ambientAudioEnabled");
     if (saved !== null) {
-      setAmbientAudioEnabled(saved === "true");
+      const isEnabled = saved === "true";
+      setAmbientAudioEnabled(isEnabled);
+      isAudioEnabledRef.current = isEnabled;
     }
-    setIsHydrated(true);
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "ambientAudioEnabled" && e.newValue !== null) {
+        const isEnabled = e.newValue === "true";
+        setAmbientAudioEnabled(isEnabled);
+        isAudioEnabledRef.current = isEnabled;
+      }
+    };
+
+    const handleCustomEvent = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      setAmbientAudioEnabled(detail);
+      isAudioEnabledRef.current = detail;
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("ambientAudioToggled", handleCustomEvent);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("ambientAudioToggled", handleCustomEvent);
+    };
   }, []);
 
-  useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem("ambientAudioEnabled", String(ambientAudioEnabled));
-    }
-  }, [ambientAudioEnabled, isHydrated]);
+  const toggleAudio = useCallback(() => {
+    setAmbientAudioEnabled((prev) => {
+      const next = !prev;
+      localStorage.setItem("ambientAudioEnabled", String(next));
+      isAudioEnabledRef.current = next;
+      window.dispatchEvent(
+        new CustomEvent("ambientAudioToggled", { detail: next }),
+      );
+
+      // Force resume the context immediately if unmuting
+      if (next && audioContextRef.current?.state === "suspended") {
+        audioContextRef.current.resume();
+      }
+      return next;
+    });
+  }, []);
 
   const initAudio = useCallback(() => {
-    if (prefersReducedMotion || !ambientAudioEnabled) return;
+    if (prefersReducedMotion) return;
 
     if (audioContextRef.current && audioContextRef.current.state !== "closed")
       return;
@@ -87,7 +137,7 @@ function ContactsRef() {
   }, [prefersReducedMotion, ambientAudioEnabled]);
 
   useEffect(() => {
-    localStorage.setItem("ambientAudioEnabled", String(ambientAudioEnabled));
+    if (!isMotionHydrated) return;
 
     if (!ambientAudioEnabled || prefersReducedMotion) {
       if (gainNodeRef.current) {
@@ -95,43 +145,64 @@ function ContactsRef() {
           value: 0,
           duration: 0.5,
           ease: "power2.out",
+          overwrite: "auto",
         });
       }
     } else {
-      const trigger = ScrollTrigger.getById("contact-audio-trigger");
-      if (trigger?.isActive) {
-        initAudio();
+      if (isVisibleRef.current) {
+        // If we switch it on while already watching, ensure audio goes up
         if (gainNodeRef.current) {
           gsap.to(gainNodeRef.current.gain, {
             value: 0.1,
             duration: 1,
             ease: "power2.inOut",
+            overwrite: "auto",
           });
         }
       }
     }
   }, [ambientAudioEnabled, prefersReducedMotion, initAudio]);
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     const handleGlobalInteraction = () => {
-      if (
-        !prefersReducedMotion &&
-        ambientAudioEnabled &&
-        audioContextRef.current?.state === "suspended"
-      ) {
+      // Unconditionally resume the context on the first user interaction
+      // globally across the app to unlock the Web Audio API proactively.
+      if (audioContextRef.current?.state === "suspended") {
         audioContextRef.current.resume();
       }
     };
-    window.addEventListener("touchstart", handleGlobalInteraction);
-    window.addEventListener("mousedown", handleGlobalInteraction);
+
+    // Add aggressive, passive listeners on the capture phase so they register
+    // even if propagation is stopped somewhere.
+    const events = [
+      "pointerdown",
+      "touchstart",
+      "keydown",
+      "wheel",
+      "scroll",
+      "mousemove",
+    ];
+    events.forEach((e) =>
+      document.addEventListener(e, handleGlobalInteraction, {
+        capture: true,
+        passive: true,
+      }),
+    );
+
     return () => {
-      window.removeEventListener("touchstart", handleGlobalInteraction);
-      window.removeEventListener("mousedown", handleGlobalInteraction);
+      events.forEach((e) =>
+        document.removeEventListener(e, handleGlobalInteraction, {
+          capture: true,
+        }),
+      );
     };
-  }, [prefersReducedMotion, ambientAudioEnabled]);
+  }, []);
 
   useGSAP(
     () => {
+      if (!isMotionHydrated) return;
       initAudio();
 
       if (title1Ref.current && title2Ref.current) {
@@ -146,38 +217,60 @@ function ContactsRef() {
 
         const allChars = [...split1.chars, ...split2.chars];
 
-        gsap.fromTo(
-          allChars,
-          { opacity: 0.4, scaleX: -1 },
-          {
-            opacity: 1,
-            scaleX: 1,
-            duration: 0.8,
-            stagger: 0.05,
-            ease: "expo.inOut",
-            scrollTrigger: {
-              trigger: contactRef.current,
-              start: "top center",
-              toggleActions: "play none none reverse",
-            },
-          },
-        );
+        gsap.set(allChars, { opacity: 0.4, scaleX: -1 });
 
-        ScrollTrigger.create({
-          id: "contact-audio-trigger",
-          trigger: contactRef.current,
-          start: "top center",
-          end: "bottom center",
+        gsap.to(allChars, {
+          opacity: 1,
+          scaleX: 1,
+          duration: 0.8,
+          stagger: 0.05,
+          ease: "expo.out",
+          scrollTrigger: {
+            trigger: scrollTriggerSelector || contactRef.current,
+            start: scrollTriggerStart || "top 20%",
+            toggleActions: "play none none reverse",
+          },
+        });
+
+        // Use a dedicated ScrollTrigger for the audio to control timing correctly
+        const audioTrigger = ScrollTrigger.create({
+          trigger: scrollTriggerSelector || contactRef.current,
+          start: audioTriggerStart || "top 80%", // Trigger just before text reveal by default
+          end: audioTriggerStart ? "88% top" : "bottom 0%",
           onToggle: (self) => {
-            if (self.isActive && !prefersReducedMotion && ambientAudioEnabled) {
+            isVisibleRef.current = self.isActive;
+
+            // Short circuit if user disabled manually (read from ref to avoid stale closure)
+            if (!isAudioEnabledRef.current || prefersReducedMotion) return;
+
+            if (self.isActive) {
               if (audioContextRef.current?.state === "suspended") {
-                audioContextRef.current.resume();
+                audioContextRef.current.resume().catch(() => {});
+
+                // If the browser STILL blocked it because of missing user interaction,
+                // animate the speaker icon to gently prompt the user to interact.
+                setTimeout(() => {
+                  if (
+                    audioContextRef.current?.state === "suspended" &&
+                    buttonRef.current &&
+                    isAudioEnabledRef.current
+                  ) {
+                    gsap.to(buttonRef.current, {
+                      scale: 1.15,
+                      yoyo: true,
+                      repeat: 5,
+                      duration: 0.3,
+                      ease: "power2.inOut",
+                    });
+                  }
+                }, 150);
               }
               if (gainNodeRef.current) {
                 gsap.to(gainNodeRef.current.gain, {
                   value: 0.1,
                   duration: 1.2,
                   ease: "power2.inOut",
+                  overwrite: "auto",
                 });
               }
             } else {
@@ -186,17 +279,9 @@ function ContactsRef() {
                   value: 0,
                   duration: 0.8,
                   ease: "power2.out",
+                  overwrite: "auto",
                 });
               }
-            }
-          },
-          onUpdate: (self) => {
-            if (
-              !self.isActive &&
-              gainNodeRef.current &&
-              gainNodeRef.current.gain.value > 0
-            ) {
-              gsap.set(gainNodeRef.current.gain, { value: 0 });
             }
           },
         });
@@ -204,6 +289,7 @@ function ContactsRef() {
         return () => {
           split1.revert();
           split2.revert();
+          audioTrigger.kill();
           if (sourceRef.current) {
             try {
               sourceRef.current.stop();
@@ -218,16 +304,20 @@ function ContactsRef() {
             audioContextRef.current = null;
           }
           gainNodeRef.current = null;
+          gsap.killTweensOf(buttonRef.current);
         };
       }
     },
-    { scope: contactRef },
+    {
+      scope: contactRef,
+      dependencies: [isMotionHydrated, prefersReducedMotion],
+    },
   );
 
   return (
     <div
       ref={contactRef}
-      className="sticky top-0 h-screen bg-background flex-center"
+      className="relative w-full h-full bg-background flex-center"
     >
       <div className="wrapper max-w-screen w-full min-h-screen pt-4.5 flex flex-col gap-19">
         <div className="relative mt-2 grow w-full flex justify-end items-end overflow-hidden tv-static">
@@ -257,13 +347,18 @@ function ContactsRef() {
 
         <div className="mt-auto w-full flex justify-between items-end pb-4">
           <Button
+            ref={buttonRef}
             variant="ghost"
             size="icon"
-            onClick={() => setAmbientAudioEnabled(!ambientAudioEnabled)}
+            onClick={toggleAudio}
             className="rounded-full"
-            title={!isHydrated || ambientAudioEnabled ? "Mute audio" : "Unmute audio"}
+            title={
+              !isMotionHydrated || ambientAudioEnabled
+                ? "Mute audio"
+                : "Unmute audio"
+            }
             aria-label={
-              !isHydrated || ambientAudioEnabled
+              !isMotionHydrated || ambientAudioEnabled
                 ? "Mute ambient audio"
                 : "Unmute ambient audio"
             }

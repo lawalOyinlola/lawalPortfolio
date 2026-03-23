@@ -11,6 +11,14 @@ export const scrollToAnchor = (
   const element = document.getElementById(id);
   if (element) {
     element.scrollIntoView({ behavior });
+
+    // Focus management: move keyboard focus to the target element.
+    // If the element isn't focusable (e.g. a <section>), give it a tabindex.
+    if (!element.getAttribute("tabindex")) {
+      element.setAttribute("tabindex", "-1");
+    }
+    // focus() with preventScroll: true is critical to avoid clashing with smooth scroll.
+    element.focus({ preventScroll: true });
   }
 };
 

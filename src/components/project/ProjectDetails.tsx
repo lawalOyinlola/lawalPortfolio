@@ -15,7 +15,7 @@ if (typeof window !== "undefined") {
 
 export default function ProjectDetails({ project }: { project: Project }) {
   const containerRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {
@@ -40,7 +40,7 @@ export default function ProjectDetails({ project }: { project: Project }) {
         },
       );
     },
-    { scope: containerRef },
+    { scope: containerRef, dependencies: [prefersReducedMotion] },
   );
   if (!project.deeperDetails || project.deeperDetails.length === 0) return null;
 

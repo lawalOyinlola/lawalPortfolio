@@ -14,7 +14,7 @@ const FluidCursorEffect = ({
   const animationIdRef = useRef<number | null>(null);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
 
   // Configuration
   const config = {
@@ -1428,9 +1428,9 @@ const FluidCursorEffect = ({
         gl.useProgram(null);
       }
     };
-  }, [resetKey]);
+  }, [resetKey, triggerRef, prefersReducedMotion, isHydrated]);
 
-  if (error || prefersReducedMotion) {
+  if (error || prefersReducedMotion || !isHydrated) {
     return null;
   }
 

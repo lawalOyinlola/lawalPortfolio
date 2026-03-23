@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
  * Uses window.matchMedia('(prefers-reduced-motion: reduce)')
  */
 export function usePrefersReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
@@ -33,5 +33,5 @@ export function usePrefersReducedMotion() {
     }
   }, []);
 
-  return prefersReducedMotion;
+  return { prefersReducedMotion, isHydrated };
 }

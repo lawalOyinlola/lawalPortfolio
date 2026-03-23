@@ -68,7 +68,7 @@ const GridAnimation = ({
 }: GridAnimationProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { isMobile, isSE, width, height } = useWindowDimensions();
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {

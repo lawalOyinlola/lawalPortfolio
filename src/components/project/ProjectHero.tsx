@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
 
 export default function ProjectHero({ project }: { project: Project }) {
   const containerRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {

@@ -26,12 +26,17 @@ function Projects() {
   // Pre-split text on mount so name-char-i classes exist
   useGSAP(
     () => {
-      FEATURED_PROJECTS.forEach((_, i) => {
-        new SplitText(`.name-split-${i}`, {
-          type: "words,chars",
-          charsClass: `name-char-${i} inline-block`,
-        });
-      });
+      const splits = FEATURED_PROJECTS.map(
+        (_, i) =>
+          new SplitText(`.name-split-${i}`, {
+            type: "words,chars",
+            charsClass: `name-char-${i} inline-block`,
+          }),
+      );
+
+      return () => {
+        splits.forEach((split) => split.revert());
+      };
     },
     { scope: sectionRef },
   );
@@ -265,10 +270,40 @@ function Projects() {
         goTo(indexRef.current - 1);
       }
     };
-
     window.addEventListener("wheel", handleWheel, { passive: false });
     return () => window.removeEventListener("wheel", handleWheel);
   }, [goTo]);
+
+  const handleTabKeyDown = useCallback(
+    (e: React.KeyboardEvent, index: number) => {
+      if (lockedRef.current) return;
+
+      let newIndex = index;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        if (index >= COUNT - 1) return;
+        newIndex = index + 1;
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        if (index <= 0) return;
+        newIndex = index - 1;
+      } else if (e.key === "Home") {
+        newIndex = 0;
+      } else if (e.key === "End") {
+        newIndex = COUNT - 1;
+      } else {
+        return;
+      }
+
+      e.preventDefault();
+      goTo(newIndex);
+
+      // Move focus to the new tab
+      setTimeout(() => {
+        const nextTab = document.getElementById(`tab-${newIndex}`);
+        if (nextTab) nextTab.focus();
+      }, 0);
+    },
+    [goTo],
+  );
 
   // Handle mini-nav visibility via ScrollTrigger
   useGSAP(
@@ -330,6 +365,8 @@ function Projects() {
               id={`tab-${index}`}
               aria-label={`Project ${index + 1}: ${project.name}`}
               onClick={() => goTo(index)}
+              onKeyDown={(e) => handleTabKeyDown(e, index)}
+              tabIndex={activeIndex === index ? 0 : -1}
               className={`title transition-all cursor-pointer min-h-10 md:min-h-19 ${
                 activeIndex !== index
                   ? "text-[clamp(1.5rem,4vw,2.25rem)] text-muted-foreground"

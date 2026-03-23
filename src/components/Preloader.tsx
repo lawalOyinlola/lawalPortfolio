@@ -27,17 +27,18 @@ export default function Preloader({ setComplete }: PreloaderProps) {
   const sloganRef = useRef<HTMLSpanElement>(null);
   const progressProxy = useRef({ value: 0 });
   const { isMobile, isMounted } = useWindowDimensions();
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion, isHydrated: isMotionHydrated } =
+    usePrefersReducedMotion();
 
   // Responsive column count: fewer columns on mobile for clarity
   const columnCount = isMounted ? (isMobile ? 8 : 16) : 16;
   const halfCols = columnCount / 2;
-  const waveHalf = 1 / halfCols;
 
   // Brand-name flip
   useGSAP(
     () => {
-      if (!brandRef.current || prefersReducedMotion) return;
+      if (!isMotionHydrated || !brandRef.current || prefersReducedMotion)
+        return;
 
       const split = new SplitText(brandRef.current, {
         type: "words,chars",
@@ -55,12 +56,22 @@ export default function Preloader({ setComplete }: PreloaderProps) {
 
       return () => split.revert();
     },
-    { scope: containerRef },
+    {
+      scope: containerRef,
+      dependencies: [isMotionHydrated, prefersReducedMotion],
+    },
   );
 
   // Main time-based progress + exit
   useGSAP(
     () => {
+      if (!isMotionHydrated) return;
+
+      if (prefersReducedMotion) {
+        const timer = setTimeout(() => setComplete(true), 2000);
+        return () => clearTimeout(timer);
+      }
+
       const startProgress = progressProxy.current.value;
       gsap.set(".progress-trail", { width: `${startProgress * 50}%` });
       gsap.set(".pct-tip", { left: `${startProgress * 50}%` });
@@ -141,7 +152,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
     },
     {
       scope: containerRef,
-      dependencies: [columnCount],
+      dependencies: [columnCount, prefersReducedMotion, isMotionHydrated],
       revertOnUpdate: true,
     },
   );
@@ -155,7 +166,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
       <h1
         ref={brandRef}
         aria-label={brandName}
-        className="relative title text-foreground text-[clamp(3rem,15vw,9rem)] text-center h-1/2 select-none pointer-events-none"
+        className="relative title text-foreground text-[clamp(3rem,15vw,9rem)] text-center h-1/2 select-none pointer-events-none pt-20"
       >
         {brandName}
       </h1>

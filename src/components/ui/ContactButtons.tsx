@@ -23,7 +23,7 @@ export default function ContactButtons({
   className,
 }: ContactButtonsProp) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   const handleMouseEnter = (
     e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>,

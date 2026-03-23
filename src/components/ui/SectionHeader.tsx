@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -36,21 +36,19 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
 
   // Helper to extract text from ReactNode for aria-label and SplitText check
   const getTextContent = (node: React.ReactNode): string => {
-    if (typeof node === "string" || typeof node === "number") return String(node);
+    if (typeof node === "string" || typeof node === "number")
+      return String(node);
     if (!node) return "";
     if (Array.isArray(node)) return node.map(getTextContent).join("");
     if (React.isValidElement(node)) {
       // Cast props to access children safely in TypeScript
-      const element = node as React.ReactElement<{ children?: React.ReactNode }>;
+      const element = node as React.ReactElement<{
+        children?: React.ReactNode;
+      }>;
       return getTextContent(element.props.children);
     }
     return "";
