@@ -48,7 +48,7 @@ export const PROJECTS: Project[] = [
     category: "Fintech",
     description:
       "SafulPay is a groundbreaking fintech company based in Sierra Leone, dedicated to transforming the financial landscape. By offering innovative digital payment solutions, SafulPay empowers individuals and businesses to engage in seamless transactions. With a focus on accessibility and security, this platform aims to enhance financial inclusion, making it easier for everyone to manage their finances and participate in the economy.",
-    image: "/projects/my_projects.jpeg",
+    image: "/projects/safulpay/hero.png",
     github: "https://github.com/TECH-N-GOODWILL-LIMITED/SafulPay-Website-v2",
     live: "https://safulpay.com",
     keypoints: [
@@ -57,7 +57,32 @@ export const PROJECTS: Project[] = [
       "Multi-app Ecosystem (Merchant, Agent, Users)",
       "Corporate Website & Brand Platform",
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/safulpay/laptop_mockup.png",
+        title: "Project Discovery & Planning",
+        description:
+          "During the initial phase, we conducted thorough research to understand the target audience and define the core features that would deliver the most value.",
+      },
+      {
+        image: "/projects/safulpay/safulpay_laptop.png",
+        title: "Design & Prototyping",
+        description:
+          "We created wireframes and high-fidelity prototypes to visualize the user journey, ensuring a seamless and intuitive experience across all devices.",
+      },
+      {
+        image: "/projects/safulpay/hero.png",
+        title: "Development & Engineering",
+        description:
+          "The application was built using modern web technologies, focusing on performance, scalability, and maintainability for future iterations.",
+      },
+      {
+        image: "/projects/my_projects.jpeg",
+        title: "Testing & Launch",
+        description:
+          "Rigorous quality assurance testing was performed to ensure a bug-free experience before smoothly deploying the application to production environments.",
+      },
+    ],
     featured: true,
     startDate: "Mar 2023",
   },
