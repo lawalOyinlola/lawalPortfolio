@@ -34,17 +34,16 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
       const textPanelEl = textPanelRef.current;
       if (!imageEl || !textPanelEl) return;
 
+      if (prefersReducedMotion) {
+        gsap.set(textPanelEl, { opacity: 1, y: 0 });
+        gsap.set(imageEl, { scale: 1 });
+        return;
+      }
+      
       const split = new SplitText(".product-statement", {
         type: "words,chars",
         charsClass: "inline-block",
       });
-
-      if (prefersReducedMotion) {
-        gsap.set(textPanelEl, { opacity: 1, y: 0 });
-        gsap.set(split.chars, { opacity: 1, y: 0 });
-        gsap.set(imageEl, { scale: 1 });
-        return;
-      }
 
       // Parallax/Overlay mode
       gsap.set(textPanelEl, { yPercent: 100 });
