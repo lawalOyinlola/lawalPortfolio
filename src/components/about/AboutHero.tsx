@@ -10,6 +10,7 @@ import { handleNavigation } from "@/lib/navigation";
 import FluidCursorEffect from "@/components/ui/smokey-cursor-effect";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP);
@@ -19,6 +20,7 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
   const aboutRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
   const router = useRouter();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {
@@ -27,6 +29,12 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
       const items = gsap.utils.toArray<HTMLElement>(".hero-item");
       const tags = gsap.utils.toArray<HTMLElement>(".tag-item");
       if (items.length === 0) return;
+
+      // When user prefers reduced motion, just reveal everything immediately
+      if (prefersReducedMotion) {
+        gsap.set([...items, ...tags], { autoAlpha: 1, x: 0, y: 0, scale: 1 });
+        return;
+      }
 
       const tl = gsap.timeline({ delay: 0.2 });
 
@@ -59,7 +67,7 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
         );
       }
     },
-    { dependencies: [ready], scope: aboutRef },
+    { dependencies: [ready, prefersReducedMotion], scope: aboutRef },
   );
 
   return (

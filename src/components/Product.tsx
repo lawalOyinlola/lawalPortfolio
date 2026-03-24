@@ -4,11 +4,12 @@ import { useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { SplitText } from "gsap/SplitText";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP, ScrollTrigger);
+  gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 }
 
 const STATEMENT =
@@ -28,20 +29,26 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
   useGSAP(
     () => {
       if (!isHydrated) return;
-      const words = gsap.utils.toArray<HTMLSpanElement>(".reveal-word");
+
       const imageEl = imageRef.current;
       const textPanelEl = textPanelRef.current;
       if (!imageEl || !textPanelEl) return;
 
+      const split = new SplitText(".product-statement", {
+        type: "words,chars",
+        charsClass: "inline-block",
+      });
+
       if (prefersReducedMotion) {
-        gsap.set(textPanelEl, { yPercent: 0, opacity: 1 });
-        gsap.set(words, { opacity: 1, y: 0 });
+        gsap.set(textPanelEl, { opacity: 1, y: 0 });
+        gsap.set(split.chars, { opacity: 1, y: 0 });
         gsap.set(imageEl, { scale: 1 });
         return;
       }
 
+      // Parallax/Overlay mode
       gsap.set(textPanelEl, { yPercent: 100 });
-      gsap.set(words, { opacity: 0, y: 24 });
+      gsap.set(split.chars, { opacity: 0, y: 24 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -51,29 +58,43 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
           scrub: 0.45,
         },
       });
-      tl.to(imageEl, { scale: 1.08, ease: "none", duration: 1 }, 0);
 
-      // Keep the image pinned while the text panel overlays it.
-      tl.to(textPanelEl, { yPercent: 0, ease: "none", duration: 0.9 }, 0.35);
+      tl.to(imageEl, { scale: 1.08, ease: "none", duration: 1 }, 0);
+      tl.to(textPanelEl, { yPercent: 0, ease: "none", duration: 1.1 }, 0.55);
 
       tl.to(
-        words,
-        { opacity: 1, y: 0, ease: "none", stagger: 0.05, duration: 0.45 },
-        0.6,
+        split.chars,
+        { opacity: 1, y: 0, ease: "none", stagger: 0.02, duration: 0.25 },
+        0.75,
       );
+
+      return () => {
+        split.revert();
+      };
     },
     { scope: sectionRef, dependencies: [isHydrated, prefersReducedMotion] },
   );
 
-  const wordsArray = STATEMENT.split(" ");
-
   return (
-    <section ref={sectionRef} className="relative z-1 h-[260vh] bg-foreground">
-      <div className="sticky top-0 h-screen overflow-hidden will-change-transform">
+    <section
+      ref={sectionRef}
+      className={`relative z-1 bg-foreground ${
+        prefersReducedMotion ? "h-auto" : "h-[260vh]"
+      }`}
+    >
+      <div
+        className={`${
+          prefersReducedMotion
+            ? "relative"
+            : "sticky top-0 h-screen overflow-hidden will-change-transform"
+        }`}
+      >
         {/* Phase 1: full-screen image */}
         <div
           ref={imageRef}
-          className="product-image absolute inset-0 origin-center will-change-transform"
+          className={`product-image origin-center will-change-transform ${
+            prefersReducedMotion ? "relative h-screen" : "absolute inset-0"
+          }`}
         >
           <Image
             src={imageSrc}
@@ -84,22 +105,21 @@ const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
           />
         </div>
 
-        {/* Phase 2: full-screen text panel over pinned image */}
+        {/* Phase 2: text panel */}
         <div
           ref={textPanelRef}
-          className="text-panel absolute inset-0 z-10 flex-center bg-foreground will-change-transform"
+          className={`text-panel z-10 flex-center bg-foreground will-change-transform ${
+            prefersReducedMotion
+              ? "relative h-screen py-24 md:py-32"
+              : "absolute inset-0"
+          }`}
         >
           <div className="wrapper flex justify-end w-full px-12">
-            <h2 aria-label={STATEMENT} className="max-w-175 title leading-none">
-              {wordsArray.map((word, i) => (
-                <span
-                  key={i}
-                  aria-hidden="true"
-                  className="reveal-word inline-block mr-[0.25em] text-white"
-                >
-                  {word}
-                </span>
-              ))}
+            <h2
+              aria-label={STATEMENT}
+              className="product-statement max-w-175 title leading-none text-white"
+            >
+              {STATEMENT}
             </h2>
           </div>
         </div>

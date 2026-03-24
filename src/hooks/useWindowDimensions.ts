@@ -23,7 +23,7 @@ export function useWindowDimensions() {
 
     const handleResize = () => {
       clearTimeout(timer);
-      timer = setTimeout(updateDimensions, 150);
+      timer = setTimeout(updateDimensions, 300);
     };
 
     updateDimensions();

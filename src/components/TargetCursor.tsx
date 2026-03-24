@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 
 export interface TargetCursorProps {
   targetSelector?: string;
@@ -29,6 +30,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
   const cornersRef = useRef<NodeListOf<HTMLDivElement> | null>(null);
   const spinTl = useRef<gsap.core.Timeline | null>(null);
   const dotRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const isActiveRef = useRef(false);
   const targetCornerPositionsRef = useRef<{ x: number; y: number }[] | null>(
@@ -67,7 +69,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
 
   useGSAP(
     () => {
-      if (isMobile || !cursorRef.current) return;
+      if (isMobile || !cursorRef.current || prefersReducedMotion) return;
 
       const originalCursor = document.body.style.cursor;
 
@@ -334,6 +336,11 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
 
       return () => {
         if (tickerFnRef.current) {
+          if (resumeTimeout) {
+            clearTimeout(resumeTimeout);
+            resumeTimeout = null;
+          }
+
           gsap.ticker.remove(tickerFnRef.current);
         }
         window.removeEventListener("mousemove", moveHandler);
@@ -366,6 +373,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
         hoverDuration,
         parallaxOn,
         isHydrated,
+        prefersReducedMotion,
       ],
     },
   );
@@ -382,7 +390,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
     }
   }, [spinDuration, isMobile]);
 
-  if (!isHydrated || isMobile) {
+  if (!isHydrated || isMobile || prefersReducedMotion) {
     return null;
   }
 

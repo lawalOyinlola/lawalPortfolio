@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, useRef } from "react";
+import { RefObject, useRef, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -19,20 +19,30 @@ const V_HEIGHTS = [
 const COLUMN_COUNT = V_HEIGHTS.length;
 const CENTER = (COLUMN_COUNT - 1) / 2;
 
-function getColumnConfig(i: number, isMobile: boolean, isSE: boolean) {
+// Fixed speed/delay table — avoids Math.random() on every re-render/resize.
+// Generated once at module load time and never changes.
+const FIXED_SPEEDS: number[] = V_HEIGHTS.map(
+  (_, i) => 2.2 + ((i * 37 + 13) % 100) / 43.5,
+);
+const FIXED_DELAYS: number[] = V_HEIGHTS.map(
+  (_, i) => ((i * 53 + 7) % 100) / 66.7,
+);
+
+function getColumnConfig(
+  i: number,
+  isMobile: boolean,
+  isSE: boolean,
+): { lo: number; hi: number; speed: number; delay: number } {
   const rawHeight = V_HEIGHTS[i];
-  // On mobile, reduce the base height so it doesn't take up too much vertical space
   const height = isSE
     ? rawHeight * 0.5
     : isMobile
       ? rawHeight * 0.65
       : rawHeight;
 
-  // yPercent 0 = full coverage, yPercent -100 = empty.
   const base = -(100 - height);
-
   const dist = Math.abs(i - CENTER) / CENTER;
-  // Reduce oscillation magnitude on mobile to complement the scaled-down heights
+
   const baseOscillation = 6 + dist * 10;
   const oscillation = isSE
     ? baseOscillation * 0.5
@@ -40,13 +50,11 @@ function getColumnConfig(i: number, isMobile: boolean, isSE: boolean) {
       ? baseOscillation * 0.7
       : baseOscillation;
 
-  const speed = 2.2 + Math.random() * 2.3;
-  const delay = Math.random() * 1.5;
+  // Use fixed (stable) speed and delay values
+  const speed = FIXED_SPEEDS[i];
+  const delay = FIXED_DELAYS[i];
 
-  const lo = base - oscillation;
-  const hi = base + oscillation;
-
-  return { lo, hi, speed, delay };
+  return { lo: base - oscillation, hi: base + oscillation, speed, delay };
 }
 
 interface GridAnimationProps {
@@ -67,8 +75,18 @@ const GridAnimation = ({
   className = "",
 }: GridAnimationProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { isMobile, isSE, width, height } = useWindowDimensions();
+  const { isMobile, isSE } = useWindowDimensions();
   const { prefersReducedMotion } = usePrefersReducedMotion();
+
+  // Track isMobile/isSE in a ref so changing viewport width doesn't force
+  // GSAP to re-run (which causes teardown/restart mid-animation).
+  // GSAP only re-runs on the coarser deps: ready, scrubStart, prefersReducedMotion.
+  const isMobileRef = useRef(isMobile);
+  const isSERef = useRef(isSE);
+  useLayoutEffect(() => {
+    isMobileRef.current = isMobile;
+    isSERef.current = isSE;
+  }, [isMobile, isSE]);
 
   useGSAP(
     () => {
@@ -77,16 +95,24 @@ const GridAnimation = ({
         containerRef.current,
       );
 
+      // Sync GSAP's transform state with the inline CSS starting position.
+      // Without this, GSAP would read yPercent as 0 (open) and animate incorrectly.
+      gsap.set(shutters, { yPercent: -100 });
+
       if (prefersReducedMotion) {
         shutters.forEach((shutter, i) => {
-          const { hi } = getColumnConfig(i, isMobile, isSE);
+          const { hi } = getColumnConfig(
+            i,
+            isMobileRef.current,
+            isSERef.current,
+          );
           gsap.set(shutter, { yPercent: hi });
         });
         return;
       }
 
       const COLUMN_CONFIGS = V_HEIGHTS.map((_, i) =>
-        getColumnConfig(i, isMobile, isSE),
+        getColumnConfig(i, isMobileRef.current, isSERef.current),
       );
 
       const oscillationTweens: gsap.core.Tween[] = [];
@@ -96,54 +122,43 @@ const GridAnimation = ({
       const triggerEl = triggerRef?.current ?? containerRef.current;
       if (!triggerEl) return;
 
-      const scrubTargets = COLUMN_CONFIGS.map((c) => ({ y: c.hi }));
-      const activeTargets = scrubStart ? scrubTargets : shutters;
-
       const setOscillationPaused = (paused: boolean) => {
         oscillationTweens.forEach((tween) => tween.paused(paused));
       };
 
-      // Setup oscillation tweens
-      activeTargets.forEach((target, i) => {
-        const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
-        const tween = gsap.fromTo(
-          target,
-          scrubStart ? { y: hi } : { yPercent: hi },
-          {
-            ...(scrubStart ? { y: lo } : { yPercent: lo }),
-            duration: speed,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut",
-            delay,
-            paused: !scrubStart,
-            overwrite: "auto",
-          },
-        );
-        oscillationTweens.push(tween);
-      });
-
-      let tickerUpdater: (() => void) | null = null;
-
       if (scrubStart) {
         // --- PARTNERS SECTION MODE (Scrub to Open) ---
-        const mProxy = { m: 0 };
+        const scrubTargets = COLUMN_CONFIGS.map((c) => ({ y: c.hi }));
 
-        // This ticker continuously applies the scrub scale to the running oscillation,
-        // allowing flawless synchronization when scrubbing backwards from the current position!
-        tickerUpdater = () => {
+        scrubTargets.forEach((target, i) => {
+          const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
+          const tween = gsap.fromTo(
+            target,
+            { y: hi },
+            {
+              y: lo,
+              duration: speed,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              delay,
+            },
+          );
+          oscillationTweens.push(tween);
+        });
+
+        const mProxy = { m: 0 };
+        const tickerUpdater = () => {
           shutters.forEach((shutter, i) => {
-            gsap.set(shutter, {
-              yPercent: scrubTargets[i].y * mProxy.m,
-            });
+            gsap.set(shutter, { yPercent: scrubTargets[i].y * mProxy.m });
           });
         };
         gsap.ticker.add(tickerUpdater);
 
         if (!ready) {
           return () => {
-            if (tickerUpdater) gsap.ticker.remove(tickerUpdater);
-            oscillationTweens.forEach((tween) => tween.kill());
+            gsap.ticker.remove(tickerUpdater);
+            oscillationTweens.forEach((t) => t.kill());
           };
         }
 
@@ -155,20 +170,38 @@ const GridAnimation = ({
             scrub: true,
           },
         });
-
         scrubTimeline.fromTo(mProxy, { m: 0 }, { m: 1, ease: "none" }, 0);
 
         return () => {
           scrubTimeline?.scrollTrigger?.kill();
           scrubTimeline?.kill();
-          if (tickerUpdater) gsap.ticker.remove(tickerUpdater);
-          oscillationTweens.forEach((tween) => tween.kill());
+          gsap.ticker.remove(tickerUpdater);
+          oscillationTweens.forEach((t) => t.kill());
         };
       } else {
         // --- HERO SECTION MODE (Normal Intro) ---
         let capturedHeights: number[] = [];
         let closeTween: gsap.core.Tween | null = null;
         let restoreTween: gsap.core.Tween | null = null;
+
+        shutters.forEach((shutter, i) => {
+          const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
+          const tween = gsap.fromTo(
+            shutter,
+            { yPercent: hi },
+            {
+              yPercent: lo,
+              duration: speed,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              delay,
+              paused: true,
+              overwrite: "auto",
+            },
+          );
+          oscillationTweens.push(tween);
+        });
 
         const closeFromCurrent = () => {
           capturedHeights = shutters.map((shutter) =>
@@ -229,9 +262,8 @@ const GridAnimation = ({
             gsap.set(shutters, { yPercent: 0 });
             setOscillationPaused(true);
           } else {
-            gsap.set(shutters, { yPercent: -100 });
-            gsap.set(containerRef.current, { yPercent: 0 });
-
+            // Shutters are already pre-set to translateY(-100%) via inline style.
+            // Just run the intro animation from where they already are.
             if (!ready) return;
 
             introTimeline = gsap.timeline();
@@ -261,22 +293,22 @@ const GridAnimation = ({
 
         initScrollState();
         const timer = setTimeout(() => st.refresh(), 100);
+
         return () => {
           clearTimeout(timer);
           st.kill();
+          introTimeline?.kill();
+          closeTween?.kill();
+          restoreTween?.kill();
+          oscillationTweens.forEach((t) => t.kill());
         };
       }
     },
     {
       scope: containerRef,
-      dependencies: [
-        ready,
-        triggerRef,
-        scrubStart,
-        width,
-        height,
-        prefersReducedMotion,
-      ],
+      // Only re-run on logical state changes, NOT on raw pixel dimensions.
+      // isMobile/isSE changes are handled via refs (useLayoutEffect above).
+      dependencies: [ready, scrubStart, prefersReducedMotion],
     },
   );
 
