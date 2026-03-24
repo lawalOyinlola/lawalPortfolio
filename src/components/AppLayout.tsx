@@ -31,7 +31,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   // Accessibility: Reset focus to main container on page change (if no anchor)
   useEffect(() => {
-    if (!loading && typeof window !== "undefined" && !window.location.hash) {
+    if (
+      !loading &&
+      pathname &&
+      typeof window !== "undefined" &&
+      !window.location.hash
+    ) {
       // Small delay to ensure the page has updated its layout
       const timer = setTimeout(() => {
         if (mainRef.current) {

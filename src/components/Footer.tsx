@@ -21,6 +21,7 @@ import {
 import type { Icon } from "@phosphor-icons/react";
 import { buttonVariants } from "./ui/button";
 import Magnetic from "./ui/Magnetic";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 interface FooterProps {
   className?: string;
@@ -66,6 +67,7 @@ function Footer({ className }: FooterProps) {
   const { isSE, zFold } = useWindowDimensions();
   const pathname = usePathname();
   const router = useRouter();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useGSAP(
     () => {
@@ -179,7 +181,10 @@ function Footer({ className }: FooterProps) {
         footerRef.current?.contains(target) &&
         !footerRef.current.contains(previousTarget)
       ) {
-        target.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        target.scrollIntoView({
+          block: "nearest",
+          behavior: prefersReducedMotion ? "auto" : "smooth",
+        });
       }
     };
 

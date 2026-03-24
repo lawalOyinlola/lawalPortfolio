@@ -51,8 +51,8 @@ function BrandStats({ children }: { children: React.ReactNode }) {
 
       // Initial states
       gsap.set(contactOverlayEl, {
+        autoAlpha: 0,
         yPercent: 100,
-        autoAlpha: 1,
         pointerEvents: "none",
       });
       gsap.set(handoffOverlayEl, { autoAlpha: 0 });
@@ -63,7 +63,11 @@ function BrandStats({ children }: { children: React.ReactNode }) {
       });
 
       if (prefersReducedMotion) {
-        gsap.set(contactOverlayEl, { yPercent: 0, pointerEvents: "auto" });
+        gsap.set(contactOverlayEl, {
+          yPercent: 0,
+          autoAlpha: 1,
+          pointerEvents: "auto",
+        });
         return;
       }
 
@@ -125,6 +129,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
           contactOverlayEl,
           {
             yPercent: 0,
+            autoAlpha: 1,
             duration: 0.5,
             ease: "none",
           },
