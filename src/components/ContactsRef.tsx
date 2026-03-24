@@ -46,9 +46,6 @@ function ContactsRef({
 
   const [ambientAudioEnabled, setAmbientAudioEnabled] = useState(true);
 
-  useEffect(() => {
-    isAudioEnabledRef.current = ambientAudioEnabled;
-  }, [ambientAudioEnabled]);
 
   useEffect(() => {
     const saved = localStorage.getItem("ambientAudioEnabled");
@@ -61,15 +58,19 @@ function ContactsRef({
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "ambientAudioEnabled" && e.newValue !== null) {
         const isEnabled = e.newValue === "true";
-        setAmbientAudioEnabled(isEnabled);
-        isAudioEnabledRef.current = isEnabled;
+        if (isAudioEnabledRef.current !== isEnabled) {
+          setAmbientAudioEnabled(isEnabled);
+          isAudioEnabledRef.current = isEnabled;
+        }
       }
     };
 
     const handleCustomEvent = (e: Event) => {
       const detail = (e as CustomEvent).detail;
-      setAmbientAudioEnabled(detail);
-      isAudioEnabledRef.current = detail;
+      if (isAudioEnabledRef.current !== detail) {
+        setAmbientAudioEnabled(detail);
+        isAudioEnabledRef.current = detail;
+      }
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -81,21 +82,28 @@ function ContactsRef({
   }, []);
 
   const toggleAudio = useCallback(() => {
-    setAmbientAudioEnabled((prev) => {
-      const next = !prev;
-      localStorage.setItem("ambientAudioEnabled", String(next));
-      isAudioEnabledRef.current = next;
-      window.dispatchEvent(
-        new CustomEvent("ambientAudioToggled", { detail: next }),
-      );
-
-      // Force resume the context immediately if unmuting
-      if (next && audioContextRef.current?.state === "suspended") {
-        audioContextRef.current.resume();
-      }
-      return next;
-    });
+    setAmbientAudioEnabled((prev) => !prev);
   }, []);
+
+  // Sync side-effects (localStorage, event dispatch, and audio context resume)
+  useEffect(() => {
+    if (!isMotionHydrated) return;
+
+    localStorage.setItem("ambientAudioEnabled", String(ambientAudioEnabled));
+    isAudioEnabledRef.current = ambientAudioEnabled;
+
+    window.dispatchEvent(
+      new CustomEvent("ambientAudioToggled", { detail: ambientAudioEnabled }),
+    );
+
+    // Force resume the context immediately if unmuting
+    if (
+      ambientAudioEnabled &&
+      audioContextRef.current?.state === "suspended"
+    ) {
+      audioContextRef.current.resume();
+    }
+  }, [ambientAudioEnabled, isMotionHydrated]);
 
   const initAudio = useCallback(() => {
     if (prefersReducedMotion) return;
@@ -356,17 +364,22 @@ function ContactsRef({
             ref={buttonRef}
             variant="ghost"
             size="icon"
+            disabled={prefersReducedMotion}
             onClick={toggleAudio}
             className="rounded-full"
             title={
-              !isMotionHydrated || ambientAudioEnabled
-                ? "Mute audio"
-                : "Unmute audio"
+              prefersReducedMotion
+                ? "Ambient audio unavailable while reduced motion is enabled"
+                : !isMotionHydrated || ambientAudioEnabled
+                  ? "Mute audio"
+                  : "Unmute audio"
             }
             aria-label={
-              !isMotionHydrated || ambientAudioEnabled
-                ? "Mute ambient audio"
-                : "Unmute ambient audio"
+              prefersReducedMotion
+                ? "Ambient audio unavailable while reduced motion is enabled"
+                : !isMotionHydrated || ambientAudioEnabled
+                  ? "Mute ambient audio"
+                  : "Unmute ambient audio"
             }
           >
             {ambientAudioEnabled && !prefersReducedMotion ? (
