@@ -80,7 +80,7 @@ export const PROJECTS: Project[] = [
         image: "/projects/safulpay/safulpay_agency.png",
         title: "The Agency Platform",
         description:
-          "Developed a robust business dashboard for monitoring agent performance, managing seamless onboarding, and orcherstrating automated disbursement and recollection workflows.",
+          "Developed a robust business dashboard for monitoring agent performance, managing seamless onboarding, and orchestrating automated disbursement and recollection workflows.",
       },
     ],
     featured: true,
@@ -129,27 +129,51 @@ export const PROJECTS: Project[] = [
       },
     ],
     featured: true,
-    startDate: "Nov 2023",
+    startDate: "Oct 2025",
   },
   {
-    name: "AI Resume Analyzer",
-    slug: "ai-resume-analyzer",
+    name: "Khariar",
+    slug: "khariar",
     category: "AI / ML",
     description:
-      "An intelligent resume analysis tool that leverages the Gemini AI model to evaluate resumes against job descriptions. It provides actionable feedback, keyword optimization suggestions, and scoring to help job seekers improve their applications and increase interview chances.",
-    image: "/projects/my_projects.jpeg",
-    github: "https://github.com/lawalOyinlola/ai-resume-analyzer",
-    live: "https://yero-ai-resume-analyzer.vercel.app/",
+      "An intelligent career platform leveraging Gemini AI to evaluate resumes against job descriptions. It provides deep ATS optimization, actionable feedback, and personalized scoring to help job seekers enhance their applications and land interviews.",
+    image: "/projects/khariar/khariar_home.png",
+    github: "https://github.com/lawalOyinlola/khariar",
+    live: "https://khariar.vercel.app",
     keypoints: [
-      "Engineered NLP pipeline for extracting text from PDF resumes",
-      "Implemented AI-powered resume scoring and feedback using Gemini AI",
-      "Developed job description matching algorithm to optimize application success",
-      "Designed intuitive file management system integrated with Puter.js storage",
+      "Engineered an AI-powered 'Career Co-pilot' for comprehensive resume analysis and ATS optimization",
+      "Implemented an intelligent PDF parsing pipeline using Gemini AI for deep candidate-to-role matching",
+      "Developed robust JSON parsing algorithms to safely handle AI hallucinations and ensure feedback stability",
+      "Integrated Puter.js for seamless cloud-based job tracking and secure authentication",
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/khariar/khariar_analysis.png",
+        title: "Intelligent Text Extraction",
+        description:
+          "Integrated PDF.js to extract and format complex resume text, ensuring high data accuracy before routing it through the AI feedback pipeline.",
+      },
+      {
+        image: "/projects/khariar/khariar_improve.png",
+        title: "AI-Driven Feedback Engine",
+        description:
+          "Leveraged Gemini AI to generate actionable resume scores, keyword optimizations, and intelligent, section-by-section content improvements based on target job descriptions.",
+      },
+      {
+        image: "/projects/khariar/khariar_review.png",
+        title: "Robust Data Pipelines",
+        description:
+          "Engineered strict JSON parsing mechanisms and regex fallbacks to eliminate AI hallucinations and guarantee stable data extraction for the UI.",
+      },
+      {
+        image: "/projects/khariar/khariar_mismatch.png",
+        title: "Secure Cloud Architecture",
+        description:
+          "Built an intuitive file management dashboard mapped to Puter.js, providing users with fast, secure document storage and persistent authentication.",
+      },
+    ],
     featured: true,
-    startDate: "Feb 2024",
-    endDate: "Apr 2024",
+    startDate: "Nov 2025",
   },
   {
     name: "LIA",
@@ -193,6 +217,7 @@ export const PROJECTS: Project[] = [
       },
     ],
     featured: true,
+    startDate: "Jan 2026",
   },
   {
     name: "Scissors Web",

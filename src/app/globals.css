@@ -152,7 +152,8 @@
   input,
   textarea,
   select,
-  [role="button"] {
+  [role="button"],
+  [tabindex]:not([tabindex="-1"]) {
     @apply focus:outline-ring/50 focus-visible:outline-ring/50;
   }
   body {

@@ -78,15 +78,6 @@ const GridAnimation = ({
   const { isMobile, isSE } = useWindowDimensions();
   const { prefersReducedMotion } = usePrefersReducedMotion();
 
-  // Track isMobile/isSE in a ref so changing viewport width doesn't force
-  // GSAP to re-run (which causes teardown/restart mid-animation).
-  // GSAP only re-runs on the coarser deps: ready, scrubStart, prefersReducedMotion.
-  const isMobileRef = useRef(isMobile);
-  const isSERef = useRef(isSE);
-  useLayoutEffect(() => {
-    isMobileRef.current = isMobile;
-    isSERef.current = isSE;
-  }, [isMobile, isSE]);
 
   useGSAP(
     () => {
@@ -103,8 +94,8 @@ const GridAnimation = ({
         shutters.forEach((shutter, i) => {
           const { hi } = getColumnConfig(
             i,
-            isMobileRef.current,
-            isSERef.current,
+            isMobile,
+            isSE,
           );
           gsap.set(shutter, { yPercent: hi });
         });
@@ -112,7 +103,7 @@ const GridAnimation = ({
       }
 
       const COLUMN_CONFIGS = V_HEIGHTS.map((_, i) =>
-        getColumnConfig(i, isMobileRef.current, isSERef.current),
+        getColumnConfig(i, isMobile, isSE),
       );
 
       const oscillationTweens: gsap.core.Tween[] = [];
@@ -123,7 +114,9 @@ const GridAnimation = ({
       if (!triggerEl) return;
 
       const setOscillationPaused = (paused: boolean) => {
-        oscillationTweens.forEach((tween) => tween.paused(paused));
+        oscillationTweens.forEach((tween) => {
+          tween.paused(paused);
+        });
       };
 
       if (scrubStart) {
@@ -142,6 +135,7 @@ const GridAnimation = ({
               yoyo: true,
               ease: "sine.inOut",
               delay,
+              immediateRender: false,
             },
           );
           oscillationTweens.push(tween);
@@ -158,7 +152,9 @@ const GridAnimation = ({
         if (!ready) {
           return () => {
             gsap.ticker.remove(tickerUpdater);
-            oscillationTweens.forEach((t) => t.kill());
+            oscillationTweens.forEach((t) => {
+              t.kill();
+            });
           };
         }
 
@@ -176,7 +172,9 @@ const GridAnimation = ({
           scrubTimeline?.scrollTrigger?.kill();
           scrubTimeline?.kill();
           gsap.ticker.remove(tickerUpdater);
-          oscillationTweens.forEach((t) => t.kill());
+          oscillationTweens.forEach((t) => {
+            t.kill();
+          });
         };
       } else {
         // --- HERO SECTION MODE (Normal Intro) ---
@@ -198,6 +196,7 @@ const GridAnimation = ({
               delay,
               paused: true,
               overwrite: "auto",
+              immediateRender: false,
             },
           );
           oscillationTweens.push(tween);
@@ -300,7 +299,9 @@ const GridAnimation = ({
           introTimeline?.kill();
           closeTween?.kill();
           restoreTween?.kill();
-          oscillationTweens.forEach((t) => t.kill());
+          oscillationTweens.forEach((t) => {
+            t.kill();
+          });
         };
       }
     },
@@ -308,7 +309,7 @@ const GridAnimation = ({
       scope: containerRef,
       // Only re-run on logical state changes, NOT on raw pixel dimensions.
       // isMobile/isSE changes are handled via refs (useLayoutEffect above).
-      dependencies: [ready, scrubStart, prefersReducedMotion],
+      dependencies: [ready, scrubStart, prefersReducedMotion, isMobile, isSE],
     },
   );
 

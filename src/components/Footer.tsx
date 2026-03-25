@@ -67,7 +67,7 @@ function Footer({ className }: FooterProps) {
   const { isSE, zFold } = useWindowDimensions();
   const pathname = usePathname();
   const router = useRouter();
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useGSAP(
     () => {
