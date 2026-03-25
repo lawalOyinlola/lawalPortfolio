@@ -142,7 +142,7 @@ function ContactsRef({
     filter.connect(gainNode);
     gainNode.connect(ctx.destination);
     source.start();
-  }, [prefersReducedMotion, ambientAudioEnabled]);
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     if (!isMotionHydrated) return;
