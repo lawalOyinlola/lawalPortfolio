@@ -46,7 +46,6 @@ function ContactsRef({
 
   const [ambientAudioEnabled, setAmbientAudioEnabled] = useState(true);
 
-
   useEffect(() => {
     const saved = localStorage.getItem("ambientAudioEnabled");
     if (saved !== null) {
@@ -97,10 +96,7 @@ function ContactsRef({
     );
 
     // Force resume the context immediately if unmuting
-    if (
-      ambientAudioEnabled &&
-      audioContextRef.current?.state === "suspended"
-    ) {
+    if (ambientAudioEnabled && audioContextRef.current?.state === "suspended") {
       audioContextRef.current.resume();
     }
   }, [ambientAudioEnabled, isMotionHydrated]);
@@ -240,7 +236,7 @@ function ContactsRef({
             ease: "expo.out",
             scrollTrigger: {
               trigger: scrollTriggerSelector || contactRef.current,
-              start: scrollTriggerStart || "top 20%",
+              start: scrollTriggerStart || "top center",
               toggleActions: "play none none reverse",
             },
           });

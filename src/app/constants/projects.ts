@@ -116,7 +116,7 @@ export const PROJECTS: Project[] = [
           "We crafted a dashboard layout utilizing React 19 and Tailwind CSS, focusing on accessible data visualization and seamless user experience.",
       },
       {
-        image: "/projects/marketgist/marketgist_dashboard.png",
+        image: "/projects/marketgist/marketgist_watchlist.png",
         title: "Development & Engineering",
         description:
           "The platform was built with Next.js 15, integrating Finnhub API for live stocks and Inngest for background job processing and automation.",
@@ -220,21 +220,46 @@ export const PROJECTS: Project[] = [
     startDate: "Jan 2026",
   },
   {
-    name: "Scissors Web",
-    slug: "scissors-web",
+    name: "ScissorsWeb",
+    slug: "scissorsweb",
     category: "Utility",
     description:
       "A feature-rich URL shortening service built with React and Supabase. Scissors Web provides custom short URLs with emojis, real-time click analytics, and dynamic QR code generation to help users manage and track their digital presence with ease.",
-    image: "/projects/my_projects.jpeg",
+    image: "/projects/scissorsweb/scissors_home.png",
     github: "https://github.com/lawalOyinlola/scissorsWeb",
     live: "https://scissorsweb.netlify.app/",
     keypoints: [
       "Developed secure URL shortening service with custom link aliases",
       "Implemented real-time click analytics and geographical tracking system",
       "Integrated dynamic QR code generation for enhanced link sharing",
-      "Built responsive frontend using React, Tailwind CSS, and Firebase",
+      "Built responsive frontend using React, Tailwind CSS, and Supabase",
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/scissorsweb/scissors_main.png",
+        title: "Custom URL Shortening",
+        description:
+          "Developed a feature-rich URL shortening service that allows users to create memorable, custom aliases and use unique emoji-based slugs for their links.",
+      },
+      {
+        image: "/projects/scissorsweb/scissors_analytics.png",
+        title: "Real-Time Link Insights",
+        description:
+          "Built a robust analytics dashboard that tracks every click, providing detailed insights into geographic locations, device types, and referral sources.",
+      },
+      {
+        image: "/projects/scissorsweb/scissors_qrcode.png",
+        title: "Dynamic QR Code Generation",
+        description:
+          "Integrated an automatic QR code generator for every link, enabling seamless sharing across physical and digital platforms.",
+      },
+      {
+        image: "/projects/scissorsweb/scissors_faq.png",
+        title: "Secure Link Management",
+        description:
+          "Leveraged Supabase for secure authentication and reliable database management, ensuring performant link resolution and user data protection.",
+      },
+    ],
     featured: false,
   },
   {

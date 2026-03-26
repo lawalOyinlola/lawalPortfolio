@@ -1,6 +1,6 @@
 "use client";
 
-import { RefObject, useRef, useLayoutEffect } from "react";
+import { RefObject, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -78,7 +78,6 @@ const GridAnimation = ({
   const { isMobile, isSE } = useWindowDimensions();
   const { prefersReducedMotion } = usePrefersReducedMotion();
 
-
   useGSAP(
     () => {
       const shutters = gsap.utils.toArray<HTMLDivElement>(
@@ -92,11 +91,7 @@ const GridAnimation = ({
 
       if (prefersReducedMotion) {
         shutters.forEach((shutter, i) => {
-          const { hi } = getColumnConfig(
-            i,
-            isMobile,
-            isSE,
-          );
+          const { hi } = getColumnConfig(i, isMobile, isSE);
           gsap.set(shutter, { yPercent: hi });
         });
         return;
@@ -307,8 +302,8 @@ const GridAnimation = ({
     },
     {
       scope: containerRef,
-      // Only re-run on logical state changes, NOT on raw pixel dimensions.
-      // isMobile/isSE changes are handled via refs (useLayoutEffect above).
+      // Re-run when layout-affecting state changes. isMobile/isSE are debounced
+      // in useWindowDimensions, so this won't thrash on every resize pixel.
       dependencies: [ready, scrubStart, prefersReducedMotion, isMobile, isSE],
     },
   );
