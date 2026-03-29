@@ -69,6 +69,7 @@ export default function ProjectHero({ project }: { project: Project }) {
             priority
             className="object-cover"
             sizes="100vw"
+            unoptimized
           />
         </div>
       </div>
