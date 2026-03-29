@@ -48,7 +48,7 @@ export const PROJECTS: Project[] = [
     category: "Fintech",
     description:
       "SafulPay is a groundbreaking fintech company based in Sierra Leone, dedicated to transforming the financial landscape. By offering innovative digital payment solutions, SafulPay empowers individuals and businesses to engage in seamless transactions. With a focus on accessibility and security, this platform aims to enhance financial inclusion, making it easier for everyone to manage their finances and participate in the economy.",
-    image: "/projects/safulpay/hero.png",
+    image: "/projects/safulpay/safulpay_hero.png",
     github: "https://github.com/TECH-N-GOODWILL-LIMITED/SafulPay-Website-v2",
     live: "https://safulpay.com",
     keypoints: [
@@ -263,22 +263,49 @@ export const PROJECTS: Project[] = [
     featured: false,
   },
   {
-    name: "Pig Game",
-    slug: "pig-game",
+    name: "Lumina Dice",
+    slug: "lumina-dice",
     category: "Game",
     description:
       "A fun and interactive dice game built as a browser-based experience. Players take turns rolling dice and strategically deciding when to hold their score, racing to be the first to reach the target.",
-    image: "/projects/my_projects.jpeg",
-    github: "https://github.com/lawalOyinlola/Pig-game",
-    live: "https://dice-piggygame.netlify.app/",
+    image: "/projects/lumina/lumina_gameplay.png",
+    github: "https://github.com/lawalOyinlola/Lumina_Dice",
+    live: "https://lumina-dice.vercel.app/",
     keypoints: [
-      "Engineered game logic and state management for seamless play",
-      "Developed interactive UI with real-time score tracking and updates",
-      "Implemented responsive design for an optimal mobile gaming experience",
-      "Created smooth animations for enhanced player engagement and feedback",
+      "Architected core game logic with dynamic turn switching and score persistence",
+      "Implemented rolling mechanics with real-time feedback and risk-based decision systems",
+      "Designed immersive player celebration states using CSS animations and DOM transitions",
+      "Engineered responsive multi-player interface for an optimal cross-device gaming experience",
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/lumina/lumina_mockups.png",
+        title: "Strategic Gameplay",
+        description:
+          "Modernized the classic Pig Game with a clean, Lumina-themed UI, focusing on readability and intuitive dice control.",
+      },
+      {
+        image: "/projects/lumina/lumina_turn_lost.png",
+        title: "Dynamic State Machine",
+        description:
+          "Engineered robust state machines to handle the core 'Roll or Hold' loop, featuring animated feedback for turn losses.",
+      },
+      {
+        image: "/projects/lumina/lumina_rules.png",
+        title: "Clear Instructions",
+        description:
+          "Integrated an accessible rules modal ensuring new players can quickly understand game mechanics and winning strategies.",
+      },
+      {
+        image: "/projects/lumina/lumina_winner.png",
+        title: "Immersive Celebration",
+        description:
+          "Developed dynamic victory UI that highlights the winner and provides a seamless flow for starting a new match.",
+      },
+    ],
     featured: false,
+    startDate: "Jul 2024",
+    endDate: "Mar 2026",
   },
   {
     name: "Resolve",
