@@ -313,16 +313,41 @@ export const PROJECTS: Project[] = [
     category: "Web Platform",
     description:
       "A secure and transparent electronic voting platform designed to facilitate digital democracy. Resolve provides a tamper-proof voting experience with real-time results and multi-stage authentication for secure collective decision-making.",
-    image: "/projects/my_projects.jpeg",
+    image: "/projects/resolve/resolve_hero.png",
     github: "https://github.com/hngprojects/E-Vote-FE",
     live: "https://resolve.vote",
     keypoints: [
       "Developed secure electronic voting platform for digital democratic processes",
-      "Implemented multi-stage authentication for voter identity verification and security",
-      "Integrated real-time results dashboard with tamper-proof data auditing systems",
-      "Designed intuitive user interface for streamlined collective decision management",
+      "Implemented multi-layered authentication including Google Social and biometric verification",
+      "Developed real-time results engine with dynamic data visualization and secure exporting",
+      "Designed intuitive, mobile-first election management systems for diverse organizational needs",
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/resolve/resolve_elections.png",
+        title: "Transparent Digital Democracy",
+        description:
+          "Designed a cohesive, accessible experience that bridges the gap between traditional democratic processes and modern digital security.",
+      },
+      {
+        image: "/projects/resolve/resolve_home.png",
+        title: "Dynamic Election Management",
+        description:
+          "Engineered a streamlined dashboard for organizers to manage complex candidate profiles, election timelines, and custom voting logic.",
+      },
+      {
+        image: "/projects/resolve/resolve_auth.png",
+        title: "Multi-Layered Authentication",
+        description:
+          "Implemented a robust, multi-layered identity verification system supporting social logins and invitation-only access to prevent voter fraud.",
+      },
+      {
+        image: "/projects/resolve/resolve_vote.png",
+        title: "Real-Time Notifications",
+        description:
+          "Integrated interactive real-time alerts to notify users when elections begin, provide countdowns for upcoming polls, and deliver instant results updates.",
+      },
+    ],
     featured: false,
   },
   {
