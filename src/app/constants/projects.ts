@@ -59,7 +59,7 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/safulpay/laptop_mockup.png",
+        image: "/projects/safulpay/safulpay_graphic.png",
         title: "Strategic Discovery",
         description:
           "Conducted market research to define a roadmap for transforming the financial landscape in Sierra Leone through digital payment innovation.",
@@ -409,17 +409,42 @@ export const PROJECTS: Project[] = [
     slug: "macbook-clone",
     category: "Landing Page",
     description:
-      "A pixel-perfect recreation of Apple's MacBook Pro product page, showcasing advanced CSS animations and scroll-driven interactions. This project demonstrates high-fidelity UI replication and premium web motion design.",
-    image: "/projects/my_projects.jpeg",
+      "A pixel-perfect, high-fidelity recreation of Apple's MacBook Pro M4 landing page. This project showcases advanced scroll-driven animations, intricate device mockups, and immersive feature storytelling, highlighting the power of Apple Intelligence and the M4 chip series.",
+    image: "/projects/macbook_m4/macbook_hero.png",
     github: "https://github.com/lawalOyinlola/mackbook-landing-page",
     live: "https://yero-macbook-pro.vercel.app/",
     keypoints: [
       "Engineered complex scroll-driven animations for an immersive product experience",
-      "Achieved pixel-perfect UI recreation focusing on premium aesthetic details",
+      "Developed interactive 3D-style hardware cutouts and AI feature overlays",
       "Optimized frontend performance for smooth 60fps motion and transitions",
-      "Implemented advanced CSS techniques for replicating high-end hardware textures",
+      "Achieved pixel-perfect UI recreation focusing on premium aesthetic details"
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/macbook_m4/macbook_upgrade.png",
+        title: "Built for Intelligence",
+        description:
+          "The flagship hero section introducing the MacBook Pro lineup with a signature glowing aesthetic and focus on Apple Intelligence.",
+      },
+      {
+        image: "/projects/macbook_m4/macbook_ai_fetaures.png",
+        title: "AI-Powered Workflows",
+        description:
+          "Visualizing Apple Intelligence with interactive summaries and writing tools, brought to life through smooth motion design.",
+      },
+      {
+        image: "/projects/macbook_m4/macbook_m4_cutout.png",
+        title: "The Rocket Chip",
+        description:
+          "A deep dive into the M4 family architecture, featuring hardware cutouts and performance-driven data visualizations.",
+      },
+      {
+        image: "/projects/macbook_m4/macbook_nextlevel_features.png",
+        title: "Next-Level Performance",
+        description:
+          "A high-density feature grid highlighting 24-hour battery life, 120Hz Liquid Retina XDR, and massive performance leaps.",
+      },
+    ],
     featured: false,
   },
   {
@@ -427,17 +452,42 @@ export const PROJECTS: Project[] = [
     slug: "zentry-clone",
     category: "Landing Page",
     description:
-      "An award-worthy recreation of the Zentry website featuring complex GSAP animations and immersive scroll experiences. This project pushes the boundaries of creative frontend development and interactive storytelling.",
-    image: "/projects/my_projects.jpeg",
+      "An award-worthy recreation of the Zentry website, featuring high-fidelity GSAP animations, cinematic transitions, and an immersive 'World of Zentry' storytelling experience. This project demonstrates advanced frontend motion, scroll-driven interactions, and premium UI design standards.",
+    image: "/projects/zentry/zentry_contact.png",
     github: "https://github.com/lawalOyinlola/zentry-clone-awwwards",
     live: "https://zentryclone-awwwards.vercel.app",
     keypoints: [
-      "Architected complex GSAP animation sequences for a cinematic web experience",
-      "Developed immersive scroll-based interactions with smooth state transitions",
-      "Pushed creative frontend boundaries using cutting-edge motion and layout techniques",
-      "Replicated Awwwards-level design standards with meticulous attention to detail",
+      "Engineered cinematic video expansion transitions and scroll-driven clip-path animations",
+      "Implemented high-performance smooth scrolling using Lenis for fluid motion",
+      "Developed an interactive bento-grid layout with 3D tilt hover effects",
+      "Architected complex GSAP ScrollTrigger sequences for pinned narrative storytelling",
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/zentry/zentry_hero.png",
+        title: "Metagame Hero",
+        description:
+          "A cinematic entrance featuring video expansion transitions and 'GAMING REDEFINED' typography, setting the stage for an immersive digital odyssey.",
+      },
+      {
+        image: "/projects/zentry/zentry_pinned_image.png",
+        title: "Cinematic Narrative",
+        description:
+          "Utilizing GSAP ScrollTrigger to pin and scale complex image frames as the user scrolls, creating a cinematic window into the story layer.",
+      },
+      {
+        image: "/projects/zentry/zentry_projects.png",
+        title: "Interactive Ecosystem",
+        description:
+          "A feature-rich bento grid highlighting core Zentry layers with dynamic hover effects and 3D skew interactions for a premium feel.",
+      },
+      {
+        image: "/projects/zentry/zentry_multiverse.png",
+        title: "Unified Play Layer",
+        description:
+          "Showcasing the 'Multiversal IP World' with stylized illustrations and large typography that emphasize Zentry's scale and connectivity.",
+      },
+    ],
     featured: false,
   },
 ];

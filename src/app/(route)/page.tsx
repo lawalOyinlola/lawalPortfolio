@@ -23,7 +23,6 @@ export default function Home() {
         <ContactsRef
           scrollTriggerSelector="#stats-contact-section"
           scrollTriggerStart="84% top"
-          audioTriggerStart="78% top"
         />
       </BrandStats>
     </div>

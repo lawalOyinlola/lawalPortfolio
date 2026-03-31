@@ -51,7 +51,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
 
       // Initial states
       gsap.set(contactOverlayEl, {
-        autoAlpha: 0,
+        autoAlpha: 0.6,
         yPercent: 100,
         pointerEvents: "none",
       });
@@ -84,7 +84,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
       const mainTl = gsap.timeline({
         scrollTrigger: {
           trigger: handoffEl,
-          start: "top center",
+          start: "top 15%", // Delayed zoom
           end: "bottom bottom",
           scrub: 0.5,
           onUpdate: (self) => {
@@ -94,12 +94,11 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         },
       });
 
-      // Fixed corners visibility toggle
-      gsap.set(cornersRef.current, { autoAlpha: 0 });
+      // Background corners visibility toggle
       ScrollTrigger.create({
         trigger: sectionEl,
-        start: "top top",
-        end: "bottom top",
+        start: () => `10% top`, // Wait for content entry
+        end: "bottom top", // Stay until section is completely gone
         onToggle: (self) => {
           gsap.to(cornersRef.current, {
             autoAlpha: self.isActive ? 1 : 0,
@@ -122,7 +121,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
           0,
         )
         // Fade out stats content natively as we scroll
-        .to(statsContentEl, { autoAlpha: 0, duration: 0.3 }, 0)
+        .to(statsContentEl, { autoAlpha: 0, duration: 0.5 }, 0)
 
         // Phase 2: Reveal Contact Overlay (Parallax Slide Up) AFTER zoom
         .to(
@@ -230,7 +229,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
           {/* Scroll spacer to drive the zoom and slide-reveal timeline */}
           <div
             ref={handoffRef}
-            className="h-[250vh] w-full"
+            className="h-[180vh] w-full"
             aria-hidden="true"
           />
         </div>
