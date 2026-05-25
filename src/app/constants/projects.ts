@@ -391,17 +391,42 @@ export const PROJECTS: Project[] = [
     slug: "task-pilot",
     category: "Productivity",
     description:
-      "An intuitive task management application built with Vue.js, featuring a robust drag-and-drop interface. Task Pilot streamlines team collaboration with real-time updates and efficient project tracking workflows.",
-    image: "/projects/my_projects.jpeg",
-    github: "https://github.com/lawalOyinlola/vue_todo",
-    live: "https://altschool-taskpilot.netlify.app/",
+      "A high-performance productivity cockpit built with Vue 3 and Vite, Task Pilot redefines task management through a 'Mission Control' lens. It features a sophisticated persistence layer using LZ-string compression, cutting-edge UI primitives from Reka UI, and a dual-engine theme system (Nocturnal & Aero). Designed for professional focus, it combines automated feedback loops with a mobile-first tactical interface.",
+    image: "/projects/taskpilot/taskpilot_hero.png",
+    github: "https://github.com/lawalOyinlola/taskpilot",
+    live: "https://taskpilot-lawal.vercel.app/",
     keypoints: [
-      "Built intuitive task management application using Vue.js for reactivity",
-      "Developed drag-and-drop interface for efficient task organization and prioritization",
-      "Implemented real-time collaboration features for team productivity and tracking",
-      "Created automated notification system for deadlines and project milestone reminders",
+      "Performance-Driven Persistence: Implements LZ-string compression for LocalStorage, ensuring lightning-fast data syncing with a minimal memory footprint",
+      "Modern Tech Stack: Built with Vue 3 (Composition API), Vite, and the latest Tailwind CSS 4 for a future-proof, highly optimized development workflow",
+      "Premium UI/UX Polish: Features fluid transitions via FormKit Auto-Animate and crisp, customizable notifications powered by Vue-Sonner",
+      "Extensible Component Architecture: Utilizes Reka UI primitives to deliver accessible, headless components that maintain high design fidelity across all devices",
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/taskpilot/taskpilot_lightndark.png",
+        title: "Nocturnal Navigator & Aero Command",
+        description:
+          "A sophisticated multi-theme engine powered by VueUse, offering seamless transitions between the high-contrast 'Nocturnal' dark mode and the clean 'Aero' light palette for optimal focus.",
+      },
+      {
+        image: "/projects/taskpilot/taskpilot_sonner_light.png",
+        title: "Precision Mission Feedback",
+        description:
+          "Integrated `vue-sonner` for crisp, non-intrusive notifications. Every mission launch, completion, or deletion is acknowledged with tactical micro-interactions that reinforce the 'Mission Control' aesthetic.",
+      },
+      {
+        image: "/projects/taskpilot/taskpilot_empty.png",
+        title: "Zero-State Operational Readiness",
+        description:
+          "A refined hero section designed to minimize cognitive load when the mission feed is clear, featuring smooth transitions and a centered 'Launch' interface for immediate task entry.",
+      },
+      {
+        image: "/projects/taskpilot/taskpilot_iphone.png",
+        title: "Tactical Mobile Responsiveness",
+        description:
+          "Engineered with a mobile-first philosophy, utilizing adaptive grid layouts and floating action elements to ensure full operational capacity across all viewport sizes without compromising the premium UI.",
+      },
+    ],
     featured: false,
   },
   {
@@ -417,7 +442,7 @@ export const PROJECTS: Project[] = [
       "Engineered complex scroll-driven animations for an immersive product experience",
       "Developed interactive 3D-style hardware cutouts and AI feature overlays",
       "Optimized frontend performance for smooth 60fps motion and transitions",
-      "Achieved pixel-perfect UI recreation focusing on premium aesthetic details"
+      "Achieved pixel-perfect UI recreation focusing on premium aesthetic details",
     ],
     deeperDetails: [
       {

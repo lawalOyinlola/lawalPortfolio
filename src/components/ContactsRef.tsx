@@ -108,8 +108,7 @@ function ContactsRef({
           </h2>
         </div>
 
-        <div className="mt-auto w-full flex justify-between items-end pb-4">
-          <div className="flex-1" />
+        <div className="mt-auto w-full flex justify-end items-end pb-4">
           <ContactButtons />
         </div>
       </div>

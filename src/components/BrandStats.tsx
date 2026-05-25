@@ -51,7 +51,8 @@ function BrandStats({ children }: { children: React.ReactNode }) {
 
       // Initial states
       gsap.set(contactOverlayEl, {
-        autoAlpha: 0.6,
+        autoAlpha: 0,
+        opacity: 0.6,
         yPercent: 100,
         pointerEvents: "none",
       });
@@ -66,6 +67,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         gsap.set(contactOverlayEl, {
           yPercent: 0,
           autoAlpha: 1,
+          opacity: 1,
           pointerEvents: "auto",
         });
         return;
