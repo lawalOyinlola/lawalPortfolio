@@ -40,7 +40,7 @@ export const handleNavigation = (
   }
 
   if (currentPathname === href) {
-    // Already on the target page — smooth scroll immediately
+    // Already on the target page, so smooth scroll immediately
     requestAnimationFrame(() => {
       scrollToAnchor(anchor);
     });

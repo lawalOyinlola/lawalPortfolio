@@ -21,6 +21,7 @@ const NAV_LINKS: { label: string; href: string; anchor?: string }[] = [
   { label: "ABOUT", href: "/about" },
   { label: "PROJECTS", href: "/projects" },
   { label: "TOOLS & TECH", href: "/about", anchor: "tools-tech" },
+  { label: "FAQ", href: "/faq" },
   { label: "CONTACT", href: "/about", anchor: "contact" },
 ];
 
@@ -286,7 +287,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
               <div className="md:w-1/4 flex-none hidden md:block">
                 <p className="text-xs md:text-base italic font-extralight leading-relaxed max-w-sm">
                   As Your Engineering Reliability Operator, {BrandName} bridges
-                  creativity with engineering discipline — transforming complex
+                  creativity with engineering discipline, turning complex
                   ideas into dependable digital products that work flawlessly
                   every time.
                 </p>
@@ -296,11 +297,11 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
             {/* Bottom Text */}
             <div className="mt-auto max-w-4xl pt-4">
               <p className="text-xs md:text-base opacity-90">
-                Engineering isn&apos;t just about writing code — it&apos;s about
+                Engineering isn&apos;t just about writing code. It&apos;s about
                 building systems people can depend on. {BrandName} represents a
                 commitment to precision, performance, and reliability. Every
                 line of code is written with the intent to make technology feel
-                effortless — stable under pressure, scalable by design, and
+                effortless: stable under pressure, scalable by design, and
                 secure by default.
               </p>
             </div>

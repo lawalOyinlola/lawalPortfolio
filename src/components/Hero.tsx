@@ -64,7 +64,7 @@ const Hero = ({ ready = true }: HeroProps) => {
       {/* Hero texts */}
       <div className="wrapper relative z-10 max-w-206">
         <h1 ref={textRef} className="header">
-          Engineering isn&apos;t just about writing code — it&apos;s about
+          Engineering isn&apos;t just about writing code. It&apos;s about
           building systems people can depend on.{" "}
           <span className="text-accent font-normal">
             <span className="-scale-x-100 inline-block">{BRAND.shortName}</span>{" "}
@@ -72,7 +72,7 @@ const Hero = ({ ready = true }: HeroProps) => {
             Every line of code is written with the intent to make technology
             feel effortless.
           </span>{" "}
-          — stable under pressure, scalable by design, and secure by default.
+          Stable under pressure, scalable by design, and secure by default.
         </h1>
       </div>
     </section>

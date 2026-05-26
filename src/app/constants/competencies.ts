@@ -15,7 +15,7 @@ export type AdaptabilityItem = {
 
 export type Tool = {
   name: string;
-  /** SVG src or public icon URL — update with actual brand SVG/PNG as needed */
+  /** SVG src or public icon URL. Update with actual brand SVG/PNG as needed. */
   icon: string;
   /** Optional colour to tint the icon on hover */
   color?: string;
@@ -31,13 +31,19 @@ export const COMPETENCIES: Competency[] = [
     title: "UI Architecture & Design Systems",
     description:
       "Building scalable, reusable component libraries that bridge Figma designs and production code. Every interface is pixel-perfect, accessible, and responsive from day one.",
-    tags: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+    tags: ["React", "Next.js", "TypeScript", "Shadcn/Radix"],
   },
   {
     title: "FinTech Engineering",
     description:
-      "End-to-end development of secure digital payment ecosystems — merchant dashboards, agent portals, and consumer apps — for real-world financial infrastructure.",
-    tags: ["SafulPay", "Dashboards", "Security", "Multi-app"],
+      "End-to-end engineering across SafulPay's payment ecosystem: re-platforming the corporate site, engineering the v2 frontend architecture with the Golang backend team, and shipping the Agent & Merchant Onboarding web app with live analytics and a marketer leaderboard.",
+    tags: ["SafulPay", "Dashboards", "Onboarding", "Security"],
+  },
+  {
+    title: "Real-time & Geospatial Systems",
+    description:
+      "Multi-tenant SaaS built on live data and interactive maps. Trakkam delivers fleet tracking with Mapbox geofencing, real-time WebSocket vehicle telemetry, and a 7-tier role-based access model at Tech N' Goodwill.",
+    tags: ["Mapbox", "WebSockets", "Multi-tenant", "RBAC"],
   },
   {
     title: "Animation & Motion Design",
@@ -48,14 +54,20 @@ export const COMPETENCIES: Competency[] = [
   {
     title: "AI-Powered Platforms",
     description:
-      "Integrating AI capabilities into production interfaces, from LLM-driven content pipelines to intelligent resume analyzers and LinkedIn automation tools.",
-    tags: ["OpenAI", "LLMs", "Real-time APIs", "ML Interfaces"],
+      "Shipping AI capabilities inside production interfaces, from Khariar's Gemini-powered ATS and resume evaluation to MarketGist's AI news summaries and on-device language detection through Chrome Origin Trials.",
+    tags: ["Gemini", "LLMs", "Chrome Origin Trials", "AI UI"],
   },
   {
     title: "Accessibility & Performance",
     description:
-      "Delivering WCAG-compliant interfaces with ~40% performance improvements through code-splitting, lazy loading, semantic HTML, and image optimization.",
-    tags: ["WCAG", "Web Vitals", "a11y", "SEO"],
+      "WCAG-compliant interfaces with measurable performance wins. Re-platforming SafulPay took Lighthouse from 68 to a perfect 100 across Performance, Accessibility, Best Practices, and SEO.",
+    tags: ["WCAG", "Web Vitals", "Lighthouse", "SEO"],
+  },
+  {
+    title: "Full-Stack & Self-Hosted Infrastructure",
+    description:
+      "When a project genuinely needs it, I extend beyond the frontend. Trakkam ships on a self-hosted NestJS and Prisma API with NGINX, PM2, and GitHub Actions CI/CD on a $5/month VPS, roughly 8x cheaper than the equivalent managed setup.",
+    tags: ["NestJS", "Prisma", "NGINX", "Self-hosted"],
   },
   {
     title: "Cross-platform Development",
@@ -65,7 +77,7 @@ export const COMPETENCIES: Competency[] = [
   },
 ];
 
-// Icon paths — use /tool-icons/<name>.svg once you drop logos into /public/tool-icons/
+// Icon paths. Use /tool-icons/<name>.svg once you drop logos into /public/tool-icons/
 // or replace with CDN URLs e.g. https://cdn.simpleicons.org/<slug>
 const si = (slug: string) => `https://cdn.simpleicons.org/${slug}`;
 const iconify = (set: string, name: string) =>
@@ -108,8 +120,23 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { name: "Next.js", icon: si("nextdotjs"), color: "#ffffff" },
       { name: "React", icon: si("react"), color: "#61dafb" },
       { name: "Vue", icon: si("vuedotjs"), color: "#4fc08d" },
+      { name: "Node.js", icon: si("nodedotjs"), color: "#5fa04e" },
+      { name: "NestJS", icon: si("nestjs"), color: "#e0234e" },
+    ],
+  },
+  {
+    category: "State, Data & APIs",
+    tools: [
       { name: "Redux Toolkit", icon: si("redux"), color: "#764abc" },
       { name: "React Router", icon: si("reactrouter"), color: "#ca4245" },
+      {
+        name: "React Hook Form",
+        icon: si("reacthookform"),
+        color: "#ec5990",
+      },
+      { name: "Zod", icon: si("zod"), color: "#3068b7" },
+      { name: "TanStack Query", icon: si("reactquery"), color: "#ff4154" },
+      { name: "Socket.io", icon: si("socketdotio"), color: "#25c2a0" },
     ],
   },
   {
@@ -124,7 +151,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
 
       { name: "Radix UI", icon: si("radixui"), color: "#ffffff" },
 
-      { name: "Shadcn UI", icon: si("shadcnui"), color: "#ffffff" },
+      { name: "Shadcn UI", icon: si("shadcnui"), color: "#a1a1aa" },
       { name: "Tailwind CSS", icon: si("tailwindcss"), color: "#06b6d4" },
       { name: "GSAP", icon: si("greensock"), color: "#88ce02" },
       { name: "Framer Motion", icon: si("framer"), color: "#0055ff" },
@@ -143,7 +170,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
         icon: "https://uploadthing.com/favicon.ico",
         color: "#782606",
       },
-      { name: "Mapbox", icon: si("mapbox"), color: "#f1ffff" },
+      { name: "Mapbox", icon: si("mapbox"), color: "#4264fb" },
       { name: "React Leaflet", icon: si("leaflet"), color: "#199900" },
     ],
   },
@@ -152,6 +179,8 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     tools: [
       { name: "PostgreSQL", icon: si("postgresql"), color: "#4169e1" },
       { name: "MongoDB", icon: si("mongodb"), color: "#47a248" },
+      { name: "MariaDB", icon: si("mariadb"), color: "#c0765a" },
+      { name: "Prisma", icon: si("prisma"), color: "#5a67d8" },
       { name: "Drizzle ORM", icon: si("drizzle"), color: "#c5f74f" },
       {
         name: "Inngest",
@@ -185,9 +214,15 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
         color: "#ffffff",
       },
       {
+        name: "GitHub Actions",
+        icon: si("githubactions"),
+        color: "#2088ff",
+      },
+      { name: "NGINX", icon: si("nginx"), color: "#009639" },
+      {
         name: "Puter.js",
         icon: "https://puter.com/dist/favicons/android-icon-192x192.png",
-        color: "#0041ff",
+        color: "#1e90ff",
       },
     ],
   },
@@ -219,16 +254,16 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
 
 export const ADAPTABILITY_ITEMS: AdaptabilityItem[] = [
   {
-    metric: "40%",
-    label: "Performance Boost",
+    metric: "68 → 100",
+    label: "Lighthouse Lift",
     detail:
-      "Achieved through code-splitting, lazy loading, and systematic image optimization across production FinTech applications.",
+      "Re-platformed the SafulPay corporate site to Next.js and took Lighthouse from 68 to a perfect 100 across Performance, Accessibility, Best Practices, and SEO, all while shipping additional sections in the same pass.",
   },
   {
     metric: `${YEARS_OF_EXPERIENCE}+`,
     label: "Years of Engineering",
     detail:
-      "From animal nutrition academia to shipping production-grade software — a deliberate, disciplined pivot driven by engineering curiosity.",
+      "From animal nutrition academia to shipping production-grade software. A deliberate, disciplined pivot driven by engineering curiosity.",
   },
   {
     metric: `${PROJECTS.length}+`,
@@ -240,13 +275,13 @@ export const ADAPTABILITY_ITEMS: AdaptabilityItem[] = [
     metric: "30%",
     label: "Faster Review Cycles",
     detail:
-      "Standardized Git workflows and code review protocols across distributed engineering teams.",
+      "Standardized Git/GitHub workflows and structured pull requests at Tech N' Goodwill cut code review turnaround by roughly 30%.",
   },
   {
-    metric: "5+",
-    label: "Tech Stacks Mastered",
+    metric: "8x",
+    label: "Cheaper Infrastructure",
     detail:
-      "React, Next.js, Vue, TypeScript, GSAP — always learning, always shipping.",
+      "Trakkam, the multi-tenant GPS fleet SaaS I shipped end-to-end, runs on a self-hosted $5/month VPS, roughly 8x cheaper than the equivalent managed setup, without sacrificing reliability.",
   },
   {
     metric: "96%",

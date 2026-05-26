@@ -171,7 +171,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
         {brandName}
       </h1>
 
-      {/* Slogan + logo — bottom quarter, above grid but below brand name */}
+      {/* Slogan + logo: bottom quarter, above grid but below brand name */}
       <div className="slogan-accent absolute inset-x-0 bottom-8 z-50 text-accent flex items-center justify-center gap-3 px-6 pointer-events-none">
         <svg
           width="24"
@@ -227,7 +227,7 @@ export default function Preloader({ setComplete }: PreloaderProps) {
 
       {/* Progress grid */}
       <div className="absolute inset-0 flex items-end">
-        {/* Horizontal progress trail — positioned relative to this container */}
+        {/* Horizontal progress trail, positioned relative to this container */}
         <div
           className="progress-indicator-wrap absolute inset-x-0 z-20 pointer-events-none"
           style={{ top: "50%" }}

@@ -180,7 +180,7 @@ export const PROJECTS: Project[] = [
     slug: "lia",
     category: "AI Assistant",
     description:
-      "LinkedIn Intelligent Assistant — an AI-powered tool designed to supercharge your LinkedIn presence. LIA automates content creation, engagement strategies, and networking outreach, helping professionals build meaningful connections and grow their personal brand effortlessly.",
+      "LinkedIn Intelligent Assistant is an AI-powered tool designed to supercharge your LinkedIn presence. LIA automates content creation, engagement strategies, and networking outreach, helping professionals build meaningful connections and grow their personal brand effortlessly.",
     image: "/projects/lia/lia_laptop_mockup.jpeg",
     github: "https://github.com/TenacityVentures/Lia",
     live: "https://www.getlia.live",

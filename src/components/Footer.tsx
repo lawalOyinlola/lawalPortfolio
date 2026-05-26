@@ -52,6 +52,7 @@ const EXPLORE_LINKS = [
   },
   { label: "Clients", href: "/about", anchor: "clients" },
   { label: "Projects", href: "/projects" },
+  { label: "FAQ", href: "/faq" },
 ];
 
 const SOCIAL_ICON_MAP: Record<string, Icon> = {
@@ -217,14 +218,14 @@ function Footer({ className }: FooterProps) {
               className={`invert ${zFold ? " " : "max-[376px]:hidden"}`}
             />
             <p className="text-sm leading-relaxed text-background/70">
-              Engineering isn&apos;t just about writing code — it&apos;s about
+              Engineering isn&apos;t just about writing code. It&apos;s about
               building systems people can depend on.{" "}
               <span className="font-semibold text-background -scale-x-100 inline-block">
                 {BRAND.shortName}
               </span>{" "}
               represents a commitment to precision, performance, and
               reliability. Every line of code is written with the intent to make
-              technology <em>feel</em> effortless — stable under pressure,
+              technology <em>feel</em> effortless: stable under pressure,
               scalable by design, and secure by default.
             </p>
           </div>

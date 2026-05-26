@@ -3,3 +3,4 @@ export { PARTNERS, type Partner } from "./partners";
 export { BRAND } from "./brand";
 export { TIPS } from "./tips";
 export { BRAND_STATS } from "./stats";
+export { FAQS, type FAQ } from "./faqs";

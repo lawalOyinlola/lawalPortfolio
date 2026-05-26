@@ -25,7 +25,7 @@ export default function Clients() {
             why.&rdquo;
           </p>
           <cite className="not-italic text-xs text-muted-foreground mt-3 block uppercase tracking-widest">
-            — Client feedback, 2024
+            — Co-Founder SafulPay, 2024
           </cite>
         </blockquote>
       </div>

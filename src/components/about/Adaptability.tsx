@@ -68,12 +68,12 @@ export default function Adaptability() {
           subtitle="Why it matters"
           title="Adaptability"
           description={`
-              From academia to production FinTech — ${BRAND.shortName} is proof
+              From academia to production FinTech, ${BRAND.shortName} is proof
               that the best engineers are built by curiosity, shaped by
               adversity, and measured by impact.`}
         />
 
-        {/* Two-column layout — metrics left, narrative right */}
+        {/* Two-column layout: metrics left, narrative right */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Metric cards */}
           <div className="adapt-grid grid grid-cols-2 gap-px bg-border border border-border h-fit">
@@ -95,7 +95,7 @@ export default function Adaptability() {
             ))}
           </div>
 
-          {/* Narrative — Veil style */}
+          {/* Narrative (Veil style) */}
           <div className="adapt-text flex flex-col gap-8 justify-center">
             <div className="flex flex-col gap-5">
               <h3 className="text-primary font-semibold text-xl md:text-2xl leading-snug">
@@ -113,11 +113,11 @@ export default function Adaptability() {
               {[
                 {
                   title: "Reliability under pressure",
-                  body: "Stable systems that hold when it matters most — from payment flows to real-time interfaces.",
+                  body: "Stable systems that hold when it matters most, from SafulPay's payment flows to Trakkam's live WebSocket fleet tracking.",
                 },
                 {
                   title: "Scalable by design",
-                  body: "Architecture decisions made with growth in mind — components, APIs, and data flows built to extend.",
+                  body: "Architecture decisions made with growth in mind, where components, APIs, and data flows are built to extend.",
                 },
                 {
                   title: "Secure by default",

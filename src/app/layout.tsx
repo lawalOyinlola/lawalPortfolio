@@ -17,7 +17,29 @@ export const metadata: Metadata = {
   keywords: BRAND.keywords,
   authors: [{ name: BRAND.name, url: BRAND.url }],
   creator: BRAND.name,
+  publisher: BRAND.name,
+  applicationName: BRAND.name,
+  category: "technology",
   metadataBase: new URL(BRAND.url),
+  manifest: "/manifest.webmanifest",
+  alternates: {
+    canonical: "/",
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  verification: {
+    ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    }),
+    ...(process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION && {
+      other: {
+        "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION,
+      },
+    }),
+  },
   icons: [
     {
       rel: "icon",

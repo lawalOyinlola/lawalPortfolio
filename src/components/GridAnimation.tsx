@@ -19,7 +19,7 @@ const V_HEIGHTS = [
 const COLUMN_COUNT = V_HEIGHTS.length;
 const CENTER = (COLUMN_COUNT - 1) / 2;
 
-// Fixed speed/delay table — avoids Math.random() on every re-render/resize.
+// Fixed speed/delay table; avoids Math.random() on every re-render/resize.
 // Generated once at module load time and never changes.
 const FIXED_SPEEDS: number[] = V_HEIGHTS.map(
   (_, i) => 2.2 + ((i * 37 + 13) % 100) / 43.5,

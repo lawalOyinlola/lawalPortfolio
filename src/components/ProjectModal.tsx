@@ -119,7 +119,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
     }
   }, [isOpen, onClose, isMobileView, updateSlideSideForElement]);
 
-  // GSAP animations — scoped to containerRef
+  // GSAP animations, scoped to containerRef
   useGSAP(
     () => {
       if (isOpen) {
@@ -274,7 +274,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
           }}
         />
 
-        {/* Main Box — 60% clip-path viewport */}
+        {/* Main Box (60% clip-path viewport) */}
         <div
           ref={(el) => {
             if (el) blocksRef.current[2] = el as HTMLDivElement;
@@ -323,7 +323,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
                   or a big idea?
                 </h3>
                 <p className="text-sm max-w-[28ch] opacity-80">
-                  We&apos;ll get you started — or help you dream bigger.
+                  We&apos;ll get you started, or help you dream bigger.
                 </p>
 
                 <ContactButtons
