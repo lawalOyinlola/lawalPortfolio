@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
 import { BRAND, PROJECTS } from "./constants";
 
+// Bump when content meaningfully changes; avoids a fresh date every build.
+const LAST_UPDATED = new Date("2026-06-03T00:00:00.000Z");
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const now = LAST_UPDATED;
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
