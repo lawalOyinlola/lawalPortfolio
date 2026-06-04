@@ -10,8 +10,7 @@ type LoadingContextValue = {
 const LoadingContext = createContext<LoadingContextValue | null>(null);
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
-  // Set initial state to `false` to skip the Preloader intro and show content
-  // immediately (see AppLayout/Preloader).
+  // Set initial state to `true` to show the Preloader intro on initial load
   const [loading, setLoading] = useState(true);
 
   const value = useMemo(() => ({ loading, setLoading }), [loading]);

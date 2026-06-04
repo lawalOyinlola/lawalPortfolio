@@ -28,7 +28,11 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/api/", "/private/"],
       },
-      ...AI_CRAWLERS.map((userAgent) => ({ userAgent, allow: "/" })),
+      ...AI_CRAWLERS.map((userAgent) => ({
+        userAgent,
+        allow: "/",
+        disallow: ["/api/", "/private/"],
+      })),
     ],
     sitemap: `${BRAND.url}/sitemap.xml`,
     host: BRAND.url,

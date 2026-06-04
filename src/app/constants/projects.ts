@@ -369,21 +369,46 @@ export const PROJECTS: Project[] = [
     featured: false,
   },
   {
-    name: "Reach Afrika",
-    slug: "reach-afrika",
+    name: "A Certain Woman",
+    slug: "a-certain-woman",
     category: "Social Impact",
     description:
-      "A community-focused platform connecting Africa with vital resources and opportunities. Built with Next.js and Framer Motion, Reach Afrika emphasizes modern UX/UI and performance to bridge socio-economic gaps.",
-    image: "/projects/my_projects.jpeg",
-    github: "https://github.com/lawalOyinlola/reach-afrika",
-    live: "https://reach-afrika.vercel.app/",
+      "A faith-rooted women's movement based in Freetown, Sierra Leone — restoring hearts, reclaiming crowns. The platform serves as a digital sanctuary and hub for the community, showcasing their mission, core pillars, anthem, and stories of transformation.",
+    image: "/projects/acw/acw_about.png",
+    github: "https://github.com/lawalOyinlola/a_certain_woman",
+    live: "https://acertainwoman.org",
     keypoints: [
-      "Engineered community platform connecting African populations with vital resources",
-      "Implemented modern UX/UI design focusing on socio-economic impact storytelling",
-      "Integrated high-performance SEO strategies to maximize platform visibility and reach",
-      "Developed cross-cultural interface catering to diverse regional community needs",
+      "Developed an 11-section editorial web platform using Next.js 16 (App Router, Turbopack), React 19, and TypeScript",
+      "Designed a bespoke print-magazine visual style using custom Tailwind CSS v4 design tokens and color scheme (Cream, Forest Green, Gold)",
+      "Built interactive components including custom audio players for the movement's anthem and dynamic image lightboxes",
+      "Implemented fully accessible shadcn/ui components customized with CSS variables to ensure keyboard nav and focus compliance",
     ],
-    deeperDetails: placeholderDetails,
+    deeperDetails: [
+      {
+        image: "/projects/acw/acw_manifesto.png",
+        title: "Editorial Identity & Voice",
+        description:
+          "Established a reverent, unhurried digital magazine aesthetic. Copy is set in long measure with DM Serif Display headings and gold italic display accents to represent the sisterhood's sacred values.",
+      },
+      {
+        image: "/projects/acw/acw_impact.png",
+        title: "Pillars of Impact & Service",
+        description:
+          "Created structured, asymmetric layouts detailing the movement's focus areas, combining custom icons and micro-interactions to guide visitors through community outreach and leadership programs.",
+      },
+      {
+        image: "/projects/acw/acw_founder.png",
+        title: "Founder's Narrative & Vision",
+        description:
+          "Crafted dedicated content spaces showcasing the founder's message, utilizing custom drop-caps, hairline borders, and subtle radial gradient backdrops to establish trust and connection.",
+      },
+      {
+        image: "/projects/acw/acw_footer.png",
+        title: "Community Engagement Hub",
+        description:
+          "Integrated responsive contact systems, interactive video dialogs, and newsletter subscriptions to gather partners and enable women to join the sisterhood seamlessly.",
+      },
+    ],
     featured: false,
   },
   {
