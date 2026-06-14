@@ -1,13 +1,15 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { SplitText } from "gsap/SplitText";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FEATURED_PROJECTS } from "@/app/constants";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, SplitText);
@@ -19,9 +21,27 @@ const HOLD = 0.4;
 
 function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
+  const panelsRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef(0);
   const lockedRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const router = useRouter();
+  const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
+
+  const cursorEnabled = useMemo(
+    () =>
+      isHydrated &&
+      !prefersReducedMotion &&
+      !window.matchMedia("(pointer: coarse)").matches,
+    [isHydrated, prefersReducedMotion],
+  );
+
+  const openActiveProject = useCallback(() => {
+    const slug = FEATURED_PROJECTS[indexRef.current]?.slug;
+    if (slug) router.push(`/projects/${slug}`);
+  }, [router]);
 
   // Pre-split text on mount so name-char-i classes exist
   useGSAP(
@@ -337,6 +357,56 @@ function Projects() {
     { scope: sectionRef },
   );
 
+  // Tracking "View Project" cursor that follows the pointer over the panels
+  useGSAP(
+    () => {
+      if (!cursorEnabled) return;
+      const cursor = cursorRef.current;
+      const area = panelsRef.current;
+      if (!cursor || !area) return;
+
+      gsap.set(cursor, { xPercent: -50, yPercent: -50, scale: 0, autoAlpha: 0 });
+
+      const xTo = gsap.quickTo(cursor, "x", { duration: 0.45, ease: "power3" });
+      const yTo = gsap.quickTo(cursor, "y", { duration: 0.45, ease: "power3" });
+
+      const move = (e: MouseEvent) => {
+        xTo(e.clientX);
+        yTo(e.clientY);
+      };
+
+      const reveal = (e: MouseEvent) => {
+        gsap.set(cursor, { x: e.clientX, y: e.clientY });
+        gsap.to(cursor, {
+          scale: 1,
+          autoAlpha: 1,
+          duration: 0.35,
+          ease: "power3.out",
+        });
+      };
+
+      const conceal = () => {
+        gsap.to(cursor, {
+          scale: 0,
+          autoAlpha: 0,
+          duration: 0.3,
+          ease: "power3.in",
+        });
+      };
+
+      area.addEventListener("mousemove", move);
+      area.addEventListener("mouseenter", reveal as EventListener);
+      area.addEventListener("mouseleave", conceal);
+
+      return () => {
+        area.removeEventListener("mousemove", move);
+        area.removeEventListener("mouseenter", reveal as EventListener);
+        area.removeEventListener("mouseleave", conceal);
+      };
+    },
+    { scope: sectionRef, dependencies: [cursorEnabled] },
+  );
+
   if (COUNT === 0) return null;
 
   return (
@@ -379,7 +449,11 @@ function Projects() {
         </div>
 
         {/* Stacked Project Panels */}
-        <div aria-live="polite" className="relative flex-1 min-h-0">
+        <div
+          ref={panelsRef}
+          aria-live="polite"
+          className="relative flex-1 min-h-0"
+        >
           {FEATURED_PROJECTS.map((project, i) => (
             <div
               key={project.name}
@@ -439,8 +513,30 @@ function Projects() {
               </div>
             </div>
           ))}
+
+          {/* Click-anywhere overlay — opens the active project */}
+          <button
+            type="button"
+            onClick={openActiveProject}
+            aria-label={`View ${FEATURED_PROJECTS[activeIndex].name} — open project page`}
+            className="absolute inset-0 z-20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
+            style={{ cursor: cursorEnabled ? "none" : "pointer" }}
+          />
         </div>
       </div>
+
+      {/* Tracking cursor */}
+      {cursorEnabled && (
+        <div
+          ref={cursorRef}
+          aria-hidden="true"
+          className="pointer-events-none fixed top-0 left-0 z-50 flex items-center gap-2 whitespace-nowrap bg-foreground px-4 py-2.5 text-[11px] font-medium uppercase tracking-wide text-background"
+          style={{ opacity: 0, willChange: "transform" }}
+        >
+          View Project
+          <span aria-hidden="true">&rarr;</span>
+        </div>
+      )}
     </section>
   );
 }
