@@ -1,4 +1,0 @@
-# False positives: linkedin-client-secret matched the icon import `LinkedinLogoIcon, WhatsappLogoIcon`
-38b128b3418ac00f74a41e925da462d57025179a:src/components/ui/ContactButtons.tsx:linkedin-client-secret:3
-a787abef3b17a3ac08a907f3e27619593d59dbcf:src/components/Contact.tsx:linkedin-client-secret:1
-a787abef3b17a3ac08a907f3e27619593d59dbcf:src/components/ContactsRef.tsx:linkedin-client-secret:3

@@ -1,0 +1,19 @@
+# gitleaks config: the built-in rules, plus one narrowly scoped exception.
+# CI picks this file up automatically from the repo root.
+
+[extend]
+useDefault = true
+
+# The built-in linkedin-client-secret rule fires on Phosphor icon imports: the
+# word "linkedin", then a comma, then any 16-character identifier. The WhatsApp
+# icon component name happens to be exactly 16 characters, so a normal import
+# list reads as a client secret. The exception below applies to this one rule
+# only, and only when the matched text contains the LinkedIn icon's component
+# name, so a real LinkedIn secret anywhere in the repo is still reported.
+[[rules]]
+id = "linkedin-client-secret"
+
+[[rules.allowlists]]
+description = "Phosphor icon component name, not a credential"
+regexTarget = "match"
+regexes = ['''LinkedinLogoIcon''']
