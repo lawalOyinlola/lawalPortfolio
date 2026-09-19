@@ -2,6 +2,7 @@
   "name": "portfolio",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.26.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -20,7 +21,7 @@
     "embla-carousel-react": "^8.6.0",
     "gray-matter": "^4.0.3",
     "gsap": "^3.14.2",
-    "next": "16.1.6",
+    "next": "16.3.5",
     "next-themes": "^0.4.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -33,7 +34,6 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
-    "shadcn": "3.8.5",
     "shiki": "^4.4.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.1",
@@ -43,13 +43,21 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.3.5",
+    "shadcn": "3.8.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "browserslist": "^4.28.7",
+      "baseline-browser-mapping": "^2.11.0",
+      "@babel/core@7": "^7.29.6"
+    }
   }
 }
