@@ -7,7 +7,7 @@ import { getTagColor } from "@/lib/tag-colors";
 import TagPill from "./TagPill";
 
 export default function PostCard({ post }: { post: BlogPost }) {
-  const { title, description, date, tags, cover, coverAlt } = post.frontmatter;
+  const { title, description, date, tags, cover } = post.frontmatter;
   const accentStyle = tags[0]
     ? ({ "--post-accent": getTagColor(tags[0]) } as CSSProperties)
     : undefined;
@@ -21,7 +21,10 @@ export default function PostCard({ post }: { post: BlogPost }) {
         <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden rounded-xl bg-muted md:w-56">
           <Image
             src={cover}
-            alt={coverAlt ?? ""}
+            // Decorative here on purpose: the title and description beside it
+            // already say what the post is, so a long alt would just be read
+            // out before the title on every card. The post page describes it.
+            alt=""
             fill
             sizes="(max-width: 768px) 100vw, 224px"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
