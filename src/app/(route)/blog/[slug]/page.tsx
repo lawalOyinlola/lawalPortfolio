@@ -149,7 +149,8 @@ export default async function BlogPostPage({
           <div className="relative mt-12 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border/20 bg-muted">
             <Image
               src={cover}
-              alt={coverAlt ?? ""}
+              // The schema requires coverAlt whenever cover is set.
+              alt={coverAlt ?? title}
               fill
               sizes="(max-width: 1024px) 100vw, 1024px"
               className="object-cover"
