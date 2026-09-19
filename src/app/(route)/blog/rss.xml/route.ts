@@ -30,6 +30,15 @@ function absolutifyHtml(html: string): string {
   return html.replace(/(src|href)="\/(?!\/)/g, `$1="${ASSET_ORIGIN}/`);
 }
 
+/**
+ * A literal "]]>" in a post (a code sample about XML, say) would close the
+ * CDATA section early and break the feed. Splitting it across two sections
+ * keeps the HTML byte-for-byte identical once a reader unwraps it.
+ */
+function toCdata(html: string): string {
+  return `<![CDATA[${html.replace(/\]\]>/g, "]]]]><![CDATA[>")}]]>`;
+}
+
 export const dynamic = "force-static";
 
 export async function GET() {
@@ -52,7 +61,7 @@ export async function GET() {
           ? `      <enclosure url="${escapeXml(toAbsoluteAssetUrl(cover))}" type="image/png" />`
           : "",
         ...tags.map((tag) => `      <category>${escapeXml(tag)}</category>`),
-        `      <content:encoded><![CDATA[${absolutifyHtml(html)}]]></content:encoded>`,
+        `      <content:encoded>${toCdata(absolutifyHtml(html))}</content:encoded>`,
         "    </item>",
       ]
         .filter(Boolean)
