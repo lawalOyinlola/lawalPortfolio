@@ -1,0 +1,57 @@
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <rect width="960" height="560" fill="#ffffff"/>
+
+  <text x="40" y="44" font-size="22" font-weight="700" fill="#1a3c5e">The tuning curve: untuned PL1, tuned PL1, PL2</text>
+  <text x="40" y="68" font-size="13.5" fill="#555555">Attack payloads blocked versus false positives on legitimate traffic, at each operating point.</text>
+  <line x1="40" y1="84" x2="920" y2="84" stroke="#c99a2e" stroke-width="2"/>
+
+  <!-- three columns -->
+  <!-- headers -->
+  <text x="220" y="130" font-size="16" font-weight="700" fill="#1a3c5e" text-anchor="middle">PL1 untuned</text>
+  <text x="480" y="130" font-size="16" font-weight="700" fill="#1a3c5e" text-anchor="middle">PL1 tuned</text>
+  <text x="740" y="130" font-size="16" font-weight="700" fill="#1a3c5e" text-anchor="middle">PL2</text>
+  <text x="220" y="150" font-size="12" fill="#555555" text-anchor="middle">out of the box</text>
+  <text x="480" y="150" font-size="12" fill="#555555" text-anchor="middle">one method exclusion</text>
+  <text x="740" y="150" font-size="12" fill="#555555" text-anchor="middle">higher paranoia</text>
+
+  <!-- attacks blocked bar (max ~12, scale height 130) -->
+  <!-- baseline y for bars -->
+  <g>
+    <!-- PL1 untuned: blocked 12 -->
+    <rect x="160" y="200" width="50" height="130" rx="3" fill="#1a3c5e"/>
+    <text x="185" y="192" font-size="13" font-weight="700" fill="#1a3c5e" text-anchor="middle">12</text>
+    <!-- FP 2 -->
+    <rect x="222" y="308" width="50" height="22" rx="3" fill="#b23b3b"/>
+    <text x="247" y="300" font-size="13" font-weight="700" fill="#b23b3b" text-anchor="middle">2</text>
+
+    <!-- PL1 tuned: blocked 12, FP 0 -->
+    <rect x="420" y="200" width="50" height="130" rx="3" fill="#1a3c5e"/>
+    <text x="445" y="192" font-size="13" font-weight="700" fill="#1a3c5e" text-anchor="middle">12</text>
+    <circle cx="507" cy="319" r="7" fill="#2e7d46"/>
+    <text x="507" y="300" font-size="13" font-weight="700" fill="#2e7d46" text-anchor="middle">0</text>
+
+    <!-- PL2: blocked 12, FP 2 -->
+    <rect x="680" y="200" width="50" height="130" rx="3" fill="#1a3c5e"/>
+    <text x="705" y="192" font-size="13" font-weight="700" fill="#1a3c5e" text-anchor="middle">12</text>
+    <rect x="742" y="308" width="50" height="22" rx="3" fill="#b23b3b"/>
+    <text x="767" y="300" font-size="13" font-weight="700" fill="#b23b3b" text-anchor="middle">2</text>
+  </g>
+
+  <line x1="40" y1="330" x2="920" y2="330" stroke="#333333" stroke-width="1.5"/>
+
+  <!-- axis labels under -->
+  <text x="185" y="352" font-size="11.5" fill="#1a3c5e" text-anchor="middle">attacks blocked</text>
+  <text x="247" y="352" font-size="11.5" fill="#b23b3b" text-anchor="middle">false pos.</text>
+  <text x="445" y="352" font-size="11.5" fill="#1a3c5e" text-anchor="middle">attacks blocked</text>
+  <text x="507" y="352" font-size="11.5" fill="#2e7d46" text-anchor="middle">false pos.</text>
+  <text x="705" y="352" font-size="11.5" fill="#1a3c5e" text-anchor="middle">attacks blocked</text>
+  <text x="767" y="352" font-size="11.5" fill="#b23b3b" text-anchor="middle">false pos.</text>
+
+  <!-- reading -->
+  <text x="40" y="400" font-size="13" fill="#333333">Attack coverage never moves: the same 12 payloads block at every setting, and all 12 were already handled by the app.</text>
+  <text x="40" y="420" font-size="13" fill="#333333">Tuning removes the two method-enforcement false positives that broke PATCH and DELETE. Raising to PL2 adds them back</text>
+  <text x="40" y="440" font-size="13" fill="#333333">as two new content false positives, a strong password and a punctuated business name, while catching nothing new.</text>
+  <text x="40" y="472" font-size="13" font-weight="700" fill="#8a6d1a">The operating point is a tuned PL1. More paranoia is pure cost here.</text>
+  <text x="40" y="508" font-size="11.5" fill="#666666">Untuned PL1 returned 403 on a thirteenth case, a cross-tenant PATCH, but by the same method rule rather than by attack</text>
+  <text x="40" y="524" font-size="11.5" fill="#666666">detection. It is counted as the false positive it was, not as coverage. Attack-rule coverage is 12 at every operating point.</text>
+</svg>

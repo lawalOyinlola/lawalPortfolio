@@ -1,0 +1,77 @@
+<svg viewBox="0 0 960 620" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <rect width="960" height="620" fill="#ffffff"/>
+
+  <text x="40" y="44" font-size="22" font-weight="700" fill="#1a3c5e">What actually stops each attack class</text>
+  <text x="40" y="68" font-size="13.5" fill="#555555">Measured against a production app, tuned WAF at paranoia level 1. The control that fires first is the one that matters.</text>
+  <line x1="40" y1="84" x2="920" y2="84" stroke="#c99a2e" stroke-width="2"/>
+
+  <!-- legend -->
+  <rect x="470" y="30" width="14" height="14" rx="2" fill="#1a3c5e"/>
+  <text x="490" y="42" font-size="11.5" fill="#333333">Application</text>
+  <rect x="590" y="30" width="14" height="14" rx="2" fill="#c99a2e"/>
+  <text x="610" y="42" font-size="11.5" fill="#333333">WAF</text>
+  <rect x="672" y="30" width="14" height="14" rx="2" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+  <text x="692" y="42" font-size="11.5" fill="#333333">Neither (structural)</text>
+
+  <!-- rows: label | who-stops-it bar | note -->
+  <!-- Row 1 SQL injection: app -->
+  <g transform="translate(0,120)">
+    <text x="40" y="0" font-size="14.5" font-weight="700" fill="#1a3c5e">SQL injection</text>
+    <rect x="300" y="-14" width="300" height="22" rx="3" fill="#1a3c5e"/>
+    <text x="450" y="1" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">Application</text>
+    <text x="620" y="1" font-size="12" fill="#555555">Prisma binds every query; UUID pipe rejects the id</text>
+  </g>
+  <!-- Row 2 Reflected XSS: app (render escape), WAF adds transit block -->
+  <g transform="translate(0,164)">
+    <text x="40" y="0" font-size="14.5" font-weight="700" fill="#1a3c5e">Reflected XSS</text>
+    <rect x="300" y="-14" width="220" height="22" rx="3" fill="#1a3c5e"/>
+    <text x="410" y="1" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">Application</text>
+    <rect x="524" y="-14" width="76" height="22" rx="3" fill="#c99a2e"/>
+    <text x="562" y="1" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">WAF</text>
+    <text x="620" y="1" font-size="12" fill="#555555">React escapes on render; WAF blocks in transit too</text>
+  </g>
+  <!-- Row 3 Stored XSS / cmd payloads: WAF blocks transit, app stores inert -->
+  <g transform="translate(0,208)">
+    <text x="40" y="0" font-size="14.5" font-weight="700" fill="#1a3c5e">Stored XSS / cmd payloads</text>
+    <rect x="300" y="-14" width="150" height="22" rx="3" fill="#1a3c5e"/>
+    <text x="375" y="1" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">App (inert)</text>
+    <rect x="454" y="-14" width="146" height="22" rx="3" fill="#c99a2e"/>
+    <text x="527" y="1" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">WAF</text>
+    <text x="620" y="1" font-size="12" fill="#555555">Stored as text, no sink; WAF stops it entering</text>
+  </g>
+  <!-- Row 4 Auth / JWT: app -->
+  <g transform="translate(0,252)">
+    <text x="40" y="0" font-size="14.5" font-weight="700" fill="#1a3c5e">Auth bypass / JWT</text>
+    <rect x="300" y="-14" width="300" height="22" rx="3" fill="#1a3c5e"/>
+    <text x="450" y="1" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">Application</text>
+    <text x="620" y="1" font-size="12" fill="#555555">Signature verified; WAF sees well-formed requests</text>
+  </g>
+  <!-- Row 5 Path / cmd in URL path segment: neither at PL1/PL2 -->
+  <g transform="translate(0,296)">
+    <text x="40" y="0" font-size="14.5" font-weight="700" fill="#1a3c5e">Injection in a URL path</text>
+    <rect x="300" y="-14" width="300" height="22" rx="3" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+    <text x="450" y="1" font-size="11" font-weight="700" fill="#8a6d1a" text-anchor="middle">WAF gap (rules target args, not path)</text>
+    <text x="620" y="1" font-size="12" fill="#555555">Here the UUID pipe catches it; elsewhere it bypasses</text>
+  </g>
+  <!-- Row 6 IDOR: app only, WAF structurally cannot -->
+  <g transform="translate(0,340)">
+    <text x="40" y="0" font-size="14.5" font-weight="700" fill="#1a3c5e">IDOR / broken object-level auth</text>
+    <rect x="300" y="-14" width="220" height="22" rx="3" fill="#1a3c5e"/>
+    <text x="410" y="1" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">Application</text>
+    <rect x="524" y="-14" width="76" height="22" rx="3" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+    <text x="562" y="1" font-size="10.5" font-weight="700" fill="#8a6d1a" text-anchor="middle">no rule</text>
+    <text x="620" y="1" font-size="12" fill="#555555">Well-formed request; no signature can tell it apart</text>
+  </g>
+
+  <line x1="40" y1="384" x2="920" y2="384" stroke="#e0e0e0" stroke-width="1"/>
+
+  <!-- conclusion band -->
+  <text x="40" y="420" font-size="15" font-weight="700" fill="#1a3c5e">The pattern</text>
+  <text x="40" y="446" font-size="13" fill="#333333">The application already stops every class the WAF stops. The WAF's genuine addition is blocking stored and in-transit</text>
+  <text x="40" y="466" font-size="13" fill="#333333">payloads before they land, and buying response time. The breach-class it cannot reach is IDOR, and it also missed SQL</text>
+  <text x="40" y="486" font-size="13" fill="#333333">and command injection placed in a URL path. Those are the gaps that matter. A compensating control, not a fix.</text>
+
+  <rect x="40" y="516" width="880" height="60" rx="4" fill="#f5f2e8" stroke="#c99a2e" stroke-width="1"/>
+  <text x="60" y="540" font-size="12.5" font-weight="700" fill="#8a6d1a">Blocked 12 of 26 attack payloads. Every one was already handled by the framework.</text>
+  <text x="60" y="560" font-size="12.5" fill="#8a6d1a">IDOR passed it untouched at every level, and so did SQL and command injection placed in a URL path.</text>
+</svg>
