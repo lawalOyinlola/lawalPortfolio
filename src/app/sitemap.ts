@@ -7,6 +7,14 @@ const LAST_UPDATED = new Date("2026-06-03T00:00:00.000Z");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = LAST_UPDATED;
+  const posts = getBlogPosts();
+
+  // The index changes whenever any post does, so it takes the newest post's
+  // date (an edit to an older post counts, hence the max rather than posts[0]).
+  const blogIndexModified = posts.reduce<Date>((latest, post) => {
+    const modified = post.frontmatter.updated ?? post.frontmatter.date;
+    return modified > latest ? modified : latest;
+  }, now);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -29,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${BRAND.url}/blog`,
-      lastModified: now,
+      lastModified: blogIndexModified,
       changeFrequency: "weekly",
       priority: 0.8,
     },
@@ -44,7 +52,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Posts carry their own dates, so the stable-constant rule above doesn't apply:
   // a post's lastModified is real content metadata, not build churn.
-  const blogRoutes: MetadataRoute.Sitemap = getBlogPosts().map((post) => ({
+  const blogRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${BRAND.url}/blog/${post.slug}`,
     lastModified: post.frontmatter.updated ?? post.frontmatter.date,
     changeFrequency: "yearly",
