@@ -233,3 +233,296 @@ html[data-hide-logo="true"] .logo-btn {
     opacity: 0.1;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Long-form content (/blog, /labs)
+   Hand-rolled rather than @tailwindcss/typography: the plugin's defaults fight
+   PPMori and the token palette hard enough that overriding it costs more than
+   this does.
+--------------------------------------------------------------------------- */
+
+@layer components {
+  .prose {
+    @apply text-base leading-[1.75] text-foreground/90;
+    max-width: 68ch;
+  }
+
+  .prose > * + * {
+    @apply mt-6;
+  }
+
+  .prose h2 {
+    @apply mt-14 mb-0 scroll-mt-28 text-xl font-semibold tracking-tight text-primary md:text-2xl;
+  }
+
+  .prose h3 {
+    @apply mt-10 mb-0 scroll-mt-28 text-lg font-semibold tracking-tight text-primary;
+  }
+
+  .prose h4 {
+    @apply mt-8 mb-0 scroll-mt-28 text-base font-semibold text-primary;
+  }
+
+  .prose h2 + *,
+  .prose h3 + *,
+  .prose h4 + * {
+    @apply mt-3;
+  }
+
+  .prose a {
+    @apply text-primary underline underline-offset-4 transition-colors;
+    text-decoration-color: color-mix(in oklab, var(--post-accent, var(--ring)) 45%, transparent);
+  }
+
+  .prose a:hover {
+    text-decoration-color: var(--post-accent, var(--ring));
+  }
+
+  .prose strong {
+    @apply font-semibold text-primary;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply space-y-2 pl-6;
+  }
+
+  .prose ul {
+    @apply list-disc;
+  }
+
+  .prose ol {
+    @apply list-decimal;
+  }
+
+  .prose li::marker {
+    color: var(--post-accent, var(--muted-foreground));
+  }
+
+  .prose ol > li::marker {
+    @apply font-semibold;
+  }
+
+  .prose li > ul,
+  .prose li > ol {
+    @apply mt-2;
+  }
+
+  .prose blockquote {
+    @apply border-l-2 pl-5 text-muted-foreground italic;
+    border-color: var(--post-accent, var(--accent));
+  }
+
+  .prose blockquote p {
+    @apply mt-0;
+  }
+
+  .prose hr {
+    @apply my-12 border-t border-border/40;
+  }
+
+  .prose img,
+  .prose svg {
+    @apply my-8 h-auto w-full rounded-xl border border-border/30;
+  }
+
+  /* Made interactive by ImageZoom; the attribute only exists once JS has run,
+     so without JS nothing advertises a zoom that can't happen. */
+  .prose img[data-zoomable] {
+    @apply cursor-zoom-in transition-[transform,box-shadow,border-color] duration-300;
+  }
+
+  .prose img[data-zoomable]:hover {
+    @apply -translate-y-0.5 shadow-lg;
+    border-color: color-mix(in oklab, var(--post-accent, var(--ring)) 35%, transparent);
+  }
+
+  .prose img[data-zoomable]:focus-visible {
+    outline: 2px solid var(--post-accent, var(--ring));
+    outline-offset: 4px;
+  }
+
+  .prose figure figcaption {
+    @apply mt-3 text-center text-xs text-muted-foreground;
+  }
+
+  /* Inline code — the `:not(pre code)` guard keeps this off highlighted blocks. */
+  .prose :not(pre) > code {
+    @apply rounded-md bg-muted px-1.5 py-0.5 font-mono text-[0.85em] text-primary;
+  }
+
+  .prose pre {
+    @apply my-8 overflow-x-auto rounded-xl border border-border/30 bg-muted/60 p-4 font-mono text-[0.85rem] leading-relaxed;
+  }
+
+  .prose pre code {
+    @apply grid bg-transparent p-0 text-inherit;
+  }
+
+  .prose table {
+    @apply my-8 w-full border-collapse text-left text-sm;
+  }
+
+  .prose th {
+    @apply border-b border-border/40 pb-2 pr-4 font-semibold text-primary;
+  }
+
+  .prose td {
+    @apply border-b border-border/20 py-2 pr-4 align-top;
+  }
+
+  /* Heading anchors: present for keyboard and deep-linking, quiet until hover. */
+  .prose .heading-anchor {
+    @apply ml-2 no-underline opacity-0 transition-opacity;
+    color: var(--post-accent, var(--muted-foreground));
+  }
+
+  .prose h2:hover .heading-anchor,
+  .prose h3:hover .heading-anchor,
+  .prose .heading-anchor:focus-visible {
+    @apply opacity-100;
+  }
+}
+
+/* rehype-pretty-code dual themes: both palettes ship as custom properties on
+   every token, so switching costs one CSS rule instead of a second highlight. */
+.prose [data-theme],
+.prose [data-theme] span {
+  color: var(--shiki-light);
+}
+
+.dark .prose [data-theme],
+.dark .prose [data-theme] span {
+  color: var(--shiki-dark);
+}
+
+.prose pre [data-line] {
+  @apply border-l-2 border-transparent px-4;
+}
+
+.prose pre [data-highlighted-line] {
+  border-color: var(--post-accent, var(--ring));
+  background-color: color-mix(in oklab, var(--post-accent, var(--ring)) 10%, transparent);
+}
+
+.prose pre [data-line-numbers] {
+  counter-reset: line;
+}
+
+.prose pre [data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  @apply mr-4 inline-block w-4 text-right text-muted-foreground;
+}
+
+.prose pre [data-rehype-pretty-code-title] {
+  @apply mb-2 block text-xs text-muted-foreground;
+}
+
+/* rehype-pretty-code wraps each block in a <figure>; the margin belongs there
+   rather than on the <pre> so the optional title sits tight against its code. */
+.prose figure[data-rehype-pretty-code-figure] {
+  @apply my-8;
+}
+
+.prose figure[data-rehype-pretty-code-figure] > pre {
+  @apply my-0;
+}
+
+.prose figcaption[data-rehype-pretty-code-title] {
+  @apply rounded-t-xl border border-b-0 border-border/30 bg-muted/60 px-4 py-2 font-mono text-xs text-muted-foreground;
+}
+
+.prose figcaption[data-rehype-pretty-code-title] + pre {
+  @apply rounded-t-none;
+}
+
+/* ---------------------------------------------------------------------------
+   Tag pills: dev.to-style coloured "#". --tag comes from src/lib/tag-colors.ts.
+--------------------------------------------------------------------------- */
+
+@layer components {
+  .tag-pill {
+    --tag-fg: var(--tag);
+    @apply inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium text-foreground/80;
+    background-color: color-mix(in oklab, var(--tag) 8%, transparent);
+    border-color: color-mix(in oklab, var(--tag) 22%, transparent);
+  }
+
+  .tag-pill-hash {
+    @apply mr-px font-semibold;
+    color: var(--tag-fg);
+  }
+}
+
+/* The palette is tuned for the light background; lift it in dark mode instead
+   of maintaining a second table of colours. */
+.dark .tag-pill {
+  --tag-fg: color-mix(in oklab, var(--tag) 55%, white);
+}
+
+/* ---------------------------------------------------------------------------
+   Image zoom (ImageZoom.tsx). Native <dialog>: resets the UA box, then fades
+   and scales in via @starting-style, with no JS animation library.
+--------------------------------------------------------------------------- */
+
+.image-zoom {
+  @apply m-0 flex h-dvh max-h-none w-screen max-w-none cursor-zoom-out items-center justify-center border-0 bg-transparent p-6 md:p-12;
+  opacity: 0;
+  transform: scale(0.97);
+  transition:
+    opacity 220ms ease-out,
+    transform 220ms ease-out,
+    overlay 220ms allow-discrete,
+    display 220ms allow-discrete;
+}
+
+.image-zoom:not([open]) {
+  display: none;
+}
+
+.image-zoom[open] {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@starting-style {
+  .image-zoom[open] {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+.image-zoom::backdrop {
+  background-color: rgb(10 10 10 / 0);
+  backdrop-filter: blur(0);
+  transition:
+    background-color 220ms ease-out,
+    backdrop-filter 220ms ease-out,
+    overlay 220ms allow-discrete,
+    display 220ms allow-discrete;
+}
+
+.image-zoom[open]::backdrop {
+  background-color: rgb(10 10 10 / 0.85);
+  backdrop-filter: blur(6px);
+}
+
+@starting-style {
+  .image-zoom[open]::backdrop {
+    background-color: rgb(10 10 10 / 0);
+    backdrop-filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-zoom,
+  .image-zoom::backdrop,
+  .prose img[data-zoomable] {
+    transition: none;
+  }
+
+  .prose img[data-zoomable]:hover {
+    transform: none;
+  }
+}

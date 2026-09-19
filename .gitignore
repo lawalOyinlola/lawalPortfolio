@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 PORTFOLIO_SYNC.md
+
+# local working docs: plans, todo lists, security audits
+tasks/
