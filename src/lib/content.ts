@@ -44,7 +44,8 @@ const baseFrontmatter = z.object({
   updated: z.coerce.date().optional(),
   tags: z.array(z.string()).default([]),
   cover: z.string().optional(),
-  coverAlt: z.string().optional(),
+  /** Required whenever `cover` is set; enforced by requireCoverAlt below. */
+  coverAlt: z.string().min(1).optional(),
   draft: z.boolean().default(false),
   /**
    * Set once the post exists on dev.to (via sync, RSS import, or migration).
@@ -58,7 +59,25 @@ const baseFrontmatter = z.object({
   devto_published: z.boolean().default(false),
 });
 
-export const blogFrontmatterSchema = baseFrontmatter;
+/**
+ * A cover without alt text is invisible to screen readers, and covers here
+ * often carry the post's headline numbers. Applied to each final schema rather
+ * than the base, because zod 4 won't `.extend()` an object that has refinements.
+ */
+function requireCoverAlt(
+  data: { cover?: string; coverAlt?: string },
+  ctx: z.RefinementCtx,
+): void {
+  if (data.cover && !data.coverAlt) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["coverAlt"],
+      message: "coverAlt is required when cover is set",
+    });
+  }
+}
+
+export const blogFrontmatterSchema = baseFrontmatter.superRefine(requireCoverAlt);
 
 /**
  * `status` is the publication gate, not decoration. HackTheBox forbids writeups
@@ -82,7 +101,7 @@ export const labFrontmatterSchema = baseFrontmatter.extend({
   cves: z.array(z.string()).default([]),
   skills: z.array(z.string()).default([]),
   status: z.enum(["retired", "free-room", "own-lab"]),
-});
+}).superRefine(requireCoverAlt);
 
 export type BlogFrontmatter = z.infer<typeof blogFrontmatterSchema>;
 export type LabFrontmatter = z.infer<typeof labFrontmatterSchema>;
@@ -112,12 +131,15 @@ const REDACTED = /r[3e]d[4a]ct|snip|\*{3,}|x{4,}/i;
  * Publishing a live flag spoils the box for everyone and breaks platform rules.
  * Redacted forms — `HTB{r3d4ct3d}` — are allowed through deliberately.
  */
-function assertNoLeakedFlags(body: string, source: string): void {
-  for (const match of body.matchAll(FLAG_PATTERN)) {
+function assertNoLeakedFlags(raw: string, source: string): void {
+  for (const match of raw.matchAll(FLAG_PATTERN)) {
     const inner = match[1] ?? "";
     if (!REDACTED.test(inner)) {
+      // Point at the line, never print the value: this message lands in CI and
+      // deploy logs, which would otherwise publish the flag it's protecting.
+      const line = raw.slice(0, match.index).split("\n").length;
       throw new Error(
-        `[content] ${source} contains what looks like an unredacted flag: "${match[0]}".\n` +
+        `[content] ${source}:${line} contains what looks like an unredacted flag.\n` +
           `Redact it (e.g. HTB{r3d4ct3d}) or remove it before publishing.`,
       );
     }
@@ -159,7 +181,9 @@ function parseFile<T>(
     throw new Error(`[content] Invalid frontmatter in ${source}:\n${issues}`);
   }
 
-  assertNoLeakedFlags(content, source);
+  // The whole file, frontmatter included: a flag in the title or description
+  // would reach the page, its metadata and the RSS feed just the same.
+  assertNoLeakedFlags(raw, source);
 
   return {
     slug: file.replace(/\.mdx?$/, ""),
