@@ -99,7 +99,6 @@ export async function renderMarkdown(source: string): Promise<RenderedMarkdown> 
       properties: {
         className: ["heading-anchor"],
         ariaLabel: "Link to this section",
-        tabIndex: -1,
       },
       content: { type: "text", value: "#" },
     })
