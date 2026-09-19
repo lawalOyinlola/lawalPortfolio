@@ -98,7 +98,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
             </Magnetic>
           </div>
 
-          {isProjectPage && !isMenuOpen && !isProjectOpen && (
+          {currentProject && !isMenuOpen && !isProjectOpen && (
             <div className="hidden min-[928px]:flex items-center gap-1 bg-background border-2 border-background z-21 shadow-sm *:not-first:border *:not-first:border-border *:not-first:px-3.75 *:not-first:hover:border-primary">
               {currentProject?.github && (
                 <a
