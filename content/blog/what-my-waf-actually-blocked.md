@@ -2,6 +2,7 @@
 title: "What my WAF actually blocked, and what my app already stops on its own"
 description: "I ran 26 attack payloads against a production app with ModSecurity on and off. It blocked 12: five my app already rejected, and seven it stopped a step earlier than the app's own defences. The class behind most real breaches never showed up in either column."
 date: 2026-09-14
+updated: 2026-09-20
 tags: [security, webdev, devops, cybersecurity]
 cover: /images/blog/what-my-waf-actually-blocked/coverimage.png
 coverAlt: "12 payloads the WAF blocked, 7 the app didn't already stop. What twelve blocked requests actually proved: measuring a WAF against an app that already defends itself."
@@ -17,7 +18,7 @@ That something is a web application firewall, and last month I spent a weekend t
 
 ## First, what the thing actually is
 
-It is software. Twenty years ago you might have racked a physical appliance for this, but today a WAF is one of three things, all of them software: a module inside the web server you already run, a standalone reverse proxy that traffic passes through on its way in, or a cloud service like Cloudflare that filters at the DNS layer before anything reaches your machines at all.
+It is software. Twenty years ago you might have racked a physical appliance for this, but today a WAF is one of three things, all of them software: a module inside the web server you already run, a standalone reverse proxy that traffic passes through on its way in, or a cloud service like Cloudflare that your DNS points at, filtering requests at its own edge before anything reaches your machines at all.
 
 Mine is the first kind. ModSecurity, running as a module inside the NGINX that already sits at the edge of the application, which means no extra network hop, no new machine, and no new bill. The rules it runs come from the OWASP Core Rule Set, a community-maintained collection of patterns for injection, cross-site scripting, traversal and the rest. ModSecurity is the engine; the rule set is the fuel.
 
