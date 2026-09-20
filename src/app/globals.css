@@ -454,6 +454,14 @@ html[data-hide-logo="true"] .logo-btn {
     color: var(--tag-fg);
   }
 
+  /* Chrome and Safari draw their own clear button inside type="search",
+     which sat next to ours and read as two X icons. */
+  .search-field::-webkit-search-cancel-button,
+  .search-field::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
   /* Filter toggles on the blog index. Same colour source as .tag-pill, but
      they carry a pressed state, so the accent fills rather than tints. */
   .tag-filter {
