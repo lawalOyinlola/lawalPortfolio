@@ -14,7 +14,7 @@ import { renderMarkdown } from "@/lib/markdown";
  * fetches every image by URL, so image paths must be absolute here — a relative
  * path resolves against dev.to and 404s.
  *
- * Only posts with `devto_published: true` are included; see isSyndicatable().
+ * Only posts dev.to does not already have are included; see isSyndicatable().
  */
 
 function escapeXml(value: string): string {
@@ -26,8 +26,16 @@ function escapeXml(value: string): string {
     .replace(/'/g, "&apos;");
 }
 
+/**
+ * Root-relative URLs have to be absolute in the feed. Assets and pages can sit
+ * on different origins: ASSET_ORIGIN may point at a CDN later, while a link to
+ * /projects/... must still resolve to the site itself. Protocol-relative URLs
+ * (//host/path) are already absolute and are left alone.
+ */
 function absolutifyHtml(html: string): string {
-  return html.replace(/(src|href)="\/(?!\/)/g, `$1="${ASSET_ORIGIN}/`);
+  return html
+    .replace(/src="\/(?!\/)/g, `src="${ASSET_ORIGIN}/`)
+    .replace(/href="\/(?!\/)/g, `href="${BRAND.url}/`);
 }
 
 /**
