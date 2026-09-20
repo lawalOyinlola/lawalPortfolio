@@ -16,19 +16,19 @@ export const PARTNERS: Partner[] = [
     name: "Winners Chapel Int'l Goderich",
     shortName: "WCI Goderich",
     role: "Web Platform Development",
-    logo: "/partner-logos/logo_wci_nobg.png",
+    logo: "/partner-logos/logo_wci_nobg.webp",
   },
   {
     name: "Tech N' GoodWill Limited",
     shortName: "TechN'GoodWill",
     role: "Lead Software Engineer",
-    logo: "/partner-logos/logo_techengoodwill.png",
+    logo: "/partner-logos/logo_techengoodwill.webp",
   },
   {
     name: "Reach Afrika",
     shortName: "Reach Afrika",
     role: "NGO-Social Impact Tech Partner",
-    logo: "/partner-logos/logo_reach_afrika.png",
+    logo: "/partner-logos/logo_reach_afrika.webp",
   },
   {
     name: "AltSchool Africa",
