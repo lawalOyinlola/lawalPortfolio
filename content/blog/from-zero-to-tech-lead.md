@@ -57,8 +57,10 @@ The graduation email put a number on it: 95 points out of 100 across all categor
 
 ## Where I am now
 
-Since then I have been building production software rather than coursework. Most of my work has been at Tech N' Goodwill Limited on SafulPay, a fintech product in Sierra Leone, across the mobile app, the agent and merchant dashboards, and the corporate site.
+Since then I have been building production software rather than coursework. I am a Software Developer and Team Lead at Tech N' Goodwill Limited, where much of my work went into SafulPay, a fintech product in Sierra Leone, across the mobile app, the agent and merchant dashboards, and the corporate site.
 
-What has changed most recently is what I am curious about. Building payment software makes you think about what happens when someone attacks it, so I have started working through security properly and writing down what I find. I measured [what a web application firewall actually blocked](/blog/what-my-waf-actually-blocked) in front of an app I had already built, and wrote up [the vocabulary and the rules of ethical hacking](/blog/ethical-hacking-is-not-a-toolset) for anyone starting where I am. More of that is coming, including the lab work behind it.
+Right now I am building [Trakkam](https://trakkam.com), a GPS and IoT platform for fleet monitoring: live tracking, alerts, and a web dashboard, plus a WhatsApp bot for the people who would rather ask a question in a chat than open another app. It is self hosted, so the infrastructure, the deployments and the hardening are mine to get right too.
+
+That is also what changed what I am curious about. Building payment software and then hosting a tracking platform yourself makes you think hard about what happens when someone attacks it, so I have started working through security properly and writing down what I find. I measured [what a web application firewall actually blocked](/blog/what-my-waf-actually-blocked) in front of an app I had already built, and wrote up [the vocabulary and the rules of ethical hacking](/blog/ethical-hacking-is-not-a-toolset) for anyone starting where I am. More of that is coming, including the lab work behind it.
 
 The through line from the empty repo two hours before a deadline is the same one I would offer anyone starting out: the moment something breaks is usually the moment you actually learn the thing. Keep building, and keep writing down what breaks.
