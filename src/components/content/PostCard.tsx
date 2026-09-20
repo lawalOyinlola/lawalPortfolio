@@ -32,7 +32,7 @@ export default function PostCard({
   return (
     <article
       style={{ ...accentStyle, "--i": index } as CSSProperties}
-      className="post-row group relative flex flex-col gap-5 py-7 transition-colors duration-300 md:flex-row md:gap-8 md:py-8"
+      className="post-row group relative flex flex-col gap-5 py-7 pr-1 transition-colors duration-300 md:flex-row md:gap-8 md:py-8 md:pr-6"
     >
       {cover && (
         // self-start is load-bearing: without it the flex row stretches this
@@ -59,7 +59,7 @@ export default function PostCard({
           <span>{post.readingMinutes} min read</span>
         </div>
 
-        <h2 className="max-w-[34ch] text-xl font-semibold leading-snug tracking-tight text-primary md:text-[1.6rem]">
+        <h2 className="max-w-[40ch] text-xl font-semibold leading-snug tracking-tight text-primary md:text-[1.6rem]">
           <Link
             href={`/blog/${post.slug}`}
             className="after:absolute after:inset-0 decoration-(--post-accent,var(--ring)) decoration-2 underline-offset-[6px] group-hover:underline"
@@ -68,7 +68,7 @@ export default function PostCard({
           </Link>
         </h2>
 
-        <p className="max-w-[62ch] text-sm leading-relaxed text-muted-foreground">
+        <p className="max-w-[68ch] text-sm leading-relaxed text-muted-foreground">
           {description}
         </p>
 
