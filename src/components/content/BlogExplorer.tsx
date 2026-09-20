@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getTagColor } from "@/lib/tag-colors";
 import PostCard, { type PostSummary } from "./PostCard";
@@ -17,6 +17,25 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
   const [query, setQuery] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const searchId = useId();
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Bring the results back into view after a filter changes.
+   *
+   * Tied to the discrete actions (a tag, a clear) rather than to the result
+   * count: scrolling the page on every keystroke while someone is still typing
+   * would fight them for control of the viewport.
+   */
+  function scrollToResults() {
+    const top = resultsRef.current?.getBoundingClientRect().top;
+    if (top === undefined || top >= 0) return;
+    resultsRef.current?.scrollIntoView({
+      block: "start",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  }
 
   const tags = useMemo(() => {
     const counts = new Map<string, number>();
@@ -54,11 +73,13 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
         ? current.filter((t) => t !== tag)
         : [...current, tag],
     );
+    scrollToResults();
   }
 
   function clearAll() {
     setQuery("");
     setActiveTags([]);
+    scrollToResults();
   }
 
   return (
@@ -138,7 +159,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
           </button>
         )}
       </aside>
-      <div className="lg:order-1">
+      <div ref={resultsRef} className="scroll-mt-28 lg:order-1">
         <p
           role="status"
           className="text-xs uppercase tracking-widest text-muted-foreground"
