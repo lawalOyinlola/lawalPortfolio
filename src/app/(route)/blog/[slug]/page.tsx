@@ -176,7 +176,7 @@ export default async function BlogPostPage({
         <div className="mt-16 flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
           <TableOfContents
             headings={headings}
-            className="lg:sticky lg:top-28 lg:order-2 lg:w-56 lg:shrink-0"
+            className="lg:sticky lg:top-28 lg:order-2 lg:w-76 lg:shrink-0"
           />
           <Prose html={html} className="lg:order-1 lg:flex-1" />
         </div>
@@ -209,7 +209,7 @@ export default async function BlogPostPage({
         {related.length > 0 && (
           <section
             aria-labelledby="keep-reading"
-            className="mt-28 max-w-5xl border-t border-border/25 pt-14"
+            className="mt-28 max-w-5xl border-t border-border pt-14"
           >
             <h2
               id="keep-reading"
