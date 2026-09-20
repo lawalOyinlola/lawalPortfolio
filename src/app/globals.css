@@ -501,6 +501,12 @@ html[data-hide-logo="true"] .logo-btn {
     transform: scale(0.98);
   }
 
+  .reaction-chip-failed {
+    @apply text-destructive;
+    border-color: color-mix(in oklab, var(--destructive) 45%, transparent);
+    background-color: color-mix(in oklab, var(--destructive) 8%, transparent);
+  }
+
   .reaction-chip-active {
     color: var(--post-accent, var(--ring));
     border-color: color-mix(in oklab, var(--post-accent, var(--ring)) 55%, transparent);
