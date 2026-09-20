@@ -206,7 +206,7 @@ html[data-hide-logo="true"] .logo-btn {
 }
 
 .tv-static {
-  background: url("/shimmer.png") repeat #dcdcdc;
+  background: url("/shimmer.webp") repeat #dcdcdc;
   filter: grayscale(1) contrast(1.1);
   animation: tv-static-shift 220ms steps(2) infinite;
 }

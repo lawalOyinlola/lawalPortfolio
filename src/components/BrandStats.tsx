@@ -172,7 +172,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
             className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] sm:w-[60vw] md:w-130 aspect-4/5 sm:aspect-square md:aspect-auto md:h-75 max-h-[60vh] mx-auto overflow-hidden bg-foreground will-change-transform"
           >
             <Image
-              src="/stats_image.png"
+              src="/stats_image.webp"
               alt="Stats showcase visual"
               fill
               className="object-cover"
