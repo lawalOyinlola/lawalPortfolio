@@ -16,25 +16,25 @@ export type Project = {
 // Placeholder for deeper details so we can reuse it
 const placeholderDetails = [
   {
-    image: "/projects/my_projects.jpeg",
+    image: "/projects/my_projects.webp",
     title: "Project Discovery & Planning",
     description:
       "During the initial phase, we conducted thorough research to understand the target audience and define the core features that would deliver the most value.",
   },
   {
-    image: "/projects/my_projects.jpeg",
+    image: "/projects/my_projects.webp",
     title: "Design & Prototyping",
     description:
       "We created wireframes and high-fidelity prototypes to visualize the user journey, ensuring a seamless and intuitive experience across all devices.",
   },
   {
-    image: "/projects/my_projects.jpeg",
+    image: "/projects/my_projects.webp",
     title: "Development & Engineering",
     description:
       "The application was built using modern web technologies, focusing on performance, scalability, and maintainability for future iterations.",
   },
   {
-    image: "/projects/my_projects.jpeg",
+    image: "/projects/my_projects.webp",
     title: "Testing & Launch",
     description:
       "Rigorous quality assurance testing was performed to ensure a bug-free experience before smoothly deploying the application to production environments.",
@@ -48,7 +48,7 @@ export const PROJECTS: Project[] = [
     category: "Fintech",
     description:
       "SafulPay is a groundbreaking fintech company based in Sierra Leone, dedicated to transforming the financial landscape. By offering innovative digital payment solutions, SafulPay empowers individuals and businesses to engage in seamless transactions. With a focus on accessibility and security, this platform aims to enhance financial inclusion, making it easier for everyone to manage their finances and participate in the economy.",
-    image: "/projects/safulpay/safulpay_hero.png",
+    image: "/projects/safulpay/safulpay_hero.webp",
     github: "https://github.com/TECH-N-GOODWILL-LIMITED/SafulPay-Website-v2",
     live: "https://safulpay.com",
     keypoints: [
@@ -59,25 +59,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/safulpay/safulpay_graphic.png",
+        image: "/projects/safulpay/safulpay_graphic.webp",
         title: "Strategic Discovery",
         description:
           "Conducted market research to define a roadmap for transforming the financial landscape in Sierra Leone through digital payment innovation.",
       },
       {
-        image: "/projects/safulpay/safulpay_design.png",
+        image: "/projects/safulpay/safulpay_design.webp",
         title: "User-Centric Prototyping",
         description:
           "Designed intuitive user journeys for diverse user groups, emphasizing accessibility and security for seamless cross-platform financial interactions.",
       },
       {
-        image: "/projects/safulpay/safulpay_mockups.png",
+        image: "/projects/safulpay/safulpay_mockups.webp",
         title: "Tech Stack & Engineering",
         description:
           "Engineered the mobile experience using Flutterflow (Flutter) and developed the agent monitoring dashboards with Next.js, integrated with a robust GoLang backend ecosystem.",
       },
       {
-        image: "/projects/safulpay/safulpay_agency.png",
+        image: "/projects/safulpay/safulpay_agency.webp",
         title: "The Agency Platform",
         description:
           "Developed a robust business dashboard for monitoring agent performance, managing seamless onboarding, and orchestrating automated disbursement and recollection workflows.",
@@ -92,7 +92,7 @@ export const PROJECTS: Project[] = [
     category: "Dashboard",
     description:
       "A comprehensive market analysis platform providing real-time insights into various industries and trends. MarketGist leverages AI-powered analytics to deliver actionable intelligence, helping investors and analysts make informed decisions with confidence.",
-    image: "/projects/marketgist/marketgist.png",
+    image: "/projects/marketgist/marketgist.webp",
     github:
       "https://github.com/lawalOyinlola/marketGist-stock-market-dashboard-with-AI-insights-alerts-charts",
     live: "https://marketgist.vercel.app",
@@ -104,25 +104,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/marketgist/marketgist_multi_screenshot.png",
+        image: "/projects/marketgist/marketgist_multi_screenshot.webp",
         title: "Project Discovery & Planning",
         description:
           "We analyzed the need for real-time market data and designed an automated system to aggregate financial news and stock metrics for investors.",
       },
       {
-        image: "/projects/marketgist/marketgist_design.png",
+        image: "/projects/marketgist/marketgist_design.webp",
         title: "Design & Prototyping",
         description:
           "We crafted a dashboard layout utilizing React 19 and Tailwind CSS, focusing on accessible data visualization and seamless user experience.",
       },
       {
-        image: "/projects/marketgist/marketgist_watchlist.png",
+        image: "/projects/marketgist/marketgist_watchlist.webp",
         title: "Development & Engineering",
         description:
           "The platform was built with Next.js 15, integrating Finnhub API for live stocks and Inngest for background job processing and automation.",
       },
       {
-        image: "/projects/marketgist/marketgist_on_a_curved_screen.png",
+        image: "/projects/marketgist/marketgist_on_a_curved_screen.webp",
         title: "Testing & Launch",
         description:
           "We rigorously tested Gemini AI news summaries, background Cron jobs, and API rate limits to guarantee timely delivery of market insights.",
@@ -137,7 +137,7 @@ export const PROJECTS: Project[] = [
     category: "AI / ML",
     description:
       "An intelligent career platform leveraging Gemini AI to evaluate resumes against job descriptions. It provides deep ATS optimization, actionable feedback, and personalized scoring to help job seekers enhance their applications and land interviews.",
-    image: "/projects/khariar/khariar_home.png",
+    image: "/projects/khariar/khariar_home.webp",
     github: "https://github.com/lawalOyinlola/khariar",
     live: "https://khariar.vercel.app",
     keypoints: [
@@ -148,25 +148,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/khariar/khariar_analysis.png",
+        image: "/projects/khariar/khariar_analysis.webp",
         title: "Intelligent Text Extraction",
         description:
           "Integrated PDF.js to extract and format complex resume text, ensuring high data accuracy before routing it through the AI feedback pipeline.",
       },
       {
-        image: "/projects/khariar/khariar_improve.png",
+        image: "/projects/khariar/khariar_improve.webp",
         title: "AI-Driven Feedback Engine",
         description:
           "Leveraged Gemini AI to generate actionable resume scores, keyword optimizations, and intelligent, section-by-section content improvements based on target job descriptions.",
       },
       {
-        image: "/projects/khariar/khariar_review.png",
+        image: "/projects/khariar/khariar_review.webp",
         title: "Robust Data Pipelines",
         description:
           "Engineered strict JSON parsing mechanisms and regex fallbacks to eliminate AI hallucinations and guarantee stable data extraction for the UI.",
       },
       {
-        image: "/projects/khariar/khariar_mismatch.png",
+        image: "/projects/khariar/khariar_mismatch.webp",
         title: "Secure Cloud Architecture",
         description:
           "Built an intuitive file management dashboard mapped to Puter.js, providing users with fast, secure document storage and persistent authentication.",
@@ -181,7 +181,7 @@ export const PROJECTS: Project[] = [
     category: "AI Assistant",
     description:
       "LinkedIn Intelligent Assistant is an AI-powered tool designed to supercharge your LinkedIn presence. LIA automates content creation, engagement strategies, and networking outreach, helping professionals build meaningful connections and grow their personal brand effortlessly.",
-    image: "/projects/lia/lia_laptop_mockup.jpeg",
+    image: "/projects/lia/lia_laptop_mockup.webp",
     github: "https://github.com/TenacityVentures/Lia",
     live: "https://www.getlia.live",
     keypoints: [
@@ -192,25 +192,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/lia/lia_laptop_mockup.jpeg",
+        image: "/projects/lia/lia_laptop_mockup.webp",
         title: "AI Content Generation",
         description:
           "Developed a sophisticated AI pipeline using various AI models to generate high-engagement LinkedIn posts, allowing users to maintain a professional presence with minimal effort.",
       },
       {
-        image: "/projects/lia/lia_extension.png",
+        image: "/projects/lia/lia_extension.webp",
         title: "Smart Engagement",
         description:
           "Implemented an intelligent reply system that analyzes thread context to craft thoughtful, relevant comments, fostering meaningful professional discussions and growth.",
       },
       {
-        image: "/projects/lia/lia_mockup_light.png",
+        image: "/projects/lia/lia_mockup_light.webp",
         title: "Seamless Integration",
         description:
           "Engineered a robust Chrome Extension using React 19 and Vite, featuring a native-feel side panel and content script injections for a friction-less LinkedIn workflow.",
       },
       {
-        image: "/projects/lia/lia_landing_page.png",
+        image: "/projects/lia/lia_landing_page.webp",
         title: "Full-Stack Ecosystem",
         description:
           "Built a modern architecture with a Next.js landing page and a dedicated API server, leveraging Tailwind CSS 4 for a premium, responsive user interface.",
@@ -225,7 +225,7 @@ export const PROJECTS: Project[] = [
     category: "Utility",
     description:
       "A feature-rich URL shortening service built with React and Supabase. Scissors Web provides custom short URLs with emojis, real-time click analytics, and dynamic QR code generation to help users manage and track their digital presence with ease.",
-    image: "/projects/scissorsweb/scissors_home.png",
+    image: "/projects/scissorsweb/scissors_home.webp",
     github: "https://github.com/lawalOyinlola/scissorsWeb",
     live: "https://scissorsweb.netlify.app/",
     keypoints: [
@@ -236,25 +236,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/scissorsweb/scissors_main.png",
+        image: "/projects/scissorsweb/scissors_main.webp",
         title: "Custom URL Shortening",
         description:
           "Developed a feature-rich URL shortening service that allows users to create memorable, custom aliases and use unique emoji-based slugs for their links.",
       },
       {
-        image: "/projects/scissorsweb/scissors_analytics.png",
+        image: "/projects/scissorsweb/scissors_analytics.webp",
         title: "Real-Time Link Insights",
         description:
           "Built a robust analytics dashboard that tracks every click, providing detailed insights into geographic locations, device types, and referral sources.",
       },
       {
-        image: "/projects/scissorsweb/scissors_qrcode.png",
+        image: "/projects/scissorsweb/scissors_qrcode.webp",
         title: "Dynamic QR Code Generation",
         description:
           "Integrated an automatic QR code generator for every link, enabling seamless sharing across physical and digital platforms.",
       },
       {
-        image: "/projects/scissorsweb/scissors_faq.png",
+        image: "/projects/scissorsweb/scissors_faq.webp",
         title: "Secure Link Management",
         description:
           "Leveraged Supabase for secure authentication and reliable database management, ensuring performant link resolution and user data protection.",
@@ -268,7 +268,7 @@ export const PROJECTS: Project[] = [
     category: "Game",
     description:
       "A fun and interactive dice game built as a browser-based experience. Players take turns rolling dice and strategically deciding when to hold their score, racing to be the first to reach the target.",
-    image: "/projects/lumina/lumina_gameplay.png",
+    image: "/projects/lumina/lumina_gameplay.webp",
     github: "https://github.com/lawalOyinlola/Lumina_Dice",
     live: "https://lumina-dice.vercel.app/",
     keypoints: [
@@ -279,25 +279,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/lumina/lumina_mockups.png",
+        image: "/projects/lumina/lumina_mockups.webp",
         title: "Strategic Gameplay",
         description:
           "Modernized the classic Pig Game with a clean, Lumina-themed UI, focusing on readability and intuitive dice control.",
       },
       {
-        image: "/projects/lumina/lumina_turn_lost.png",
+        image: "/projects/lumina/lumina_turn_lost.webp",
         title: "Dynamic State Machine",
         description:
           "Engineered robust state machines to handle the core 'Roll or Hold' loop, featuring animated feedback for turn losses.",
       },
       {
-        image: "/projects/lumina/lumina_rules.png",
+        image: "/projects/lumina/lumina_rules.webp",
         title: "Clear Instructions",
         description:
           "Integrated an accessible rules modal ensuring new players can quickly understand game mechanics and winning strategies.",
       },
       {
-        image: "/projects/lumina/lumina_winner.png",
+        image: "/projects/lumina/lumina_winner.webp",
         title: "Immersive Celebration",
         description:
           "Developed dynamic victory UI that highlights the winner and provides a seamless flow for starting a new match.",
@@ -313,7 +313,7 @@ export const PROJECTS: Project[] = [
     category: "Web Platform",
     description:
       "A secure and transparent electronic voting platform designed to facilitate digital democracy. Resolve provides a tamper-proof voting experience with real-time results and multi-stage authentication for secure collective decision-making.",
-    image: "/projects/resolve/resolve_hero.png",
+    image: "/projects/resolve/resolve_hero.webp",
     github: "https://github.com/hngprojects/E-Vote-FE",
     live: "https://resolve.vote",
     keypoints: [
@@ -324,25 +324,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/resolve/resolve_elections.png",
+        image: "/projects/resolve/resolve_elections.webp",
         title: "Transparent Digital Democracy",
         description:
           "Designed a cohesive, accessible experience that bridges the gap between traditional democratic processes and modern digital security.",
       },
       {
-        image: "/projects/resolve/resolve_home.png",
+        image: "/projects/resolve/resolve_home.webp",
         title: "Dynamic Election Management",
         description:
           "Engineered a streamlined dashboard for organizers to manage complex candidate profiles, election timelines, and custom voting logic.",
       },
       {
-        image: "/projects/resolve/resolve_auth.png",
+        image: "/projects/resolve/resolve_auth.webp",
         title: "Multi-Layered Authentication",
         description:
           "Implemented a robust, multi-layered identity verification system supporting social logins and invitation-only access to prevent voter fraud.",
       },
       {
-        image: "/projects/resolve/resolve_vote.png",
+        image: "/projects/resolve/resolve_vote.webp",
         title: "Real-Time Notifications",
         description:
           "Integrated interactive real-time alerts to notify users when elections begin, provide countdowns for upcoming polls, and deliver instant results updates.",
@@ -356,7 +356,7 @@ export const PROJECTS: Project[] = [
     category: "Web Platform",
     description:
       "A complete digital solution for church management and community engagement built with Next.js 16 and Tailwind CSS 4. It features interactive resource libraries, event management, and seamless ministerial outreach tools.",
-    image: "/projects/my_projects.jpeg",
+    image: "/projects/my_projects.webp",
     github: "https://github.com/lawalOyinlola/wci_goderich",
     live: "https://wcigoderich.org",
     keypoints: [
@@ -374,7 +374,7 @@ export const PROJECTS: Project[] = [
     category: "Social Impact",
     description:
       "A faith-rooted women's movement based in Freetown, Sierra Leone — restoring hearts, reclaiming crowns. The platform serves as a digital sanctuary and hub for the community, showcasing their mission, core pillars, anthem, and stories of transformation.",
-    image: "/projects/acw/acw_about.png",
+    image: "/projects/acw/acw_about.webp",
     github: "https://github.com/lawalOyinlola/a_certain_woman",
     live: "https://acertainwoman.org",
     keypoints: [
@@ -385,25 +385,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/acw/acw_manifesto.png",
+        image: "/projects/acw/acw_manifesto.webp",
         title: "Editorial Identity & Voice",
         description:
           "Established a reverent, unhurried digital magazine aesthetic. Copy is set in long measure with DM Serif Display headings and gold italic display accents to represent the sisterhood's sacred values.",
       },
       {
-        image: "/projects/acw/acw_impact.png",
+        image: "/projects/acw/acw_impact.webp",
         title: "Pillars of Impact & Service",
         description:
           "Created structured, asymmetric layouts detailing the movement's focus areas, combining custom icons and micro-interactions to guide visitors through community outreach and leadership programs.",
       },
       {
-        image: "/projects/acw/acw_founder.png",
+        image: "/projects/acw/acw_founder.webp",
         title: "Founder's Narrative & Vision",
         description:
           "Crafted dedicated content spaces showcasing the founder's message, utilizing custom drop-caps, hairline borders, and subtle radial gradient backdrops to establish trust and connection.",
       },
       {
-        image: "/projects/acw/acw_footer.png",
+        image: "/projects/acw/acw_footer.webp",
         title: "Community Engagement Hub",
         description:
           "Integrated responsive contact systems, interactive video dialogs, and newsletter subscriptions to gather partners and enable women to join the sisterhood seamlessly.",
@@ -417,7 +417,7 @@ export const PROJECTS: Project[] = [
     category: "Productivity",
     description:
       "A high-performance productivity cockpit built with Vue 3 and Vite, Task Pilot redefines task management through a 'Mission Control' lens. It features a sophisticated persistence layer using LZ-string compression, cutting-edge UI primitives from Reka UI, and a dual-engine theme system (Nocturnal & Aero). Designed for professional focus, it combines automated feedback loops with a mobile-first tactical interface.",
-    image: "/projects/taskpilot/taskpilot_hero.png",
+    image: "/projects/taskpilot/taskpilot_hero.webp",
     github: "https://github.com/lawalOyinlola/taskpilot",
     live: "https://taskpilot-lawal.vercel.app/",
     keypoints: [
@@ -428,25 +428,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/taskpilot/taskpilot_lightndark.png",
+        image: "/projects/taskpilot/taskpilot_lightndark.webp",
         title: "Nocturnal Navigator & Aero Command",
         description:
           "A sophisticated multi-theme engine powered by VueUse, offering seamless transitions between the high-contrast 'Nocturnal' dark mode and the clean 'Aero' light palette for optimal focus.",
       },
       {
-        image: "/projects/taskpilot/taskpilot_sonner_light.png",
+        image: "/projects/taskpilot/taskpilot_sonner_light.webp",
         title: "Precision Mission Feedback",
         description:
           "Integrated `vue-sonner` for crisp, non-intrusive notifications. Every mission launch, completion, or deletion is acknowledged with tactical micro-interactions that reinforce the 'Mission Control' aesthetic.",
       },
       {
-        image: "/projects/taskpilot/taskpilot_empty.png",
+        image: "/projects/taskpilot/taskpilot_empty.webp",
         title: "Zero-State Operational Readiness",
         description:
           "A refined hero section designed to minimize cognitive load when the mission feed is clear, featuring smooth transitions and a centered 'Launch' interface for immediate task entry.",
       },
       {
-        image: "/projects/taskpilot/taskpilot_iphone.png",
+        image: "/projects/taskpilot/taskpilot_iphone.webp",
         title: "Tactical Mobile Responsiveness",
         description:
           "Engineered with a mobile-first philosophy, utilizing adaptive grid layouts and floating action elements to ensure full operational capacity across all viewport sizes without compromising the premium UI.",
@@ -460,7 +460,7 @@ export const PROJECTS: Project[] = [
     category: "Landing Page",
     description:
       "A pixel-perfect, high-fidelity recreation of Apple's MacBook Pro M4 landing page. This project showcases advanced scroll-driven animations, intricate device mockups, and immersive feature storytelling, highlighting the power of Apple Intelligence and the M4 chip series.",
-    image: "/projects/macbook_m4/macbook_hero.png",
+    image: "/projects/macbook_m4/macbook_hero.webp",
     github: "https://github.com/lawalOyinlola/mackbook-landing-page",
     live: "https://yero-macbook-pro.vercel.app/",
     keypoints: [
@@ -471,25 +471,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/macbook_m4/macbook_upgrade.png",
+        image: "/projects/macbook_m4/macbook_upgrade.webp",
         title: "Built for Intelligence",
         description:
           "The flagship hero section introducing the MacBook Pro lineup with a signature glowing aesthetic and focus on Apple Intelligence.",
       },
       {
-        image: "/projects/macbook_m4/macbook_ai_fetaures.png",
+        image: "/projects/macbook_m4/macbook_ai_fetaures.webp",
         title: "AI-Powered Workflows",
         description:
           "Visualizing Apple Intelligence with interactive summaries and writing tools, brought to life through smooth motion design.",
       },
       {
-        image: "/projects/macbook_m4/macbook_m4_cutout.png",
+        image: "/projects/macbook_m4/macbook_m4_cutout.webp",
         title: "The Rocket Chip",
         description:
           "A deep dive into the M4 family architecture, featuring hardware cutouts and performance-driven data visualizations.",
       },
       {
-        image: "/projects/macbook_m4/macbook_nextlevel_features.png",
+        image: "/projects/macbook_m4/macbook_nextlevel_features.webp",
         title: "Next-Level Performance",
         description:
           "A high-density feature grid highlighting 24-hour battery life, 120Hz Liquid Retina XDR, and massive performance leaps.",
@@ -503,7 +503,7 @@ export const PROJECTS: Project[] = [
     category: "Landing Page",
     description:
       "An award-worthy recreation of the Zentry website, featuring high-fidelity GSAP animations, cinematic transitions, and an immersive 'World of Zentry' storytelling experience. This project demonstrates advanced frontend motion, scroll-driven interactions, and premium UI design standards.",
-    image: "/projects/zentry/zentry_contact.png",
+    image: "/projects/zentry/zentry_contact.webp",
     github: "https://github.com/lawalOyinlola/zentry-clone-awwwards",
     live: "https://zentryclone-awwwards.vercel.app",
     keypoints: [
@@ -514,25 +514,25 @@ export const PROJECTS: Project[] = [
     ],
     deeperDetails: [
       {
-        image: "/projects/zentry/zentry_hero.png",
+        image: "/projects/zentry/zentry_hero.webp",
         title: "Metagame Hero",
         description:
           "A cinematic entrance featuring video expansion transitions and 'GAMING REDEFINED' typography, setting the stage for an immersive digital odyssey.",
       },
       {
-        image: "/projects/zentry/zentry_pinned_image.png",
+        image: "/projects/zentry/zentry_pinned_image.webp",
         title: "Cinematic Narrative",
         description:
           "Utilizing GSAP ScrollTrigger to pin and scale complex image frames as the user scrolls, creating a cinematic window into the story layer.",
       },
       {
-        image: "/projects/zentry/zentry_projects.png",
+        image: "/projects/zentry/zentry_projects.webp",
         title: "Interactive Ecosystem",
         description:
           "A feature-rich bento grid highlighting core Zentry layers with dynamic hover effects and 3D skew interactions for a premium feel.",
       },
       {
-        image: "/projects/zentry/zentry_multiverse.png",
+        image: "/projects/zentry/zentry_multiverse.webp",
         title: "Unified Play Layer",
         description:
           "Showcasing the 'Multiversal IP World' with stylized illustrations and large typography that emphasize Zentry's scale and connectivity.",

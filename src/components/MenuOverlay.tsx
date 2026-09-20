@@ -17,6 +17,7 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import { handleNavigation } from "@/lib/navigation";
 import { handleDirectionalFocus, handleEmailClick } from "@/lib/utils";
 import { HoverFlipText } from "./ui/hover-flip-text";
+import { HoverFlipIcon } from "./ui/hover-flip-icon";
 
 interface MenuOverlayProps {
   isOpen: boolean;
@@ -35,9 +36,17 @@ const NAV_LINKS: { label: string; href: string; anchor?: string }[] = [
 // Direct contact routes replace the old CONTACT nav item: one tap to the
 // channel itself rather than a jump to a section that lists them.
 const CONTACT_LINKS: { label: string; href: string; icon: Icon }[] = [
-  { label: "LinkedIn", href: BRAND.socials.linkedin.href, icon: LinkedinLogoIcon },
+  {
+    label: "LinkedIn",
+    href: BRAND.socials.linkedin.href,
+    icon: LinkedinLogoIcon,
+  },
   { label: "GitHub", href: BRAND.socials.github.href, icon: GithubLogoIcon },
-  { label: "WhatsApp", href: BRAND.socials.whatsapp.href, icon: WhatsappLogoIcon },
+  {
+    label: "WhatsApp",
+    href: BRAND.socials.whatsapp.href,
+    icon: WhatsappLogoIcon,
+  },
 ];
 
 const contactLinkClass =
@@ -308,9 +317,9 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
               <div className="md:w-1/4 flex-none hidden md:block">
                 <p className="text-xs md:text-base italic font-extralight leading-relaxed max-w-sm">
                   As Your Engineering Reliability Operator, {BrandName} bridges
-                  creativity with engineering discipline, turning complex
-                  ideas into dependable digital products that work flawlessly
-                  every time.
+                  creativity with engineering discipline, turning complex ideas
+                  into dependable digital products that work flawlessly every
+                  time.
                 </p>
               </div>
             </div>
@@ -330,7 +339,9 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
                       rel="noopener noreferrer"
                       className={contactLinkClass}
                     >
-                      <LinkIcon size={18} weight="bold" aria-hidden />
+                      <HoverFlipIcon>
+                        <LinkIcon size={18} weight="bold" />
+                      </HoverFlipIcon>
                       {label}
                     </a>
                   </li>
@@ -342,7 +353,9 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
                     aria-label={`Email ${BRAND.email}`}
                     className={contactLinkClass}
                   >
-                    <EnvelopeSimpleIcon size={18} weight="bold" aria-hidden />
+                    <HoverFlipIcon>
+                      <EnvelopeSimpleIcon size={18} weight="bold" />
+                    </HoverFlipIcon>
                     Email
                   </button>
                 </li>

@@ -15,6 +15,7 @@ import { renderMarkdown } from "@/lib/markdown";
 import Prose from "@/components/content/Prose";
 import TableOfContents from "@/components/content/TableOfContents";
 import ArticleJsonLd from "@/components/content/ArticleJsonLd";
+import PostReactions from "@/components/content/PostReactions";
 import TagPill from "@/components/content/TagPill";
 import ContactsRef from "@/components/ContactsRef";
 import { getTagColor } from "@/lib/tag-colors";
@@ -35,7 +36,9 @@ export async function generateMetadata({
   const { title, description, date, updated, cover, coverAlt, tags } =
     post.frontmatter;
   const url = `${BRAND.url}/blog/${post.slug}`;
-  const image = cover ? toAbsoluteAssetUrl(cover) : `${BRAND.url}${BRAND.ogImage}`;
+  const image = cover
+    ? toAbsoluteAssetUrl(cover)
+    : `${BRAND.url}${BRAND.ogImage}`;
 
   return {
     title,
@@ -85,8 +88,16 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const { title, description, date, updated, tags, cover, coverAlt, devto_url } =
-    post.frontmatter;
+  const {
+    title,
+    description,
+    date,
+    updated,
+    tags,
+    cover,
+    coverAlt,
+    devto_url,
+  } = post.frontmatter;
   const { html, headings } = await renderMarkdown(post.body);
   const related = getRelatedPosts(post);
   // The first tag's colour becomes the post's accent: links, list markers,
@@ -96,7 +107,10 @@ export default async function BlogPostPage({
     : undefined;
 
   return (
-    <article className="min-h-screen relative bg-background z-1" style={accentStyle}>
+    <article
+      className="min-h-screen relative bg-background z-1"
+      style={accentStyle}
+    >
       <ArticleJsonLd
         title={title}
         description={description}
@@ -146,7 +160,7 @@ export default async function BlogPostPage({
         </header>
 
         {cover && (
-          <div className="relative mt-12 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border/20 bg-muted">
+          <div className="relative mt-12 aspect-video w-full overflow-hidden rounded-2xl border border-border/20 bg-muted">
             <Image
               src={cover}
               // The schema requires coverAlt whenever cover is set.
@@ -162,47 +176,82 @@ export default async function BlogPostPage({
         <div className="mt-16 flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
           <TableOfContents
             headings={headings}
-            className="lg:sticky lg:top-28 lg:order-2 lg:w-56 lg:shrink-0"
+            className="lg:sticky lg:top-28 lg:order-2 lg:w-76 lg:shrink-0"
           />
           <Prose html={html} className="lg:order-1 lg:flex-1" />
         </div>
 
-        {devto_url && (
-          <p className="mt-16 max-w-2xl text-sm text-muted-foreground">
-            This post is also published on{" "}
-            <a
-              href={devto_url}
-              className="underline underline-offset-4 hover:text-primary"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              dev.to
-            </a>
-            .
-          </p>
-        )}
+        {/* Kept inside the reading column: these belong to the article, not to
+            the page, so they should not run wider than the words above them. */}
+        <div className="max-w-[68ch]">
+          <PostReactions
+            slug={post.slug}
+            title={title}
+            devtoUrl={devto_url ?? null}
+          />
+
+          {devto_url && (
+            <p className="mt-6 text-sm text-muted-foreground">
+              This post is also published on{" "}
+              <a
+                href={devto_url}
+                className="underline underline-offset-4 hover:text-primary"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                dev.to
+              </a>
+              .
+            </p>
+          )}
+        </div>
 
         {related.length > 0 && (
-          <section className="mt-24 border-t border-border/20 pt-12">
-            <h2 className="text-xs uppercase tracking-widest text-muted-foreground">
+          <section
+            aria-labelledby="keep-reading"
+            className="mt-28 max-w-5xl border-t border-border pt-14"
+          >
+            <h2
+              id="keep-reading"
+              className="text-xs font-semibold uppercase tracking-[0.2em] text-primary"
+            >
               Keep reading
             </h2>
-            <ul className="mt-6 flex flex-col gap-4">
-              {related.map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/blog/${item.slug}`}
-                    className="group flex flex-col gap-1"
+
+            {/* Two columns at desktop width so each blurb keeps a sane measure
+                instead of one line running the full page. */}
+            <ul className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-border/20 sm:grid-cols-2">
+              {related.map((item) => {
+                const relatedAccent = item.frontmatter.tags[0]
+                  ? ({
+                      "--post-accent": getTagColor(item.frontmatter.tags[0]),
+                    } as CSSProperties)
+                  : undefined;
+                return (
+                  <li
+                    key={item.slug}
+                    style={relatedAccent}
+                    className="bg-background"
                   >
-                    <span className="text-lg font-semibold text-primary transition-opacity group-hover:opacity-70">
-                      {item.frontmatter.title}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {item.frontmatter.description}
-                    </span>
-                  </Link>
-                </li>
-              ))}
+                    <Link
+                      href={`/blog/${item.slug}`}
+                      className="group flex h-full flex-col gap-2 p-6 transition-colors duration-300 hover:bg-[color-mix(in_oklab,var(--post-accent,var(--ring))_5%,transparent)]"
+                    >
+                      <span className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+                        {formatPostDate(item.frontmatter.date)}
+                        <span aria-hidden>·</span>
+                        {item.readingMinutes} min
+                      </span>
+                      <span className="max-w-[32ch] text-base font-semibold leading-snug text-primary decoration-[color:var(--post-accent,var(--ring))] decoration-2 underline-offset-4 group-hover:underline">
+                        {item.frontmatter.title}
+                      </span>
+                      <span className="max-w-[46ch] text-sm leading-relaxed text-muted-foreground">
+                        {item.frontmatter.description}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </section>
         )}

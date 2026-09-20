@@ -397,28 +397,28 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
   return (
     <div
       ref={cursorRef}
-      className="fixed top-0 start-0 w-0 h-0 pointer-events-none z-9999"
+      className="fixed top-0 inset-s-0 w-0 h-0 pointer-events-none z-9999"
       style={{ willChange: "transform" }}
     >
       <div
         ref={dotRef}
-        className="absolute top-1/2 start-1/2 w-1 h-1 bg-white rounded-full -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
+        className="absolute top-1/2 inset-s-1/2 w-1 h-1 bg-white rounded-full -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
         style={{ willChange: "transform" }}
       />
       <div
-        className="target-cursor-corner absolute top-1/2 start-1/2 w-3 h-3 border-[3px] border-white -translate-x-[150%] rtl:translate-x-[150%] -translate-y-[150%] border-e-0 border-b-0"
+        className="target-cursor-corner absolute top-1/2 inset-s-1/2 w-3 h-3 border-[3px] border-white translate-x-[-150%] rtl:translate-x-[150%] translate-y-[-150%] border-e-0 border-b-0"
         style={{ willChange: "transform" }}
       />
       <div
-        className="target-cursor-corner absolute top-1/2 start-1/2 w-3 h-3 border-[3px] border-white translate-x-1/2 rtl:-translate-x-1/2 -translate-y-[150%] border-s-0 border-b-0"
+        className="target-cursor-corner absolute top-1/2 inset-s-1/2 w-3 h-3 border-[3px] border-white translate-x-1/2 rtl:-translate-x-1/2 translate-y-[-150%] border-s-0 border-b-0"
         style={{ willChange: "transform" }}
       />
       <div
-        className="target-cursor-corner absolute top-1/2 start-1/2 w-3 h-3 border-[3px] border-white translate-x-1/2 rtl:-translate-x-1/2 translate-y-1/2 border-s-0 border-t-0"
+        className="target-cursor-corner absolute top-1/2 inset-s-1/2 w-3 h-3 border-[3px] border-white translate-x-1/2 rtl:-translate-x-1/2 translate-y-1/2 border-s-0 border-t-0"
         style={{ willChange: "transform" }}
       />
       <div
-        className="target-cursor-corner absolute top-1/2 start-1/2 w-3 h-3 border-[3px] border-white -translate-x-[150%] rtl:translate-x-[150%] translate-y-1/2 border-e-0 border-t-0"
+        className="target-cursor-corner absolute top-1/2 inset-s-1/2 w-3 h-3 border-[3px] border-white translate-x-[-150%] rtl:translate-x-[150%] translate-y-1/2 border-e-0 border-t-0"
         style={{ willChange: "transform" }}
       />
     </div>

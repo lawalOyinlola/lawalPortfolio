@@ -172,7 +172,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
             className="absolute inset-x-0 top-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] sm:w-[60vw] md:w-130 aspect-4/5 sm:aspect-square md:aspect-auto md:h-75 max-h-[60vh] mx-auto overflow-hidden bg-foreground will-change-transform"
           >
             <Image
-              src="/stats_image.png"
+              src="/stats_image.webp"
               alt="Stats showcase visual"
               fill
               className="object-cover"
@@ -200,7 +200,7 @@ function BrandStats({ children }: { children: React.ReactNode }) {
         {/* STATS CONTENT - SCROLLS NORMALLY OVER */}
         <div
           ref={statsContentRef}
-          className="relative max-w-400 mx-auto z-10 flex flex-col items-center justify-center gap-[28vh] md:gap-[18vh] -mt-[100vh] pt-[80vh] pb-[10vh] px-4.5 mix-blend-difference text-background pointer-events-none"
+          className="relative max-w-400 mx-auto z-10 flex flex-col items-center justify-center gap-[28vh] md:gap-[18vh] mt-[-100vh] pt-[80vh] pb-[10vh] px-4.5 mix-blend-difference text-background pointer-events-none"
         >
           <p className="text-[clamp(1.25rem,4vw,1.5rem)] text-center font-semibold text-zinc-200 leading-tight max-w-[20ch] md:max-w-[16ch]">
             {INTRO_TEXT}
@@ -210,13 +210,13 @@ function BrandStats({ children }: { children: React.ReactNode }) {
             {BRAND_STATS.map((stat) => (
               <div key={stat.name} className="w-full">
                 <div className="flex flex-col md:grid md:grid-cols-12 items-center gap-1 sm:gap-4 md:gap-8 md:*:not-even:max-w-72">
-                  <h2 className="md:col-span-4 title text-3xl md:text-5xl -tracking-[1px] md:-tracking-[2px] capitalize text-center md:text-left">
+                  <h2 className="md:col-span-4 title text-3xl md:text-5xl tracking-[-1px] md:tracking-[-2px] capitalize text-center md:text-left">
                     {stat.name}
                   </h2>
                   <p className="md:col-span-4 text-center font-semibold leading-none text-zinc-200 text-[clamp(5.5rem,20vw,9rem)] max-md:-mt-2">
                     {stat.value}
                   </p>
-                  <p className="md:col-span-4 text-center md:text-right text-sm sm:text-lg leading-relaxed md:leading-tight md:justify-self-end mt-2 md:mt-0 max-w-[280px] md:mx-0">
+                  <p className="md:col-span-4 text-center md:text-right text-sm sm:text-lg leading-relaxed md:leading-tight md:justify-self-end mt-2 md:mt-0 max-w-70 md:mx-0">
                     {stat.description}
                   </p>
                 </div>

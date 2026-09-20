@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { BRAND } from "@/app/constants";
-import { getBlogPosts } from "@/lib/content";
-import PostCard from "@/components/content/PostCard";
+import { formatPostDate, getBlogPosts } from "@/lib/content";
+import BlogExplorer from "@/components/content/BlogExplorer";
+import type { PostSummary } from "@/components/content/PostCard";
 import ContactsRef from "@/components/ContactsRef";
 
 const title = "Blog";
@@ -41,7 +42,18 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
-  const posts = getBlogPosts();
+  // Flatten to plain values here: the explorer is a client component, so the
+  // Date objects and the raw file body stay on the server where they belong.
+  const posts: PostSummary[] = getBlogPosts().map((post) => ({
+    slug: post.slug,
+    title: post.frontmatter.title,
+    description: post.frontmatter.description,
+    dateISO: post.frontmatter.date.toISOString(),
+    dateLabel: formatPostDate(post.frontmatter.date),
+    readingMinutes: post.readingMinutes,
+    tags: post.frontmatter.tags,
+    cover: post.frontmatter.cover ?? null,
+  }));
 
   return (
     <article className="min-h-screen relative bg-background z-1">
@@ -53,10 +65,10 @@ export default function BlogPage() {
             Writing
           </p>
           <h1 className="bold-title mt-1 text-primary">Blog</h1>
-          <p className="mt-4 text-sm leading-loose text-muted-foreground">
+          <p className="mt-4 max-w-[58ch] text-sm leading-loose text-muted-foreground">
             Notes on what I build and break: frontend engineering, performance,
-            accessibility, and the security side of the craft. Posts live here first
-            and are syndicated elsewhere.
+            accessibility, and the security side of the craft. Posts live here
+            first and are syndicated elsewhere.
           </p>
         </header>
 
@@ -65,11 +77,7 @@ export default function BlogPage() {
             First post is on its way.
           </p>
         ) : (
-          <div className="mt-16 flex flex-col gap-4">
-            {posts.map((post) => (
-              <PostCard key={post.slug} post={post} />
-            ))}
-          </div>
+          <BlogExplorer posts={posts} />
         )}
       </div>
 
