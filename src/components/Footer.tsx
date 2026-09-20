@@ -311,7 +311,7 @@ function Footer({ className }: FooterProps) {
                       className={buttonVariants({
                         variant: "link",
                         className:
-                          "group text-background! text-sm! font-normal! p-0! py-1! h-fit flex justify-start items-center overflow-hidden max-w-[10ch] min-[320px]:max-w-[148px] min-[392px]:max-w-none",
+                          "group text-background! text-sm! font-normal! p-0! py-1! h-fit flex justify-start items-center overflow-hidden max-w-[10ch] min-[320px]:max-w-37 min-[392px]:max-w-none",
                       })}
                     >
                       <EnvelopeSimpleIcon

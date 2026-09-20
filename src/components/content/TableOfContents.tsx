@@ -66,12 +66,15 @@ export default function TableOfContents({
     const list = listRef.current;
     if (!list || !activeId || list.scrollHeight <= list.clientHeight) return;
 
-    const link = list.querySelector<HTMLElement>(`[data-toc-id="${CSS.escape(activeId)}"]`);
+    const link = list.querySelector<HTMLElement>(
+      `[data-toc-id="${CSS.escape(activeId)}"]`,
+    );
     if (!link) return;
 
     const top = link.offsetTop;
     const bottom = top + link.offsetHeight;
-    if (top >= list.scrollTop && bottom <= list.scrollTop + list.clientHeight) return;
+    if (top >= list.scrollTop && bottom <= list.scrollTop + list.clientHeight)
+      return;
 
     list.scrollTo({
       top: top - list.clientHeight / 2,
@@ -81,7 +84,8 @@ export default function TableOfContents({
 
   const onNavigate = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
     // Let modified clicks (new tab, copy link) behave like normal links.
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0)
+      return;
     event.preventDefault();
     scrollToAnchor(id, prefersReducedMotion() ? "auto" : "smooth");
     history.replaceState(null, "", `#${id}`);
@@ -95,7 +99,10 @@ export default function TableOfContents({
         id="toc-heading"
         className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary"
       >
-        <span aria-hidden className="h-3.5 w-1 rounded-full bg-[var(--post-accent,var(--ring))]" />
+        <span
+          aria-hidden
+          className="h-3.5 w-1 rounded-full bg-(--post-accent,var(--ring))"
+        />
         On this page
       </h2>
       <ol
@@ -115,7 +122,7 @@ export default function TableOfContents({
                   "-ml-px block border-l-2 py-1 pr-2 leading-snug transition-colors duration-200",
                   heading.depth === 3 ? "pl-7" : "pl-4",
                   isActive
-                    ? "border-[color:var(--post-accent,var(--ring))] font-medium text-primary"
+                    ? "border-(--post-accent,var(--ring)) font-medium text-primary"
                     : "border-transparent text-foreground/60 hover:border-border hover:text-primary",
                 )}
               >

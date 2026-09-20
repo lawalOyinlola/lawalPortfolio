@@ -79,7 +79,10 @@ export default function ExploreProjects({
         },
       );
     },
-    { scope: containerRef, dependencies: [prefersReducedMotion, otherProjects.length] },
+    {
+      scope: containerRef,
+      dependencies: [prefersReducedMotion, otherProjects.length],
+    },
   );
 
   if (otherProjects.length === 0) return null;
@@ -138,11 +141,11 @@ export default function ExploreProjects({
           <div className="flex justify-end gap-2 mt-8 md:absolute md:-top-20 md:right-0 md:mt-0">
             <CarouselPrevious
               size="icon-lg"
-              className="static size-9 top-auto start-auto translate-y-0 md:absolute md:top-10 md:start-auto md:-left-20 md:transform-none bg-background text-foreground border-foreground/20 hover:bg-foreground hover:text-background"
+              className="static size-9 top-auto inset-s-auto translate-y-0 md:absolute md:top-10 md:inset-s-auto md:-left-20 md:transform-none bg-background text-foreground border-foreground/20 hover:bg-foreground hover:text-background"
             />
             <CarouselNext
               size="icon-lg"
-              className="static size-9 top-auto end-auto translate-y-0 md:absolute md:top-10 md:right-0 md:transform-none bg-background text-foreground border-foreground/20 hover:bg-foreground hover:text-background"
+              className="static size-9 top-auto inset-e-auto translate-y-0 md:absolute md:top-10 md:right-0 md:transform-none bg-background text-foreground border-foreground/20 hover:bg-foreground hover:text-background"
             />
           </div>
         </Carousel>
