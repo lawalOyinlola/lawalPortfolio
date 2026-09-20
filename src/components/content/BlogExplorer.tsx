@@ -85,7 +85,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="WAF, careers, tooling"
-            className="search-field w-full rounded-full border border-border/80 bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
+            className="search-field w-full rounded-full border border-border bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
           />
           {query && (
             <button
