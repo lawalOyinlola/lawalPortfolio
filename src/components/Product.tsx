@@ -19,7 +19,7 @@ interface ProductProps {
   imageSrc?: string;
 }
 
-const Product = ({ imageSrc = "/projects/my_projects.jpeg" }: ProductProps) => {
+const Product = ({ imageSrc = "/projects/my_projects.webp" }: ProductProps) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const textPanelRef = useRef<HTMLDivElement>(null);
