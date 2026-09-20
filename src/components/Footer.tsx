@@ -13,8 +13,6 @@ import { handleEmailClick, handleDirectionalFocus } from "@/lib/utils";
 import {
   GithubLogoIcon,
   LinkedinLogoIcon,
-  TwitterLogoIcon,
-  InstagramLogoIcon,
   WhatsappLogoIcon,
   EnvelopeSimpleIcon,
 } from "@phosphor-icons/react";
@@ -45,23 +43,21 @@ const EXPLORE_LINKS = [
     href: "/about",
     anchor: "tools-tech",
   },
-  {
-    label: "Adaptability",
-    href: "/about",
-    anchor: "adaptability",
-  },
   { label: "Clients", href: "/about", anchor: "clients" },
   { label: "Projects", href: "/projects" },
+  // Takes Adaptability's slot: the footer is exactly one screen tall and
+  // already clips on small phones, so a new link has to replace one.
+  { label: "Blog", href: "/blog" },
   { label: "FAQ", href: "/faq" },
 ];
 
-const SOCIAL_ICON_MAP: Record<string, Icon> = {
-  GitHub: GithubLogoIcon,
-  LinkedIn: LinkedinLogoIcon,
-  Twitter: TwitterLogoIcon,
-  Instagram: InstagramLogoIcon,
-  WhatsApp: WhatsappLogoIcon,
-};
+// Explicit list rather than Object.values(BRAND.socials): only the profiles
+// that represent the work professionally belong in the footer.
+const FOOTER_SOCIALS: { label: string; href: string; icon: Icon }[] = [
+  { ...BRAND.socials.linkedin, icon: LinkedinLogoIcon },
+  { ...BRAND.socials.github, icon: GithubLogoIcon },
+  { ...BRAND.socials.whatsapp, icon: WhatsappLogoIcon },
+];
 
 function Footer({ className }: FooterProps) {
   const footerRef = useRef<HTMLElement>(null);
@@ -280,8 +276,7 @@ function Footer({ className }: FooterProps) {
                 Socials
               </h3>
               <ul className="flex flex-col gap-2.5">
-                {Object.values(BRAND.socials).map((link) => {
-                  const Icon = SOCIAL_ICON_MAP[link.label];
+                {FOOTER_SOCIALS.map(({ icon: Icon, ...link }) => {
                   return (
                     <li key={link.label}>
                       <Magnetic strength={0.1} radius={80}>
@@ -295,13 +290,11 @@ function Footer({ className }: FooterProps) {
                               "group text-background! text-sm! font-normal! p-0! py-1! h-fit",
                           })}
                         >
-                          {Icon && (
-                            <Icon
-                              size={16}
-                              weight="bold"
-                              className="text-background/30 group-hover:text-background/70 transition-colors"
-                            />
-                          )}
+                          <Icon
+                            size={16}
+                            weight="bold"
+                            className="text-background/30 group-hover:text-background/70 transition-colors"
+                          />
                           {link.label}
                         </a>
                       </Magnetic>

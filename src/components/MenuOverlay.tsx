@@ -4,11 +4,18 @@ import { useEffect, useRef, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import {
+  EnvelopeSimpleIcon,
+  GithubLogoIcon,
+  LinkedinLogoIcon,
+  WhatsappLogoIcon,
+} from "@phosphor-icons/react";
+import type { Icon } from "@phosphor-icons/react";
 import { BRAND } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { handleNavigation } from "@/lib/navigation";
-import { handleDirectionalFocus } from "@/lib/utils";
+import { handleDirectionalFocus, handleEmailClick } from "@/lib/utils";
 import { HoverFlipText } from "./ui/hover-flip-text";
 
 interface MenuOverlayProps {
@@ -20,10 +27,21 @@ const NAV_LINKS: { label: string; href: string; anchor?: string }[] = [
   { label: "HOME", href: "/" },
   { label: "ABOUT", href: "/about" },
   { label: "PROJECTS", href: "/projects" },
+  { label: "BLOG", href: "/blog" },
   { label: "TOOLS & TECH", href: "/about", anchor: "tools-tech" },
   { label: "FAQ", href: "/faq" },
-  { label: "CONTACT", href: "/about", anchor: "contact" },
 ];
+
+// Direct contact routes replace the old CONTACT nav item: one tap to the
+// channel itself rather than a jump to a section that lists them.
+const CONTACT_LINKS: { label: string; href: string; icon: Icon }[] = [
+  { label: "LinkedIn", href: BRAND.socials.linkedin.href, icon: LinkedinLogoIcon },
+  { label: "GitHub", href: BRAND.socials.github.href, icon: GithubLogoIcon },
+  { label: "WhatsApp", href: BRAND.socials.whatsapp.href, icon: WhatsappLogoIcon },
+];
+
+const contactLinkClass =
+  "group inline-flex items-center gap-2 py-1 text-sm md:text-base text-foreground/80 hover:text-chart-3 transition-colors";
 
 export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -243,7 +261,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
           role="dialog"
           aria-modal="true"
           aria-label="Site navigation menu"
-          className={`absolute bg-background p-6 md:p-12.5 shadow-2xl z-10 flex flex-col pointer-events-auto ${
+          className={`absolute bg-background p-6 md:p-12.5 [@media(min-width:600px)_and_(max-height:800px)]:py-8 shadow-2xl z-10 flex flex-col pointer-events-auto ${
             isMobileView ? "overflow-y-auto" : "overflow-hidden"
           }`}
           style={{
@@ -276,7 +294,10 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
                         handleNavClick(href, anchor);
                       }
                     }}
-                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black text-left block"
+                    // On short desktop screens (a 1280x720 laptop) six links at full
+                    // size overflow the fixed menu box and the top one is clipped;
+                    // tie the size to the viewport height there instead.
+                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black text-left block [@media(min-width:600px)_and_(max-height:800px)]:text-[min(5vw,4.8vh)]"
                   >
                     <HoverFlipText text={label} />
                   </a>
@@ -294,16 +315,38 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
               </div>
             </div>
 
-            {/* Bottom Text */}
-            <div className="mt-auto max-w-4xl pt-4">
-              <p className="text-xs md:text-base opacity-90">
-                Engineering isn&apos;t just about writing code. It&apos;s about
-                building systems people can depend on. {BrandName} represents a
-                commitment to precision, performance, and reliability. Every
-                line of code is written with the intent to make technology feel
-                effortless: stable under pressure, scalable by design, and
-                secure by default.
-              </p>
+            {/* Contact. Replaces a paragraph that repeated the footer word for
+                word, so the menu gets shorter rather than longer. */}
+            <div className="mt-auto pt-4">
+              <h2 className="mb-2 text-[10px] font-semibold uppercase tracking-[3px] text-foreground/50">
+                Get in touch
+              </h2>
+              <ul className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                {CONTACT_LINKS.map(({ label, href, icon: LinkIcon }) => (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={contactLinkClass}
+                    >
+                      <LinkIcon size={18} weight="bold" aria-hidden />
+                      {label}
+                    </a>
+                  </li>
+                ))}
+                <li>
+                  <button
+                    type="button"
+                    onClick={handleEmailClick}
+                    aria-label={`Email ${BRAND.email}`}
+                    className={contactLinkClass}
+                  >
+                    <EnvelopeSimpleIcon size={18} weight="bold" aria-hidden />
+                    Email
+                  </button>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
