@@ -21,8 +21,10 @@ jobs:
         with:
           node-version: 22
       # Reads pnpm-lock.yaml only; nothing is installed or executed.
-      # --prod: dev tooling (eslint, shadcn CLI) never ships. See tasks/security-audit.md (22).
-      - run: pnpm audit --prod --audit-level high
+      # Dev dependencies are audited too: tailwindcss, @tailwindcss/postcss and
+      # typescript all run during `next build`, so they are part of the build
+      # supply chain rather than local-only tooling.
+      - run: pnpm audit --audit-level high
 
   secrets:
     name: Secret scan
