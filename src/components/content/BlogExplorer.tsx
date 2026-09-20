@@ -62,10 +62,10 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
   }
 
   return (
-    <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-[minmax(0,46rem)_15rem] lg:items-start lg:justify-between lg:gap-16">
+    <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-14">
       {/* Mirrors the table of contents on a post page: same width, same side,
           same sticky behaviour, so the two pages feel like one system. */}
-      <aside className="lg:sticky lg:top-28 lg:order-2 lg:w-60 lg:shrink-0">
+      <aside className="lg:sticky lg:top-28 lg:order-2 lg:w-76 lg:shrink-0">
         <label
           htmlFor={searchId}
           className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary"
@@ -85,7 +85,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="WAF, careers, tooling"
-            className="w-full rounded-full border border-border/40 bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
+            className="search-field w-full rounded-full border border-border/80 bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
           />
           {query && (
             <button
