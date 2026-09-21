@@ -70,7 +70,11 @@ function buildArticle(fm, body, slug) {
   const article = {
     title: fm.title,
     body_markdown: absolutify(body).trim(),
-    published: !fm.draft,
+    // devto_published is the switch, not `draft`. A post can be live here
+    // while it is still a draft over there, and publishing to someone else's
+    // audience should be a deliberate edit rather than a side effect of a
+    // sync run.
+    published: fm.devto_published === true,
     canonical_url: `${BRAND_URL}/blog/${slug}`,
     description: fm.description,
     tags: normaliseTags(fm.tags ?? []),
@@ -100,7 +104,7 @@ async function api(pathname, options = {}) {
  * Rewrite only the three sync fields, line by line. Re-serialising the whole
  * frontmatter would reformat dates and quoting across every post.
  */
-function writeBackSyncFields(file, { id, url }) {
+function writeBackSyncFields(file, { id, url, published }) {
   const raw = readFileSync(file, "utf8");
   const end = raw.indexOf("\n---", 3);
   if (!raw.startsWith("---") || end === -1) {
@@ -110,7 +114,10 @@ function writeBackSyncFields(file, { id, url }) {
   const rest = raw.slice(end);
 
   head = head.replace(/^devto_id:.*$/m, `devto_id: ${id}`);
-  head = head.replace(/^devto_published:.*$/m, "devto_published: true");
+  head = head.replace(
+    /^devto_published:.*$/m,
+    `devto_published: ${published === true}`,
+  );
   if (/^devto_url:/m.test(head)) {
     head = head.replace(/^devto_url:.*$/m, `devto_url: ${url}`);
   } else {
@@ -127,8 +134,10 @@ function sameArticle(local, remote) {
     local.title === remote.title &&
     local.body_markdown.trim() === (remote.body_markdown ?? "").trim() &&
     local.description === remote.description &&
-    (local.main_image ?? null) === (remote.cover_image ?? null) &&
-    local.tags.join(",") === (remote.tags ?? []).join(",")
+    // cover_image is not compared: dev.to re-hosts the image on its own CDN,
+    // so the value that comes back is never the URL that was sent.
+    local.tags.join(",") === (remote.tags ?? []).join(",") &&
+    local.published === remote.published
   );
 }
 
@@ -161,8 +170,16 @@ for (const filename of files) {
       updated += 1;
       continue;
     }
-    const remote = await api(`/articles/${fm.devto_id}`);
-    if (sameArticle(article, remote)) {
+    // GET /articles/{id} only serves published articles, so a draft 404s
+    // here. That is not a failure: it just means there is nothing to compare
+    // against and the update goes ahead unconditionally.
+    let remote = null;
+    try {
+      remote = await api(`/articles/${fm.devto_id}`);
+    } catch {
+      remote = null;
+    }
+    if (remote && sameArticle(article, remote)) {
       console.log(`unchanged     ${slug}`);
       skipped += 1;
       continue;
@@ -183,7 +200,11 @@ for (const filename of files) {
       method: "POST",
       body: JSON.stringify({ article }),
     });
-    writeBackSyncFields(file, { id: result.id, url: result.url });
+    writeBackSyncFields(file, {
+      id: result.id,
+      url: result.url,
+      published: result.published,
+    });
     console.log(`created       ${slug} -> ${result.url}`);
     created += 1;
   }
