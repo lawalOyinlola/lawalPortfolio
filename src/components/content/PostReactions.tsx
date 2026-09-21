@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChatCircleIcon,
   HeartIcon,
   LinkSimpleIcon,
   CheckIcon,
+  WarningIcon,
 } from "@phosphor-icons/react";
 import { BRAND } from "@/app/constants";
 
@@ -33,7 +34,10 @@ export default function PostReactions({
   devtoUrl: string | null;
 }) {
   const [liked, setLiked] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">(
+    "idle",
+  );
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Reading in an effect rather than in useState keeps the server and the
   // first client render identical; storage is unavailable in private windows
@@ -46,26 +50,40 @@ export default function PostReactions({
     }
   }, [slug]);
 
+  useEffect(() => {
+    return () => {
+      if (resetTimer.current) clearTimeout(resetTimer.current);
+    };
+  }, []);
+
+  // The write stays outside the state updater: React is free to call an
+  // updater more than once, and a function that touches storage cannot be
+  // replayed safely.
   function toggleLike() {
-    setLiked((current) => {
-      const next = !current;
-      try {
-        if (next) localStorage.setItem(STORAGE_PREFIX + slug, "1");
-        else localStorage.removeItem(STORAGE_PREFIX + slug);
-      } catch {
-        /* the button still reflects the click for this session */
-      }
-      return next;
-    });
+    const next = !liked;
+    setLiked(next);
+    try {
+      if (next) localStorage.setItem(STORAGE_PREFIX + slug, "1");
+      else localStorage.removeItem(STORAGE_PREFIX + slug);
+    } catch {
+      /* the button still reflects the click for this session */
+    }
+  }
+
+  function flashCopyState(state: "copied" | "failed") {
+    setCopyState(state);
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+    resetTimer.current = setTimeout(() => setCopyState("idle"), 4000);
   }
 
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(`${BRAND.url}/blog/${slug}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      flashCopyState("copied");
     } catch {
-      /* clipboard denied: the address bar still has the URL */
+      // Clipboard access is refused outright in some browsers and over plain
+      // HTTP. Saying so beats a button that looks like it worked.
+      flashCopyState("failed");
     }
   }
 
@@ -85,27 +103,54 @@ export default function PostReactions({
           size={15}
           weight={liked ? "fill" : "bold"}
           aria-hidden
-          className={liked ? "scale-110 transition-transform" : "transition-transform"}
+          className={
+            liked ? "scale-110 transition-transform" : "transition-transform"
+          }
         />
         {liked ? "Liked" : "Like this"}
       </button>
 
-      <a href={discussHref} {...(devtoUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="reaction-chip">
+      <a
+        href={discussHref}
+        {...(devtoUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className="reaction-chip"
+      >
         <ChatCircleIcon size={15} weight="bold" aria-hidden />
         {devtoUrl ? "Discuss on dev.to" : "Reply by email"}
       </a>
 
-      <button type="button" onClick={copyLink} className="reaction-chip">
-        {copied ? (
+      <button
+        type="button"
+        onClick={copyLink}
+        className={`reaction-chip ${copyState === "failed" ? "reaction-chip-failed" : ""}`}
+      >
+        {copyState === "copied" && (
           <CheckIcon size={15} weight="bold" aria-hidden />
-        ) : (
+        )}
+        {copyState === "failed" && (
+          <WarningIcon size={15} weight="bold" aria-hidden />
+        )}
+        {copyState === "idle" && (
           <LinkSimpleIcon size={15} weight="bold" aria-hidden />
         )}
-        {copied ? "Link copied" : "Copy link"}
+        {copyState === "copied"
+          ? "Link copied"
+          : copyState === "failed"
+            ? "Copy failed"
+            : "Copy link"}
       </button>
 
-      <p className="w-full text-xs leading-relaxed text-muted-foreground sm:w-auto sm:pl-2">
-        Likes are saved in your browser only.
+      {/* A label change inside a button is not reliably announced, so the
+          outcome gets its own live region. */}
+      <p
+        role="status"
+        className="w-full text-xs leading-relaxed text-muted-foreground sm:w-auto sm:pl-2"
+      >
+        {copyState === "failed"
+          ? "Could not reach the clipboard. Copy the address from the address bar."
+          : copyState === "copied"
+            ? "Link copied to your clipboard."
+            : "Likes are saved in your browser only."}
       </p>
     </div>
   );

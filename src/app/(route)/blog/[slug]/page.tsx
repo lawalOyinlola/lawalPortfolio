@@ -242,7 +242,7 @@ export default async function BlogPostPage({
                         <span aria-hidden>·</span>
                         {item.readingMinutes} min
                       </span>
-                      <span className="max-w-[32ch] text-base font-semibold leading-snug text-primary decoration-[color:var(--post-accent,var(--ring))] decoration-2 underline-offset-4 group-hover:underline">
+                      <span className="max-w-[32ch] text-base font-semibold leading-snug text-primary decoration-(--post-accent,var(--ring)) decoration-2 underline-offset-4 group-hover:underline">
                         {item.frontmatter.title}
                       </span>
                       <span className="max-w-[46ch] text-sm leading-relaxed text-muted-foreground">
