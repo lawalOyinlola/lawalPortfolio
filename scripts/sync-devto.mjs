@@ -188,13 +188,34 @@ async function fetchRemoteArticles() {
   return byId;
 }
 
+/**
+ * dev.to serves the cover through its own image proxy, so the value that comes
+ * back is never the URL that was sent. It does percent-encode the original
+ * inside the proxy URL, though, so decoding it is enough to tell whether the
+ * cover still points at the file the frontmatter names. Without this, swapping
+ * a cover and changing nothing else reads as no change and never reaches
+ * dev.to.
+ */
+function sameCover(local, remote) {
+  const localCover = local.main_image ?? null;
+  const remoteCover = remote.cover_image ?? null;
+  if (!localCover && !remoteCover) return true;
+  if (!localCover || !remoteCover) return false;
+  let decoded = remoteCover;
+  try {
+    decoded = decodeURIComponent(remoteCover);
+  } catch {
+    /* a malformed URL just means compare it raw */
+  }
+  return decoded.includes(localCover);
+}
+
 function sameArticle(local, remote) {
   return (
     local.title === remote.title &&
     local.body_markdown.trim() === (remote.body_markdown ?? "").trim() &&
     local.description === remote.description &&
-    // cover_image is not compared: dev.to re-hosts the image on its own CDN,
-    // so the value that comes back is never the URL that was sent.
+    sameCover(local, remote) &&
     local.tags.join(",") === remoteTags(remote).join(",") &&
     // The me/all listing does carry this, and without it flipping
     // devto_published to true would be read as no change and never publish.
