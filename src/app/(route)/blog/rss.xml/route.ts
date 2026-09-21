@@ -39,6 +39,26 @@ function absolutifyHtml(html: string): string {
 }
 
 /**
+ * The enclosure has to declare the cover's real type: covers are .jpg as often
+ * as .png, and a reader that trusts a wrong type may refuse to render it.
+ */
+const MIME_BY_EXTENSION: Record<string, string> = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  webp: "image/webp",
+  avif: "image/avif",
+  gif: "image/gif",
+  svg: "image/svg+xml",
+};
+
+function imageMimeType(url: string): string {
+  const filename = url.split(/[?#]/)[0];
+  const extension = filename.slice(filename.lastIndexOf(".") + 1).toLowerCase();
+  return MIME_BY_EXTENSION[extension] ?? "application/octet-stream";
+}
+
+/**
  * A literal "]]>" in a post (a code sample about XML, say) would close the
  * CDATA section early and break the feed. Splitting it across two sections
  * keeps the HTML byte-for-byte identical once a reader unwraps it.
@@ -66,7 +86,7 @@ export async function GET() {
         `      <pubDate>${date.toUTCString()}</pubDate>`,
         `      <description>${escapeXml(description)}</description>`,
         cover
-          ? `      <enclosure url="${escapeXml(toAbsoluteAssetUrl(cover))}" type="image/png" />`
+          ? `      <enclosure url="${escapeXml(toAbsoluteAssetUrl(cover))}" type="${imageMimeType(cover)}" />`
           : "",
         ...tags.map((tag) => `      <category>${escapeXml(tag)}</category>`),
         `      <content:encoded>${toCdata(absolutifyHtml(html))}</content:encoded>`,
