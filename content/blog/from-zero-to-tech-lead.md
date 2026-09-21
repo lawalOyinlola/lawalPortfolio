@@ -7,7 +7,7 @@ tags: [career, beginners, webdev, frontend]
 cover: "/images/blog/from-zero-to-tech-lead/coverimage.jpg"
 coverAlt: "A timeline titled From zero to tech lead, one year at AltSchool Africa, marking four points: no background, the program, the deadline, and team lead."
 draft: false
-devto_id: null
+devto_id: 4702362
 devto_published: false
 ---
 
