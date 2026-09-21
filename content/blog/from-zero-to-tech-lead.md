@@ -8,7 +8,8 @@ cover: "/images/blog/from-zero-to-tech-lead/coverimage.jpg"
 coverAlt: "A timeline titled From zero to tech lead, one year at AltSchool Africa, marking four points: no background, the program, the deadline, and team lead."
 draft: false
 devto_id: 4702362
-devto_published: false
+devto_url: https://dev.to/lawaloyinlola/from-zero-to-tech-lead-what-the-altschool-year-actually-taught-me-i8k
+devto_published: true
 ---
 
 It has been over a year since I graduated from **AltSchool Africa**, and what a transformative ride it has been. From having no background in tech to leading software projects at **Tech N' Goodwill Limited**, my journey has been packed with lessons, mistakes, growth, and soft skills development.
