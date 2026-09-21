@@ -147,7 +147,8 @@ pnpm sync:devto
 
 ### 7. Commit what the sync wrote back
 
-The sync adds `devto_id` and `devto_url` to your frontmatter. **Commit them.**
+The sync adds `devto_id` and `devto_url` to your frontmatter, and sets
+`devto_published` to what dev.to reports for the new article. **Commit them.**
 
 ```bash
 git add content/blog/<slug>.md
@@ -203,6 +204,7 @@ dev.to editor, those edits are lost on the next sync. Edit here instead.
 | --- | --- |
 | `devto_id` | The dev.to article id. Its presence turns the next sync into an update. |
 | `devto_url` | Renders the "also published on dev.to" line on your post. |
+| `devto_published` | Overwritten on create with the published state dev.to returns, so the file matches what is live there. |
 
 ---
 
