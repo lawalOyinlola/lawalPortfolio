@@ -207,7 +207,19 @@ function sameCover(local, remote) {
   } catch {
     /* a malformed URL just means compare it raw */
   }
-  return decoded.includes(localCover);
+  // The original is the last absolute URL in the proxy URL. A value with no
+  // nested URL was not proxied, so it is the original itself.
+  const nested = decoded.search(/https?:\/\/(?!.*https?:\/\/)/);
+  const original = nested > 0 ? decoded.slice(nested) : decoded;
+  return normalizeUrl(original) === normalizeUrl(localCover);
+}
+
+function normalizeUrl(value) {
+  try {
+    return new URL(value.trim()).href;
+  } catch {
+    return value.trim();
+  }
 }
 
 function sameArticle(local, remote) {
