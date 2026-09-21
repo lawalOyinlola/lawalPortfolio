@@ -129,15 +129,44 @@ function writeBackSyncFields(file, { id, url, published }) {
   writeFileSync(file, head + rest);
 }
 
+/**
+ * tag_list comes back as an array from the listing and as a comma-separated
+ * string from a single fetch. Normalise both.
+ */
+function remoteTags(remote) {
+  const raw = remote.tag_list ?? remote.tags ?? [];
+  const list = Array.isArray(raw) ? raw : raw.split(",");
+  return list.map((t) => t.trim()).filter(Boolean);
+}
+
+/**
+ * Everything the account owns, keyed by id.
+ *
+ * GET /articles/{id} is no use for this: it 404s for a draft, and it kept
+ * 404ing for a post that had just been published even though the public page
+ * was live. The me/all listing carries body_markdown for drafts and published
+ * posts alike, and costs one request instead of one per post.
+ */
+async function fetchRemoteArticles() {
+  const byId = new Map();
+  for (let page = 1; page <= 10; page += 1) {
+    const batch = await api(`/articles/me/all?per_page=100&page=${page}`);
+    if (!batch?.length) break;
+    for (const article of batch) byId.set(article.id, article);
+    if (batch.length < 100) break;
+  }
+  return byId;
+}
+
 function sameArticle(local, remote) {
   return (
     local.title === remote.title &&
     local.body_markdown.trim() === (remote.body_markdown ?? "").trim() &&
     local.description === remote.description &&
     // cover_image is not compared: dev.to re-hosts the image on its own CDN,
-    // so the value that comes back is never the URL that was sent.
-    local.tags.join(",") === (remote.tags ?? []).join(",") &&
-    local.published === remote.published
+    // so the value that comes back is never the URL that was sent. `published`
+    // is not compared either, because a single-article fetch omits it.
+    local.tags.join(",") === remoteTags(remote).join(",")
   );
 }
 
@@ -148,6 +177,12 @@ const files = readdirSync(BLOG_DIR)
 let created = 0;
 let updated = 0;
 let skipped = 0;
+
+// One listing up front, so each post can be compared without a fetch of its
+// own. A dry run still reads it when a key is available, because a preview
+// that cannot tell a real change from a no-op is not worth much; without a
+// key it falls back to listing everything as a would-update.
+const remoteArticles = apiKey ? await fetchRemoteArticles() : new Map();
 
 for (const filename of files) {
   const slug = filename.replace(/\.md$/, "");
@@ -165,23 +200,15 @@ for (const filename of files) {
   const article = buildArticle(fm, body, slug);
 
   if (fm.devto_id) {
-    if (dryRun) {
-      console.log(`would update  ${slug} (id ${fm.devto_id})`);
-      updated += 1;
-      continue;
-    }
-    // GET /articles/{id} only serves published articles, so a draft 404s
-    // here. That is not a failure: it just means there is nothing to compare
-    // against and the update goes ahead unconditionally.
-    let remote = null;
-    try {
-      remote = await api(`/articles/${fm.devto_id}`);
-    } catch {
-      remote = null;
-    }
+    const remote = remoteArticles.get(fm.devto_id) ?? null;
     if (remote && sameArticle(article, remote)) {
       console.log(`unchanged     ${slug}`);
       skipped += 1;
+      continue;
+    }
+    if (dryRun) {
+      console.log(`would update  ${slug} (id ${fm.devto_id})`);
+      updated += 1;
       continue;
     }
     await api(`/articles/${fm.devto_id}`, {
