@@ -7,6 +7,9 @@ const isDev = process.env.NODE_ENV === "development";
 // and the other directives carry the weight. See tasks/security-audit.md (20).
 // img-src allows any https origin: icons come from cdn.simpleicons.org and
 // api.iconify.design, and blog assets may be served from NEXT_PUBLIC_ASSET_ORIGIN.
+// upgrade-insecure-requests is production-only: localhost is exempt from it,
+// but the dev server is also reachable over the LAN (Next prints that address),
+// and there every http asset would be upgraded to https and fail.
 const contentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
@@ -17,8 +20,7 @@ const contentSecurityPolicy = `
   object-src 'none';
   base-uri 'self';
   form-action 'self';
-  frame-ancestors 'none';
-  upgrade-insecure-requests;
+  frame-ancestors 'none';${isDev ? "" : "\n  upgrade-insecure-requests;"}
 `
   .replace(/\s{2,}/g, " ")
   .trim();
