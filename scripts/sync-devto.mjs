@@ -39,8 +39,18 @@ const BRAND_URL = (() => {
 
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
-const onlySlug = args[args.indexOf("--only") + 1] || null;
-const only = args.includes("--only") ? onlySlug : null;
+
+// `--only` with nothing after it used to fall through to null, which meant it
+// quietly synced every post instead of the one that was asked for.
+let only = null;
+if (args.includes("--only")) {
+  const next = args[args.indexOf("--only") + 1];
+  if (!next || next.startsWith("--")) {
+    console.error("--only needs a slug, for example --only my-post.");
+    process.exit(1);
+  }
+  only = next;
+}
 
 /**
  * An exported variable wins, so CI can inject the key without a file. Failing
@@ -134,19 +144,18 @@ function writeBackSyncFields(file, { id, url, published }) {
   let head = raw.slice(0, end);
   const rest = raw.slice(end);
 
-  head = head.replace(/^devto_id:.*$/m, `devto_id: ${id}`);
-  head = head.replace(
-    /^devto_published:.*$/m,
-    `devto_published: ${published === true}`,
-  );
-  if (/^devto_url:/m.test(head)) {
-    head = head.replace(/^devto_url:.*$/m, `devto_url: ${url}`);
-  } else {
-    head = head.replace(
-      /^devto_id:.*$/m,
-      (line) => `${line}\ndevto_url: ${url}`,
-    );
-  }
+  // These three are optional in the schema, so a hand-written post may not
+  // have them at all. Replacing a line that is not there silently does
+  // nothing, which would lose the id and create a duplicate on the next run.
+  const set = (text, key, value) =>
+    new RegExp(`^${key}:.*$`, "m").test(text)
+      ? text.replace(new RegExp(`^${key}:.*$`, "m"), `${key}: ${value}`)
+      : `${text.replace(/\s*$/, "")}\n${key}: ${value}`;
+
+  head = set(head, "devto_id", id);
+  head = set(head, "devto_url", url);
+  head = set(head, "devto_published", published === true);
+
   writeFileSync(file, head + rest);
 }
 
@@ -179,15 +188,50 @@ async function fetchRemoteArticles() {
   return byId;
 }
 
+/**
+ * dev.to serves the cover through its own image proxy, so the value that comes
+ * back is never the URL that was sent. It does percent-encode the original
+ * inside the proxy URL, though, so decoding it is enough to tell whether the
+ * cover still points at the file the frontmatter names. Without this, swapping
+ * a cover and changing nothing else reads as no change and never reaches
+ * dev.to.
+ */
+function sameCover(local, remote) {
+  const localCover = local.main_image ?? null;
+  const remoteCover = remote.cover_image ?? null;
+  if (!localCover && !remoteCover) return true;
+  if (!localCover || !remoteCover) return false;
+  let decoded = remoteCover;
+  try {
+    decoded = decodeURIComponent(remoteCover);
+  } catch {
+    /* a malformed URL just means compare it raw */
+  }
+  // The original is the last absolute URL in the proxy URL. A value with no
+  // nested URL was not proxied, so it is the original itself.
+  const nested = decoded.search(/https?:\/\/(?!.*https?:\/\/)/);
+  const original = nested > 0 ? decoded.slice(nested) : decoded;
+  return normalizeUrl(original) === normalizeUrl(localCover);
+}
+
+function normalizeUrl(value) {
+  try {
+    return new URL(value.trim()).href;
+  } catch {
+    return value.trim();
+  }
+}
+
 function sameArticle(local, remote) {
   return (
     local.title === remote.title &&
     local.body_markdown.trim() === (remote.body_markdown ?? "").trim() &&
     local.description === remote.description &&
-    // cover_image is not compared: dev.to re-hosts the image on its own CDN,
-    // so the value that comes back is never the URL that was sent. `published`
-    // is not compared either, because a single-article fetch omits it.
-    local.tags.join(",") === remoteTags(remote).join(",")
+    sameCover(local, remote) &&
+    local.tags.join(",") === remoteTags(remote).join(",") &&
+    // The me/all listing does carry this, and without it flipping
+    // devto_published to true would be read as no change and never publish.
+    local.published === remote.published
   );
 }
 
