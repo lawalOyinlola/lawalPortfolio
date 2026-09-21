@@ -107,7 +107,7 @@ export default function TableOfContents({
       </h2>
       <ol
         ref={listRef}
-        className="relative space-y-1 overflow-y-auto border-l border-border/40 lg:max-h-[calc(100vh-11rem)]"
+        className="relative space-y-1 overflow-y-auto border-l border-border/80 lg:max-h-[calc(100vh-11rem)]"
       >
         {headings.map((heading) => {
           const isActive = heading.id === activeId;
@@ -123,7 +123,7 @@ export default function TableOfContents({
                   heading.depth === 3 ? "pl-7" : "pl-4",
                   isActive
                     ? "border-(--post-accent,var(--ring)) font-medium text-primary"
-                    : "border-transparent text-foreground/60 hover:border-border hover:text-primary",
+                    : "border-transparent text-foreground/60 hover:border-foreground/20 hover:text-primary",
                 )}
               >
                 {heading.text}
