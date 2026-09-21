@@ -12,7 +12,9 @@
  *   node scripts/sync-devto.mjs                # do it
  *   node scripts/sync-devto.mjs --only <slug>  # one post
  *
- * Needs DEV_API_KEY (dev.to: Settings, Extensions, DEV Community API Keys).
+ * Needs DEVTO_API_KEY, read from the environment or from .env.local / .env
+ * in the project root. Generate one at dev.to: Settings, Extensions, DEV
+ * Community API Keys. Those files are gitignored; never commit the key.
  */
 
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
@@ -40,10 +42,29 @@ const dryRun = args.includes("--dry-run");
 const onlySlug = args[args.indexOf("--only") + 1] || null;
 const only = args.includes("--only") ? onlySlug : null;
 
-const apiKey = process.env.DEV_API_KEY;
+/**
+ * An exported variable wins, so CI can inject the key without a file. Failing
+ * to load a file is not an error: most of the time there simply is not one.
+ */
+function readApiKey() {
+  if (process.env.DEVTO_API_KEY) return process.env.DEVTO_API_KEY;
+  for (const file of [".env.local", ".env"]) {
+    try {
+      process.loadEnvFile(path.join(process.cwd(), file));
+    } catch {
+      continue;
+    }
+    if (process.env.DEVTO_API_KEY) return process.env.DEVTO_API_KEY;
+  }
+  return null;
+}
+
+const apiKey = readApiKey();
 if (!apiKey && !dryRun) {
   console.error(
-    "DEV_API_KEY is not set. Export it, or pass --dry-run to preview.",
+    "DEVTO_API_KEY is not set.\n" +
+      "Add it to .env.local as DEVTO_API_KEY=... , export it, or pass\n" +
+      "--dry-run to preview without calling dev.to.",
   );
   process.exit(1);
 }
