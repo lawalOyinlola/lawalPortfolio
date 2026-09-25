@@ -7,7 +7,7 @@ cover: /images/blog/security-checklist-my-agent-runs/coverimage.jpg
 coverAlt: "Two versions of the same checklist item. On the left, a clipboard line that has been ticked. On the right, an inspection tag for the same control, with a test written on it, a result of 401, and a date it was run."
 draft: false
 devto_id: 4742944
-devto_url: https://dev.to/lawaloyinlola/a-security-checklist-my-coding-agent-has-to-run-4n39-temp-slug-179257
+devto_url: https://dev.to/lawaloyinlola/a-security-checklist-my-coding-agent-has-to-run-7b
 devto_published: true
 ---
 
