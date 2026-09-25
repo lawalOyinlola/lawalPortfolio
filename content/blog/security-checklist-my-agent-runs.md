@@ -34,18 +34,14 @@ Doing the same to every control gave me the constraint the whole project hangs o
 
 ```bash
 for f in skills/*/SKILL.md; do
-  echo "$(basename $(dirname $f)): controls=$(grep -cE '^### [0-9]+\.' $f) verify=$(grep -c 'Verify:' $f)"
-  awk '/^### [0-9]+\./ { if (id && n != 1) print FILENAME ": control " id " has " n " Verify: steps"
-                         id = $2; sub(/\.$/, "", id); n = 0; next }
-       { n += gsub(/Verify:/, "") }
-       END { if (id && n != 1) print FILENAME ": control " id " has " n " Verify: steps" }' $f
+  echo "$(basename $(dirname $f)): controls=$(grep -cE '^### [0-9]+\.' $f) verify=$(grep -cE '^[[:space:]]*- \*\*Verify:\*\*' $f)"
 done
 # legal-compliance: controls=20 verify=20
 # project-kickoff: controls=18 verify=18
 # security-protocols: controls=44 verify=44
 ```
 
-The totals on their own are not enough, and this loop is how I found out. Its first version only compared them, and they matched while control 12 had no verify step at all and control 15 had two, so both sides still read 44. The `awk` half now counts each control separately and names any that does not have exactly one, and the repository runs the same check on every pull request. When the loop prints the three totals and nothing else, every control can be checked.
+The totals on their own are not enough, and this is how I found out. The first version of this loop only compared them, and they matched while control 12 had no verify step at all and control 15 had two, so both sides still read 44. So the totals are now the summary, not the proof: a per-control check, [`ci/scripts/check-verify-steps.sh`](https://github.com/lawalOyinlola/appsec-protocols/blob/main/ci/scripts/check-verify-steps.sh), fails any control without exactly one step, and it runs on every pull request.
 
 ## Why it is a skill and not a document
 
@@ -55,7 +51,7 @@ That timing is why the checklist ships as an agent skill: an instruction file th
 
 ![An excerpt from the audit file: control 20, security headers, marked FAIL; control 21, force HTTPS, marked PASS, with a note listing what was not checked.](/images/blog/security-checklist-my-agent-runs/audit-excerpt.jpg)
 
-*Part of the audit the skill wrote when I ran it against this site. The headers failure has since been fixed.*
+_Part of the audit the skill wrote when I ran it against this site. The missing headers have since been added._
 
 It is also built so it cannot tell me what I want to hear. Its own reporting rule forbids "all secure" as an output. It reports which controls pass, which fail, and which were never checked, because unchecked is a real state, and hiding it inside a pass is how a checklist turns back into theatre.
 
