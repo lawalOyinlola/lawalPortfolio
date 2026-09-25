@@ -6,6 +6,9 @@ tags: [security, appsec, ai, webdev]
 cover: /images/blog/security-checklist-my-agent-runs/coverimage.jpg
 coverAlt: "Two versions of the same checklist item. On the left, a clipboard line that has been ticked. On the right, an inspection tag for the same control, with a test written on it, a result of 401, and a date it was run."
 draft: false
+devto_id: 4742944
+devto_url: https://dev.to/lawaloyinlola/a-security-checklist-my-coding-agent-has-to-run-4n39-temp-slug-179257
+devto_published: false
 ---
 
 Most security checklists are written in a way that guarantees they will be ignored, and the first one I wrote was one of those. It listed things that should be true about an application. Sessions should be invalidated when a password changes. Uploads should be validated by their content rather than their filename. Every line was correct, and I never tested a single one, because a sentence that says what should be true never says what you would do to find out.
