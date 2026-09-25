@@ -8,7 +8,7 @@ coverAlt: "Two versions of the same checklist item. On the left, a clipboard lin
 draft: false
 devto_id: 4742944
 devto_url: https://dev.to/lawaloyinlola/a-security-checklist-my-coding-agent-has-to-run-4n39-temp-slug-179257
-devto_published: false
+devto_published: true
 ---
 
 Most security checklists are written in a way that guarantees they will be ignored, and the first one I wrote was one of those. It listed things that should be true about an application. Sessions should be invalidated when a password changes. Uploads should be validated by their content rather than their filename. Every line was correct, and I never tested a single one, because a sentence that says what should be true never says what you would do to find out.
