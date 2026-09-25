@@ -35,13 +35,17 @@ Doing the same to every control gave me the constraint the whole project hangs o
 ```bash
 for f in skills/*/SKILL.md; do
   echo "$(basename $(dirname $f)): controls=$(grep -cE '^### [0-9]+\.' $f) verify=$(grep -c 'Verify:' $f)"
+  awk '/^### [0-9]+\./ { if (id && n != 1) print FILENAME ": control " id " has " n " Verify: steps"
+                         id = $2; sub(/\.$/, "", id); n = 0; next }
+       { n += gsub(/Verify:/, "") }
+       END { if (id && n != 1) print FILENAME ": control " id " has " n " Verify: steps" }' $f
 done
 # legal-compliance: controls=20 verify=20
 # project-kickoff: controls=18 verify=18
 # security-protocols: controls=44 verify=44
 ```
 
-If those two numbers ever stop matching, I have written a control that cannot be checked, which is exactly what the exercise exists to prevent.
+The totals on their own are not enough, and this loop is how I found out. Its first version only compared them, and they matched while control 12 had no verify step at all and control 15 had two, so both sides still read 44. The `awk` half now counts each control separately and names any that does not have exactly one, and the repository runs the same check on every pull request. When the loop prints the three totals and nothing else, every control can be checked.
 
 ## Why it is a skill and not a document
 
