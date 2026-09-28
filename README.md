@@ -64,14 +64,14 @@ The focus here is on **performance**, **clean architecture**, and **animation th
 
 | Category            | Technology                                                                            | Description                                                          |
 | :------------------ | :------------------------------------------------------------------------------------ | :------------------------------------------------------------------- |
-| **Framework**       | <img src="https://cdn.simpleicons.org/nextdotjs/000000" height="14" /> Next.js 16     | App Router, Server Components, static generation.                    |
-| **Language**        | <img src="https://cdn.simpleicons.org/typescript/3178C6" height="14" /> TypeScript    | Strict typing for robust, maintainable code.                         |
-| **Styling**         | <img src="https://cdn.simpleicons.org/tailwindcss/06B6D4" height="14" /> Tailwind CSS | Tailwind v4, utility-first and responsive.                           |
-| **Animation**       | <img src="https://cdn.simpleicons.org/greensock/88CE02" height="14" /> GSAP           | Complex animation sequences and scroll triggers.                     |
+| **Framework**       | <img src="https://cdn.simpleicons.org/nextdotjs/000000" alt="" height="14" /> Next.js 16     | App Router, Server Components, static generation.                    |
+| **Language**        | <img src="https://cdn.simpleicons.org/typescript/3178C6" alt="" height="14" /> TypeScript    | Strict typing for robust, maintainable code.                         |
+| **Styling**         | <img src="https://cdn.simpleicons.org/tailwindcss/06B6D4" alt="" height="14" /> Tailwind CSS | Tailwind v4, utility-first and responsive.                           |
+| **Animation**       | <img src="https://cdn.simpleicons.org/greensock/88CE02" alt="" height="14" /> GSAP           | Complex animation sequences and scroll triggers.                     |
 | **Content**         | 📝 unified, remark, rehype, Shiki                                                     | Markdown to HTML with highlighted code; frontmatter validated by zod. |
 | **Fonts**           | 🔤 Local Fonts                                                                        | `next/font/local`, optimized for zero layout shift.                  |
-| **Package manager** | <img src="https://cdn.simpleicons.org/pnpm/F69220" height="14" /> pnpm                | Pinned in `package.json` through `packageManager`.                   |
-| **Deployment**      | <img src="https://cdn.simpleicons.org/vercel/000000" height="14" /> Vercel            | Edge network deployment, preview deploys per branch.                 |
+| **Package manager** | <img src="https://cdn.simpleicons.org/pnpm/F69220" alt="" height="14" /> pnpm                | Pinned in `package.json` through `packageManager`.                   |
+| **Deployment**      | <img src="https://cdn.simpleicons.org/vercel/000000" alt="" height="14" /> Vercel            | Edge network deployment, preview deploys per branch.                 |
 
 ---
 
@@ -80,7 +80,7 @@ The focus here is on **performance**, **clean architecture**, and **animation th
 ### Prerequisites
 
 - Node.js **20.9 or newer** (Next.js 16's minimum; CI runs Node 22)
-- pnpm, which Corepack can provide: `corepack enable`
+- pnpm, which Corepack can provide. On Node.js 25+, Corepack is no longer bundled: run `npm install --global corepack@latest` first, then `corepack enable`.
 
 ### Installation
 
