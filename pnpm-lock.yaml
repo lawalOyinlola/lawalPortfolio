@@ -18,7 +18,7 @@ importers:
         version: 1.2.0(@types/react@19.3.0)(react-dom@19.2.3(react@19.3.0))(react@19.3.0)
       '@gsap/react':
         specifier: ^2.1.2
-        version: 2.1.2(gsap@3.14.2)(react@19.3.0)
+        version: 2.1.2(gsap@3.15.0)(react@19.3.0)
       '@phosphor-icons/react':
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.2.3(react@19.3.0))(react@19.3.0)
@@ -44,8 +44,8 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3
       gsap:
-        specifier: ^3.14.2
-        version: 3.14.2
+        specifier: ^3.15.0
+        version: 3.15.0
       next:
         specifier: 16.3.5
         version: 16.3.5(@babel/core@7.29.7)(@types/node@20.19.32)(react-dom@19.2.3(react@19.3.0))(react@19.3.0)
@@ -2033,8 +2033,8 @@ packages:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
 
-  gsap@3.14.2:
-    resolution: {integrity: sha512-P8/mMxVLU7o4+55+1TCnQrPmgjPKnwkzkXOK1asnR9Jg2lna4tEY5qBJjMmAaOBDDZWtlRjBXjLa0w53G/uBLA==}
+  gsap@3.15.0:
+    resolution: {integrity: sha512-dMW4CWBTUK1AEEDeZc1g4xpPGIrSf9fJF960qbTZmN/QwZIWY5wgliS6JWl9/25fpTGJrMRtSjGtOmPnfjZB+A==}
 
   has-bigints@1.1.0:
     resolution: {integrity: sha512-R3pbpkcIqv2Pm3dUwgjclDRVmWpTJW2DcMzcIhEXEx1oh/CEMObMm3KLmRJOdvhM7o4uQBnwr8pzRK2sJWIqfg==}
@@ -4054,9 +4054,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@gsap/react@2.1.2(gsap@3.14.2)(react@19.3.0)':
+  '@gsap/react@2.1.2(gsap@3.15.0)(react@19.3.0)':
     dependencies:
-      gsap: 3.14.2
+      gsap: 3.15.0
       react: 19.3.0
 
   '@hono/node-server@2.1.1(hono@4.13.8)':
@@ -5740,7 +5740,7 @@ snapshots:
       section-matter: 1.0.0
       strip-bom-string: 1.0.0
 
-  gsap@3.14.2: {}
+  gsap@3.15.0: {}
 
   has-bigints@1.1.0: {}
 
