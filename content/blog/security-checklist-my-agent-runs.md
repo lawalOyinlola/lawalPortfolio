@@ -29,7 +29,7 @@ And here is what it became, lightly trimmed from control 9:
 >
 > **Verify:** log in on two browsers, change the password in one, refresh the other. Expect a 401.
 
-![The two-browser test: log in on two browsers, change the password in one, and the other should get a 401 on its next request. If it stays logged in, that is the bug.](/images/blog/security-checklist-my-agent-runs/two-browser-test.jpg)
+![The two-browser test: log in on two browsers, change the password in one, and the other should get a 401 on its next request. If it stays logged in, that is the bug.](/images/blog/security-checklist-my-agent-runs/two-browser-test-v2.jpg)
 
 The second version takes thirty seconds to act on, and it can fail. That is the only difference that matters, and it is the difference between a checklist and a test.
 
