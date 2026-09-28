@@ -2,14 +2,18 @@
 title: "How a security checklist became a skill"
 platform: linkedin
 companion_to: ../../blog/security-checklist-my-agent-runs.md
-status: ready
+status: posted
 carousel: carousel.pdf
+posted_url: https://lnkd.in/p/di4QdVA6
+posted_date: 2026-09-28
 ---
 
 # LinkedIn: how a security checklist became a skill
 
-Post it as a **document** (Add a document → `carousel.pdf`, title: "Agreeing isn't testing").
-Add the first comment straight after publishing.
+**Posted 2026-09-28:** https://lnkd.in/p/di4QdVA6
+
+Posted as a **document** (Add a document → `carousel.pdf`, title: "Agreeing isn't testing"),
+with the first comment added straight after.
 
 ## Copy this
 
@@ -72,10 +76,11 @@ done
 "/System/Library/Automator/Combine PDF Pages.action/Contents/MacOS/join" -o $L/carousel.pdf $S/{1,2,3,4,5}.pdf
 ```
 
-## Alt text
+## What each slide shows
 
-LinkedIn documents take no per-page alt text, so the carousel title and the post carry the meaning.
-If you post a single image instead, use slide 1's.
+Posted as a document, which takes no per-page alt text, so the carousel title and the post
+carry the meaning on LinkedIn. Kept here as a record, and for reuse if any of these images
+go out again as a standalone post.
 
 1. Agreeing isn't testing. A ticked checklist line next to an inspection tag that records the test, the expected result of 401 and the actual result of 401.
 2. The same control written two ways: a ticked statement, and a test with an expected result.
