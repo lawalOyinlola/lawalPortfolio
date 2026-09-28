@@ -199,8 +199,13 @@ skips the post. Even when it does update, dev.to already holds its own copy of
 a PNG or JPEG (see [Images](#2-images)). A new filename changes the text, so
 the sync pushes it and dev.to copies the new file.
 
-Delete the old file in the same commit. A PNG or JPEG copy on dev.to no longer
-needs it. An SVG does, until you sync, so sync straight after the deploy.
+**PNG or JPEG:** delete the old file in the same commit. dev.to already has
+its own copy and will not look at your site for it again.
+
+**SVG:** do not delete the old file yet. dev.to hotlinks it live, so removing
+it breaks the dev.to copy until you sync. Push and deploy, run
+`pnpm sync:devto`, confirm the dev.to article shows the new image, then delete
+the old file in a follow-up commit.
 
 ---
 
