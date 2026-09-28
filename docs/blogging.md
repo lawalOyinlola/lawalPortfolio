@@ -97,10 +97,18 @@ Put them in `public/images/blog/<slug>/` and link from the root:
 The sync rewrites these to absolute URLs, because dev.to fetches every image
 by URL and a root-relative path would resolve against dev.to and 404.
 
-Convert large screenshots before committing so the repo stays lean:
+What dev.to does with them depends on the format:
+
+- **PNG and JPEG are copied** onto dev.to's own storage when the article is
+  saved. From then on the dev.to copy never looks at your file again.
+- **SVG is hotlinked** from your site on every view.
+
+Shrink large images before committing so the repo and the page stay light.
+Nothing is shown wider than about 2000px:
 
 ```bash
-cwebp -q 85 -m 6 screenshot.png -o screenshot.webp
+sips -Z 2000 -s format jpeg -s formatOptions 85 in.jpg --out out.jpg   # macOS
+cwebp -q 85 -m 6 screenshot.png -o screenshot.webp                      # screenshots
 ```
 
 Keep the **cover** as `.jpg` or `.png`. It doubles as the social preview
@@ -180,6 +188,25 @@ pnpm sync:devto --only <slug>    # just one post
 **The sync overwrites the dev.to copy.** If you edited a post directly in the
 dev.to editor, those edits are lost on the next sync. Edit here instead.
 
+### Replacing an image
+
+**Give the new image a new filename**, for example `diagram-v2.jpg`, update
+the link in the post, then push, deploy and sync.
+
+Overwriting the file under the same name updates your site but never reaches
+dev.to. The sync compares the post's text, and the text has not changed, so it
+skips the post. Even when it does update, dev.to already holds its own copy of
+a PNG or JPEG (see [Images](#2-images)). A new filename changes the text, so
+the sync pushes it and dev.to copies the new file.
+
+**PNG or JPEG:** delete the old file in the same commit. dev.to already has
+its own copy and will not look at your site for it again.
+
+**SVG:** do not delete the old file yet. dev.to hotlinks it live, so removing
+it breaks the dev.to copy until you sync. Push and deploy, run
+`pnpm sync:devto`, confirm the dev.to article shows the new image, then delete
+the old file in a follow-up commit.
+
 ---
 
 ## Frontmatter reference
@@ -215,6 +242,28 @@ dev.to editor, those edits are lost on the next sync. Edit here instead.
 - **Flags are blocked on purpose.** A literal `HTB{...}` or `FLAG{...}` fails
   the build. Redact it (`HTB{r3d4ct3d}`) and it passes.
 - **`pnpm sync:devto --dry-run` is always safe.** It only reads.
+
+---
+
+## LinkedIn companion posts
+
+A post that also goes out on LinkedIn keeps its copy and its extra images in
+`content/linkedin/<slug>/`, using the **same slug as the blog post**, so the
+two are easy to find together:
+
+```text
+content/linkedin/<slug>/
+  post.md        the text to paste, the first comment, the carousel's slide list
+  carousel.pdf   what gets uploaded, as a LinkedIn "document"
+  *.jpg          images used only on LinkedIn
+```
+
+The site never reads this folder: only `content/blog` and `content/labs` are
+rendered. Keep LinkedIn-only images here rather than in `public/`, because
+everything in `public/` is deployed. Images the blog already uses stay in
+`public/images/blog/<slug>/` and are listed in `post.md` by path, not copied.
+
+Nothing here is automated. You paste the post into LinkedIn yourself.
 
 ---
 
