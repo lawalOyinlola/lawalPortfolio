@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import ChecklistPersistence from "./ChecklistPersistence";
 import CodeCopyButtons from "./CodeCopyButtons";
 import ImageZoom from "./ImageZoom";
 
@@ -23,6 +24,7 @@ export default function Prose({
       />
       <CodeCopyButtons />
       <ImageZoom />
+      <ChecklistPersistence />
     </div>
   );
 }
