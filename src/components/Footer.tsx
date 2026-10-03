@@ -30,23 +30,21 @@ if (typeof window !== "undefined") {
 }
 
 const TAGLINE_WORDS = BRAND.tagline;
+// The footer is exactly one screen tall and already clips on small phones, so
+// the column holds a fixed eight links. Competence and Clients (both About
+// sub-sections, still reachable from About itself) make way for Security and
+// its nested Labs, which the security section now needs a home for.
 const EXPLORE_LINKS = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  {
-    label: "Competence",
-    href: "/about",
-    anchor: "competence",
-  },
   {
     label: "Tools & Tech",
     href: "/about",
     anchor: "tools-tech",
   },
-  { label: "Clients", href: "/about", anchor: "clients" },
   { label: "Projects", href: "/projects" },
-  // Takes Adaptability's slot: the footer is exactly one screen tall and
-  // already clips on small phones, so a new link has to replace one.
+  { label: "Security", href: "/security" },
+  { label: "Labs", href: "/security/labs" },
   { label: "Blog", href: "/blog" },
   { label: "FAQ", href: "/faq" },
 ];
