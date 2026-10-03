@@ -15,6 +15,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return modified > latest ? modified : latest;
   }, now);
 
+  // The /security hub renders both the labs and the security-tagged blog posts
+  // (see SECURITY_TAGS in the hub page), so its freshness is the latest of
+  // either set, not just the labs.
+  const securityTags = new Set([
+    "security",
+    "cybersecurity",
+    "appsec",
+    "pentesting",
+    "penetrationtesting",
+  ]);
+  const securityHubModified = posts.reduce<Date>((latest, post) => {
+    const isSecurity = post.frontmatter.tags.some((tag) =>
+      securityTags.has(tag.toLowerCase()),
+    );
+    if (!isSecurity) return latest;
+    const modified = post.frontmatter.updated ?? post.frontmatter.date;
+    return modified > latest ? modified : latest;
+  }, labsIndexModified);
+
   // The index changes whenever any post does, so it takes the newest post's
   // date (an edit to an older post counts, hence the max rather than posts[0]).
   const blogIndexModified = posts.reduce<Date>((latest, post) => {
@@ -49,7 +68,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${BRAND.url}/security`,
-      lastModified: labsIndexModified,
+      lastModified: securityHubModified,
       changeFrequency: "monthly",
       priority: 0.8,
     },
