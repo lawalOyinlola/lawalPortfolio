@@ -21,8 +21,8 @@
   --accent-foreground: #171717;
   --destructive: #e7000b;
   --destructive-foreground: #ffffff;
-  --border: #e5e5e5;
-  --input: #e5e5e5;
+  --border: #d4d4d4;
+  --input: #d4d4d4;
   --ring: #2563ef;
   --ring-2: #a1a1a1;
   --chart-1: #91c5ff;
@@ -318,12 +318,40 @@ html[data-hide-logo="true"] .logo-btn {
   }
 
   .prose hr {
-    @apply my-12 border-t border-border/40;
+    @apply my-12 border-t border-border/70;
   }
 
   .prose img,
   .prose svg {
-    @apply my-8 h-auto w-full rounded-xl border border-border/30;
+    @apply my-8 h-auto w-full rounded-xl border border-border/70;
+  }
+
+  /* Diagram SVGs read as illustrations, not framed screenshots: transparent,
+     no border, so they sit directly on the page. */
+  .prose img[src$=".svg"] {
+    @apply rounded-none border-0 bg-transparent;
+  }
+
+  /* Collapsible long listings (wordlists, the defacement source). */
+  .prose details {
+    @apply my-8 overflow-hidden rounded-xl border border-border bg-muted/60;
+  }
+
+  .prose details > summary {
+    @apply cursor-pointer select-none px-4 py-3 font-medium text-primary;
+  }
+
+  .prose details[open] > summary {
+    @apply border-b border-border/30;
+  }
+
+  .prose details > summary:hover {
+    color: var(--post-accent, var(--ring));
+  }
+
+  /* Pull the fenced block flush inside the disclosure frame. */
+  .prose details > pre {
+    @apply my-0 rounded-none border-0 bg-transparent;
   }
 
   /* Made interactive by ImageZoom; the attribute only exists once JS has run,
@@ -352,23 +380,98 @@ html[data-hide-logo="true"] .logo-btn {
   }
 
   .prose pre {
-    @apply my-8 overflow-x-auto rounded-xl border border-border/30 bg-muted/60 p-4 font-mono text-[0.85rem] leading-relaxed;
+    @apply my-8 overflow-x-auto rounded-xl border border-border bg-muted p-4 font-mono text-[0.85rem] leading-relaxed;
   }
 
   .prose pre code {
     @apply grid bg-transparent p-0 text-inherit;
   }
 
+  /* Tables scroll horizontally on small screens instead of cramping or
+     overflowing the page (rehypeWrapTables adds the .table-scroll wrapper). */
+  .prose .table-scroll {
+    @apply my-8 w-full overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
   .prose table {
-    @apply my-8 w-full border-collapse text-left text-sm;
+    @apply w-full border-collapse text-left text-sm;
+    /* Below this width the wrapper scrolls rather than squeezing columns. */
+    min-width: 34rem;
+  }
+
+  .prose .table-scroll > table {
+    @apply my-0;
   }
 
   .prose th {
-    @apply border-b border-border/40 pb-2 pr-4 font-semibold text-primary;
+    @apply border-b border-border px-4 py-2.5 font-semibold text-primary;
+    background: color-mix(in oklab, var(--post-accent, var(--ring)) 18%, var(--muted));
   }
 
   .prose td {
-    @apply border-b border-border/20 py-2 pr-4 align-top;
+    @apply border-b border-border/60 px-4 py-2 align-top;
+  }
+
+  /* Zebra striping so dense tables (the troubleshooting and screenshot
+     references) stay readable row to row. */
+  .prose tbody tr:nth-child(odd) {
+    background: color-mix(in oklab, var(--muted-foreground) 13%, transparent);
+  }
+
+  /* Checkboxes in the screenshot checklist (Appendix C) are the reader's own
+     tracker, so give them room and the accent when ticked. */
+  .prose td input[type="checkbox"] {
+    @apply h-4 w-4 cursor-pointer align-middle;
+    accent-color: var(--post-accent, var(--ring));
+  }
+
+  /* Visible confirmation that a tick was saved (ChecklistPersistence writes it
+     to localStorage on change, so the dim-and-strike doubles as "this is
+     remembered" feedback, not just "this is checked"). */
+  .prose tbody tr:has(input[type="checkbox"]:checked) {
+    @apply opacity-55;
+  }
+
+  .prose tbody tr:has(input[type="checkbox"]:checked) td:not(:has(input)) {
+    @apply line-through;
+  }
+
+  /* Inline "capture for your report" checklists, dropped right where a shot
+     is taken. Each box shares a `data-shot-id` with its Appendix C row, and
+     ChecklistPersistence keeps the two in sync — this is only the look. */
+  .prose .capture-note {
+    @apply my-8 rounded-xl border border-border bg-muted/60 px-5 py-4;
+  }
+
+  .prose .capture-note > p {
+    @apply mt-0 mb-3 text-sm text-muted-foreground;
+  }
+
+  .prose .capture-note a {
+    color: var(--post-accent, var(--ring));
+  }
+
+  .prose .capture-note ul {
+    @apply mt-0 mb-0 list-none space-y-2 pl-0;
+  }
+
+  .prose .capture-note li {
+    @apply mt-0;
+  }
+
+  .prose .capture-note label {
+    @apply flex cursor-pointer items-start gap-2.5 text-sm leading-snug text-primary;
+  }
+
+  .prose .capture-note input[type="checkbox"] {
+    @apply mt-0.5 h-4 w-4 shrink-0 cursor-pointer;
+    accent-color: var(--post-accent, var(--ring));
+  }
+
+  .prose .capture-note label:has(input:checked) {
+    @apply text-muted-foreground line-through;
   }
 
   /* Heading anchors: present for keyboard and deep-linking, quiet until hover. */
