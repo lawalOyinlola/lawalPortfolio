@@ -29,7 +29,13 @@ export default function ChecklistPersistence() {
     const read = (): Record<string, boolean> => {
       try {
         const raw = window.localStorage.getItem(storageKey);
-        return raw ? JSON.parse(raw) : {};
+        if (!raw) return {};
+        const parsed: unknown = JSON.parse(raw);
+        // Only a plain object is safe to index; anything else (null, an array,
+        // a primitive, tampered data) resets to empty.
+        return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+          ? (parsed as Record<string, boolean>)
+          : {};
       } catch {
         return {};
       }
