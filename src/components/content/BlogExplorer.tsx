@@ -170,7 +170,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
         </p>
 
         {results.length > 0 ? (
-          <ul className="mt-6 divide-y divide-border/25 border-y border-border/25">
+          <ul className="mt-6 divide-y divide-border/60 border-y border-border/25">
             {results.map((post, index) => (
               <li key={post.slug}>
                 <PostCard post={post} index={index} />

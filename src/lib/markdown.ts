@@ -7,9 +7,9 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode, { type Options as PrettyCodeOptions } from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
-import { visit } from "unist-util-visit";
+import { visit, SKIP } from "unist-util-visit";
 import type { Plugin } from "unified";
-import type { Root } from "hast";
+import type { Root, Element } from "hast";
 
 /**
  * Markdown -> HTML for `/blog` and `/labs`.
@@ -61,6 +61,35 @@ const rehypePreserveCodeMeta: Plugin<[], Root> = () => {
   };
 };
 
+/**
+ * Wraps every table in a horizontally scrollable container.
+ *
+ * Wide reference tables (the troubleshooting list, the screenshot checklist)
+ * overflow a phone otherwise. The wrapper scrolls instead of the whole page,
+ * and `.table-scroll` in globals.css carries the overflow and the min-width
+ * that forces the scroll rather than cramming cells.
+ */
+const rehypeWrapTables: Plugin<[], Root> = () => {
+  return (tree: Root) => {
+    visit(tree, "element", (node, index, parent) => {
+      if (node.tagName !== "table" || !parent || typeof index !== "number")
+        return;
+
+      const wrapper: Element = {
+        type: "element",
+        tagName: "div",
+        properties: { className: ["table-scroll"] },
+        children: [node],
+      };
+      parent.children[index] = wrapper;
+
+      // Don't descend into the table we just moved, and skip revisiting the
+      // wrapper (which would re-match the same table forever).
+      return [SKIP, index + 1];
+    });
+  };
+};
+
 /** Collects h2/h3 into a table of contents. Must run after rehype-slug. */
 const rehypeCollectHeadings: Plugin<[Heading[]], Root> = (sink) => {
   return (tree: Root) => {
@@ -92,6 +121,7 @@ export async function renderMarkdown(source: string): Promise<RenderedMarkdown> 
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypePreserveCodeMeta)
     .use(rehypeRaw)
+    .use(rehypeWrapTables)
     .use(rehypeSlug)
     .use(rehypeCollectHeadings, headings)
     .use(rehypeAutolinkHeadings, {

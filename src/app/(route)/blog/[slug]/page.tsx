@@ -160,7 +160,7 @@ export default async function BlogPostPage({
         </header>
 
         {cover && (
-          <div className="relative mt-12 aspect-video w-full overflow-hidden rounded-2xl border border-border/20 bg-muted">
+          <div className="relative mt-12 aspect-video w-full overflow-hidden rounded-2xl border border-border/50 bg-muted">
             <Image
               src={cover}
               // The schema requires coverAlt whenever cover is set.
@@ -220,7 +220,7 @@ export default async function BlogPostPage({
 
             {/* Two columns at desktop width so each blurb keeps a sane measure
                 instead of one line running the full page. */}
-            <ul className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-border/20 sm:grid-cols-2">
+            <ul className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-border/60 sm:grid-cols-2">
               {related.map((item) => {
                 const relatedAccent = item.frontmatter.tags[0]
                   ? ({
