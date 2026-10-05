@@ -251,6 +251,8 @@ Add only what the handshake error asks for. Do not re-enable `ssh-dss`; newer Op
 
 The environment is now the shared base for every track. See how they connect on the [interactive labs map](/security/labs), or jump straight in:
 
+<img src="/images/labs/apple-silicon-lab-foundation/foundation-hub.svg" alt="The four tracks branching from the foundation: pentest (offensive), detection and SIEM (defensive), the phishing bridge (purple), and the AI-augmented SOC (defensive)." style="max-width:600px;width:100%;display:block;margin:1.5rem auto" />
+
 - [**Pentest track**](/security/labs/building-a-pentest-lab-on-apple-silicon): recon to root against the x86 targets, two independent paths, every offensive step paired with the control that stops it. Uses Kali and the targets. (Published.)
 - **Detection & SIEM track**: stand up Wazuh on the Ubuntu Server box, ship agent and network logs, and catch the attacks from the pentest track. Adds the server. (Coming next.)
 - **Phishing bridge**: run a campaign and build the detection for it in one exercise. Uses both. (Planned.)
