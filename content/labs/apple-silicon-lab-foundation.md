@@ -36,9 +36,7 @@ The whole training ecosystem of intentionally vulnerable boxes is x86. The real 
 
 ## How the labs fit together
 
-This is a hub-and-spoke setup. The foundation here is the hub. Each track is a spoke that reuses these same VMs:
-
-![The local labs map: the Foundation and the Pentest lab are published, while the Detection and SIEM, phishing bridge, and AI-augmented SOC tracks are planned, all branching from the same foundation.](/images/labs/apple-silicon-lab-foundation/local-labs-map.svg)
+This is a hub-and-spoke setup. The foundation here is the hub, and each track is a spoke that reuses these same VMs. You can see the whole map at the end of this guide.
 
 You do not need all the VMs for every track. The pentest track uses Kali and the x86 targets. The detection track adds the Ubuntu Server box running the SIEM. The phishing track bridges both. Build the pieces a track needs, when you need them.
 
@@ -251,7 +249,7 @@ Add only what the handshake error asks for. Do not re-enable `ssh-dss`; newer Op
 
 The environment is now the shared base for every track. See how they connect on the [interactive labs map](/security/labs), or jump straight in:
 
-<img src="/images/labs/apple-silicon-lab-foundation/local-labs-map.svg" alt="The local labs map: Foundation and Pentest published, Detection and SIEM, phishing, and AI-augmented SOC planned." style="max-width:560px;width:100%;display:block;margin:1.5rem auto" />
+<img src="/images/labs/apple-silicon-lab-foundation/local-labs-map.svg" alt="The local labs map: the Foundation, the Pentest lab, Detection and SIEM, the phishing bridge, and the AI-augmented SOC, all branching from the same foundation on one shared network." style="max-width:560px;width:100%;display:block;margin:1.5rem auto" />
 
 - [**Pentest track**](/security/labs/building-a-pentest-lab-on-apple-silicon): recon to root against the x86 targets, two independent paths, every offensive step paired with the control that stops it. Uses Kali and the targets. (Published.)
 - **Detection & SIEM track**: stand up Wazuh on the Ubuntu Server box, ship agent and network logs, and catch the attacks from the pentest track. Adds the server. (Coming next.)
