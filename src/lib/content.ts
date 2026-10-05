@@ -101,6 +101,14 @@ export const labFrontmatterSchema = baseFrontmatter.extend({
   cves: z.array(z.string()).default([]),
   skills: z.array(z.string()).default([]),
   status: z.enum(["retired", "free-room", "own-lab"]),
+  /**
+   * Narrative grouping for the labs landing page. Labs sharing a `series`
+   * render under one section, ordered by `order` (ascending), so the portfolio
+   * reads as a path (Foundation → tracks) rather than a flat list. Both are
+   * optional: an ungrouped lab falls back to the date-sorted grid.
+   */
+  series: z.string().optional(),
+  order: z.number().optional(),
 }).superRefine(requireCoverAlt);
 
 export type BlogFrontmatter = z.infer<typeof blogFrontmatterSchema>;
