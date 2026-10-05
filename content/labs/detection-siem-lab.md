@@ -4,6 +4,8 @@ description: "The defensive mirror of the pentest lab: a Wazuh SIEM on the Ubunt
 date: 2026-10-05
 updated: 2026-10-05
 tags: [wazuh, suricata, siem, blue-team, defensive, virustotal, homelab]
+cover: /images/labs/detection-siem-lab/alert-chain.png
+coverAlt: "The Wazuh Threat Hunting dashboard showing the full detection chain in order: a file added to /root, a VirusTotal alert flagging it as malicious at level 12, and the file deleted seconds later."
 platform: "Self-hosted"
 target: "Wazuh SIEM stack"
 difficulty: "Medium"
@@ -278,6 +280,10 @@ ls -la /root/eicar.txt   # should be gone
 ```
 
 **Checkpoint:** `active-responses.log` shows a `deleted /root/eicar.txt` line, and the file is gone.
+
+The reason this counts as evidence rather than a screenshot of a dashboard is the alert document itself. Expand the VirusTotal alert and you get the fields the verdict was built on: the file path, its MD5 and SHA1, how many engines flagged it, and a permalink back to the VirusTotal report.
+
+![The expanded Wazuh alert document for the VirusTotal rule, showing the data.virustotal fields: the flagged file path, its MD5 and SHA1 hashes, a positives count of 64, the total engine count, and a permalink to the VirusTotal report.](/images/labs/detection-siem-lab/virustotal-enrichment.png)
 
 ---
 
