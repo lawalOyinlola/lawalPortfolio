@@ -62,17 +62,20 @@ Three things live here:
 
 ### How content flows through the repo
 
-Posts and labs are plain Markdown. They are validated when the site builds (a bad frontmatter
-field fails the build rather than shipping), rendered to static pages, and the blog feed is what
-syndicates out to dev.to.
+Posts and labs are plain Markdown. Both are validated when the site builds (a bad frontmatter
+field fails the build rather than shipping) and rendered to static pages, and the site also emits
+an RSS feed. Blog posts take a second, separate path: `pnpm sync:devto` reads the Markdown in
+`content/blog` directly and pushes it to dev.to, with the canonical URL pointing back here. Labs
+stay on the site; they are not syndicated.
 
 ```mermaid
 flowchart LR
-  A["Markdown<br/>content/blog · content/labs"] --> B["zod validation<br/>at build time"]
-  B --> C["Next.js<br/>static pages"]
+  B["content/blog<br/>(Markdown)"] --> V["zod validation<br/>at build time"]
+  L["content/labs<br/>(Markdown)"] --> V
+  V --> C["Next.js<br/>static pages"]
   C --> D["lawaloyinlola.com"]
   C --> E["RSS feed"]
-  E --> F["dev.to<br/>(canonical points home)"]
+  B -->|"pnpm sync:devto"| F["dev.to<br/>(canonical points home)"]
 ```
 
 ### How the security labs fit together
