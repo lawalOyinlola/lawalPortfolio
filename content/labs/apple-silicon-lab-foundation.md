@@ -4,6 +4,8 @@ description: "The shared base every lab in this portfolio builds on: UTM on an A
 date: 2026-10-05
 updated: 2026-10-05
 tags: [apple-silicon, utm, kali, homelab, virtualization]
+cover: /images/labs/apple-silicon-lab-foundation/utm-overview.png
+coverAlt: "The UTM app on macOS showing the lab's virtual machines: an ARM Kali attacker and emulated x86 targets on an isolated network."
 platform: "Self-hosted"
 target: "Local VM lab"
 difficulty: "Easy"
@@ -36,19 +38,7 @@ The whole training ecosystem of intentionally vulnerable boxes is x86. The real 
 
 This is a hub-and-spoke setup. The foundation here is the hub. Each track is a spoke that reuses these same VMs:
 
-```
-                    ┌──────────────────────────┐
-                    │   Foundation (this lab)   │
-                    │  UTM · network · Kali ·   │
-                    │  Ubuntu Server · targets  │
-                    └────────────┬─────────────┘
-                                 │
-        ┌────────────────┬───────┴───────┬────────────────┐
-        ▼                ▼               ▼                ▼
-    Pentest          Detection        Phishing         AI SOC
-   (offensive)        & SIEM          (purple)       (blue, AI)
-                     (defensive)
-```
+![One foundation feeding four tracks: the pentest track (offensive), the detection and SIEM track (defensive), the phishing bridge (purple), and the AI-augmented SOC (defensive), all reusing the same machines.](/images/labs/apple-silicon-lab-foundation/foundation-hub.svg)
 
 You do not need all the VMs for every track. The pentest track uses Kali and the x86 targets. The detection track adds the Ubuntu Server box running the SIEM. The phishing track bridges both. Build the pieces a track needs, when you need them.
 
@@ -67,21 +57,7 @@ A plain rule to carry through the whole portfolio: **ARM64 guest → Virtualize.
 
 ## Lab architecture
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Apple Silicon Mac · UTM (QEMU)                                │
-│                                                                │
-│  UTM Shared Network · 192.168.64.0/24 (NAT, isolated from LAN) │
-│                                                                │
-│   ┌───────────────┐   ┌───────────────┐   ┌───────────────┐   │
-│   │ Kali (ARM64)  │   │ Ubuntu Server │   │ x86 targets   │   │
-│   │ Virtualize    │   │ (ARM64)       │   │ Emulate       │   │
-│   │ 192.168.64.2  │   │ Virtualize    │   │ .4 / .5 / .6  │   │
-│   │ attacker      │   │ 192.168.64.3  │   │ vulnerable    │   │
-│   │               │   │ SIEM host     │   │ boxes         │   │
-│   └───────────────┘   └───────────────┘   └───────────────┘   │
-└──────────────────────────────────────────────────────────────┘
-```
+![One Apple Silicon Mac running UTM: an ARM Kali attacker and an Ubuntu Server SIEM host both virtualised, x86 targets emulated, all on one isolated Shared Network.](/images/labs/apple-silicon-lab-foundation/foundation-architecture.svg)
 
 The addresses above are the convention this portfolio uses throughout. Yours may differ by a digit; what matters is that every VM sits on the same Shared Network.
 
@@ -273,9 +249,9 @@ Add only what the handshake error asks for. Do not re-enable `ssh-dss`; newer Op
 
 ## Where to go next
 
-The environment is now the shared base for every track:
+The environment is now the shared base for every track. See how they connect on the [interactive labs map](/security/labs), or jump straight in:
 
-- **Pentest track**: recon to root against the x86 targets, two independent paths, every offensive step paired with the control that stops it. Uses Kali and the targets. (Published.)
+- [**Pentest track**](/security/labs/building-a-pentest-lab-on-apple-silicon): recon to root against the x86 targets, two independent paths, every offensive step paired with the control that stops it. Uses Kali and the targets. (Published.)
 - **Detection & SIEM track**: stand up Wazuh on the Ubuntu Server box, ship agent and network logs, and catch the attacks from the pentest track. Adds the server. (Coming next.)
 - **Phishing bridge**: run a campaign and build the detection for it in one exercise. Uses both. (Planned.)
 - **AI-augmented SOC**: layer network inventory, dashboards, and AI triage on top of the detection stack. (Planned.)
