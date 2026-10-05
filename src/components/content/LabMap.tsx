@@ -99,118 +99,130 @@ export default function LabMap({ liveSlugs }: { liveSlugs: string[] }) {
             role="group"
             aria-label="Lab portfolio map"
           >
-        {/* Group frames */}
-        {GROUPS.map((g) => (
-          <g key={g.label}>
-            <rect
-              x={g.x}
-              y={g.y}
-              width={g.w}
-              height={g.h}
-              rx={20}
-              fill="color-mix(in oklab, var(--muted) 40%, transparent)"
-              stroke="var(--border)"
-              strokeDasharray="2 6"
-              strokeWidth={1.5}
-            />
-            <text
-              x={g.x + 18}
-              y={g.y + 26}
-              fill="var(--muted-foreground)"
-              fontSize={13}
-              fontWeight={600}
-              letterSpacing="0.14em"
-              style={{ textTransform: "uppercase" }}
-            >
-              {g.label}
-            </text>
-          </g>
-        ))}
+            {/* Group frames */}
+            {GROUPS.map((g) => (
+              <g key={g.label}>
+                <rect
+                  x={g.x}
+                  y={g.y}
+                  width={g.w}
+                  height={g.h}
+                  rx={20}
+                  fill="color-mix(in oklab, var(--muted) 40%, transparent)"
+                  stroke="var(--border)"
+                  strokeDasharray="2 6"
+                  strokeWidth={1.5}
+                />
+                <text
+                  x={g.x + 18}
+                  y={g.y + 26}
+                  fill="var(--muted-foreground)"
+                  fontSize={13}
+                  fontWeight={600}
+                  letterSpacing="0.14em"
+                  style={{ textTransform: "uppercase" }}
+                >
+                  {g.label}
+                </text>
+              </g>
+            ))}
 
-        {/* Edges */}
-        {LAB_EDGES.map((e) => {
-          const lit = active === e.from || active === e.to;
-          return (
-            <path
-              key={`${e.from}-${e.to}`}
-              d={edgePath(e.from, e.to)}
-              fill="none"
-              stroke={lit ? "var(--post-accent)" : "var(--border)"}
-              strokeWidth={lit ? 2.5 : 1.75}
-              strokeDasharray={e.soft ? "5 5" : undefined}
-              className="transition-all duration-300"
-              opacity={lit ? 1 : 0.7}
-            />
-          );
-        })}
+            {/* Edges */}
+            {LAB_EDGES.map((e) => {
+              const lit = active === e.from || active === e.to;
+              return (
+                <path
+                  key={`${e.from}-${e.to}`}
+                  d={edgePath(e.from, e.to)}
+                  fill="none"
+                  stroke={lit ? "var(--post-accent)" : "var(--border)"}
+                  strokeWidth={lit ? 2.5 : 1.75}
+                  strokeDasharray={e.soft ? "5 5" : undefined}
+                  className="transition-all duration-300"
+                  opacity={lit ? 1 : 0.7}
+                />
+              );
+            })}
 
-        {/* Nodes */}
-        {LAB_NODES.map((node) => {
-          const { x, y } = POS[node.id];
-          const liveNode = isLive(node);
-          const isFoundation = node.kind === "foundation";
-          const hot = active === node.id;
+            {/* Nodes */}
+            {LAB_NODES.map((node) => {
+              const { x, y } = POS[node.id];
+              const liveNode = isLive(node);
+              const isFoundation = node.kind === "foundation";
+              const hot = active === node.id;
 
-          const border = liveNode
-            ? "var(--post-accent)"
-            : "var(--border)";
-          const fill = isFoundation
-            ? "color-mix(in oklab, var(--post-accent) 10%, var(--background))"
-            : "var(--background)";
+              const border = liveNode ? "var(--post-accent)" : "var(--border)";
+              const fill = isFoundation
+                ? "color-mix(in oklab, var(--post-accent) 10%, var(--background))"
+                : "var(--background)";
 
-          return (
-            <g
-              key={node.id}
-              transform={`translate(${x} ${y})`}
-              role={liveNode ? "link" : "img"}
-              aria-label={
-                liveNode
-                  ? `${node.label}: ${node.kicker}. View lab.`
-                  : `${node.label}: ${node.kicker}. Coming soon.`
-              }
-              tabIndex={0}
-              onMouseEnter={() => setActive(node.id)}
-              onMouseLeave={() => setActive((a) => (a === node.id ? null : a))}
-              onFocus={() => setActive(node.id)}
-              onBlur={() => setActive((a) => (a === node.id ? null : a))}
-              onClick={() => go(node)}
-              onKeyDown={(e) => onKey(e, node)}
-              className={`outline-none ${liveNode ? "cursor-pointer" : "cursor-default"}`}
-              style={{ opacity: liveNode || hot ? 1 : 0.62 }}
-            >
-              <rect
-                width={NODE_W}
-                height={NODE_H}
-                rx={14}
-                fill={fill}
-                stroke={border}
-                strokeWidth={hot ? 2.5 : isFoundation ? 2 : 1.5}
-                strokeDasharray={liveNode ? undefined : "5 5"}
-                className="transition-all duration-300 [filter:drop-shadow(0_2px_6px_rgba(0,0,0,0.05))]"
-              />
-              <text
-                x={16}
-                y={28}
-                fill="var(--primary)"
-                fontSize={16}
-                fontWeight={700}
-              >
-                {node.label}
-              </text>
-              <text x={16} y={47} fill="var(--muted-foreground)" fontSize={10}>
-                {node.kicker}
-              </text>
-              {/* Status dot */}
-              <circle
-                cx={NODE_W - 16}
-                cy={18}
-                r={4}
-                fill={liveNode ? "var(--post-accent)" : "var(--muted-foreground)"}
-                opacity={liveNode ? 1 : 0.5}
-              />
-            </g>
-          );
-        })}
+              return (
+                <g
+                  key={node.id}
+                  transform={`translate(${x} ${y})`}
+                  role={liveNode ? "link" : "img"}
+                  aria-label={
+                    liveNode
+                      ? `${node.label}: ${node.kicker}. View lab.`
+                      : `${node.label}: ${node.kicker}. Coming soon.`
+                  }
+                  // Only published nodes are interactive, so only they are a
+                  // keyboard focus stop; planned nodes stay in the a11y tree
+                  // via role/aria-label but are not tabbable dead ends.
+                  tabIndex={liveNode ? 0 : undefined}
+                  onMouseEnter={() => setActive(node.id)}
+                  onMouseLeave={() =>
+                    setActive((a) => (a === node.id ? null : a))
+                  }
+                  onFocus={() => setActive(node.id)}
+                  onBlur={() => setActive((a) => (a === node.id ? null : a))}
+                  onClick={() => go(node)}
+                  onKeyDown={(e) => onKey(e, node)}
+                  className={`outline-none ${liveNode ? "cursor-pointer" : "cursor-default"}`}
+                  style={{ opacity: liveNode || hot ? 1 : 0.62 }}
+                >
+                  <rect
+                    width={NODE_W}
+                    height={NODE_H}
+                    rx={14}
+                    fill={fill}
+                    stroke={border}
+                    strokeWidth={hot ? 2.5 : isFoundation ? 2 : 1.5}
+                    strokeDasharray={liveNode ? undefined : "5 5"}
+                    className="transition-all duration-300 filter-[drop-shadow(0_2px_6px_rgba(0,0,0,0.05))]"
+                  />
+                  <text
+                    x={16}
+                    y={28}
+                    fill="var(--primary)"
+                    fontSize={16}
+                    fontWeight={700}
+                  >
+                    {node.label}
+                  </text>
+                  <text
+                    x={16}
+                    y={47}
+                    fill="var(--muted-foreground)"
+                    fontSize={10}
+                  >
+                    {node.kicker}
+                  </text>
+                  {/* Status dot */}
+                  <circle
+                    cx={NODE_W - 16}
+                    cy={18}
+                    r={4}
+                    fill={
+                      liveNode
+                        ? "var(--post-accent)"
+                        : "var(--muted-foreground)"
+                    }
+                    opacity={liveNode ? 1 : 0.5}
+                  />
+                </g>
+              );
+            })}
           </svg>
 
           {/* Tooltip — overlays the active node, flipping below for top-row
