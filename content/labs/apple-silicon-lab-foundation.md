@@ -246,7 +246,7 @@ The environment is now the shared base for every track. You do not need all the 
 <img src="/images/labs/apple-silicon-lab-foundation/local-labs-map.svg" alt="The local labs map: the Foundation, the Pentest lab, Detection and SIEM, the phishing bridge, and the AI-augmented SOC, all branching from the same foundation on one shared network." style="max-width:560px;width:100%;display:block;margin:1.5rem auto" />
 
 - [**Pentest track**](/security/labs/building-a-pentest-lab-on-apple-silicon): recon to root against the x86 targets, two independent paths, every offensive step paired with the control that stops it. Uses Kali and the targets. (Published.)
-- **Detection & SIEM track**: stand up Wazuh on the Ubuntu Server box, ship agent and network logs, and catch the attacks from the pentest track. Adds the server. (Coming next.)
+- [**Detection & SIEM track**](/security/labs/detection-siem-lab): stand up Wazuh on the Ubuntu Server box, ship agent and network logs, and catch the attacks from the pentest track. Adds the server. (Published.)
 - **Phishing bridge**: run a campaign and build the detection for it in one exercise. Uses both. (Planned.)
 - **AI-augmented SOC**: layer network inventory, dashboards, and AI triage on top of the detection stack. (Planned.)
 
