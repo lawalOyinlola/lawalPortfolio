@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { useId, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import Image from "next/image";
 import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
+import { getTagColor } from "@/lib/tag-colors";
 
 /** Serializable lab shape passed from the server page. */
 export type LabSummary = {
@@ -19,8 +22,8 @@ export type LabSummary = {
   skills: string[];
   series: string | null;
   order: number | null;
-  /** Non-published nodes the map shows but that have no page yet. */
-  comingSoon?: boolean;
+  cover: string | null;
+  coverAlt: string | null;
 };
 
 export type LabSeries = {
@@ -29,31 +32,50 @@ export type LabSeries = {
 };
 
 function LabCard({ lab }: { lab: LabSummary }) {
+  const accentStyle = lab.tags[0]
+    ? ({ "--post-accent": getTagColor(lab.tags[0]) } as CSSProperties)
+    : undefined;
+
   return (
     <Link
       href={`/security/labs/${lab.slug}`}
-      className="group flex h-full flex-col gap-3 p-7 transition-colors duration-300 hover:bg-muted/40"
+      style={accentStyle}
+      className="group flex h-full flex-col transition-colors duration-300 hover:bg-muted/40"
     >
-      <span className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-        <span className="rounded-full border border-[#be123c]/30 bg-[#be123c]/5 px-2.5 py-0.5 text-[#be123c]">
-          {lab.platform}
+      {lab.cover && (
+        <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-muted">
+          <Image
+            src={lab.cover}
+            alt={lab.coverAlt ?? ""}
+            fill
+            sizes="(max-width: 640px) 100vw, 50vw"
+            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          />
+        </div>
+      )}
+
+      <span className="flex flex-1 flex-col gap-3 p-7">
+        <span className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+          <span className="rounded-full border border-(--post-accent,#be123c)/30 bg-(--post-accent,#be123c)/5 px-2.5 py-0.5 text-(--post-accent,#be123c)">
+            {lab.platform}
+          </span>
+          <span className="rounded-full border border-border/40 px-2.5 py-0.5">
+            {lab.difficulty}
+          </span>
+          <span aria-hidden>·</span>
+          {lab.dateLabel}
+          <span aria-hidden>·</span>
+          {lab.readingMinutes} min
         </span>
-        <span className="rounded-full border border-border/40 px-2.5 py-0.5">
-          {lab.difficulty}
+        <span className="text-lg font-semibold leading-snug text-primary underline-offset-4 group-hover:underline">
+          {lab.title}
         </span>
-        <span aria-hidden>·</span>
-        {lab.dateLabel}
-        <span aria-hidden>·</span>
-        {lab.readingMinutes} min
-      </span>
-      <span className="text-lg font-semibold leading-snug text-primary underline-offset-4 group-hover:underline">
-        {lab.title}
-      </span>
-      <span className="text-xs uppercase tracking-widest text-muted-foreground">
-        Target: {lab.target}
-      </span>
-      <span className="max-w-[52ch] text-sm leading-relaxed text-muted-foreground">
-        {lab.description}
+        <span className="text-xs uppercase tracking-widest text-muted-foreground">
+          Target: {lab.target}
+        </span>
+        <span className="max-w-[52ch] text-sm leading-relaxed text-muted-foreground">
+          {lab.description}
+        </span>
       </span>
     </Link>
   );
@@ -225,9 +247,7 @@ export default function LabsExplorer({
                       type="button"
                       onClick={() => toggleTag(tag)}
                       aria-pressed={isActive}
-                      style={
-                        { "--tag": "#be123c" } as React.CSSProperties
-                      }
+                      style={{ "--tag": getTagColor(tag) } as CSSProperties}
                       className={`tag-filter ${isActive ? "tag-filter-active" : ""}`}
                     >
                       <span aria-hidden className="opacity-55">
