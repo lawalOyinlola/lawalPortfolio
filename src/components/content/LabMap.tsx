@@ -71,10 +71,13 @@ export default function LabMap({ liveSlugs }: { liveSlugs: string[] }) {
 
   const activeNode = LAB_NODES.find((n) => n.id === active) ?? null;
   const activeLive = activeNode ? isLive(activeNode) : false;
+  // Top-row nodes have little room above them; flip their tooltip below so the
+  // figure's clipping can't cut off the title and description.
+  const tipBelow = activeNode ? POS[activeNode.id].y < 140 : false;
 
   return (
     <figure
-      className="group/map relative my-10 overflow-hidden rounded-2xl border border-border/60 bg-muted/20 p-3 sm:p-5"
+      className="group/map my-10 overflow-hidden rounded-2xl border border-border/60 bg-muted/20 p-3 sm:p-5"
       style={{ "--post-accent": "#be123c" } as CSSProperties}
     >
       <figcaption className="sr-only">
@@ -83,12 +86,19 @@ export default function LabMap({ liveSlugs }: { liveSlugs: string[] }) {
         planned.
       </figcaption>
 
-      <svg
-        viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-        className="h-auto w-full"
-        role="group"
-        aria-label="Lab portfolio map"
-      >
+      {/* Scroll the map horizontally on narrow screens instead of shrinking
+          the whole 960-unit diagram to phone width and making labels tiny.
+          The inner relative box is the tooltip's positioning context and
+          tracks the svg exactly (svg is w-full of it), so tooltips stay
+          aligned while the map is scrolled. */}
+      <div className="overflow-x-auto">
+        <div className="relative min-w-175 sm:min-w-0">
+          <svg
+            viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+            className="h-auto w-full"
+            role="group"
+            aria-label="Lab portfolio map"
+          >
         {/* Group frames */}
         {GROUPS.map((g) => (
           <g key={g.label}>
@@ -201,34 +211,43 @@ export default function LabMap({ liveSlugs }: { liveSlugs: string[] }) {
             </g>
           );
         })}
-      </svg>
+          </svg>
 
-      {/* Tooltip — HTML overlay positioned over the active node. */}
-      {activeNode && (
-        <div
-          role="status"
-          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-[115%] rounded-lg border border-border bg-background px-3 py-2 text-center shadow-lg"
-          style={{
-            left: `${((POS[activeNode.id].x + NODE_W / 2) / VIEW_W) * 100}%`,
-            top: `${(POS[activeNode.id].y / VIEW_H) * 100}%`,
-          }}
-        >
-          <span className="block text-sm font-semibold text-primary">
-            {activeNode.label}
-          </span>
-          <span className="mt-0.5 block text-xs text-muted-foreground">
-            {activeNode.kicker}
-          </span>
-          <span
-            className="mt-1 block text-[10px] font-semibold uppercase tracking-widest"
-            style={{
-              color: activeLive ? "var(--post-accent)" : "var(--muted-foreground)",
-            }}
-          >
-            {activeLive ? "View lab →" : "Coming soon"}
-          </span>
+          {/* Tooltip — overlays the active node, flipping below for top-row
+              nodes so it is never clipped by the figure. */}
+          {activeNode && (
+            <div
+              role="status"
+              className={`pointer-events-none absolute z-10 -translate-x-1/2 rounded-lg border border-border bg-background px-3 py-2 text-center shadow-lg ${
+                tipBelow ? "mt-2" : "-mt-2 -translate-y-full"
+              }`}
+              style={{
+                left: `${((POS[activeNode.id].x + NODE_W / 2) / VIEW_W) * 100}%`,
+                top: tipBelow
+                  ? `${((POS[activeNode.id].y + NODE_H) / VIEW_H) * 100}%`
+                  : `${(POS[activeNode.id].y / VIEW_H) * 100}%`,
+              }}
+            >
+              <span className="block text-sm font-semibold text-primary">
+                {activeNode.label}
+              </span>
+              <span className="mt-0.5 block text-xs text-muted-foreground">
+                {activeNode.kicker}
+              </span>
+              <span
+                className="mt-1 block text-[10px] font-semibold uppercase tracking-widest"
+                style={{
+                  color: activeLive
+                    ? "var(--post-accent)"
+                    : "var(--muted-foreground)",
+                }}
+              >
+                {activeLive ? "View lab →" : "Coming soon"}
+              </span>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Legend */}
       <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 px-2 text-[11px] text-muted-foreground">
