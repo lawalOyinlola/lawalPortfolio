@@ -28,7 +28,7 @@ If you have already done the environment setup inside another lab, you can skip 
 
 ## Why this lab exists
 
-Most security lab guides assume an Intel machine running VirtualBox. On an Apple Silicon Mac they break at step one: VirtualBox cannot run x86 guests on ARM, and Parallels and VMware Fusion are paid tools that virtualize rather than emulate, so they still cannot boot the old x86 systems most vulnerable VMs are built for.
+Most security lab guides assume an Intel machine running VirtualBox. On an Apple Silicon Mac they break at step one: VirtualBox cannot run x86 guests on ARM at all. Parallels (paid) and VMware Fusion (free for personal use) are more polished, but they virtualize rather than emulate, so regardless of cost neither can boot the old x86 systems most vulnerable VMs are built for.
 
 The whole training ecosystem of intentionally vulnerable boxes is x86. The real problem on an ARM Mac is not the attacking, it is getting those targets to run at all. This foundation solves that with **UTM**, a free, open-source hypervisor that can both virtualize ARM-native guests at full speed and emulate x86 guests slowly but faithfully, on the same machine and the same isolated network. No paid software, no Intel hardware.
 
@@ -174,16 +174,16 @@ Every lab VM must be on the same UTM network mode to see the others. Use **Share
 |---|---|---|
 | **Shared Network** | All VMs get IPs on the same `192.168.64.0/24` subnet, NAT'd through the Mac | **Yes, use this** |
 | Bridged | Puts the VM on your real LAN | No, this exposes deliberately vulnerable boxes to your real network |
-| Host Only | VMs reach the Mac and each other but have no internet | Optional, see the note below |
+| Host Only | Isolates VMs; VM-to-VM access needs a shared host network with manually assigned IPs | Not covered here |
 
-> **"Isolated" means isolated from your LAN, not air-gapped.** Shared Network is NAT: your VMs cannot be reached inbound from your real network, but they *can* reach the internet outbound through the Mac. That path is what Kali and the Ubuntu Server box need for updates and feed syncs, which is why the labs use it. It does mean a vulnerable target has internet while it runs, so power targets off when you are not using them. To wall them off entirely, put the targets on **Host Only** so they can still reach Kali, and give Kali a second interface on Shared only if it needs the internet.
+> **"Isolated" means isolated from your LAN, not air-gapped.** Shared Network is NAT: your VMs cannot be reached inbound from your real network, but they *can* reach the internet outbound through the Mac. That path is what Kali and the Ubuntu Server box need for updates and feed syncs, which is why the labs use it. It does mean a vulnerable target has internet while it runs, so power targets off when you are not using them. Fully air-gapping the targets while keeping them reachable from Kali is possible but fiddly here (it needs a shared host network with manually assigned IPs) and is not covered in this guide; for the lab, Shared Network plus powering targets off when idle is the pragmatic balance.
 
 Confirm connectivity after booting two VMs:
 
 ```bash
 # From Kali
 ip addr show        # note Kali's IP, e.g. 192.168.64.2
-ping 192.168.64.6   # ping a target
+ping 192.168.64.x   # the target's IP; find it with ip addr on the target VM
 ```
 
 **Checkpoint:** you get ping replies. If not, confirm both VMs are set to Shared Network and check each one's actual IP with `ip addr`.
