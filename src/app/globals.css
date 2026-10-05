@@ -647,6 +647,34 @@ html[data-hide-logo="true"] .logo-btn {
   --tag-fg: color-mix(in oklab, var(--tag) 55%, white);
 }
 
+/* Table of contents: a group's h3 children stay collapsed until the reader
+   scrolls into that section (data-expanded, set in TableOfContents.tsx) or
+   hovers / keyboard-focuses the group, so a long post's TOC reads as a short
+   list of headings rather than a wall of sub-headings. The 0fr/1fr grid-row
+   trick animates to the content's real height without a guessed max-height. */
+.toc-subitems {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toc-subitems > div {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.toc-group:hover .toc-subitems,
+.toc-group:focus-within .toc-subitems,
+.toc-subitems[data-expanded="true"] {
+  grid-template-rows: 1fr;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-subitems {
+    transition: none;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    Image zoom (ImageZoom.tsx). Native <dialog>: resets the UA box, then fades
    and scales in via @starting-style, with no JS animation library.
