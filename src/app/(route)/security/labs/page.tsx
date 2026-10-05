@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BRAND } from "@/app/constants";
+import { BRAND, LAB_SERIES } from "@/app/constants";
 import { formatPostDate, getLabPosts } from "@/lib/content";
+import LabMap from "@/components/content/LabMap";
+import LabsExplorer, {
+  type LabSummary,
+} from "@/components/content/LabsExplorer";
 import ContactsRef from "@/components/ContactsRef";
 
 const title = "Labs";
@@ -36,7 +40,25 @@ export const metadata: Metadata = {
 };
 
 export default function LabsPage() {
-  const labs = getLabPosts();
+  const posts = getLabPosts();
+
+  const labs: LabSummary[] = posts.map((lab) => ({
+    slug: lab.slug,
+    title: lab.frontmatter.title,
+    description: lab.frontmatter.description,
+    platform: lab.frontmatter.platform,
+    difficulty: lab.frontmatter.difficulty,
+    target: lab.frontmatter.target,
+    dateLabel: formatPostDate(lab.frontmatter.date),
+    readingMinutes: lab.readingMinutes,
+    tags: lab.frontmatter.tags,
+    tools: lab.frontmatter.tools,
+    skills: lab.frontmatter.skills,
+    series: lab.frontmatter.series ?? null,
+    order: lab.frontmatter.order ?? null,
+  }));
+
+  const liveSlugs = posts.map((lab) => lab.slug);
 
   return (
     <article className="min-h-screen relative bg-background z-1">
@@ -51,10 +73,12 @@ export default function LabsPage() {
             / Labs
           </p>
           <h1 className="bold-title mt-1 text-primary">Labs</h1>
-          <p className="mt-4 max-w-[58ch] text-sm leading-loose text-muted-foreground">
-            Self-hosted environments and retired boxes, each taken end to end
-            from recon to root. Every offensive step is paired with the control
-            that stops it, because the fix is the point.
+          <p className="mt-4 max-w-[60ch] text-sm leading-loose text-muted-foreground">
+            A connected set of security labs built on one machine, not a pile of
+            one-off writeups. A shared foundation stands up the environment once;
+            each track then reuses it to go end to end, from recon to root or
+            from attack to alert, with the control that stops it named at every
+            step. The map shows how they fit together.
           </p>
         </header>
 
@@ -63,45 +87,10 @@ export default function LabsPage() {
             First writeup is on its way.
           </p>
         ) : (
-          <ul className="mt-14 grid gap-px overflow-hidden rounded-2xl bg-border/60 sm:grid-cols-2">
-            {labs.map((lab) => {
-              const { title, description, date, platform, difficulty, target } =
-                lab.frontmatter;
-              return (
-                <li key={lab.slug} className="bg-background">
-                  <Link
-                    href={`/security/labs/${lab.slug}`}
-                    className="group flex h-full flex-col gap-3 p-7 transition-colors duration-300 hover:bg-muted/40"
-                  >
-                    <span className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-                      <span className="rounded-full border border-[#be123c]/30 bg-[#be123c]/5 px-2.5 py-0.5 text-[#be123c]">
-                        {platform}
-                      </span>
-                      <span className="rounded-full border border-border/40 px-2.5 py-0.5">
-                        {difficulty}
-                      </span>
-                      <span aria-hidden>·</span>
-                      {formatPostDate(date)}
-                      <span aria-hidden>·</span>
-                      {lab.readingMinutes} min
-                    </span>
-
-                    <span className="text-lg font-semibold leading-snug text-primary underline-offset-4 group-hover:underline">
-                      {title}
-                    </span>
-
-                    <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                      Target: {target}
-                    </span>
-
-                    <span className="max-w-[52ch] text-sm leading-relaxed text-muted-foreground">
-                      {description}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <>
+            <LabMap liveSlugs={liveSlugs} />
+            <LabsExplorer labs={labs} series={[...LAB_SERIES]} />
+          </>
         )}
       </div>
 
