@@ -40,21 +40,10 @@ function LabCard({ lab }: { lab: LabSummary }) {
     <Link
       href={`/security/labs/${lab.slug}`}
       style={accentStyle}
-      className="group flex h-full flex-col transition-colors duration-300 hover:bg-muted/40"
+      className="group relative flex flex-col gap-5 py-7 pr-1 transition-colors duration-300 md:flex-row md:items-start md:gap-8 md:py-8"
     >
-      {lab.cover && (
-        <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-muted">
-          <Image
-            src={lab.cover}
-            alt={lab.coverAlt ?? ""}
-            fill
-            sizes="(max-width: 640px) 100vw, 50vw"
-            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
-          />
-        </div>
-      )}
-
-      <span className="flex flex-1 flex-col gap-3 p-7">
+      {/* Content first in the DOM, so on desktop it reads left of the cover. */}
+      <div className="flex flex-1 flex-col gap-2.5">
         <span className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
           <span className="rounded-full border border-(--post-accent,#be123c)/30 bg-(--post-accent,#be123c)/5 px-2.5 py-0.5 text-(--post-accent,#be123c)">
             {lab.platform}
@@ -67,25 +56,37 @@ function LabCard({ lab }: { lab: LabSummary }) {
           <span aria-hidden>·</span>
           {lab.readingMinutes} min
         </span>
-        <span className="text-lg font-semibold leading-snug text-primary underline-offset-4 group-hover:underline">
+        <h3 className="max-w-[48ch] text-xl font-semibold leading-snug text-primary underline-offset-4 group-hover:underline">
           {lab.title}
-        </span>
+        </h3>
         <span className="text-xs uppercase tracking-widest text-muted-foreground">
           Target: {lab.target}
         </span>
-        <span className="max-w-[52ch] text-sm leading-relaxed text-muted-foreground">
+        <p className="max-w-[68ch] text-sm leading-relaxed text-muted-foreground">
           {lab.description}
-        </span>
-      </span>
+        </p>
+      </div>
+
+      {lab.cover && (
+        <div className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
+          <Image
+            src={lab.cover}
+            alt={lab.coverAlt ?? ""}
+            fill
+            sizes="(max-width: 768px) 100vw, 288px"
+            className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          />
+        </div>
+      )}
     </Link>
   );
 }
 
 function Grid({ labs }: { labs: LabSummary[] }) {
   return (
-    <ul className="grid gap-px overflow-hidden rounded-2xl bg-border/60 sm:grid-cols-2">
+    <ul className="flex flex-col divide-y divide-border/60 border-y border-border/25">
       {labs.map((lab) => (
-        <li key={lab.slug} className="bg-background">
+        <li key={lab.slug}>
           <LabCard lab={lab} />
         </li>
       ))}
@@ -146,6 +147,8 @@ export default function LabsExplorer({
         lab.title,
         lab.description,
         lab.target,
+        lab.platform,
+        lab.difficulty,
         ...lab.tags,
         ...lab.tools,
         ...lab.skills,
@@ -175,10 +178,14 @@ export default function LabsExplorer({
 
   // Unfiltered view: group by series in declared order, ungrouped labs last.
   const grouped = useMemo(() => {
+    // Only series declared in LAB_SERIES get their own section; a lab tagged
+    // with an unknown series still shows up, under "More", rather than
+    // silently disappearing from the page.
+    const knownNames = new Set(series.map((s) => s.name));
     const byName = new Map<string, LabSummary[]>();
     const ungrouped: LabSummary[] = [];
     for (const lab of labs) {
-      if (lab.series) {
+      if (lab.series && knownNames.has(lab.series)) {
         const arr = byName.get(lab.series) ?? [];
         arr.push(lab);
         byName.set(lab.series, arr);
