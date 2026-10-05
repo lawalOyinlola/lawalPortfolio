@@ -31,9 +31,9 @@ This lab runs on the shared environment from the [**Foundation lab**](/security/
 
 - **Ubuntu Server** (ARM64, Virtualize, `192.168.64.3`): this becomes the Wazuh host.
 - **Kali** (ARM64, Virtualize, `192.168.64.2`): the first agent, and the attacker later.
-- **One x86 target** (Emulate, e.g. Metasploitable 2 at `192.168.64.4`): the second agent and the victim.
+- **A monitored endpoint** (a modern 64-bit Ubuntu VM at `192.168.64.4`): the second agent, where Suricata and file-integrity monitoring run, and the victim in the capstone. Metasploitable 2 is too old to run a current Wazuh agent or Suricata, so stand up a fresh Ubuntu here rather than reusing the pentest target.
 
-If you have not built those yet, the full walkthrough with every gotcha is in the [Foundation lab](/security/labs/apple-silicon-lab-foundation). Snapshot the target while it is clean before you start.
+If you have not built those yet, the full walkthrough with every gotcha is in the [Foundation lab](/security/labs/apple-silicon-lab-foundation). Snapshot the endpoint while it is clean before you start.
 
 </details>
 
@@ -47,7 +47,7 @@ The three detection layers you will end up with, and the attack each one catches
 
 | Layer | Watches | Catches |
 |---|---|---|
-| Network (Suricata) | Traffic on the target's interface | Port and version scans |
+| Network (Suricata) | Traffic on the endpoint's interface | Port and version scans |
 | Host (Wazuh agent) | Auth and system logs | SSH brute-force, logins |
 | FIM + VirusTotal | Sensitive directories | Malware written to disk |
 
@@ -77,12 +77,12 @@ The `-a` flag is the all-in-one install. It prints the admin password at the end
 
 ## 2. Deploy the agents
 
-An agent is architecture-specific, so match the package to the host: Kali is ARM64, the x86 target is amd64.
+An agent is architecture-specific, so match the package to each host's architecture: Kali is ARM64, and the Ubuntu endpoint is whatever you built it as.
 
 | Endpoint | Package |
 |---|---|
 | Kali (`192.168.64.2`) | `wazuh-agent` **aarch64** `.deb` |
-| x86 target (`192.168.64.4`) | `wazuh-agent` **amd64** `.deb` |
+| Ubuntu endpoint (`192.168.64.4`) | `wazuh-agent` matching its arch (**amd64** if x86_64, **aarch64** if ARM64) |
 
 On the dashboard, open **Agents → Deploy new agent**, pick the OS and architecture, and set the manager address to `192.168.64.3`. The dashboard generates the exact install command, including the enrolment key. Run it on the endpoint, then enable and start the service:
 
@@ -100,17 +100,18 @@ sudo systemctl start wazuh-agent
 
 > **Kali logs to journald, not `/var/log/auth.log`.** The agent already reads journald by default, so do not add a duplicate localfile block for auth on Kali, or you will double-count events.
 
-**Checkpoint:** Agents page shows Kali and the target as Active, with a recent keep-alive.
+**Checkpoint:** Agents page shows Kali and the endpoint as Active, with a recent keep-alive.
 
 ---
 
 ## 3. Suricata IDS
 
-Suricata gives you the network layer. Install it on the **x86 target** so it sees traffic on the lab network, then feed its events into that host's Wazuh agent.
+Suricata gives you the network layer. Install it on the **Ubuntu endpoint** so it sees traffic on the lab network, then feed its events into that host's Wazuh agent.
 
-**Install from the stable PPA:**
+**Install from the stable PPA.** On a minimal Ubuntu, `add-apt-repository` is not present until you install `software-properties-common`, so add it first:
 
 ```bash
+sudo apt-get install -y software-properties-common
 sudo add-apt-repository ppa:oisf/suricata-stable
 sudo apt-get update
 sudo apt-get install suricata -y
@@ -151,7 +152,7 @@ sudo systemctl restart suricata
 sudo systemctl status suricata
 ```
 
-**Point the agent at Suricata's event log** by adding a localfile block to the target's `/var/ossec/etc/ossec.conf`, inside `<ossec_config>`:
+**Point the agent at Suricata's event log** by adding a localfile block to the endpoint's `/var/ossec/etc/ossec.conf`, inside `<ossec_config>`:
 
 ```xml
 <localfile>
@@ -166,7 +167,7 @@ Restart the agent so it picks up the new log:
 sudo systemctl restart wazuh-agent
 ```
 
-**Checkpoint:** `sudo tail /var/log/suricata/eve.json` shows JSON events, and the Wazuh dashboard starts showing Suricata-sourced alerts under the target agent.
+**Checkpoint:** `sudo tail /var/log/suricata/eve.json` shows JSON events, and the Wazuh dashboard starts showing Suricata-sourced alerts under the endpoint's agent.
 
 ---
 
@@ -176,7 +177,7 @@ This is the layer the pentest lab does not have an equivalent for, and it is the
 
 **Register for a free API key** at virustotal.com and copy your key from your profile. The free tier is rate-limited, which is fine for a lab.
 
-**On the target agent**, watch the directories an attacker writes to. Edit `/var/ossec/etc/ossec.conf`:
+**On the Ubuntu endpoint**, watch the directories an attacker writes to. Edit `/var/ossec/etc/ossec.conf`:
 
 ```xml
 <syscheck>
@@ -238,38 +239,54 @@ This is the layer the pentest lab does not have an equivalent for, and it is the
 </active-response>
 ```
 
-**Create the removal script** at `/var/ossec/active-response/bin/remove-threat.sh`. It reads the alert from stdin, pulls the flagged file path with `jq`, deletes it, and logs what it did:
+That `<location>local</location>` is the detail that trips people up: the response runs on the agent where the alert fired, which is the endpoint where the file actually sits, not on the manager. So the blocks above live on the manager, but the script they name has to be installed on the endpoint. Restart the manager now so it loads the integration, the rules, and the active-response config:
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
+**Create the removal script on the endpoint** at `/var/ossec/active-response/bin/remove-threat.sh`. It reads the alert from stdin and pulls the flagged file path with `jq`. Because it runs as root and the path comes from the alert, it must never delete outside the directories you actually monitor, so it resolves symlinks first and refuses anything outside the watched set:
 
 ```bash
 #!/bin/bash
+# Active response: delete a file VirusTotal confirmed malicious.
+# Runs on the endpoint, as root, so it only ever deletes inside watched dirs.
 LOG_FILE="/var/ossec/logs/active-responses.log"
 read INPUT_JSON
-FILENAME=$(echo "$INPUT_JSON" | jq -r .parameters.alert.data.virustotal.source.file)
 COMMAND=$(echo "$INPUT_JSON" | jq -r .command)
+FILENAME=$(echo "$INPUT_JSON" | jq -r .parameters.alert.data.virustotal.source.file)
 
-if [ "$COMMAND" = "add" ]; then
-  if [ -f "$FILENAME" ]; then
-    rm -f "$FILENAME"
-    echo "$(date) remove-threat: deleted $FILENAME" >> "$LOG_FILE"
-  else
-    echo "$(date) remove-threat: file not found $FILENAME" >> "$LOG_FILE"
-  fi
-fi
+[ "$COMMAND" != "add" ] && exit 0
+
+# Resolve symlinks; bail quietly if the file is already gone
+REAL=$(realpath -e -- "$FILENAME" 2>/dev/null) || {
+  echo "$(date) remove-threat: not found $FILENAME" >> "$LOG_FILE"; exit 0; }
+
+# Only ever delete inside the directories syscheck watches
+case "$REAL" in
+  /root/*|/home/*|/tmp/*|/var/www/*)
+    rm -f -- "$REAL"
+    echo "$(date) remove-threat: OK deleted $REAL" >> "$LOG_FILE" ;;
+  *)
+    echo "$(date) remove-threat: REFUSED path outside allowlist: $REAL" >> "$LOG_FILE" ;;
+esac
 ```
 
-Install `jq`, set ownership and permissions, and restart the manager:
+> **Keep the allowlist in step with syscheck.** The `case` branches must match the directories in your `<syscheck>` block. If they drift apart, a confirmed-malicious file in a watched directory gets flagged and then refused deletion. Change both together.
+
+Install `jq`, set ownership and permissions, and restart the agent so it picks up the script, all **on the endpoint**:
 
 ```bash
 sudo apt-get install jq -y
 sudo chown root:wazuh /var/ossec/active-response/bin/remove-threat.sh
 sudo chmod 750 /var/ossec/active-response/bin/remove-threat.sh
-sudo systemctl restart wazuh-manager
+sudo systemctl restart wazuh-agent
 ```
 
-**Test it with EICAR**, the standard harmless antivirus test string that every engine flags. On the target:
+**Test it with EICAR**, the standard harmless antivirus test string that every engine flags. On the endpoint, drop it into a watched directory. Writing to `/root` needs root, so pipe it through `sudo tee`:
 
 ```bash
-echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /root/eicar.txt
+echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' | sudo tee /root/eicar.txt >/dev/null
 ```
 
 **Watch the chain fire** on the dashboard: FIM detects the new file, the manager sends the hash to VirusTotal, rule 100200 then 100201 fire, and the active response deletes `/root/eicar.txt`. Confirm the deletion and the log:
@@ -279,7 +296,7 @@ cat /var/ossec/logs/active-responses.log
 ls -la /root/eicar.txt   # should be gone
 ```
 
-**Checkpoint:** `active-responses.log` shows a `deleted /root/eicar.txt` line, and the file is gone.
+**Checkpoint:** `active-responses.log` shows an `OK deleted /root/eicar.txt` line, and the file is gone.
 
 The reason this counts as evidence rather than a screenshot of a dashboard is the alert document itself. Expand the VirusTotal alert and you get the fields the verdict was built on: the file path, its MD5 and SHA1, how many engines flagged it, and a permalink back to the VirusTotal report.
 
@@ -302,14 +319,15 @@ On the dashboard, the target agent shows Suricata **ET SCAN** alerts (Nmap servi
 
 **Host layer: SSH brute-force from Kali.** Point Hydra at SSH the way the pentest lab does. On the dashboard, the host layer raises authentication-failure alerts, and a burst of them is the brute-force signature. Two independent layers now describe the same attack: Suricata saw the packets, the agent saw the failed logins.
 
-**FIM + VirusTotal: drop a suspicious file.** Copy the EICAR file from Kali to the target to simulate malware landing on the box after a compromise:
+**FIM + VirusTotal: drop a suspicious file.** Create the EICAR file on Kali, then copy it to the endpoint to simulate malware landing on the box after a compromise:
 
 ```bash
-# From Kali
+# From Kali: make the test file, then copy it into a watched directory
+echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /tmp/eicar.txt
 scp /tmp/eicar.txt user@192.168.64.4:/tmp/
 ```
 
-FIM catches the write, VirusTotal confirms it, and the active response removes it, all without you touching the dashboard. That is the full detect-and-respond loop.
+FIM catches the write, VirusTotal confirms it, and the active response removes it (`/tmp` is in the script's allowlist), all without you touching the dashboard. That is the full detect-and-respond loop.
 
 **Checkpoint:** the dashboard's **Threat Hunting** and **MITRE ATT&CK** views show the scan, the brute-force, and the file event, each mapped to a technique.
 
@@ -334,7 +352,7 @@ FIM catches the write, VirusTotal confirms it, and the active response removes i
 | Suricata will not start | Duplicate `HOME_NET`/`EXTERNAL_NET`, or a rule-path typo | `suricata -T -c ...` to test; delete duplicate keys |
 | No Suricata alerts in Wazuh | Agent not reading `eve.json` | Confirm the localfile block and restart the agent |
 | VirusTotal rules never fire | API key wrong, rate-limited, or syscheck not watching the path | Check the manager logs; confirm the file landed in a watched directory |
-| EICAR file not deleted | Script not executable, wrong owner, or `jq` missing | `chmod 750`, `chown root:wazuh`, install `jq`, restart the manager |
+| EICAR file not deleted | Script not on the endpoint, not executable, wrong owner, or `jq` missing | On the endpoint: `chmod 750`, `chown root:wazuh`, install `jq`, restart the agent |
 
 ---
 
