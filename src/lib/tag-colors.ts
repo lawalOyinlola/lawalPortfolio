@@ -24,6 +24,16 @@ const TAG_COLORS: Record<string, string> = {
   accessibility: "#6d28d9",
   a11y: "#6d28d9",
   linux: "#44403c",
+
+  // Lab discipline tags: team colour carries the real-world association
+  // (red team = red, blue team = blue), posture tags get a neutral pairing
+  // so "offensive"/"defensive" read as a matched set rather than competing
+  // with the team hue on the same card.
+  redteam: "#dc2626",
+  blueteam: "#2563eb",
+  purpleteam: "#9333ea",
+  offensive: "#c2410c",
+  defensive: "#0e7490",
 };
 
 const FALLBACK_PALETTE = [
