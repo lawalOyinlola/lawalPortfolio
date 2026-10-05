@@ -56,6 +56,8 @@ export default function LabsPage() {
     skills: lab.frontmatter.skills,
     series: lab.frontmatter.series ?? null,
     order: lab.frontmatter.order ?? null,
+    cover: lab.frontmatter.cover ?? null,
+    coverAlt: lab.frontmatter.coverAlt ?? null,
   }));
 
   const liveSlugs = posts.map((lab) => lab.slug);
