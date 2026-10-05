@@ -183,7 +183,8 @@ Confirm connectivity after booting two VMs:
 ```bash
 # From Kali
 ip addr show        # note Kali's IP, e.g. 192.168.64.2
-ping 192.168.64.x   # the target's IP; find it with ip addr on the target VM
+TARGET=192.168.64.4 # the target's IP; find it with ip addr on the target VM
+ping "$TARGET"
 ```
 
 **Checkpoint:** you get ping replies. If not, confirm both VMs are set to Shared Network and check each one's actual IP with `ip addr`.
@@ -247,7 +248,7 @@ The environment is now the shared base for every track. You do not need all the 
 
 - [**Pentest track**](/security/labs/building-a-pentest-lab-on-apple-silicon): recon to root against the x86 targets, two independent paths, every offensive step paired with the control that stops it. Uses Kali and the targets. (Published.)
 - [**Detection & SIEM track**](/security/labs/detection-siem-lab): stand up Wazuh on the Ubuntu Server box, ship agent and network logs, and catch the attacks from the pentest track. Adds the server. (Published.)
-- **Phishing bridge**: run a campaign and build the detection for it in one exercise. Uses both. (Planned.)
+- [**Phishing bridge**](/security/labs/phishing-simulation-lab): run a campaign and build the detection for it in one exercise. Uses both. (Published.)
 - **AI-augmented SOC**: layer network inventory, dashboards, and AI triage on top of the detection stack. (Planned.)
 
 Each track guide opens with a short foundation checklist that links back here, so you never lose your place in it.
@@ -262,7 +263,7 @@ Each track guide opens with a short foundation checklist that links back here, s
 | "Display output is not active" on an old guest | No driver for UTM's default display card | Switch the display card to plain VGA |
 | Root filesystem much smaller than the disk | LVM guided-install only claimed part of it | `lvextend -l +100%FREE` then `resize2fs` |
 | VMs cannot ping each other | Mixed or wrong network modes | Put every VM on the same Shared Network |
-| A vulnerable box has internet you did not want | Shared Network is NAT, not air-gapped | Power targets off when idle, or move them to Host Only |
+| A vulnerable box has internet you did not want | Shared Network is NAT, not air-gapped | Power targets off when idle |
 | SSH to an old target is refused | Modern OpenSSH drops legacy algorithms | Add `-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa` |
 | An ARM guest runs slowly | Accidentally created in Emulate mode | Rebuild it as Virtualize |
 
@@ -280,4 +281,4 @@ Each track guide opens with a short foundation checklist that links back here, s
 
 ## Lab status
 
-The foundation environment is built and in daily use across the tracks in this portfolio. The pentest track runs on it today; the detection track is next, and it reuses the Ubuntu Server box set up here rather than standing up anything new.
+The foundation environment is built and in daily use across the tracks in this portfolio. The pentest, detection, and phishing tracks all run on it today, reusing the Ubuntu Server box set up here rather than standing up anything new. The AI-augmented SOC track is next and layers onto the same detection stack.
