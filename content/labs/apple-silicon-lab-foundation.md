@@ -217,11 +217,13 @@ UTM has no built-in snapshot GUI. Two reliable options:
 **Option B, QEMU snapshot (lighter):**
 
 ```bash
-# VM must be stopped
-qemu-img snapshot -c clean-install /path/to/disk.qcow2
+# VM must be stopped for both commands
+qemu-img snapshot -c clean-install /path/to/disk.qcow2   # create
+qemu-img snapshot -a clean-install /path/to/disk.qcow2   # restore (apply)
+qemu-img snapshot -l /path/to/disk.qcow2                 # list snapshots
 ```
 
-**Do this while each box is clean, before any exploitation or configuration changes.** A clean snapshot is what lets you reset a target to a known state between runs.
+**Do this while each box is clean, before any exploitation or configuration changes.** A clean snapshot is what lets you reset a target to a known state: after a run, stop the VM and apply the snapshot with `-a` to roll it back.
 
 ---
 
