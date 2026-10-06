@@ -193,15 +193,17 @@ Three pieces go **on the manager**, and together they make the chain. First, two
 ```xml
 <group name="syscheck,">
 
-  <!-- A file was modified in a watched directory -->
+  <!-- A file was modified in /root -->
   <rule id="100200" level="7">
     <if_sid>550</if_sid>
+    <field name="file">^/root/</field>
     <description>File modified in /root</description>
   </rule>
 
-  <!-- A file was added to a watched directory -->
+  <!-- A file was added to /root -->
   <rule id="100201" level="7">
     <if_sid>554</if_sid>
+    <field name="file">^/root/</field>
     <description>File added to /root</description>
   </rule>
 
@@ -374,7 +376,7 @@ That `REFUSED` line is the blast-radius limit working: even a confirmed-maliciou
 
 This lab is the blue-team counterpart to the [pentest lab](/security/labs/building-a-pentest-lab-on-apple-silicon): the attacks you ran there are the events you detect here. It also sets up the two tracks that build on a working SIEM:
 
-- **Phishing bridge**: run a phishing campaign and write the custom Wazuh rules that detect it, a purple-team exercise that reuses this exact stack. [Build it here](/security/labs/phishing-simulation-lab).
+- **Phishing bridge** (planned): run a phishing campaign and write the custom Wazuh rules that detect it, a purple-team exercise that reuses this exact stack.
 - **AI-augmented SOC** (planned): layer network inventory, Grafana dashboards, and AI-assisted alert triage on top of the detection you built here.
 
 See how the tracks connect on the [interactive labs map](/security/labs).
