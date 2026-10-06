@@ -372,6 +372,35 @@ That `REFUSED` line is the blast-radius limit working: even a confirmed-maliciou
 
 ---
 
+## Appendix: Screenshot checklist
+
+Capture these as you go; the alert-chain and the rings-plus-verdict frames are the portfolio artifacts, and the config shots are what make the write-up evidence rather than assertion. Filenames follow `det-<n>` so a sorted folder reads in lab order.
+
+| Screenshot ID | What it shows | Status |
+|---|---|---|
+| `det-1` | Wazuh dashboard loaded after install, zero agents | <input type="checkbox" data-shot-id="det-1" /> |
+| `det-2` | Agents page: Kali and the endpoint both Active | <input type="checkbox" data-shot-id="det-2" /> |
+| `det-3` | Endpoint: `suricata -V` and `tail eve.json` showing JSON events | <input type="checkbox" data-shot-id="det-3" /> |
+| `det-4` | Dashboard: Suricata alerts under the endpoint agent | <input type="checkbox" data-shot-id="det-4" /> |
+| `det-5` | `/root` realtime `<syscheck>` entry and the `100200`/`100201` rules | <input type="checkbox" data-shot-id="det-5" /> |
+| `det-6` | Manager `ossec.conf`: VirusTotal integration + active-response blocks | <input type="checkbox" data-shot-id="det-6" /> |
+| `det-7` | `remove-threat.sh` on the endpoint (the `/root` guard visible) | <input type="checkbox" data-shot-id="det-7" /> |
+| `det-8` | `active-responses.log` showing `OK deleted /root/eicar.txt` | <input type="checkbox" data-shot-id="det-8" /> |
+| `det-9` | Threat Hunting: the full chain, file added → VirusTotal verdict → file deleted | <input type="checkbox" data-shot-id="det-9" /> |
+| `det-10` | The expanded VirusTotal alert document (file, hashes, positives, permalink) | <input type="checkbox" data-shot-id="det-10" /> |
+| `det-11` | `active-responses.log` showing `REFUSED path outside /root` from the guard test | <input type="checkbox" data-shot-id="det-11" /> |
+| `det-12` | Capstone: Suricata `ET SCAN` alerts from the `nmap` scan | <input type="checkbox" data-shot-id="det-12" /> |
+| `det-13` | Capstone: host-layer authentication-failure alerts from the Hydra brute-force | <input type="checkbox" data-shot-id="det-13" /> |
+| `det-14` | MITRE ATT&CK matrix with the triggered techniques lit | <input type="checkbox" data-shot-id="det-14" /> |
+
+---
+
+## Lab status
+
+The detection stack is built and running end to end: Wazuh manager, indexer, and dashboard on the Ubuntu Server box, agents on Kali and the endpoint, Suricata on the endpoint, and the VirusTotal file-integrity auto-delete verified against EICAR with the `/root` guard confirmed. The phishing bridge and the AI-augmented SOC build on this same SIEM.
+
+---
+
 ## Where this sits
 
 This lab is the blue-team counterpart to the [pentest lab](/security/labs/building-a-pentest-lab-on-apple-silicon): the attacks you ran there are the events you detect here. It also sets up the two tracks that build on a working SIEM:
