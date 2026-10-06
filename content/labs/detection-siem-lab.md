@@ -173,7 +173,7 @@ sudo systemctl restart wazuh-agent
 
 ## 4. VirusTotal file-integrity monitoring
 
-This is the layer the pentest lab does not have an equivalent for, and it is the most satisfying one: the SIEM watches sensitive directories, and when a new file appears it checks the file's hash against VirusTotal and, if enough engines flag it, deletes it automatically.
+This is the layer the pentest lab does not have an equivalent for, and it is the most satisfying one: the SIEM watches sensitive directories, and when a new file appears it checks the file's hash against VirusTotal and, if any engine flags it as malicious, deletes it automatically.
 
 **Register for a free API key** at virustotal.com and copy your key from your profile. The free tier is rate-limited, which is fine for a lab.
 
@@ -186,7 +186,7 @@ This is the layer the pentest lab does not have an equivalent for, and it is the
 </syscheck>
 ```
 
-`realtime="yes"` means a file dropped in `/root` is caught the moment it is written rather than at the next scheduled scan, which is what makes the detect-and-delete feel instant.
+`realtime="yes"` means a file dropped in `/root` is normally caught as it is written rather than waiting for the next scheduled scan, which is what makes the detect-and-delete feel instant. One caveat: Wazuh pauses realtime monitoring while a scheduled FIM scan is running, so a drop during a scan is caught once that scan finishes rather than at the instant it lands.
 
 Three pieces go **on the manager**, and together they make the chain. First, two custom rules in `/var/ossec/etc/rules/local_rules.xml` that fire when a file is added to or modified in `/root`. They build on Wazuh's base FIM rules, where 550 is "file modified" and 554 is "file added":
 
