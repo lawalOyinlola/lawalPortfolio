@@ -109,6 +109,14 @@ uname -m
 
 Expected output is `aarch64`. That confirms you are running native ARM, not emulation.
 
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-c-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="fnd-1" /> <code>fnd-1</code>: Kali VM settings, ARM64 + Virtualize</label></li>
+<li><label><input type="checkbox" data-shot-id="fnd-1b" /> <code>fnd-1b</code>: Kali terminal, `uname -m` shows `aarch64`</label></li>
+</ul>
+</div>
+
 ---
 
 ## 2. The Ubuntu Server VM (ARM64, Virtualize)
@@ -140,6 +148,14 @@ sudo resize2fs /dev/ubuntu-vg/ubuntu-lv
 
 **Checkpoint:** `df -h /` now shows close to the full disk, and `uname -m` reports `aarch64`.
 
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-c-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="fnd-2" /> <code>fnd-2</code>: Ubuntu Server VM settings, ARM64 + Virtualize</label></li>
+<li><label><input type="checkbox" data-shot-id="fnd-2b" /> <code>fnd-2b</code>: Ubuntu Server, `df -h /` after the LVM extend and `uname -m`</label></li>
+</ul>
+</div>
+
 ---
 
 ## 3. Adding x86 target VMs (Emulate)
@@ -163,6 +179,14 @@ Vulnerable boxes ship as x86 disk images. The import workflow is the same for ev
 **If the screen says "Display output is not active":** this is not a hang. Old kernels lack a driver for UTM's default display card. Shut down, go to **Settings → Display**, and switch the card to plain **VGA**.
 
 **Checkpoint:** the target reaches its login banner. It does not need to log in to be useful; many lab targets are attacked over the network only.
+
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-c-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="fnd-3" /> <code>fnd-3</code>: x86 target VM settings, x86_64 + Emulate</label></li>
+<li><label><input type="checkbox" data-shot-id="fnd-3b" /> <code>fnd-3b</code>: x86 target reaching its boot or login banner</label></li>
+</ul>
+</div>
 
 ---
 
@@ -188,6 +212,15 @@ ping "$TARGET"
 ```
 
 **Checkpoint:** you get ping replies. If not, confirm both VMs are set to Shared Network and check each one's actual IP with `ip addr`.
+
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-c-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="fnd-0" /> <code>fnd-0</code>: UTM overview with every lab VM listed</label></li>
+<li><label><input type="checkbox" data-shot-id="fnd-4" /> <code>fnd-4</code>: UTM network settings, Shared Network on every VM</label></li>
+<li><label><input type="checkbox" data-shot-id="fnd-4b" /> <code>fnd-4b</code>: `ip addr` on Kali and a successful `ping` to the target</label></li>
+</ul>
+</div>
 
 ---
 
@@ -225,6 +258,13 @@ qemu-img snapshot -l /path/to/disk.qcow2                 # list snapshots
 ```
 
 **Do this while each box is clean, before any exploitation or configuration changes.** A clean snapshot is what lets you reset a target to a known state: after a run, stop the VM and apply the snapshot with `-a` to roll it back.
+
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-c-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="fnd-5" /> <code>fnd-5</code>: `qemu-img snapshot -c clean …` creating a clean snapshot</label></li>
+</ul>
+</div>
 
 ---
 
@@ -276,6 +316,25 @@ Each track guide opens with a short foundation checklist that links back here, s
 | Kali Linux | Attacker | ARM64 / Virtualize | 192.168.64.2 | 4 GB |
 | Ubuntu Server | SIEM host | ARM64 / Virtualize | 192.168.64.3 | 6 GB |
 | x86 target(s) | Victim | x86_64 / Emulate | 192.168.64.4–.6 | 0.5–1 GB |
+
+---
+
+## Appendix C: Screenshot checklist
+
+Capture these as you go; they are the evidence that the environment is built and the proof you point every track back to. Filenames follow `fnd-<n>` so a sorted folder reads in build order.
+
+| Screenshot ID | What it shows | Status |
+|---|---|---|
+| `fnd-0` | UTM overview with every lab VM listed | <input type="checkbox" data-shot-id="fnd-0" /> |
+| `fnd-1` | Kali VM settings: ARM64 + Virtualize | <input type="checkbox" data-shot-id="fnd-1" /> |
+| `fnd-1b` | Kali terminal: `uname -m` → `aarch64` | <input type="checkbox" data-shot-id="fnd-1b" /> |
+| `fnd-2` | Ubuntu Server VM settings: ARM64 + Virtualize | <input type="checkbox" data-shot-id="fnd-2" /> |
+| `fnd-2b` | Ubuntu Server: `df -h /` after the LVM extend, `uname -m` | <input type="checkbox" data-shot-id="fnd-2b" /> |
+| `fnd-3` | x86 target VM settings: x86_64 + Emulate | <input type="checkbox" data-shot-id="fnd-3" /> |
+| `fnd-3b` | x86 target reaching its boot / login banner | <input type="checkbox" data-shot-id="fnd-3b" /> |
+| `fnd-4` | UTM network settings: Shared Network on every VM | <input type="checkbox" data-shot-id="fnd-4" /> |
+| `fnd-4b` | Connectivity: `ip addr` on Kali + a successful `ping` to the target | <input type="checkbox" data-shot-id="fnd-4b" /> |
+| `fnd-5` | `qemu-img snapshot -c clean …` creating a clean snapshot | <input type="checkbox" data-shot-id="fnd-5" /> |
 
 ---
 

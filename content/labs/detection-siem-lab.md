@@ -71,6 +71,13 @@ The `-a` flag is the all-in-one install. It prints the admin password at the end
 
 **Checkpoint:** the dashboard loads and shows zero agents. That is expected; you add them next.
 
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="det-1" /> <code>det-1</code>: Wazuh dashboard loaded after install, zero agents</label></li>
+</ul>
+</div>
+
 > **If the dashboard is unreachable or read-only later:** the indexer locks itself read-only when its disk fills. Free space, then restart the three services in order (`wazuh-indexer`, `wazuh-manager`, `wazuh-dashboard`). This is the single most common way the stack gets stuck.
 
 ---
@@ -101,6 +108,13 @@ sudo systemctl start wazuh-agent
 > **Kali logs to journald, not `/var/log/auth.log`.** The agent already reads journald by default, so do not add a duplicate localfile block for auth on Kali, or you will double-count events.
 
 **Checkpoint:** Agents page shows Kali and the endpoint as Active, with a recent keep-alive.
+
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="det-2" /> <code>det-2</code>: Agents page, Kali and the endpoint both Active</label></li>
+</ul>
+</div>
 
 ---
 
@@ -168,6 +182,14 @@ sudo systemctl restart wazuh-agent
 ```
 
 **Checkpoint:** `sudo tail /var/log/suricata/eve.json` shows JSON events, and the Wazuh dashboard starts showing Suricata-sourced alerts under the endpoint's agent.
+
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="det-3" /> <code>det-3</code>: `suricata -V` and `tail eve.json` showing JSON events</label></li>
+<li><label><input type="checkbox" data-shot-id="det-4" /> <code>det-4</code>: dashboard showing Suricata alerts under the endpoint agent</label></li>
+</ul>
+</div>
 
 ---
 
@@ -289,6 +311,15 @@ sudo chmod 750 /var/ossec/active-response/bin/remove-threat.sh
 sudo systemctl restart wazuh-agent
 ```
 
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="det-5" /> <code>det-5</code>: the `/root` realtime `<syscheck>` entry and the `100200`/`100201` rules</label></li>
+<li><label><input type="checkbox" data-shot-id="det-6" /> <code>det-6</code>: manager `ossec.conf`, the VirusTotal integration and active-response blocks</label></li>
+<li><label><input type="checkbox" data-shot-id="det-7" /> <code>det-7</code>: `remove-threat.sh` on the endpoint, the `/root` guard visible</label></li>
+</ul>
+</div>
+
 **Test it with EICAR**, the standard harmless antivirus test string that every engine flags. On the endpoint, drop it into a watched directory. Writing to `/root` needs root, so pipe it through `sudo tee`:
 
 ```bash
@@ -304,9 +335,24 @@ ls -la /root/eicar.txt   # should be gone
 
 **Checkpoint:** `active-responses.log` shows an `OK deleted /root/eicar.txt` line, and the file is gone.
 
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="det-8" /> <code>det-8</code>: `active-responses.log` showing `OK deleted /root/eicar.txt`</label></li>
+<li><label><input type="checkbox" data-shot-id="det-9" /> <code>det-9</code>: Threat Hunting, the full chain: file added → VirusTotal verdict → file deleted</label></li>
+</ul>
+</div>
+
 The reason this counts as evidence rather than a screenshot of a dashboard is the alert document itself. Expand the VirusTotal alert and you get the fields the verdict was built on: the file path, its MD5 and SHA1, how many engines flagged it, and a permalink back to the VirusTotal report.
 
 ![The expanded Wazuh alert document for the VirusTotal rule, showing the data.virustotal fields: the flagged file path, its MD5 and SHA1 hashes, a positives count of 64, the total engine count, and a permalink to the VirusTotal report.](/images/labs/detection-siem-lab/virustotal-enrichment.png)
+
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="det-10" /> <code>det-10</code>: the expanded VirusTotal alert document, file, hashes, positives, permalink</label></li>
+</ul>
+</div>
 
 ---
 
@@ -345,7 +391,23 @@ sudo tail -n1 /var/ossec/logs/active-responses.log   # REFUSED path outside /roo
 
 That `REFUSED` line is the blast-radius limit working: even a confirmed-malicious verdict cannot make the script delete outside `/root`. That is the full detect-and-respond loop, with a deliberate cap on what the automated `rm` will touch.
 
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="det-11" /> <code>det-11</code>: `active-responses.log` showing `REFUSED path outside /root` from the guard test</label></li>
+</ul>
+</div>
+
 **Checkpoint:** the dashboard's **Threat Hunting** and **MITRE ATT&CK** views show the scan, the brute-force, and the file event, each mapped to a technique.
+
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="det-12" /> <code>det-12</code>: Suricata `ET SCAN` alerts from the `nmap` scan</label></li>
+<li><label><input type="checkbox" data-shot-id="det-13" /> <code>det-13</code>: host-layer authentication-failure alerts from the Hydra brute-force</label></li>
+<li><label><input type="checkbox" data-shot-id="det-14" /> <code>det-14</code>: MITRE ATT&CK matrix with the triggered techniques lit</label></li>
+</ul>
+</div>
 
 > **Skip the VirusTotal parts** if you did not set up section 4. The scan and brute-force detection still work on their own; the FIM auto-delete is the only piece that needs the integration.
 
@@ -369,6 +431,35 @@ That `REFUSED` line is the blast-radius limit working: even a confirmed-maliciou
 | No Suricata alerts in Wazuh | Agent not reading `eve.json` | Confirm the localfile block and restart the agent |
 | VirusTotal rules never fire | API key wrong, rate-limited, or syscheck not watching the path | Check the manager logs; confirm the file landed in a watched directory |
 | EICAR file not deleted | Script not on the endpoint, not executable, wrong owner, or `jq` missing | On the endpoint: `chmod 750`, `chown root:wazuh`, install `jq`, restart the agent |
+
+---
+
+## Appendix: Screenshot checklist
+
+Capture these as you go; the alert-chain and the rings-plus-verdict frames are the portfolio artifacts, and the config shots are what make the write-up evidence rather than assertion. Filenames follow `det-<n>` so a sorted folder reads in lab order.
+
+| Screenshot ID | What it shows | Status |
+|---|---|---|
+| `det-1` | Wazuh dashboard loaded after install, zero agents | <input type="checkbox" data-shot-id="det-1" /> |
+| `det-2` | Agents page: Kali and the endpoint both Active | <input type="checkbox" data-shot-id="det-2" /> |
+| `det-3` | Endpoint: `suricata -V` and `tail eve.json` showing JSON events | <input type="checkbox" data-shot-id="det-3" /> |
+| `det-4` | Dashboard: Suricata alerts under the endpoint agent | <input type="checkbox" data-shot-id="det-4" /> |
+| `det-5` | `/root` realtime `<syscheck>` entry and the `100200`/`100201` rules | <input type="checkbox" data-shot-id="det-5" /> |
+| `det-6` | Manager `ossec.conf`: VirusTotal integration + active-response blocks | <input type="checkbox" data-shot-id="det-6" /> |
+| `det-7` | `remove-threat.sh` on the endpoint (the `/root` guard visible) | <input type="checkbox" data-shot-id="det-7" /> |
+| `det-8` | `active-responses.log` showing `OK deleted /root/eicar.txt` | <input type="checkbox" data-shot-id="det-8" /> |
+| `det-9` | Threat Hunting: the full chain, file added → VirusTotal verdict → file deleted | <input type="checkbox" data-shot-id="det-9" /> |
+| `det-10` | The expanded VirusTotal alert document (file, hashes, positives, permalink) | <input type="checkbox" data-shot-id="det-10" /> |
+| `det-11` | `active-responses.log` showing `REFUSED path outside /root` from the guard test | <input type="checkbox" data-shot-id="det-11" /> |
+| `det-12` | Capstone: Suricata `ET SCAN` alerts from the `nmap` scan | <input type="checkbox" data-shot-id="det-12" /> |
+| `det-13` | Capstone: host-layer authentication-failure alerts from the Hydra brute-force | <input type="checkbox" data-shot-id="det-13" /> |
+| `det-14` | MITRE ATT&CK matrix with the triggered techniques lit | <input type="checkbox" data-shot-id="det-14" /> |
+
+---
+
+## Lab status
+
+The detection stack is built and running end to end: Wazuh manager, indexer, and dashboard on the Ubuntu Server box, agents on Kali and the endpoint, Suricata on the endpoint, and the VirusTotal file-integrity auto-delete verified against EICAR with the `/root` guard confirmed. The phishing bridge and the AI-augmented SOC build on this same SIEM.
 
 ---
 
