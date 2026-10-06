@@ -31,9 +31,9 @@ This lab runs on the shared environment from the [**Foundation lab**](/security/
 
 - **Ubuntu Server** (ARM64, Virtualize, `192.168.64.3`): this becomes the Wazuh host.
 - **Kali** (ARM64, Virtualize, `192.168.64.2`): the first agent, and the attacker later.
-- **One x86 target** (Emulate, e.g. Metasploitable 2 at `192.168.64.4`): the second agent and the victim.
+- **A monitored endpoint** (a modern 64-bit Ubuntu VM at `192.168.64.4`): the second agent, where Suricata and file-integrity monitoring run, and the victim in the capstone. Metasploitable 2 is too old to run a current Wazuh agent or Suricata, so stand up a fresh Ubuntu here rather than reusing the pentest target.
 
-If you have not built those yet, the full walkthrough with every gotcha is in the [Foundation lab](/security/labs/apple-silicon-lab-foundation). Snapshot the target while it is clean before you start.
+If you have not built those yet, the full walkthrough with every gotcha is in the [Foundation lab](/security/labs/apple-silicon-lab-foundation). Snapshot the endpoint while it is clean before you start.
 
 </details>
 
@@ -47,7 +47,7 @@ The three detection layers you will end up with, and the attack each one catches
 
 | Layer | Watches | Catches |
 |---|---|---|
-| Network (Suricata) | Traffic on the target's interface | Port and version scans |
+| Network (Suricata) | Traffic on the endpoint's interface | Port and version scans |
 | Host (Wazuh agent) | Auth and system logs | SSH brute-force, logins |
 | FIM + VirusTotal | Sensitive directories | Malware written to disk |
 
@@ -77,12 +77,12 @@ The `-a` flag is the all-in-one install. It prints the admin password at the end
 
 ## 2. Deploy the agents
 
-An agent is architecture-specific, so match the package to the host: Kali is ARM64, the x86 target is amd64.
+An agent is architecture-specific, so match the package to each host's architecture: Kali is ARM64, and the Ubuntu endpoint is whatever you built it as.
 
 | Endpoint | Package |
 |---|---|
 | Kali (`192.168.64.2`) | `wazuh-agent` **aarch64** `.deb` |
-| x86 target (`192.168.64.4`) | `wazuh-agent` **amd64** `.deb` |
+| Ubuntu endpoint (`192.168.64.4`) | `wazuh-agent` matching its arch (**amd64** if x86_64, **aarch64** if ARM64) |
 
 On the dashboard, open **Agents → Deploy new agent**, pick the OS and architecture, and set the manager address to `192.168.64.3`. The dashboard generates the exact install command, including the enrolment key. Run it on the endpoint, then enable and start the service:
 
@@ -100,17 +100,18 @@ sudo systemctl start wazuh-agent
 
 > **Kali logs to journald, not `/var/log/auth.log`.** The agent already reads journald by default, so do not add a duplicate localfile block for auth on Kali, or you will double-count events.
 
-**Checkpoint:** Agents page shows Kali and the target as Active, with a recent keep-alive.
+**Checkpoint:** Agents page shows Kali and the endpoint as Active, with a recent keep-alive.
 
 ---
 
 ## 3. Suricata IDS
 
-Suricata gives you the network layer. Install it on the **x86 target** so it sees traffic on the lab network, then feed its events into that host's Wazuh agent.
+Suricata gives you the network layer. Install it on the **Ubuntu endpoint** so it sees traffic on the lab network, then feed its events into that host's Wazuh agent.
 
-**Install from the stable PPA:**
+**Install from the stable PPA.** On a minimal Ubuntu, `add-apt-repository` is not present until you install `software-properties-common`, so add it first:
 
 ```bash
+sudo apt-get install -y software-properties-common
 sudo add-apt-repository ppa:oisf/suricata-stable
 sudo apt-get update
 sudo apt-get install suricata -y
@@ -151,7 +152,7 @@ sudo systemctl restart suricata
 sudo systemctl status suricata
 ```
 
-**Point the agent at Suricata's event log** by adding a localfile block to the target's `/var/ossec/etc/ossec.conf`, inside `<ossec_config>`:
+**Point the agent at Suricata's event log** by adding a localfile block to the endpoint's `/var/ossec/etc/ossec.conf`, inside `<ossec_config>`:
 
 ```xml
 <localfile>
@@ -166,62 +167,61 @@ Restart the agent so it picks up the new log:
 sudo systemctl restart wazuh-agent
 ```
 
-**Checkpoint:** `sudo tail /var/log/suricata/eve.json` shows JSON events, and the Wazuh dashboard starts showing Suricata-sourced alerts under the target agent.
+**Checkpoint:** `sudo tail /var/log/suricata/eve.json` shows JSON events, and the Wazuh dashboard starts showing Suricata-sourced alerts under the endpoint's agent.
 
 ---
 
 ## 4. VirusTotal file-integrity monitoring
 
-This is the layer the pentest lab does not have an equivalent for, and it is the most satisfying one: the SIEM watches sensitive directories, and when a new file appears it checks the file's hash against VirusTotal and, if enough engines flag it, deletes it automatically.
+This is the layer the pentest lab does not have an equivalent for, and it is the most satisfying one: the SIEM watches sensitive directories, and when a new file appears it checks the file's hash against VirusTotal and, if any engine flags it as malicious, deletes it automatically.
 
 **Register for a free API key** at virustotal.com and copy your key from your profile. The free tier is rate-limited, which is fine for a lab.
 
-**On the target agent**, watch the directories an attacker writes to. Edit `/var/ossec/etc/ossec.conf`:
+**On the Ubuntu endpoint**, tell FIM to watch `/root` in real time, the directory the auto-delete will act on. The stock `<syscheck>` block already watches the system directories (`/etc`, `/usr/bin`, `/bin`, and so on); add one line to it in `/var/ossec/etc/ossec.conf`:
 
 ```xml
 <syscheck>
-  <disabled>no</disabled>
-  <frequency>300</frequency>
-  <directories check_all="yes" realtime="yes">/home,/root</directories>
-  <directories check_all="yes" realtime="yes">/tmp</directories>
-  <directories check_all="yes" realtime="yes">/var/www</directories>
+  <!-- ...the stock entries stay as they are... -->
+  <directories realtime="yes">/root</directories>
 </syscheck>
 ```
 
-**On the manager**, wire the VirusTotal integration into `/var/ossec/etc/ossec.conf`:
+`realtime="yes"` means a file dropped in `/root` is normally caught as it is written rather than waiting for the next scheduled scan, which is what makes the detect-and-delete feel instant. One caveat: Wazuh pauses realtime monitoring while a scheduled FIM scan is running, so a drop during a scan is caught once that scan finishes rather than at the instant it lands.
+
+Three pieces go **on the manager**, and together they make the chain. First, two custom rules in `/var/ossec/etc/rules/local_rules.xml` that fire when a file is added to or modified in `/root`. They build on Wazuh's base FIM rules, where 550 is "file modified" and 554 is "file added":
 
 ```xml
-<integration>
-  <name>virustotal</name>
-  <api_key>YOUR_VT_API_KEY</api_key>
-  <group>syscheck</group>
-  <alert_format>json</alert_format>
-</integration>
-```
+<group name="syscheck,">
 
-**Add two custom rules** to `/var/ossec/etc/rules/local_rules.xml`. These build on Wazuh's base VirusTotal alert (rule 87105): the first fires when any engine flags a file, the second escalates when ten or more do and triggers the cleanup.
-
-```xml
-<group name="virustotal,">
-
-  <!-- Any engine flags the file -->
-  <rule id="100200" level="12">
-    <if_sid>87105</if_sid>
-    <field name="virustotal.positives" type="pcre2">\d+</field>
-    <description>VirusTotal: $(virustotal.source.file) flagged by $(virustotal.positives) engine(s)</description>
+  <!-- A file was modified in /root -->
+  <rule id="100200" level="7">
+    <if_sid>550</if_sid>
+    <field name="file">^/root/</field>
+    <description>File modified in /root</description>
   </rule>
 
-  <!-- Ten or more engines: confirmed malicious, trigger removal -->
-  <rule id="100201" level="15">
-    <if_sid>100200</if_sid>
-    <field name="virustotal.positives" type="pcre2">^([1-9]\d|[1-9]\d{2,})$</field>
-    <description>VirusTotal: CONFIRMED MALICIOUS, $(virustotal.positives) engines flagged $(virustotal.source.file)</description>
+  <!-- A file was added to /root -->
+  <rule id="100201" level="7">
+    <if_sid>554</if_sid>
+    <field name="file">^/root/</field>
+    <description>File added to /root</description>
   </rule>
 
 </group>
 ```
 
-**Wire the active response** that deletes the file, also in the manager's `ossec.conf`:
+Next, the VirusTotal integration in `/var/ossec/etc/ossec.conf`, pointed at those two rules with `<rule_id>` so a hash lookup only happens when something lands in `/root`, not on every file event on the box. That keeps you comfortably inside the free tier:
+
+```xml
+<integration>
+  <name>virustotal</name>
+  <api_key>YOUR_VT_API_KEY</api_key>
+  <rule_id>100200,100201</rule_id>
+  <alert_format>json</alert_format>
+</integration>
+```
+
+When VirusTotal returns a malicious verdict, Wazuh's built-in rule **87105** fires. Wire the active response to that rule, also in the manager's `ossec.conf`:
 
 ```xml
 <command>
@@ -231,55 +231,78 @@ This is the layer the pentest lab does not have an equivalent for, and it is the
 </command>
 
 <active-response>
-  <disabled>no</disabled>
   <command>remove-threat</command>
   <location>local</location>
-  <rules_id>100201</rules_id>
+  <rules_id>87105</rules_id>
 </active-response>
 ```
 
-**Create the removal script** at `/var/ossec/active-response/bin/remove-threat.sh`. It reads the alert from stdin, pulls the flagged file path with `jq`, deletes it, and logs what it did:
+So the chain reads top to bottom: a file lands in `/root` (rule 100201), that triggers the VirusTotal lookup, a malicious verdict raises the built-in rule 87105, and 87105 fires the response. Rule 87105 fires on any positive count, so the script deletes on any confirmed-malicious verdict rather than waiting for a threshold. If you want a minimum number of engines before it acts, add your own rule on top of 87105 and point the active response at that instead.
+
+That `<location>local</location>` is the detail that trips people up: the response runs on the agent where the alert fired, which is the endpoint where the file actually sits, not on the manager. So the blocks above live on the manager, but the script they name has to be installed on the endpoint. Restart the manager now so it loads the integration, the rules, and the active-response config:
+
+```bash
+sudo systemctl restart wazuh-manager
+```
+
+**Create the removal script on the endpoint** at `/var/ossec/active-response/bin/remove-threat.sh`. It reads the alert from stdin, pulls the flagged file path with `jq`, and deletes it. Because it runs as root and the path comes from the alert, it refuses to touch anything outside `/root`, and it fails safe if `jq` is missing or the alert has no path:
 
 ```bash
 #!/bin/bash
-LOG_FILE="/var/ossec/logs/active-responses.log"
+# Active response: delete a file VirusTotal confirmed malicious.
+# Runs on the endpoint as root, so it only ever deletes inside /root.
+LOG="/var/ossec/logs/active-responses.log"
 read INPUT_JSON
-FILENAME=$(echo "$INPUT_JSON" | jq -r .parameters.alert.data.virustotal.source.file)
-COMMAND=$(echo "$INPUT_JSON" | jq -r .command)
 
-if [ "$COMMAND" = "add" ]; then
-  if [ -f "$FILENAME" ]; then
-    rm -f "$FILENAME"
-    echo "$(date) remove-threat: deleted $FILENAME" >> "$LOG_FILE"
-  else
-    echo "$(date) remove-threat: file not found $FILENAME" >> "$LOG_FILE"
-  fi
+# jq does the JSON parsing; refuse to run blind if it is missing
+command -v jq >/dev/null 2>&1 || {
+  echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: FAIL jq not installed" >> "$LOG"; exit 1; }
+
+# Pull the flagged file path out of the alert; empty if it is not there
+FILE=$(printf '%s' "$INPUT_JSON" | jq -r '.parameters.alert.data.virustotal.source.file // empty' 2>/dev/null)
+[ -n "$FILE" ] || {
+  echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: FAIL no file path in alert" >> "$LOG"; exit 1; }
+
+# Only ever delete inside /root; refuse anything else and leave it for a human
+case "$FILE" in
+  /root/*) ;;
+  *) echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: REFUSED path outside /root: $FILE" >> "$LOG"; exit 1 ;;
+esac
+
+# Delete, then confirm the file is actually gone before logging success
+if rm -f "$FILE" && [ ! -e "$FILE" ]; then
+  echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: OK deleted $FILE" >> "$LOG"
+else
+  echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: FAIL could not delete $FILE" >> "$LOG"
 fi
+exit 0
 ```
 
-Install `jq`, set ownership and permissions, and restart the manager:
+> **Why the delete is limited to `/root`.** The script runs `rm` as root on a path that came from the alert. Restricting it to `/root`, the one directory you watch in real time for drops, means a malformed or misdirected alert can only ever target files there, never somewhere like `/etc`. Anything else is logged as `REFUSED` and left for a human. If you want to watch and auto-clean another directory, add it to both `<syscheck>` and the `case`, deliberately.
+
+Install `jq`, set ownership and permissions, and restart the agent so it picks up the script, all **on the endpoint**:
 
 ```bash
 sudo apt-get install jq -y
 sudo chown root:wazuh /var/ossec/active-response/bin/remove-threat.sh
 sudo chmod 750 /var/ossec/active-response/bin/remove-threat.sh
-sudo systemctl restart wazuh-manager
+sudo systemctl restart wazuh-agent
 ```
 
-**Test it with EICAR**, the standard harmless antivirus test string that every engine flags. On the target:
+**Test it with EICAR**, the standard harmless antivirus test string that every engine flags. On the endpoint, drop it into a watched directory. Writing to `/root` needs root, so pipe it through `sudo tee`:
 
 ```bash
-echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /root/eicar.txt
+echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' | sudo tee /root/eicar.txt >/dev/null
 ```
 
-**Watch the chain fire** on the dashboard: FIM detects the new file, the manager sends the hash to VirusTotal, rule 100200 then 100201 fire, and the active response deletes `/root/eicar.txt`. Confirm the deletion and the log:
+**Watch the chain fire** on the dashboard: FIM rule 100201 fires (file added to `/root`), that triggers the VirusTotal lookup, the built-in rule 87105 raises the malicious verdict, and the active response deletes `/root/eicar.txt`. Confirm the deletion and the log:
 
 ```bash
 cat /var/ossec/logs/active-responses.log
 ls -la /root/eicar.txt   # should be gone
 ```
 
-**Checkpoint:** `active-responses.log` shows a `deleted /root/eicar.txt` line, and the file is gone.
+**Checkpoint:** `active-responses.log` shows an `OK deleted /root/eicar.txt` line, and the file is gone.
 
 The reason this counts as evidence rather than a screenshot of a dashboard is the alert document itself. Expand the VirusTotal alert and you get the fields the verdict was built on: the file path, its MD5 and SHA1, how many engines flagged it, and a permalink back to the VirusTotal report.
 
@@ -302,14 +325,25 @@ On the dashboard, the target agent shows Suricata **ET SCAN** alerts (Nmap servi
 
 **Host layer: SSH brute-force from Kali.** Point Hydra at SSH the way the pentest lab does. On the dashboard, the host layer raises authentication-failure alerts, and a burst of them is the brute-force signature. Two independent layers now describe the same attack: Suricata saw the packets, the agent saw the failed logins.
 
-**FIM + VirusTotal: drop a suspicious file.** Copy the EICAR file from Kali to the target to simulate malware landing on the box after a compromise:
+**FIM + VirusTotal: drop a suspicious file.** Simulate malware landing on the box after a compromise. The response script only auto-deletes inside `/root`, so a realistic post-compromise drop (an attacker who already has root) goes there. On the endpoint:
 
 ```bash
-# From Kali
-scp /tmp/eicar.txt user@192.168.64.4:/tmp/
+# On the endpoint, as root
+echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' | sudo tee /root/eicar.txt >/dev/null
 ```
 
-FIM catches the write, VirusTotal confirms it, and the active response removes it, all without you touching the dashboard. That is the full detect-and-respond loop.
+FIM catches the write, VirusTotal confirms it, and the response deletes it, logging `OK deleted /root/eicar.txt`, all without you touching the dashboard.
+
+To see the guard itself, feed the script an alert that points outside `/root`. This is a direct test of the active-response script, not a FIM event, because a file in an unwatched directory never reaches VirusTotal in the first place:
+
+```bash
+# On the endpoint: hand the script a crafted alert for a path outside /root
+echo '{"command":"add","parameters":{"alert":{"data":{"virustotal":{"source":{"file":"/tmp/canary"}}}}}}' \
+  | sudo /var/ossec/active-response/bin/remove-threat.sh
+sudo tail -n1 /var/ossec/logs/active-responses.log   # REFUSED path outside /root: /tmp/canary
+```
+
+That `REFUSED` line is the blast-radius limit working: even a confirmed-malicious verdict cannot make the script delete outside `/root`. That is the full detect-and-respond loop, with a deliberate cap on what the automated `rm` will touch.
 
 **Checkpoint:** the dashboard's **Threat Hunting** and **MITRE ATT&CK** views show the scan, the brute-force, and the file event, each mapped to a technique.
 
@@ -334,7 +368,7 @@ FIM catches the write, VirusTotal confirms it, and the active response removes i
 | Suricata will not start | Duplicate `HOME_NET`/`EXTERNAL_NET`, or a rule-path typo | `suricata -T -c ...` to test; delete duplicate keys |
 | No Suricata alerts in Wazuh | Agent not reading `eve.json` | Confirm the localfile block and restart the agent |
 | VirusTotal rules never fire | API key wrong, rate-limited, or syscheck not watching the path | Check the manager logs; confirm the file landed in a watched directory |
-| EICAR file not deleted | Script not executable, wrong owner, or `jq` missing | `chmod 750`, `chown root:wazuh`, install `jq`, restart the manager |
+| EICAR file not deleted | Script not on the endpoint, not executable, wrong owner, or `jq` missing | On the endpoint: `chmod 750`, `chown root:wazuh`, install `jq`, restart the agent |
 
 ---
 

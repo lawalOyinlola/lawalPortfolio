@@ -176,14 +176,15 @@ Every lab VM must be on the same UTM network mode to see the others. Use **Share
 | Bridged | Puts the VM on your real LAN | No, this exposes deliberately vulnerable boxes to your real network |
 | Host Only | Isolates VMs; VM-to-VM access needs a shared host network with manually assigned IPs | Not covered here |
 
-> **"Isolated" means isolated from your LAN, not air-gapped.** Shared Network is NAT: your VMs cannot be reached inbound from your real network, but they *can* reach the internet outbound through the Mac. That path is what Kali and the Ubuntu Server box need for updates and feed syncs, which is why the labs use it. It does mean a vulnerable target has internet while it runs, so power targets off when you are not using them. Fully air-gapping the targets while keeping them reachable from Kali is possible but fiddly here (it needs a shared host network with manually assigned IPs) and is not covered in this guide; for the lab, Shared Network plus powering targets off when idle is the pragmatic balance.
+> **"Isolated" means isolated from your LAN, not air-gapped.** Shared Network is NAT: your VMs cannot be reached inbound from your real network, but they *can* reach the internet outbound through the Mac. That path is what Kali and the Ubuntu Server box need for updates and feed syncs, which is why the labs use it. It does mean a deliberately vulnerable target has outbound internet the whole time it runs, and powering it off only removes that exposure while it is off, not during a session. If you want the target genuinely cut off, do not leave Shared Network as its only interface: put it on a Host Only network and reach it from Kali over a second host-only interface, or add an outbound-deny firewall rule on the target itself. Both are fiddlier and not covered here. For a throwaway box behind NAT that you power off when idle, Shared Network is the pragmatic balance, but treat the internet exposure as real while a session is live.
 
 Confirm connectivity after booting two VMs:
 
 ```bash
 # From Kali
 ip addr show        # note Kali's IP, e.g. 192.168.64.2
-ping 192.168.64.x   # the target's IP; find it with ip addr on the target VM
+TARGET=192.168.64.4 # the target's IP; find it with ip addr on the target VM
+ping "$TARGET"
 ```
 
 **Checkpoint:** you get ping replies. If not, confirm both VMs are set to Shared Network and check each one's actual IP with `ip addr`.
@@ -262,7 +263,7 @@ Each track guide opens with a short foundation checklist that links back here, s
 | "Display output is not active" on an old guest | No driver for UTM's default display card | Switch the display card to plain VGA |
 | Root filesystem much smaller than the disk | LVM guided-install only claimed part of it | `lvextend -l +100%FREE` then `resize2fs` |
 | VMs cannot ping each other | Mixed or wrong network modes | Put every VM on the same Shared Network |
-| A vulnerable box has internet you did not want | Shared Network is NAT, not air-gapped | Power targets off when idle, or move them to Host Only |
+| A vulnerable box has internet you did not want | Shared Network is NAT, not air-gapped | Power targets off when idle |
 | SSH to an old target is refused | Modern OpenSSH drops legacy algorithms | Add `-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa` |
 | An ARM guest runs slowly | Accidentally created in Emulate mode | Rebuild it as Virtualize |
 
@@ -280,4 +281,4 @@ Each track guide opens with a short foundation checklist that links back here, s
 
 ## Lab status
 
-The foundation environment is built and in daily use across the tracks in this portfolio. The pentest track runs on it today; the detection track is next, and it reuses the Ubuntu Server box set up here rather than standing up anything new.
+The foundation environment is built and in daily use across the tracks in this portfolio. The pentest and detection tracks run on it today, reusing the Ubuntu Server box set up here rather than standing up anything new. The phishing bridge and the AI-augmented SOC track are next and layer onto the same detection stack.

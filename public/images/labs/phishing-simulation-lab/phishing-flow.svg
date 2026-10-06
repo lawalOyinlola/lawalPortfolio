@@ -1,0 +1,79 @@
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+
+  <defs>
+    <marker id="red" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#b23b3b"/>
+    </marker>
+    <marker id="grn" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#2e7d46"/>
+    </marker>
+    <marker id="gold" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#c99a2e"/>
+    </marker>
+  </defs>
+
+  <text x="40" y="44" font-size="22" font-weight="700" fill="#1a3c5e">One campaign, both sides of the house</text>
+  <text x="40" y="68" font-size="13.5" fill="#555555">You launch the phish from Kali, click it from a second VM so it crosses the network, and the same click fires a Wazuh alert.</text>
+  <line x1="40" y1="84" x2="920" y2="84" stroke="#c99a2e" stroke-width="2"/>
+
+  <!-- RED band label -->
+  <text x="56" y="120" font-size="12" font-weight="700" fill="#b23b3b" letter-spacing="1">RED · BUILD AND LAUNCH</text>
+
+  <!-- Kali attacker -->
+  <rect x="56" y="134" width="236" height="150" rx="8" fill="none" stroke="#b23b3b" stroke-width="1.6"/>
+  <text x="76" y="162" font-size="16" font-weight="700" fill="#1a3c5e">Kali (ARM64)</text>
+  <text x="76" y="182" font-size="11.5" fill="#555555">192.168.64.2 · attacker</text>
+  <rect x="76" y="196" width="196" height="30" rx="6" fill="none" stroke="#c7a9a9" stroke-width="1.2"/>
+  <text x="86" y="215" font-size="12" fill="#333333">GoPhish  ·  :3333 admin  ·  :8080 phish</text>
+  <rect x="76" y="232" width="196" height="30" rx="6" fill="none" stroke="#c7a9a9" stroke-width="1.2"/>
+  <text x="86" y="251" font-size="12" fill="#333333">MailHog  ·  :8025 fake inbox</text>
+
+  <!-- victim VM -->
+  <text x="372" y="120" font-size="12" font-weight="700" fill="#8a6d1a" letter-spacing="1">VICTIM · THE CLICK</text>
+  <rect x="372" y="134" width="214" height="110" rx="8" fill="none" stroke="#1a3c5e" stroke-width="1.6"/>
+  <text x="392" y="162" font-size="16" font-weight="700" fill="#1a3c5e">Target VM</text>
+  <text x="392" y="182" font-size="11.5" fill="#555555">192.168.64.4 · the victim</text>
+  <text x="392" y="206" font-size="11.5" fill="#555555">Opens the inbox, clicks</text>
+  <text x="392" y="223" font-size="11.5" fill="#555555">the link, submits the form</text>
+
+  <!-- BLUE band label -->
+  <text x="668" y="120" font-size="12" font-weight="700" fill="#2e7d46" letter-spacing="1">BLUE · DETECT</text>
+
+  <!-- Wazuh server -->
+  <rect x="668" y="134" width="236" height="200" rx="8" fill="none" stroke="#2e7d46" stroke-width="1.6"/>
+  <text x="786" y="162" font-size="16" font-weight="700" fill="#1a3c5e" text-anchor="middle">Wazuh server</text>
+  <text x="786" y="180" font-size="11" fill="#555555" text-anchor="middle">192.168.64.3</text>
+  <rect x="688" y="196" width="196" height="30" rx="6" fill="none" stroke="#a9c7b5" stroke-width="1.2"/>
+  <text x="786" y="215" font-size="12" fill="#333333" text-anchor="middle">rule 100300 · page visited</text>
+  <rect x="688" y="232" width="196" height="30" rx="6" fill="none" stroke="#a9c7b5" stroke-width="1.2"/>
+  <text x="786" y="251" font-size="12" fill="#333333" text-anchor="middle">rule 100301 · creds submitted</text>
+  <rect x="688" y="280" width="196" height="34" rx="6" fill="none" stroke="#c99a2e" stroke-width="1.3"/>
+  <text x="786" y="302" font-size="12.5" font-weight="700" fill="#8a6d1a" text-anchor="middle">MITRE ATT&amp;CK  T1566</text>
+
+  <!-- arrow: Kali email -> victim (gold) -->
+  <path d="M292 200 C 330 200, 340 185, 370 182" fill="none" stroke="#c99a2e" stroke-width="2" marker-end="url(#gold)"/>
+  <text x="332" y="166" font-size="11" font-weight="700" fill="#8a6d1a" text-anchor="middle">email</text>
+
+  <!-- arrow: victim click -> Kali phish (red) across network -->
+  <path d="M372 224 C 330 250, 300 250, 292 244" fill="none" stroke="#b23b3b" stroke-width="2" marker-end="url(#red)"/>
+  <text x="330" y="268" font-size="11" font-weight="700" fill="#b23b3b" text-anchor="middle">click → :8080</text>
+
+  <!-- detection sources band -->
+  <text x="372" y="312" font-size="12" font-weight="700" fill="#2e7d46" letter-spacing="1">TWO VIEWS OF THE SAME CLICK</text>
+  <rect x="56" y="330" width="236" height="56" rx="8" fill="none" stroke="#2e7d46" stroke-width="1.4"/>
+  <text x="76" y="353" font-size="13" font-weight="700" fill="#1a3c5e">Host: gophish.log</text>
+  <text x="76" y="372" font-size="11.5" fill="#555555">Wazuh agent on Kali ships it</text>
+
+  <rect x="372" y="330" width="214" height="56" rx="8" fill="none" stroke="#2e7d46" stroke-width="1.4"/>
+  <text x="392" y="353" font-size="13" font-weight="700" fill="#1a3c5e">Network: Suricata</text>
+  <text x="392" y="372" font-size="11.5" fill="#555555">HTTP to :8080 on the wire</text>
+
+  <!-- arrows from both sources into Wazuh -->
+  <path d="M292 356 C 520 356, 560 300, 666 268" fill="none" stroke="#2e7d46" stroke-width="2" marker-end="url(#grn)"/>
+  <path d="M586 356 C 630 356, 650 320, 666 300" fill="none" stroke="#2e7d46" stroke-width="2" marker-end="url(#grn)"/>
+
+  <!-- bottom takeaway -->
+  <line x1="40" y1="418" x2="920" y2="418" stroke="#e3e9f1" stroke-width="1.4"/>
+  <text x="40" y="446" font-size="13" fill="#1a3c5e"><tspan font-weight="700">The purple-team artifact:</tspan> GoPhish's rings fill on the attacker's screen while rules 100300 and 100301 light up the</text>
+  <text x="40" y="466" font-size="13" fill="#1a3c5e">defender's. One exercise, the attack and its detection side by side, both tagged to the same technique.</text>
+</svg>

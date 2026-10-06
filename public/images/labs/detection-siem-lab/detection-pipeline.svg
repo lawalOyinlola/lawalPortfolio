@@ -29,7 +29,7 @@
 
   <!-- x86 target endpoint -->
   <rect x="56" y="306" width="214" height="120" rx="8" fill="#1a3c5e"/>
-  <text x="76" y="334" font-size="16" font-weight="700" fill="#ffffff">x86 target</text>
+  <text x="76" y="334" font-size="16" font-weight="700" fill="#ffffff">Ubuntu endpoint</text>
   <text x="76" y="356" font-size="11.5" fill="#b9c7da">Wazuh agent</text>
   <text x="76" y="374" font-size="11.5" fill="#b9c7da">Suricata IDS</text>
   <text x="76" y="392" font-size="11.5" fill="#b9c7da">FIM watch (/home /tmp /var/www)</text>
