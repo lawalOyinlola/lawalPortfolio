@@ -279,6 +279,25 @@ Each track guide opens with a short foundation checklist that links back here, s
 
 ---
 
+## Appendix C: Screenshot checklist
+
+Capture these as you go; they are the evidence that the environment is built and the proof you point every track back to. Filenames follow `fnd-<n>` so a sorted folder reads in build order.
+
+| Screenshot ID | What it shows | Status |
+|---|---|---|
+| `fnd-0` | UTM overview with every lab VM listed | <input type="checkbox" data-shot-id="fnd-0" /> |
+| `fnd-1` | Kali VM settings: ARM64 + Virtualize | <input type="checkbox" data-shot-id="fnd-1" /> |
+| `fnd-1b` | Kali terminal: `uname -m` → `aarch64` | <input type="checkbox" data-shot-id="fnd-1b" /> |
+| `fnd-2` | Ubuntu Server VM settings: ARM64 + Virtualize | <input type="checkbox" data-shot-id="fnd-2" /> |
+| `fnd-2b` | Ubuntu Server: `df -h /` after the LVM extend, `uname -m` | <input type="checkbox" data-shot-id="fnd-2b" /> |
+| `fnd-3` | x86 target VM settings: x86_64 + Emulate | <input type="checkbox" data-shot-id="fnd-3" /> |
+| `fnd-3b` | x86 target reaching its boot / login banner | <input type="checkbox" data-shot-id="fnd-3b" /> |
+| `fnd-4` | UTM network settings: Shared Network on every VM | <input type="checkbox" data-shot-id="fnd-4" /> |
+| `fnd-4b` | Connectivity: `ip addr` on Kali + a successful `ping` to the target | <input type="checkbox" data-shot-id="fnd-4b" /> |
+| `fnd-5` | `qemu-img snapshot -c clean …` creating a clean snapshot | <input type="checkbox" data-shot-id="fnd-5" /> |
+
+---
+
 ## Lab status
 
 The foundation environment is built and in daily use across the tracks in this portfolio. The pentest and detection tracks run on it today, reusing the Ubuntu Server box set up here rather than standing up anything new. The phishing bridge and the AI-augmented SOC track are next and layer onto the same detection stack.
