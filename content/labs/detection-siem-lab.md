@@ -245,34 +245,40 @@ That `<location>local</location>` is the detail that trips people up: the respon
 sudo systemctl restart wazuh-manager
 ```
 
-**Create the removal script on the endpoint** at `/var/ossec/active-response/bin/remove-threat.sh`. It reads the alert from stdin and pulls the flagged file path with `jq`. Because it runs as root and the path comes from the alert, it must never delete outside the directories you actually monitor, so it resolves symlinks first and refuses anything outside the watched set:
+**Create the removal script on the endpoint** at `/var/ossec/active-response/bin/remove-threat.sh`. It reads the alert from stdin, pulls the flagged file path with `jq`, and deletes it. Because it runs as root and the path comes from the alert, it refuses to touch anything outside `/root`, and it fails safe if `jq` is missing or the alert has no path:
 
 ```bash
 #!/bin/bash
 # Active response: delete a file VirusTotal confirmed malicious.
-# Runs on the endpoint, as root, so it only ever deletes inside watched dirs.
-LOG_FILE="/var/ossec/logs/active-responses.log"
+# Runs on the endpoint as root, so it only ever deletes inside /root.
+LOG="/var/ossec/logs/active-responses.log"
 read INPUT_JSON
-COMMAND=$(echo "$INPUT_JSON" | jq -r .command)
-FILENAME=$(echo "$INPUT_JSON" | jq -r .parameters.alert.data.virustotal.source.file)
 
-[ "$COMMAND" != "add" ] && exit 0
+# jq does the JSON parsing; refuse to run blind if it is missing
+command -v jq >/dev/null 2>&1 || {
+  echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: FAIL jq not installed" >> "$LOG"; exit 1; }
 
-# Resolve symlinks; bail quietly if the file is already gone
-REAL=$(realpath -e -- "$FILENAME" 2>/dev/null) || {
-  echo "$(date) remove-threat: not found $FILENAME" >> "$LOG_FILE"; exit 0; }
+# Pull the flagged file path out of the alert; empty if it is not there
+FILE=$(printf '%s' "$INPUT_JSON" | jq -r '.parameters.alert.data.virustotal.source.file // empty' 2>/dev/null)
+[ -n "$FILE" ] || {
+  echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: FAIL no file path in alert" >> "$LOG"; exit 1; }
 
-# Only ever delete inside the directories syscheck watches
-case "$REAL" in
-  /root/*|/home/*|/tmp/*|/var/www/*)
-    rm -f -- "$REAL"
-    echo "$(date) remove-threat: OK deleted $REAL" >> "$LOG_FILE" ;;
-  *)
-    echo "$(date) remove-threat: REFUSED path outside allowlist: $REAL" >> "$LOG_FILE" ;;
+# Only ever delete inside /root; refuse anything else and leave it for a human
+case "$FILE" in
+  /root/*) ;;
+  *) echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: REFUSED path outside /root: $FILE" >> "$LOG"; exit 1 ;;
 esac
+
+# Delete, then confirm the file is actually gone before logging success
+if rm -f "$FILE" && [ ! -e "$FILE" ]; then
+  echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: OK deleted $FILE" >> "$LOG"
+else
+  echo "$(date '+%Y/%m/%d %H:%M:%S') remove-threat: FAIL could not delete $FILE" >> "$LOG"
+fi
+exit 0
 ```
 
-> **Keep the allowlist in step with syscheck.** The `case` branches must match the directories in your `<syscheck>` block. If they drift apart, a confirmed-malicious file in a watched directory gets flagged and then refused deletion. Change both together.
+> **Why the delete is limited to `/root`.** The script runs `rm` as root on a path that came from the alert, so it refuses anything outside `/root` and logs it as `REFUSED` for a human to handle. The `<syscheck>` block above still watches the other directories and alerts on malware there; the script just will not auto-delete outside the one directory, which keeps a root-level `rm` to the smallest possible blast radius. If you want auto-removal somewhere else, widen the `case` deliberately.
 
 Install `jq`, set ownership and permissions, and restart the agent so it picks up the script, all **on the endpoint**:
 
@@ -319,15 +325,14 @@ On the dashboard, the target agent shows Suricata **ET SCAN** alerts (Nmap servi
 
 **Host layer: SSH brute-force from Kali.** Point Hydra at SSH the way the pentest lab does. On the dashboard, the host layer raises authentication-failure alerts, and a burst of them is the brute-force signature. Two independent layers now describe the same attack: Suricata saw the packets, the agent saw the failed logins.
 
-**FIM + VirusTotal: drop a suspicious file.** Create the EICAR file on Kali, then copy it to the endpoint to simulate malware landing on the box after a compromise:
+**FIM + VirusTotal: drop a suspicious file.** Simulate malware landing on the box after a compromise. The response script only auto-deletes inside `/root`, so a realistic post-compromise drop (an attacker who already has root) goes there. On the endpoint:
 
 ```bash
-# From Kali: make the test file, then copy it into a watched directory
-echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' > /tmp/eicar.txt
-scp /tmp/eicar.txt user@192.168.64.4:/tmp/
+# On the endpoint, as root
+echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' | sudo tee /root/eicar.txt >/dev/null
 ```
 
-FIM catches the write, VirusTotal confirms it, and the active response removes it (`/tmp` is in the script's allowlist), all without you touching the dashboard. That is the full detect-and-respond loop.
+FIM catches the write, VirusTotal confirms it, and the response deletes it, logging `OK deleted /root/eicar.txt`, all without you touching the dashboard. Drop the same file in `/tmp` instead and you see the other half of the design: it is still flagged, but the script logs `REFUSED path outside /root` and leaves it alone. That is the full detect-and-respond loop, with a deliberate limit on what the automated `rm` will touch.
 
 **Checkpoint:** the dashboard's **Threat Hunting** and **MITRE ATT&CK** views show the scan, the brute-force, and the file event, each mapped to a technique.
 
