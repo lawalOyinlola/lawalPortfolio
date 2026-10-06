@@ -177,17 +177,16 @@ This is the layer the pentest lab does not have an equivalent for, and it is the
 
 **Register for a free API key** at virustotal.com and copy your key from your profile. The free tier is rate-limited, which is fine for a lab.
 
-**On the Ubuntu endpoint**, watch the directories an attacker writes to. Edit `/var/ossec/etc/ossec.conf`:
+**On the Ubuntu endpoint**, tell FIM to watch `/root` in real time, the directory the auto-delete will act on. The stock `<syscheck>` block already watches the system directories (`/etc`, `/usr/bin`, `/bin`, and so on); add one line to it in `/var/ossec/etc/ossec.conf`:
 
 ```xml
 <syscheck>
-  <disabled>no</disabled>
-  <frequency>300</frequency>
-  <directories check_all="yes" realtime="yes">/home,/root</directories>
-  <directories check_all="yes" realtime="yes">/tmp</directories>
-  <directories check_all="yes" realtime="yes">/var/www</directories>
+  <!-- ...the stock entries stay as they are... -->
+  <directories realtime="yes">/root</directories>
 </syscheck>
 ```
+
+`realtime="yes"` means a file dropped in `/root` is caught the moment it is written rather than at the next scheduled scan, which is what makes the detect-and-delete feel instant.
 
 **On the manager**, wire the VirusTotal integration into `/var/ossec/etc/ossec.conf`:
 
@@ -278,7 +277,7 @@ fi
 exit 0
 ```
 
-> **Why the delete is limited to `/root`.** The script runs `rm` as root on a path that came from the alert, so it refuses anything outside `/root` and logs it as `REFUSED` for a human to handle. The `<syscheck>` block above still watches the other directories and alerts on malware there; the script just will not auto-delete outside the one directory, which keeps a root-level `rm` to the smallest possible blast radius. If you want auto-removal somewhere else, widen the `case` deliberately.
+> **Why the delete is limited to `/root`.** The script runs `rm` as root on a path that came from the alert. Restricting it to `/root`, the one directory you watch in real time for drops, means a malformed or misdirected alert can only ever target files there, never somewhere like `/etc`. Anything else is logged as `REFUSED` and left for a human. If you want to watch and auto-clean another directory, add it to both `<syscheck>` and the `case`, deliberately.
 
 Install `jq`, set ownership and permissions, and restart the agent so it picks up the script, all **on the endpoint**:
 
@@ -332,7 +331,18 @@ On the dashboard, the target agent shows Suricata **ET SCAN** alerts (Nmap servi
 echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' | sudo tee /root/eicar.txt >/dev/null
 ```
 
-FIM catches the write, VirusTotal confirms it, and the response deletes it, logging `OK deleted /root/eicar.txt`, all without you touching the dashboard. Drop the same file in `/tmp` instead and you see the other half of the design: it is still flagged, but the script logs `REFUSED path outside /root` and leaves it alone. That is the full detect-and-respond loop, with a deliberate limit on what the automated `rm` will touch.
+FIM catches the write, VirusTotal confirms it, and the response deletes it, logging `OK deleted /root/eicar.txt`, all without you touching the dashboard.
+
+To see the guard itself, feed the script an alert that points outside `/root`. This is a direct test of the active-response script, not a FIM event, because a file in an unwatched directory never reaches VirusTotal in the first place:
+
+```bash
+# On the endpoint: hand the script a crafted alert for a path outside /root
+echo '{"command":"add","parameters":{"alert":{"data":{"virustotal":{"source":{"file":"/tmp/canary"}}}}}}' \
+  | sudo /var/ossec/active-response/bin/remove-threat.sh
+sudo tail -n1 /var/ossec/logs/active-responses.log   # REFUSED path outside /root: /tmp/canary
+```
+
+That `REFUSED` line is the blast-radius limit working: even a confirmed-malicious verdict cannot make the script delete outside `/root`. That is the full detect-and-respond loop, with a deliberate cap on what the automated `rm` will touch.
 
 **Checkpoint:** the dashboard's **Threat Hunting** and **MITRE ATT&CK** views show the scan, the brute-force, and the file event, each mapped to a technique.
 
