@@ -15,10 +15,10 @@ skills: [social-engineering, phishing-simulation, detection-engineering, siem, m
 status: own-lab
 series: "Local labs · UTM on Apple Silicon"
 order: 3
-draft: false
+draft: true
 ---
 
-> **⚠️ For authorised, educational use only.** This lab runs entirely against invented targets on an isolated network you own. No email ever leaves your machine, and you never capture a real password. Phishing a real person or organisation without written permission and an agreed scope is a crime, regardless of how harmless the pretext looks. The skill you are practising here is seeing the click; use it only where you have permission in writing.
+> **⚠️ For authorised, educational use only.** This lab runs entirely against invented targets on an isolated network you own. No email ever leaves your machine, and you never capture a real password. Phishing a real person or organisation without written permission and an agreed scope can break criminal or civil law depending on where you are, regardless of how harmless the pretext looks. The skill you are practising here is seeing the click; use it only where you have permission in writing.
 
 The pentest lab showed the attack. The detection lab built the half that catches it. This one does both in a single exercise: you stand up a phishing campaign, launch it, click it from a second machine so the traffic crosses the network, and then watch the same click fire an alert in the SIEM you already built. That red-and-blue span in one sitting is what people mean by purple team.
 
