@@ -188,40 +188,38 @@ This is the layer the pentest lab does not have an equivalent for, and it is the
 
 `realtime="yes"` means a file dropped in `/root` is caught the moment it is written rather than at the next scheduled scan, which is what makes the detect-and-delete feel instant.
 
-**On the manager**, wire the VirusTotal integration into `/var/ossec/etc/ossec.conf`:
+Three pieces go **on the manager**, and together they make the chain. First, two custom rules in `/var/ossec/etc/rules/local_rules.xml` that fire when a file is added to or modified in `/root`. They build on Wazuh's base FIM rules, where 550 is "file modified" and 554 is "file added":
 
 ```xml
-<integration>
-  <name>virustotal</name>
-  <api_key>YOUR_VT_API_KEY</api_key>
-  <group>syscheck</group>
-  <alert_format>json</alert_format>
-</integration>
-```
+<group name="syscheck,">
 
-**Add two custom rules** to `/var/ossec/etc/rules/local_rules.xml`. These build on Wazuh's base VirusTotal alert (rule 87105): the first fires when any engine flags a file, the second escalates when ten or more do and triggers the cleanup.
-
-```xml
-<group name="virustotal,">
-
-  <!-- Any engine flags the file -->
-  <rule id="100200" level="12">
-    <if_sid>87105</if_sid>
-    <field name="virustotal.positives" type="pcre2">\d+</field>
-    <description>VirusTotal: $(virustotal.source.file) flagged by $(virustotal.positives) engine(s)</description>
+  <!-- A file was modified in a watched directory -->
+  <rule id="100200" level="7">
+    <if_sid>550</if_sid>
+    <description>File modified in /root</description>
   </rule>
 
-  <!-- Ten or more engines: confirmed malicious, trigger removal -->
-  <rule id="100201" level="15">
-    <if_sid>100200</if_sid>
-    <field name="virustotal.positives" type="pcre2">^([1-9]\d|[1-9]\d{2,})$</field>
-    <description>VirusTotal: CONFIRMED MALICIOUS, $(virustotal.positives) engines flagged $(virustotal.source.file)</description>
+  <!-- A file was added to a watched directory -->
+  <rule id="100201" level="7">
+    <if_sid>554</if_sid>
+    <description>File added to /root</description>
   </rule>
 
 </group>
 ```
 
-**Wire the active response** that deletes the file, also in the manager's `ossec.conf`:
+Next, the VirusTotal integration in `/var/ossec/etc/ossec.conf`, pointed at those two rules with `<rule_id>` so a hash lookup only happens when something lands in `/root`, not on every file event on the box. That keeps you comfortably inside the free tier:
+
+```xml
+<integration>
+  <name>virustotal</name>
+  <api_key>YOUR_VT_API_KEY</api_key>
+  <rule_id>100200,100201</rule_id>
+  <alert_format>json</alert_format>
+</integration>
+```
+
+When VirusTotal returns a malicious verdict, Wazuh's built-in rule **87105** fires. Wire the active response to that rule, also in the manager's `ossec.conf`:
 
 ```xml
 <command>
@@ -231,12 +229,13 @@ This is the layer the pentest lab does not have an equivalent for, and it is the
 </command>
 
 <active-response>
-  <disabled>no</disabled>
   <command>remove-threat</command>
   <location>local</location>
-  <rules_id>100201</rules_id>
+  <rules_id>87105</rules_id>
 </active-response>
 ```
+
+So the chain reads top to bottom: a file lands in `/root` (rule 100201), that triggers the VirusTotal lookup, a malicious verdict raises the built-in rule 87105, and 87105 fires the response. Rule 87105 fires on any positive count, so the script deletes on any confirmed-malicious verdict rather than waiting for a threshold. If you want a minimum number of engines before it acts, add your own rule on top of 87105 and point the active response at that instead.
 
 That `<location>local</location>` is the detail that trips people up: the response runs on the agent where the alert fired, which is the endpoint where the file actually sits, not on the manager. So the blocks above live on the manager, but the script they name has to be installed on the endpoint. Restart the manager now so it loads the integration, the rules, and the active-response config:
 
@@ -294,7 +293,7 @@ sudo systemctl restart wazuh-agent
 echo 'X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*' | sudo tee /root/eicar.txt >/dev/null
 ```
 
-**Watch the chain fire** on the dashboard: FIM detects the new file, the manager sends the hash to VirusTotal, rule 100200 then 100201 fire, and the active response deletes `/root/eicar.txt`. Confirm the deletion and the log:
+**Watch the chain fire** on the dashboard: FIM rule 100201 fires (file added to `/root`), that triggers the VirusTotal lookup, the built-in rule 87105 raises the malicious verdict, and the active response deletes `/root/eicar.txt`. Confirm the deletion and the log:
 
 ```bash
 cat /var/ossec/logs/active-responses.log
