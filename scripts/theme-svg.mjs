@@ -13,7 +13,9 @@
  *   node scripts/theme-svg.mjs public/images/labs/<lab>/*.svg
  *   node scripts/theme-svg.mjs --check public/images/labs/<lab>/*.svg
  *
- * Kinds: t = text fill, f = shape fill, s = stroke. A colour that is neither
+ * Kinds: t = text fill, f = shape fill, s = stroke, m = arrowhead fill inside a
+ * <marker> (kept apart because a navy arrowhead on the page has to lighten
+ * while a navy box of the same colour does not). A colour that is neither
  * mapped nor deliberately kept is reported and left alone; add it to ROLES
  * (and a matching rule in globals.css) before relying on the diagram in dark
  * mode. Running it twice changes nothing.
@@ -31,25 +33,44 @@ const ROLES = {
     "#8a6d1a": "gold", // text inside a tinted callout
     "#64748b": "slate", // secondary labels
     "#94a3b8": "faint", // legends and footnotes
+    "#333333": "body-strong", // list items on the page or a pale card
+    "#b23b3b": "red", // warnings on the page
+    "#8a2f2f": "red-deep", // text inside a pale red callout
+    "#2e7d46": "green", // section labels on the page
+    "#5a4a2a": "brown", // headings on a pale card
   },
   f: {
     "#f5f2e8": "callout", // pale gold callout panel
     "#fdf2f4": "rose-tint", // pale rose highlight panel
+    "#fbecec": "rose-tint",
+    "#faf7f2": "cream", // pale cards
+    "#faf4e6": "cream",
   },
   s: {
     "#c8d3e0": "line", // outlines and frames
     "#cbd5e1": "line",
+    "#e3e9f1": "line",
     "#2e7d46": "green",
     "#be123c": "rose",
+    "#b23b3b": "red",
+    "#1a3c5e": "ink", // navy arrows and card outlines on the page
+    "#5a4a2a": "brown",
+    "#c7a9a9": "red-soft", // outlines inside a red-themed panel
+    "#a9c7b5": "green-soft", // outlines inside a green-themed panel
+  },
+  m: {
+    "#1a3c5e": "ink",
+    "#2e7d46": "green",
   },
 };
 
 // Colours that read the same on either page, so they are deliberately left
 // unclassed: solid box fills, and the light text that sits on them.
 const KEEP = {
-  t: ["#ffffff", "#d7e0ec", "#b9c7da", "#ece2cc", "#e2d6bb"],
-  f: ["#1a3c5e", "#2e7d46", "#5a4a2a", "#c99a2e", "none"],
-  s: ["#c99a2e", "none"],
+  t: ["#ffffff", "#d7e0ec", "#b9c7da", "#ece2cc", "#e2d6bb", "#f3d6d6", "#9fb0c6", "#c99a2e"],
+  f: ["#1a3c5e", "#2e7d46", "#5a4a2a", "#c99a2e", "#b23b3b", "none"],
+  s: ["#c99a2e", "#3b5a7a", "none"],
+  m: ["#b23b3b", "#c99a2e"],
 };
 
 const TEXT = new Set(["text", "tspan"]);
@@ -86,14 +107,22 @@ for (const file of files) {
   const src = readFileSync(file, "utf8");
   const unmapped = new Set();
 
-  const out = src.replace(/<(\w+)\b[^>]*>/g, (tag, name) => {
+  // Arrowheads are tagged as kind m, so record where each <marker> sits first.
+  const markers = [...src.matchAll(/<marker\b[\s\S]*?<\/marker>/g)].map((m) => [
+    m.index,
+    m.index + m[0].length,
+  ]);
+  const inMarker = (offset) => markers.some(([start, end]) => offset > start && offset < end);
+
+  const out = src.replace(/<(\w+)\b[^>]*>/g, (tag, name, offset) => {
     if (name === "svg") return addClasses(tag, ["dg"]);
     const isText = TEXT.has(name);
     if (!isText && !SHAPES.has(name)) return tag;
 
     const classes = [];
+    const fillKind = isText ? "t" : inMarker(offset) ? "m" : "f";
     for (const [kind, colour] of [
-      [isText ? "t" : "f", attr(tag, "fill")],
+      [fillKind, attr(tag, "fill")],
       ["s", attr(tag, "stroke")],
     ]) {
       if (!colour) continue;
