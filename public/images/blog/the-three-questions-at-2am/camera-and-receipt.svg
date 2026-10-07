@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Avenir Next, Helvetica Neue, Arial, sans-serif">
+  <defs>
+    <marker id="r" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto"><path d="M1 1 L10 6 L1 11" fill="none" stroke="#d9472f" stroke-width="2"/></marker>
+  </defs>
+  <rect width="1600" height="900" fill="#f3eee4"/>
+  <g font-size="30" font-weight="700" fill="#1f2a5a">
+    <text x="80" y="130">a log line: the camera</text>
+    <text x="900" y="130">an event record: the receipt</text>
+  </g>
+  <!-- log box -->
+  <rect x="80" y="200" width="640" height="270" rx="14" fill="none" stroke="#1f2a5a" stroke-width="4"/>
+  <g font-family="Menlo, Courier New, monospace" font-size="24" fill="#1f2a5a" xml:space="preserve">
+    <text x="120" y="275">02:14:07 GET&#160;&#160;&#160;/orders&#160;&#160;&#160;&#160;&#160;200 41ms</text>
+    <text x="120" y="345" fill="#d9472f" font-weight="700">02:14:09 PATCH /users/1187 200 90ms</text>
+    <text x="120" y="415">02:14:11 GET&#160;&#160;&#160;/export&#160;&#160;&#160;&#160;&#160;200 312ms</text>
+  </g>
+  <g font-size="26" fill="#6b6f86">
+    <text x="80" y="530">A request arrived and succeeded.</text>
+    <text x="80" y="566">Nothing about who, or what changed.</text>
+  </g>
+  <line x1="720" y1="335" x2="892" y2="335" stroke="#d9472f" stroke-width="4" marker-end="url(#r)"/>
+  <text x="806" y="300" font-size="22" fill="#d9472f" text-anchor="middle">same moment</text>
+  <!-- receipt -->
+  <path d="M900 170 H1440 V740 l-30 30 l-30 -30 l-30 30 l-30 -30 l-30 30 l-30 -30 l-30 30 l-30 -30 l-30 30 l-30 -30 l-30 30 l-30 -30 l-30 30 l-30 -30 l-30 30 l-30 -30 l-30 30 l-30 -30 Z" fill="#fffdf8" stroke="#1f2a5a" stroke-width="4" stroke-linejoin="round"/>
+  <g font-family="Menlo, Courier New, monospace">
+    <text x="1170" y="230" font-size="28" font-weight="700" fill="#1f2a5a" text-anchor="middle">AUDIT RECORD</text>
+    <line x1="940" y1="255" x2="1400" y2="255" stroke="#1f2a5a" stroke-width="2" stroke-dasharray="6 6"/>
+    <g font-size="20" fill="#6b6f86">
+      <text x="950" y="300">WHEN</text>
+      <text x="950" y="390">WHO</text>
+      <text x="950" y="480">FROM</text>
+      <text x="950" y="570">WHAT CHANGED</text>
+    </g>
+    <g font-size="24" fill="#1f2a5a">
+      <text x="950" y="334">2026-10-07 02:14:09 UTC</text>
+      <text x="950" y="424">account 1187, from session</text>
+      <text x="950" y="514">203.0.113.24</text>
+      <text x="950" y="604">role: viewer → admin</text>
+    </g>
+    <line x1="940" y1="640" x2="1400" y2="640" stroke="#1f2a5a" stroke-width="2" stroke-dasharray="6 6"/>
+    <text x="1170" y="690" font-size="22" fill="#d9472f" font-weight="700" text-anchor="middle">APPEND-ONLY</text>
+  </g>
+  <text x="80" y="840" font-size="26" fill="#6b6f86">The log narrows things down. The record answers what happened, who did it, and when.</text>
+</svg>

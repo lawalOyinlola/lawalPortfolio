@@ -2,9 +2,10 @@
 title: "Ethical hacking is not a toolset, it is a mindset with a permission slip"
 description: "Hacker, ethical hacker and penetration tester are not the same thing, and one of the differences is an invoice versus a criminal record. The mindset, the seven-stage method, and the black, grey and white box styles, laid out plainly."
 date: 2026-09-10
+updated: 2026-10-07
 tags: [cybersecurity, security, appsec, penetrationtesting]
-cover: /images/blog/ethical-hacking-is-not-a-toolset/coverimage.png
-coverAlt: "Same skill set. One difference. The locksmith is invited to test the locks, with permission in writing before anything runs. The burglar breaks in to take something, with no permission and none asked for."
+cover: /images/blog/ethical-hacking-is-not-a-toolset/coverimage.jpg
+coverAlt: "An overhead photo on a mustard-yellow backdrop: an open leather case of lock picks beside a signed and stamped letter with a fountain pen resting on it. Headline: Skill does not make it legal."
 draft: false
 devto_id: 4625357
 devto_url: https://dev.to/lawaloyinlola/ethical-hacking-is-not-a-toolset-it-is-a-mindset-with-a-permission-slip-436a
@@ -21,19 +22,19 @@ Start with the uncomfortable part. An ethical hacker and a criminal have the sam
 
 Take the locksmith and the burglar. Both can open your door. One was invited, tests the lock, and tells you which one is weak. The other takes your television. Skill is neutral. Intent and authorisation are not.
 
-![Same skill set, one difference: permission](/images/blog/ethical-hacking-is-not-a-toolset/hackers-skill-set.png)
+![Same skill set, one difference: permission](/images/blog/ethical-hacking-is-not-a-toolset/hackers-skill-set-v2.png)
 
 ### The three hats
 
 The naming comes from old westerns, where the hero wore white and the villain wore black.
 
-**White hat.** The professional. Works with permission, inside an agreed scope, reports what he finds and helps fix it. This is the locksmith, and this is the target.
+**White hat.** The professional. Works with permission, inside an agreed scope, reports what they find and helps fix it. This is the locksmith, and this is the target.
 
-**Grey hat.** Pokes at systems nobody asked him to touch. Often means well, sometimes even reports the flaw afterwards, and still breaks the law doing it. My honest read on grey hats is less generous than the textbook one: a grey hat to me is simply a black hat caught in the act and in denial. Good intentions discovered after the fact are not the same as permission obtained before it.
+**Grey hat.** Pokes at systems nobody asked them to touch. Often means well, sometimes even reports the flaw afterwards, and still breaks the law doing it. My honest read on grey hats is less generous than the textbook one: a grey hat to me is simply a black hat caught in the act and in denial. Good intentions discovered after the fact are not the same as permission obtained before it.
 
-**Black hat.** The criminal. Not a distant abstraction either. He is over your shoulder while you type, in the bin behind your office, or already sitting on your network, quietly.
+**Black hat.** The criminal. Not a distant abstraction either. They are over your shoulder while you type, in the bin behind your office, or already sitting on your network, quietly.
 
-![The three hats and where each one stands on permission](/images/blog/ethical-hacking-is-not-a-toolset/kinds-of-hackers.png)
+![The three hats and where each one stands on permission](/images/blog/ethical-hacking-is-not-a-toolset/kinds-of-hackers-v2.png)
 
 One correction worth making while we are here. Hackers do not wear hoodies, do not work exclusively at night, and are not defined by a stock photo. The people doing this professionally look like the people doing any other engineering job.
 
@@ -55,7 +56,7 @@ No permission, no test. That is the whole rule, and it is worth more than any to
 
 Skill does not make an action legal. Permission does. The exact same scan, run with the same command, against the same kind of target, is a paid engagement on a client's network and a crime on a stranger's. Nothing about the technique changes. Only the paperwork does.
 
-This applies further than people expect. Not a friend's website because he said it was fine over WhatsApp. Not a company you admire and want to impress. Not a login page you stumbled onto and got curious about. Get it in writing, every time, and keep the writing.
+This applies further than people expect. Not a friend's website because they said it was fine over WhatsApp. Not a company you admire and want to impress. Not a login page you stumbled onto and got curious about. Get it in writing, every time, and keep the writing.
 
 Two ideas carry that rule in practice. The rules of engagement set out what you may test, when you may test it, how far you may go, and who to call when something breaks. The scope is the fence: the exact list of targets you are allowed to touch. Anything outside the fence is off limits even when it looks easy, and especially when it looks easy. Find something new mid engagement and you ask first and wait for a yes. When you are not sure, you stop.
 
@@ -73,13 +74,13 @@ Seven stages, start to finish:
 6. **Covering tracks.** Understand how an attacker would hide the evidence.
 7. **Reporting.** Write down everything, clearly, for the people who have to fix it.
 
-![The seven stages, with the two an attacker never has](/images/blog/ethical-hacking-is-not-a-toolset/hacking-stages.png)
+![The seven stages, with the two an attacker never has](/images/blog/ethical-hacking-is-not-a-toolset/hacking-stages-v2.png)
 
 Look closely at that list and one thing stands out. Stages two through six are exactly what an attacker does. Same sequence, same tools, often the same afternoon. Judge by the middle of the list alone and a penetration test and a breach are indistinguishable.
 
 What actually separates the two is the first stage and the last. The pentester asks permission before, and explains everything after. The attacker does neither. Remove pre-engagement and reporting and you are not doing security work, you are committing an offence with good documentation habits.
 
-Stage six deserves a footnote, because it reads strangely in an ethical context. A real attacker covers his tracks to stay hidden. An ethical hacker studies the technique so he can describe it, then does the opposite: logs every step, records every change, and hands it all over. Anything you altered gets restored. Nothing you found gets hidden.
+Stage six deserves a footnote, because it reads strangely in an ethical context. A real attacker covers their tracks to stay hidden. An ethical hacker studies the technique so they can describe it, then does the opposite: logs every step, records every change, and hands it all over. Anything you altered gets restored. Nothing you found gets hidden.
 
 ## The styles
 
@@ -91,7 +92,7 @@ Before a test starts, both sides agree how much of the map the tester gets. That
 
 **White box.** Everything: network diagrams, credentials, configuration, sometimes the source code. The fastest and most thorough option, and the best value when the goal is coverage rather than theatre.
 
-![Black box, grey box and white box, by how much you are told](/images/blog/ethical-hacking-is-not-a-toolset/how-much-map.png)
+![Black box, grey box and white box, by how much you are told](/images/blog/ethical-hacking-is-not-a-toolset/how-much-map-v2.png)
 
 There is a temptation to treat black box as the serious option because it feels most like a real attack. It is not automatically the better buy. If the goal is to find as many real weaknesses as possible in a fixed number of days, telling the tester more usually finds more.
 

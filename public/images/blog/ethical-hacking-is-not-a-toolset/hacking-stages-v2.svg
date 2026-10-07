@@ -1,0 +1,48 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#ffffff"/>
+<text x="96" y="140" font-size="56" font-weight="700" fill="#1a3c5e" text-anchor="start" >Hacking is not random</text>
+<text x="96" y="188" font-size="26" font-weight="400" fill="#5b6675" text-anchor="start" >Seven stages, each one feeding the next</text>
+<line x1="96" y1="228" x2="1504" y2="228" stroke="#c99a2e" stroke-width="4"/>
+<rect x="96" y="380" width="186" height="170" rx="8" fill="#faf5e8" stroke="#c99a2e" stroke-width="2.5"/>
+<text x="189.0" y="422" font-size="18" font-weight="700" fill="#9a7316" text-anchor="middle" >01</text>
+<text x="189.0" y="462" font-size="23" font-weight="700" fill="#1a3c5e" text-anchor="middle" >Pre-engage</text>
+<text x="189.0" y="500" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >agree the rules,</text>
+<text x="189.0" y="524" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >get it in writing</text>
+<rect x="299" y="380" width="186" height="170" rx="8" fill="#ffffff" stroke="#1a3c5e" stroke-width="2.5"/>
+<text x="392.0" y="422" font-size="18" font-weight="700" fill="#8a94a3" text-anchor="middle" >02</text>
+<text x="392.0" y="462" font-size="23" font-weight="700" fill="#1a3c5e" text-anchor="middle" >Recon</text>
+<text x="392.0" y="500" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >gather info</text>
+<text x="392.0" y="524" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >without touching</text>
+<rect x="502" y="380" width="186" height="170" rx="8" fill="#ffffff" stroke="#1a3c5e" stroke-width="2.5"/>
+<text x="595.0" y="422" font-size="18" font-weight="700" fill="#8a94a3" text-anchor="middle" >03</text>
+<text x="595.0" y="462" font-size="23" font-weight="700" fill="#1a3c5e" text-anchor="middle" >Scan</text>
+<text x="595.0" y="500" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >find the open</text>
+<text x="595.0" y="524" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >doors</text>
+<rect x="705" y="380" width="186" height="170" rx="8" fill="#ffffff" stroke="#1a3c5e" stroke-width="2.5"/>
+<text x="798.0" y="422" font-size="18" font-weight="700" fill="#8a94a3" text-anchor="middle" >04</text>
+<text x="798.0" y="462" font-size="23" font-weight="700" fill="#1a3c5e" text-anchor="middle" >Access</text>
+<text x="798.0" y="500" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >get in</text>
+<rect x="908" y="380" width="186" height="170" rx="8" fill="#ffffff" stroke="#1a3c5e" stroke-width="2.5"/>
+<text x="1001.0" y="422" font-size="18" font-weight="700" fill="#8a94a3" text-anchor="middle" >05</text>
+<text x="1001.0" y="462" font-size="23" font-weight="700" fill="#1a3c5e" text-anchor="middle" >Maintain</text>
+<text x="1001.0" y="500" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >hold the foothold,</text>
+<text x="1001.0" y="524" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >prove impact</text>
+<rect x="1111" y="380" width="186" height="170" rx="8" fill="#ffffff" stroke="#1a3c5e" stroke-width="2.5"/>
+<text x="1204.0" y="422" font-size="18" font-weight="700" fill="#8a94a3" text-anchor="middle" >06</text>
+<text x="1204.0" y="462" font-size="23" font-weight="700" fill="#1a3c5e" text-anchor="middle" >Cover tracks</text>
+<text x="1204.0" y="500" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >understand how</text>
+<text x="1204.0" y="524" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >traces are hidden</text>
+<rect x="1314" y="380" width="186" height="170" rx="8" fill="#faf5e8" stroke="#c99a2e" stroke-width="2.5"/>
+<text x="1407.0" y="422" font-size="18" font-weight="700" fill="#9a7316" text-anchor="middle" >07</text>
+<text x="1407.0" y="462" font-size="23" font-weight="700" fill="#1a3c5e" text-anchor="middle" >Report</text>
+<text x="1407.0" y="500" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >write it all up,</text>
+<text x="1407.0" y="524" font-size="17" font-weight="400" fill="#5b6675" text-anchor="middle" >hand it over</text>
+<path d="M299 352 V334 H1297 V352" fill="none" stroke="#b03a3a" stroke-width="2.5"/>
+<text x="798.0" y="318" font-size="22" font-weight="400" fill="#b03a3a" text-anchor="middle" >the same actions an intruder takes</text>
+<path d="M96 572 V590 H282" fill="none" stroke="#c99a2e" stroke-width="2.5"/><path d="M1314 590 H1500 V572" fill="none" stroke="#c99a2e" stroke-width="2.5"/>
+<text x="800" y="598" font-size="26" font-weight="700" fill="#9a7316" text-anchor="middle" >the two stages an attacker never has</text>
+<text x="96" y="668" font-size="25" font-weight="400" fill="#5b6675" text-anchor="start" >Stages two to six are what an intruder does too. What separates a pentester is asking permission</text>
+<text x="96" y="704" font-size="25" font-weight="400" fill="#5b6675" text-anchor="start" >at the front, and explaining everything at the end.</text>
+<line x1="96" y1="770" x2="1504" y2="770" stroke="#dde2e8" stroke-width="2"/>
+<text x="96" y="815" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >Note on stage six: an attacker hides the evidence. An ethical hacker logs every step and hands it over.</text>
+</svg>

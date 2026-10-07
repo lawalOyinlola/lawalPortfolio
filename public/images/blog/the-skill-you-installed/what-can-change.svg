@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Avenir Next Condensed, Avenir Next, Helvetica Neue, Arial, sans-serif">
+<rect width="1600" height="900" fill="#d9cdb4"/>
+<rect x="160" y="50" width="1280" height="800" fill="#f3ead6" stroke="#8c7b5c" stroke-width="3"/>
+<text x="200" y="125" font-size="32" fill="#2b2620" font-weight="700" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >REFERENCE CHECKLIST</text>
+<text x="200" y="162" font-size="22" fill="#6b5d45" font-weight="400" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >can this change after you reviewed it?</text>
+<line x1="200" y1="182" x2="1400" y2="182" stroke="#2b2620" stroke-width="2"/>
+<line x1="200" y1="188" x2="1400" y2="188" stroke="#2b2620" stroke-width="2"/>
+<text x="200" y="240" font-size="18" fill="#6b5d45" font-weight="700" text-anchor="start" font-family="American Typewriter, Courier New, monospace" letter-spacing="2">REFERENCE</text>
+<text x="1020" y="240" font-size="18" fill="#6b5d45" font-weight="700" text-anchor="middle" font-family="American Typewriter, Courier New, monospace" letter-spacing="2">CAN CHANGE</text>
+<text x="1260" y="240" font-size="18" fill="#6b5d45" font-weight="700" text-anchor="middle" font-family="American Typewriter, Courier New, monospace" letter-spacing="2">STAYS AS REVIEWED</text>
+<text x="200" y="310" font-size="28" fill="#2b2620" font-weight="400" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >a branch, like main</text>
+<rect x="1002" y="280" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<rect x="1242" y="280" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<path d="M1009 287 L1031 309 M1031 287 L1009 309" stroke="#b5442b" stroke-width="5" stroke-linecap="round"/>
+<line x1="200" y1="340" x2="1400" y2="340" stroke="#8c7b5c" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="200" y="390" font-size="28" fill="#2b2620" font-weight="400" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >a version tag, like v1.2</text>
+<rect x="1002" y="360" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<rect x="1242" y="360" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<path d="M1009 367 L1031 389 M1031 367 L1009 389" stroke="#b5442b" stroke-width="5" stroke-linecap="round"/>
+<line x1="200" y1="420" x2="1400" y2="420" stroke="#8c7b5c" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="200" y="470" font-size="28" fill="#2b2620" font-weight="400" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >a bare URL</text>
+<rect x="1002" y="440" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<rect x="1242" y="440" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<path d="M1009 447 L1031 469 M1031 447 L1009 469" stroke="#b5442b" stroke-width="5" stroke-linecap="round"/>
+<line x1="200" y1="500" x2="1400" y2="500" stroke="#2b2620" stroke-width="2"/>
+<text x="200" y="570" font-size="28" fill="#2b2620" font-weight="400" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >a commit hash</text>
+<rect x="1002" y="540" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<rect x="1242" y="540" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<path d="M1248 559 L1257 569 L1275 543" fill="none" stroke="#2f7d4f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="200" y1="600" x2="1400" y2="600" stroke="#8c7b5c" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="200" y="650" font-size="28" fill="#2b2620" font-weight="400" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >a content digest</text>
+<rect x="1002" y="620" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<rect x="1242" y="620" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<path d="M1248 639 L1257 649 L1275 623" fill="none" stroke="#2f7d4f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="200" y1="680" x2="1400" y2="680" stroke="#8c7b5c" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="200" y="730" font-size="28" fill="#2b2620" font-weight="400" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >a vendored copy in your repo</text>
+<rect x="1002" y="700" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<rect x="1242" y="700" width="36" height="36" fill="none" stroke="#2b2620" stroke-width="2.5"/>
+<path d="M1248 719 L1257 729 L1275 703" fill="none" stroke="#2f7d4f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="200" y="810" font-size="22" fill="#6b5d45" font-weight="400" text-anchor="start" font-family="American Typewriter, Courier New, monospace" >Pin what you fetch the way you pin a CI action: by hash, not by name.</text>
+</svg>

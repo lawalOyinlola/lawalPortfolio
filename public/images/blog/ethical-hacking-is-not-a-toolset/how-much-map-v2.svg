@@ -1,0 +1,28 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#ffffff"/>
+<text x="96" y="140" font-size="56" font-weight="700" fill="#1a3c5e" text-anchor="start" >How much of the map do you get?</text>
+<text x="96" y="188" font-size="26" font-weight="400" fill="#5b6675" text-anchor="start" >Agreed before the test starts, and it changes the cost, the pace and the coverage</text>
+<line x1="96" y1="228" x2="1504" y2="228" stroke="#c99a2e" stroke-width="4"/>
+<text x="96" y="300" font-size="36" font-weight="700" fill="#1a3c5e" text-anchor="start" >Black box</text>
+<text x="96" y="336" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >little to no information</text>
+<rect x="500" y="276" width="780" height="20" rx="10" fill="#e3e8ef"/><rect x="500" y="276" width="117.0" height="20" rx="10" fill="#1a3c5e"/>
+<text x="1310" y="293" font-size="20" font-weight="400" fill="#5b6675" text-anchor="start" >most realistic</text>
+<text x="500" y="340" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >Often just a company name or a domain. Closest to a genuine outsider,</text>
+<text x="500" y="372" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >and the slowest, because you pay to discover what the client already knew.</text>
+<line x1="96" y1="418" x2="1504" y2="418" stroke="#dde2e8" stroke-width="2"/>
+<text x="96" y="480" font-size="36" font-weight="700" fill="#1a3c5e" text-anchor="start" >Grey box</text>
+<text x="96" y="516" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >partial information</text>
+<rect x="500" y="456" width="780" height="20" rx="10" fill="#e3e8ef"/><rect x="500" y="456" width="390.0" height="20" rx="10" fill="#1a3c5e"/>
+<text x="1310" y="473" font-size="20" font-weight="400" fill="#5b6675" text-anchor="start" >most common</text>
+<text x="500" y="520" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >Usually a normal user login and a rough idea of the architecture.</text>
+<text x="500" y="552" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >Simulates an attacker who already has a foothold or a stolen credential.</text>
+<line x1="96" y1="598" x2="1504" y2="598" stroke="#dde2e8" stroke-width="2"/>
+<text x="96" y="660" font-size="36" font-weight="700" fill="#1a3c5e" text-anchor="start" >White box</text>
+<text x="96" y="696" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >full information</text>
+<rect x="500" y="636" width="780" height="20" rx="10" fill="#e3e8ef"/><rect x="500" y="636" width="780.0" height="20" rx="10" fill="#1a3c5e"/>
+<text x="1310" y="653" font-size="20" font-weight="400" fill="#5b6675" text-anchor="start" >most thorough</text>
+<text x="500" y="700" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >Diagrams, credentials, configuration, sometimes the source code. Fastest,</text>
+<text x="500" y="732" font-size="21" font-weight="400" fill="#5b6675" text-anchor="start" >and the best value when the goal is coverage rather than theatre.</text>
+<line x1="96" y1="778" x2="1504" y2="778" stroke="#dde2e8" stroke-width="2"/>
+<text x="96" y="850" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >Less information means more realism. More information usually means more findings.</text>
+</svg>

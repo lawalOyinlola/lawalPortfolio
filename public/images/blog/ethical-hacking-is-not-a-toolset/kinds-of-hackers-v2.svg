@@ -1,0 +1,38 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#ffffff"/>
+<text x="96" y="140" font-size="56" font-weight="700" fill="#1a3c5e" text-anchor="start" >Three kinds of hacker</text>
+<text x="96" y="188" font-size="26" font-weight="400" fill="#5b6675" text-anchor="start" >From the old westerns, where the hero wore white and the villain wore black</text>
+<line x1="96" y1="228" x2="1504" y2="228" stroke="#c99a2e" stroke-width="4"/>
+<rect x="96" y="270" width="443" height="460" rx="10" fill="#ffffff" stroke="#1a3c5e" stroke-width="2"/>
+<path d="M96 610 H539 V720 a10 10 0 0 1 -10 10 H106 a10 10 0 0 1 -10 -10 Z" fill="#eef2f7"/>
+<g stroke="#1a3c5e" stroke-width="3.5" stroke-linejoin="round"><path d="M283.5 350 Q287.5 316 317.5 316 Q347.5 316 351.5 350" fill="#ffffff"/><ellipse cx="317.5" cy="352" rx="56" ry="11" fill="#ffffff"/></g>
+<text x="128" y="430" font-size="36" font-weight="700" fill="#1a3c5e" text-anchor="start" >White hat</text>
+<text x="128" y="478" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >The professional. Hired, scoped,</text>
+<text x="128" y="512" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >reports what they find, helps fix it.</text>
+<text x="128" y="546" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >The locksmith.</text>
+<text x="128" y="650" font-size="16" font-weight="400" fill="#5b6675" text-anchor="start" letter-spacing="1.5">PERMISSION</text>
+<text x="128" y="690" font-size="24" font-weight="700" fill="#1a3c5e" text-anchor="start" >In writing, up front</text>
+<rect x="96" y="270" width="443" height="460" rx="10" fill="none" stroke="#1a3c5e" stroke-width="2"/>
+<rect x="579" y="270" width="443" height="460" rx="10" fill="#ffffff" stroke="#1a3c5e" stroke-width="2"/>
+<path d="M579 610 H1022 V720 a10 10 0 0 1 -10 10 H589 a10 10 0 0 1 -10 -10 Z" fill="#faf5e8"/>
+<g stroke="#1a3c5e" stroke-width="3.5" stroke-linejoin="round"><path d="M766.5 350 Q770.5 316 800.5 316 Q830.5 316 834.5 350" fill="#b9c3cf"/><ellipse cx="800.5" cy="352" rx="56" ry="11" fill="#b9c3cf"/></g>
+<text x="611" y="430" font-size="36" font-weight="700" fill="#1a3c5e" text-anchor="start" >Grey hat</text>
+<text x="611" y="478" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >Pokes at systems nobody asked</text>
+<text x="611" y="512" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >them to touch. Often means well,</text>
+<text x="611" y="546" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >still breaks the law.</text>
+<text x="611" y="650" font-size="16" font-weight="400" fill="#5b6675" text-anchor="start" letter-spacing="1.5">PERMISSION</text>
+<text x="611" y="690" font-size="24" font-weight="700" fill="#9a7316" text-anchor="start" >None, claimed after the fact</text>
+<rect x="579" y="270" width="443" height="460" rx="10" fill="none" stroke="#1a3c5e" stroke-width="2"/>
+<rect x="1062" y="270" width="443" height="460" rx="10" fill="#ffffff" stroke="#1a3c5e" stroke-width="2"/>
+<path d="M1062 610 H1505 V720 a10 10 0 0 1 -10 10 H1072 a10 10 0 0 1 -10 -10 Z" fill="#fbefef"/>
+<g stroke="#1a3c5e" stroke-width="3.5" stroke-linejoin="round"><path d="M1249.5 350 Q1253.5 316 1283.5 316 Q1313.5 316 1317.5 350" fill="#1a3c5e"/><ellipse cx="1283.5" cy="352" rx="56" ry="11" fill="#1a3c5e"/></g>
+<text x="1094" y="430" font-size="36" font-weight="700" fill="#1a3c5e" text-anchor="start" >Black hat</text>
+<text x="1094" y="478" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >The criminal. Over your shoulder,</text>
+<text x="1094" y="512" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >in your bin, or already sitting on</text>
+<text x="1094" y="546" font-size="22" font-weight="400" fill="#5b6675" text-anchor="start" >your network.</text>
+<text x="1094" y="650" font-size="16" font-weight="400" fill="#5b6675" text-anchor="start" letter-spacing="1.5">PERMISSION</text>
+<text x="1094" y="690" font-size="24" font-weight="700" fill="#b03a3a" text-anchor="start" >None, and none wanted</text>
+<rect x="1062" y="270" width="443" height="460" rx="10" fill="none" stroke="#1a3c5e" stroke-width="2"/>
+<line x1="96" y1="780" x2="1504" y2="780" stroke="#dde2e8" stroke-width="2"/>
+<text x="96" y="825" font-size="23" font-weight="400" fill="#5b6675" text-anchor="start" >The line between all three is permission. And no, none of them wear hoodies.</text>
+</svg>

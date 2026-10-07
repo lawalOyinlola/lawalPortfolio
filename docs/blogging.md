@@ -114,6 +114,9 @@ cwebp -q 85 -m 6 screenshot.png -o screenshot.webp                      # screen
 Keep the **cover** as `.jpg` or `.png`. It doubles as the social preview
 image, and WebP is unreliable in social scrapers.
 
+What the cover and diagrams should look like, their sizes, and how to change
+them on a published post are in [imagery.md](imagery.md).
+
 ### 3. Check it locally
 
 ```bash

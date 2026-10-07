@@ -1,0 +1,82 @@
+<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <rect width="960" height="540" fill="#151a2b"/>
+
+  <text x="40" y="44" font-size="22" font-weight="700" fill="#f2f1ec">What actually stops each attack class</text>
+  <text x="40" y="68" font-size="13.5" fill="#9aa1b8">Tuned paranoia level 1, production-mode build, engine on versus engine off.</text>
+  <line x1="40" y1="84" x2="920" y2="84" stroke="#f2c230" stroke-width="2"/>
+
+  <!-- legend -->
+  <rect x="600" y="26" width="112" height="24" rx="12" fill="#f2f1ec"/>
+  <text x="656" y="42" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">APPLICATION</text>
+  <rect x="720" y="26" width="52" height="24" rx="12" fill="#f2c230"/>
+  <text x="746" y="42" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">WAF</text>
+  <rect x="780.75" y="26.75" width="98.5" height="22.5" rx="12" fill="none" stroke="#9aa1b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="830" y="42" font-size="11" font-weight="700" fill="#9aa1b8" text-anchor="middle" letter-spacing="0.8">WAF MISSES</text>
+
+  <!-- SQL injection -->
+  <g>
+    <text x="40" y="129" font-size="14.5" font-weight="700" fill="#f2f1ec">SQL injection</text>
+    <rect x="300" y="112" width="132.0" height="24" rx="12" fill="#f2f1ec"/>
+    <text x="366" y="128" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">APPLICATION</text>
+    <rect x="438.0" y="112" width="132.0" height="24" rx="12" fill="#f2c230"/>
+    <text x="504" y="128" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">WAF</text>
+    <text x="590" y="129" font-size="12" fill="#9aa1b8">Input validation rejects all six; WAF blocks four too</text>
+  </g>
+  <line x1="40" y1="147" x2="920" y2="147" stroke="#2e3550" stroke-width="1"/>
+  <!-- Reflected XSS -->
+  <g>
+    <text x="40" y="175" font-size="14.5" font-weight="700" fill="#f2f1ec">Reflected XSS</text>
+    <rect x="300" y="158" width="132.0" height="24" rx="12" fill="#f2f1ec"/>
+    <text x="366" y="174" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">APPLICATION</text>
+    <rect x="438.0" y="158" width="132.0" height="24" rx="12" fill="#f2c230"/>
+    <text x="504" y="174" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">WAF</text>
+    <text x="590" y="175" font-size="12" fill="#9aa1b8">React escapes on render; WAF blocks in transit too</text>
+  </g>
+  <line x1="40" y1="193" x2="920" y2="193" stroke="#2e3550" stroke-width="1"/>
+  <!-- Stored XSS / cmd payloads -->
+  <g>
+    <text x="40" y="221" font-size="14.5" font-weight="700" fill="#f2f1ec">Stored XSS / cmd payloads</text>
+    <rect x="300" y="204" width="132.0" height="24" rx="12" fill="#f2f1ec"/>
+    <text x="366" y="220" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">APP (INERT)</text>
+    <rect x="438.0" y="204" width="132.0" height="24" rx="12" fill="#f2c230"/>
+    <text x="504" y="220" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">WAF</text>
+    <text x="590" y="221" font-size="12" fill="#9aa1b8">Stored as text, no sink; WAF stops it entering</text>
+  </g>
+  <line x1="40" y1="239" x2="920" y2="239" stroke="#2e3550" stroke-width="1"/>
+  <!-- Auth bypass / JWT -->
+  <g>
+    <text x="40" y="267" font-size="14.5" font-weight="700" fill="#f2f1ec">Auth bypass / JWT</text>
+    <rect x="300" y="250" width="132.0" height="24" rx="12" fill="#f2f1ec"/>
+    <text x="366" y="266" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">APPLICATION</text>
+    <rect x="438.75" y="250.75" width="130.5" height="22.5" rx="12" fill="none" stroke="#9aa1b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="504" y="266" font-size="11" font-weight="700" fill="#9aa1b8" text-anchor="middle" letter-spacing="0.8">NO RULE</text>
+    <text x="590" y="267" font-size="12" fill="#9aa1b8">Signature verified; WAF sees well-formed requests</text>
+  </g>
+  <line x1="40" y1="285" x2="920" y2="285" stroke="#2e3550" stroke-width="1"/>
+  <!-- Injection in a URL path -->
+  <g>
+    <text x="40" y="313" font-size="14.5" font-weight="700" fill="#f2f1ec">Injection in a URL path</text>
+    <rect x="300" y="296" width="132.0" height="24" rx="12" fill="#f2f1ec"/>
+    <text x="366" y="312" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">APPLICATION</text>
+    <rect x="438.75" y="296.75" width="130.5" height="22.5" rx="12" fill="none" stroke="#9aa1b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="504" y="312" font-size="11" font-weight="700" fill="#9aa1b8" text-anchor="middle" letter-spacing="0.8">WAF GAP</text>
+    <text x="590" y="313" font-size="12" fill="#9aa1b8">UUID pipe rejects it; rules read args, not paths</text>
+  </g>
+  <line x1="40" y1="331" x2="920" y2="331" stroke="#2e3550" stroke-width="1"/>
+  <!-- IDOR / object-level auth -->
+  <g>
+    <text x="40" y="359" font-size="14.5" font-weight="700" fill="#f2f1ec">IDOR / object-level auth</text>
+    <rect x="300" y="342" width="132.0" height="24" rx="12" fill="#f2f1ec"/>
+    <text x="366" y="358" font-size="11" font-weight="700" fill="#151a2b" text-anchor="middle" letter-spacing="0.8">APPLICATION</text>
+    <rect x="438.75" y="342.75" width="130.5" height="22.5" rx="12" fill="none" stroke="#9aa1b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="504" y="358" font-size="11" font-weight="700" fill="#9aa1b8" text-anchor="middle" letter-spacing="0.8">NO RULE</text>
+    <text x="590" y="359" font-size="12" fill="#9aa1b8">Tenant isolation 404s it; no signature can tell it apart</text>
+  </g>
+
+  <!-- conclusion -->
+  <rect x="40" y="410" width="880" height="96" rx="6" fill="#1e2438" stroke="#2e3550" stroke-width="1"/>
+  <rect x="40" y="410" width="5" height="96" fill="#f2c230"/>
+  <text x="64" y="440" font-size="13.5" font-weight="700" fill="#f2f1ec">Blocked 12 of 26. Five the app had already rejected; seven it stopped before the app's own downstream defences.</text>
+  <text x="64" y="464" font-size="12.5" fill="#9aa1b8">IDOR returned the same 404 with the engine on and off. It was never a pattern-matching problem.</text>
+  <text x="64" y="486" font-size="12.5" fill="#9aa1b8">Injection moved into a URL path slipped past the rules at both paranoia levels; only the UUID pipe stopped it.</text>
+</svg>

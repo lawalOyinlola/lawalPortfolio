@@ -1,0 +1,22 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="900" fill="#ffffff"/>
+<text x="96" y="140" font-size="56" font-weight="700" fill="#1a3c5e" text-anchor="start" >Same skill set. One difference.</text>
+<text x="96" y="188" font-size="26" font-weight="400" fill="#5b6675" text-anchor="start" >Ethical hacking, in a single comparison</text>
+<line x1="96" y1="228" x2="1504" y2="228" stroke="#c99a2e" stroke-width="4"/>
+<rect x="96" y="280" width="680" height="440" rx="10" fill="#f6f8fb" stroke="#1a3c5e" stroke-width="2.5"/>
+<g fill="none" stroke="#1a3c5e" stroke-width="4" stroke-linecap="round"><circle cx="176" cy="370" r="18"/><path d="M194 370 H252 M222 370 V386 M240 370 V386"/></g>
+<text x="156" y="480" font-size="42" font-weight="700" fill="#1a3c5e" text-anchor="start" >The locksmith</text>
+<text x="156" y="535" font-size="25" font-weight="400" fill="#5b6675" text-anchor="start" >Invited to test the locks. Finds the weak</text>
+<text x="156" y="571" font-size="25" font-weight="400" fill="#5b6675" text-anchor="start" >door and tells the owner how to fix it.</text>
+<line x1="156" y1="610" x2="716" y2="610" stroke="#dde2e8" stroke-width="2"/>
+<text x="156" y="665" font-size="25" font-weight="700" fill="#1a3c5e" text-anchor="start" >Permission: in writing, before anything runs</text>
+<rect x="824" y="280" width="680" height="440" rx="10" fill="#fbf4f4" stroke="#b03a3a" stroke-width="2.5"/>
+<g fill="none" stroke="#b03a3a" stroke-width="4" stroke-linecap="round"><rect x="890" y="366" width="56" height="44" rx="6"/><path d="M902 366 V352 a16 16 0 0 1 32 0 V366"/><path d="M882 420 L956 346"/></g>
+<text x="884" y="480" font-size="42" font-weight="700" fill="#1a3c5e" text-anchor="start" >The burglar</text>
+<text x="884" y="535" font-size="25" font-weight="400" fill="#5b6675" text-anchor="start" >Breaks in to take something. Same skills,</text>
+<text x="884" y="571" font-size="25" font-weight="400" fill="#5b6675" text-anchor="start" >used to cause harm. This is the line.</text>
+<line x1="884" y1="610" x2="1444" y2="610" stroke="#dde2e8" stroke-width="2"/>
+<text x="884" y="665" font-size="25" font-weight="700" fill="#b03a3a" text-anchor="start" >Permission: none, and none asked for</text>
+<line x1="96" y1="770" x2="1504" y2="770" stroke="#dde2e8" stroke-width="2"/>
+<text x="96" y="815" font-size="23" font-weight="400" fill="#5b6675" text-anchor="start" >Skill does not make it legal. Permission does. No permission, no test.</text>
+</svg>

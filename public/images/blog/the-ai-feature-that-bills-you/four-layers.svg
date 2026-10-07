@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Avenir Next Condensed, Avenir Next, Helvetica Neue, Arial, sans-serif">
+<rect width="1600" height="900" fill="#e9e6df"/>
+<rect x="60" y="50" width="1480" height="800" fill="#fbfaf6" stroke="#d6d2c8" stroke-width="2"/>
+<rect x="60" y="50" width="1480" height="90" fill="#23262b"/>
+<text x="100" y="108" font-size="32" fill="#fbfaf6" font-weight="700" text-anchor="start" letter-spacing="2">AI ENDPOINT: CONTROLS STATEMENT</text>
+<text x="1500" y="106" font-size="24" fill="#c9c6bd" font-weight="400" text-anchor="end" >in the order a request meets them</text>
+<rect x="60" y="560" width="1480" height="110" fill="#fbefdc"/>
+<text x="100" y="200" font-size="19" fill="#6b6e74" font-weight="600" text-anchor="start" letter-spacing="1.5">#</text>
+<text x="150" y="200" font-size="19" fill="#6b6e74" font-weight="600" text-anchor="start" letter-spacing="1.5">CONTROL</text>
+<text x="450" y="200" font-size="19" fill="#6b6e74" font-weight="600" text-anchor="start" letter-spacing="1.5">WHERE IT LIVES</text>
+<text x="760" y="200" font-size="19" fill="#6b6e74" font-weight="600" text-anchor="start" letter-spacing="1.5">ASKS</text>
+<text x="1130" y="200" font-size="19" fill="#6b6e74" font-weight="600" text-anchor="start" letter-spacing="1.5">STOPS</text>
+<line x1="100" y1="218" x2="1500" y2="218" stroke="#23262b" stroke-width="2"/>
+<text x="100" y="278" font-size="28" fill="#23262b" font-weight="700" text-anchor="start" >1</text>
+<text x="150" y="278" font-size="28" fill="#23262b" font-weight="600" text-anchor="start" >sign-in</text>
+<text x="450" y="278" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >your code</text>
+<text x="760" y="278" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >who is calling?</text>
+<text x="1130" y="278" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >anonymous callers</text>
+<line x1="100" y1="340" x2="1500" y2="340" stroke="#d6d2c8" stroke-width="2"/>
+<text x="100" y="388" font-size="28" fill="#23262b" font-weight="700" text-anchor="start" >2</text>
+<text x="150" y="388" font-size="28" fill="#23262b" font-weight="600" text-anchor="start" >quota</text>
+<text x="450" y="388" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >your code</text>
+<text x="760" y="388" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >requests and</text>
+<text x="760" y="418" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >tokens left?</text>
+<text x="1130" y="388" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >retry loops,</text>
+<text x="1130" y="418" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >long pasted documents</text>
+<line x1="100" y1="450" x2="1500" y2="450" stroke="#d6d2c8" stroke-width="2"/>
+<text x="100" y="498" font-size="28" fill="#23262b" font-weight="700" text-anchor="start" >3</text>
+<text x="150" y="498" font-size="28" fill="#23262b" font-weight="600" text-anchor="start" >size cap</text>
+<text x="450" y="498" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >your code</text>
+<text x="760" y="498" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >is this one call</text>
+<text x="760" y="528" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >too big?</text>
+<text x="1130" y="498" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >one oversized request</text>
+<line x1="100" y1="560" x2="1500" y2="560" stroke="#d6d2c8" stroke-width="2"/>
+<text x="100" y="608" font-size="28" fill="#d97b12" font-weight="700" text-anchor="start" >4</text>
+<text x="150" y="608" font-size="28" fill="#23262b" font-weight="600" text-anchor="start" >spend limit</text>
+<text x="150" y="640" font-size="28" fill="#23262b" font-weight="600" text-anchor="start" >and billing alert</text>
+<text x="450" y="608" font-size="26" fill="#d97b12" font-weight="600" text-anchor="start" >provider account</text>
+<text x="760" y="608" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >is the account</text>
+<text x="760" y="638" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >over its limit?</text>
+<text x="1130" y="608" font-size="24" fill="#23262b" font-weight="400" text-anchor="start" >a bug in 1, 2 or 3</text>
+<line x1="100" y1="684" x2="1500" y2="684" stroke="#23262b" stroke-width="3"/>
+<text x="100" y="740" font-size="22" fill="#23262b" font-weight="700" text-anchor="start" letter-spacing="2">RESULT</text>
+<text x="450" y="740" font-size="28" fill="#23262b" font-weight="600" text-anchor="start" >a known worst case per user, and a known ceiling overall</text>
+<text x="100" y="810" font-size="22" fill="#6b6e74" font-weight="400" text-anchor="start" >1 to 3 live in your code. 4 lives in a billing console, and still holds when your code is wrong.</text>
+</svg>
