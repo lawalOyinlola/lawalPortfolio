@@ -107,6 +107,36 @@ Update it whenever the diagram changes.
 
 ---
 
+## Diagrams that follow the site theme
+
+Lab diagrams have no background, so the page shows through, and their dark
+ink would vanish on a dark page. Instead of a second file, one SVG carries
+classes that the site restyles under `.dark`:
+
+```bash
+node scripts/theme-svg.mjs public/images/labs/<lab>/*.svg          # tag them
+node scripts/theme-svg.mjs --check public/images/labs/<lab>/*.svg  # verify
+```
+
+- The script adds `class="dg"` to the root and a `dg-<kind>-<role>` class
+  (`t` text, `f` fill, `s` stroke) to every element whose colour must change.
+  The original colours stay, so the file is still the light version anywhere
+  CSS cannot reach it: an `<img>`, GitHub, an editor.
+- The markdown renderer inlines any linked SVG whose root has `class="dg"`, so
+  the classes can see the page's `.dark` class. Posts keep linking the file
+  as normal; nothing in the Markdown changes.
+- The dark colours live once, in `globals.css`, shared by every lab. A colour
+  the script does not know is reported and left alone: add it to `ROLES` in
+  the script and a rule in `globals.css`, then run it again.
+- Solid boxes and the light text on them are deliberately left unclassed; they
+  read the same on either page.
+- Converted so far: the Foundation lab. Convert the rest one lab at a time.
+
+Blog diagrams do not need this: each has its own background and is linked as
+a PNG, which dev.to copies.
+
+---
+
 ## Dark and light variants
 
 When a diagram is used outside the blog, for example in a GitHub README that
