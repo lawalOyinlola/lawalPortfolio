@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
@@ -90,6 +92,68 @@ const rehypeWrapTables: Plugin<[], Root> = () => {
   };
 };
 
+const PUBLIC_DIR = path.join(process.cwd(), "public");
+
+function escapeAttr(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+
+/**
+ * Inlines theme-aware diagram SVGs in place of the <img> that links them.
+ *
+ * An SVG loaded through <img> is sealed off from the page, so it cannot see the
+ * .dark class. Inlining lets the dg-* classes that scripts/theme-svg.mjs adds be
+ * restyled from globals.css, while the file itself keeps its light colours for
+ * anywhere it is still linked. Opt-in: only SVGs whose root carries class="dg"
+ * are inlined; every other image is left exactly as it was.
+ *
+ * ids are prefixed per file, because two inlined diagrams on one page would
+ * otherwise share an id namespace and a marker could resolve to the wrong one.
+ * Must run after rehype-raw, so <img> tags written as raw HTML are seen too.
+ */
+const rehypeInlineThemedSvg: Plugin<[], Root> = () => {
+  return (tree: Root) => {
+    // Counts inlined diagrams in this document so each gets a unique id
+    // namespace: the same file embedded twice on one page would otherwise emit
+    // duplicate ids, and a marker could then resolve to the wrong instance.
+    let instance = 0;
+
+    visit(tree, "element", (node, index, parent) => {
+      if (node.tagName !== "img" || !parent || typeof index !== "number") return;
+      const src = node.properties?.src;
+      if (typeof src !== "string" || !src.startsWith("/images/") || !src.endsWith(".svg"))
+        return;
+
+      const file = path.join(PUBLIC_DIR, src);
+      if (!file.startsWith(PUBLIC_DIR + path.sep) || !fs.existsSync(file)) return;
+
+      let svg = fs.readFileSync(file, "utf8").replace(/<\?xml[^>]*>\s*/, "");
+      const rootTag = svg.match(/<svg\b[^>]*>/)?.[0];
+      if (!rootTag || !/\sclass=["'][^"']*\bdg\b/.test(rootTag)) return;
+
+      // Path plus a per-instance counter, and quote-agnostic rewrites, so ids
+      // defined with either quote style are prefixed in step with their refs.
+      const prefix =
+        src.replace(/^\/images\//, "").replace(/\.svg$/, "").replace(/[^a-z0-9]+/gi, "-") +
+        `-${instance++}`;
+      svg = svg
+        .replace(/\sid=(["'])([^"']+)\1/g, (_m, q, id) => ` id=${q}${prefix}-${id}${q}`)
+        .replace(/url\(#([^)]+)\)/g, (_m, id) => `url(#${prefix}-${id})`)
+        .replace(/href=(["'])#([^"']+)\1/g, (_m, q, id) => ` href=${q}#${prefix}-${id}${q}`);
+
+      const alt = typeof node.properties?.alt === "string" ? node.properties.alt : "";
+      const style = typeof node.properties?.style === "string" ? node.properties.style : "";
+      const extra =
+        ` role="img" aria-label="${escapeAttr(alt)}"` +
+        (style ? ` style="${escapeAttr(style)}"` : "");
+      svg = svg.replace(/<svg\b/, `<svg${extra}`);
+
+      parent.children[index] = { type: "raw", value: svg };
+      return SKIP;
+    });
+  };
+};
+
 /** Collects h2/h3 into a table of contents. Must run after rehype-slug. */
 const rehypeCollectHeadings: Plugin<[Heading[]], Root> = (sink) => {
   return (tree: Root) => {
@@ -121,6 +185,7 @@ export async function renderMarkdown(source: string): Promise<RenderedMarkdown> 
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypePreserveCodeMeta)
     .use(rehypeRaw)
+    .use(rehypeInlineThemedSvg)
     .use(rehypeWrapTables)
     .use(rehypeSlug)
     .use(rehypeCollectHeadings, headings)

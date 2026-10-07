@@ -1,12 +1,12 @@
-<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<svg class="dg" viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
 
-  <text x="40" y="46" font-size="22" font-weight="700" fill="#1a3c5e">One environment, two ways to run a machine</text>
-  <text x="40" y="70" font-size="13.5" fill="#555555">UTM virtualises ARM-native guests at full speed and emulates x86 targets faithfully, all on one isolated network.</text>
+  <text class="dg-t-ink" x="40" y="46" font-size="22" font-weight="700" fill="#1a3c5e">One environment, two ways to run a machine</text>
+  <text class="dg-t-body" x="40" y="70" font-size="13.5" fill="#555555">UTM virtualises ARM-native guests at full speed and emulates x86 targets faithfully, all on one isolated network.</text>
   <line x1="40" y1="86" x2="920" y2="86" stroke="#c99a2e" stroke-width="2"/>
 
   <!-- host boundary (outline only, so the page shows through) -->
-  <rect x="40" y="112" width="880" height="300" rx="8" fill="none" stroke="#c8d3e0" stroke-width="1.5"/>
-  <text x="60" y="138" font-size="14.5" font-weight="700" fill="#1a3c5e">macOS host: Apple Silicon Mac (ARM64) · UTM / QEMU</text>
+  <rect class="dg-s-line" x="40" y="112" width="880" height="300" rx="8" fill="none" stroke="#c8d3e0" stroke-width="1.5"/>
+  <text class="dg-t-ink" x="60" y="138" font-size="14.5" font-weight="700" fill="#1a3c5e">macOS host: Apple Silicon Mac (ARM64) · UTM / QEMU</text>
 
   <!-- Kali VM -->
   <rect x="72" y="162" width="256" height="150" rx="6" fill="#1a3c5e"/>
@@ -36,17 +36,17 @@
   <text x="652" y="291" font-size="11.5" fill="#e2d6bb">translated x86 CPU.</text>
 
   <!-- shared network bus (outline only) -->
-  <rect x="72" y="356" width="816" height="38" rx="6" fill="none" stroke="#c8d3e0" stroke-width="1.5"/>
-  <text x="480" y="380" font-size="13" font-weight="700" fill="#1a3c5e" text-anchor="middle">UTM Shared Network · isolated 192.168.64.0/24 (NAT, walled off from your LAN)</text>
+  <rect class="dg-s-line" x="72" y="356" width="816" height="38" rx="6" fill="none" stroke="#c8d3e0" stroke-width="1.5"/>
+  <text class="dg-t-ink" x="480" y="380" font-size="13" font-weight="700" fill="#1a3c5e" text-anchor="middle">UTM Shared Network · isolated 192.168.64.0/24 (NAT, walled off from your LAN)</text>
 
   <!-- connectors -->
-  <line x1="200" y1="312" x2="200" y2="356" stroke="#2e7d46" stroke-width="2.5"/>
-  <line x1="480" y1="312" x2="480" y2="356" stroke="#2e7d46" stroke-width="2.5"/>
+  <line class="dg-s-green" x1="200" y1="312" x2="200" y2="356" stroke="#2e7d46" stroke-width="2.5"/>
+  <line class="dg-s-green" x1="480" y1="312" x2="480" y2="356" stroke="#2e7d46" stroke-width="2.5"/>
   <line x1="760" y1="312" x2="760" y2="356" stroke="#c99a2e" stroke-width="2.5"/>
 
   <!-- key insight callout (a deliberate tinted note, not a background panel) -->
-  <rect x="40" y="430" width="880" height="80" rx="4" fill="#f5f2e8" stroke="#c99a2e" stroke-width="1"/>
-  <text x="60" y="456" font-size="12.5" font-weight="700" fill="#8a6d1a">The rule that governs every VM you add: ARM64 goes Virtualize (fast), x86 goes Emulate (slower, but it boots).</text>
-  <text x="60" y="476" font-size="12.5" fill="#8a6d1a">VirtualBox, Parallels and VMware Fusion only virtualise, so they cannot run an x86 target on ARM at all. UTM</text>
-  <text x="60" y="496" font-size="12.5" fill="#8a6d1a">emulates one for free, which is what lets the whole classic x86 training ecosystem run on an Apple Silicon Mac.</text>
+  <rect class="dg-f-callout" x="40" y="430" width="880" height="80" rx="4" fill="#f5f2e8" stroke="#c99a2e" stroke-width="1"/>
+  <text class="dg-t-gold" x="60" y="456" font-size="12.5" font-weight="700" fill="#8a6d1a">The rule that governs every VM you add: ARM64 goes Virtualize (fast), x86 goes Emulate (slower, but it boots).</text>
+  <text class="dg-t-gold" x="60" y="476" font-size="12.5" fill="#8a6d1a">VirtualBox, Parallels and VMware Fusion only virtualise, so they cannot run an x86 target on ARM at all. UTM</text>
+  <text class="dg-t-gold" x="60" y="496" font-size="12.5" fill="#8a6d1a">emulates one for free, which is what lets the whole classic x86 training ecosystem run on an Apple Silicon Mac.</text>
 </svg>
