@@ -2,10 +2,10 @@
 title: "From zero to tech lead: what the AltSchool year actually taught me"
 description: "No background in tech, a repo that emptied itself two hours before a deadline, and a diploma in frontend engineering at the end of it. The year I spent at AltSchool Africa, and what it led to."
 date: 2025-05-19
-updated: 2026-09-20
+updated: 2026-10-07
 tags: [career, beginners, webdev, frontend]
-cover: "/images/blog/from-zero-to-tech-lead/coverimage.jpg"
-coverAlt: "A timeline titled From zero to tech lead, one year at AltSchool Africa, marking four points: no background, the program, the deadline, and team lead."
+cover: "/images/blog/from-zero-to-tech-lead/coverimage-v2.jpg"
+coverAlt: "A painted illustration of a developer seen from behind, typing on a laptop at a small desk at night under a warm desk lamp, with a wall clock just before the hour. Headline: Start now."
 draft: false
 devto_id: 4702362
 devto_url: https://dev.to/lawaloyinlola/from-zero-to-tech-lead-what-the-altschool-year-actually-taught-me-i8k
