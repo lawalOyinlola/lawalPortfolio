@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Avenir Next Condensed, Avenir Next, Helvetica Neue, Arial, sans-serif">
+<rect width="1600" height="900" fill="#e9e6df"/>
+<rect x="80" y="70" width="680" height="760" fill="#fbfaf6" stroke="#d6d2c8" stroke-width="2"/>
+<rect x="80" y="70" width="680" height="80" fill="#23262b"/>
+<text x="110" y="122" font-size="26" fill="#fbfaf6" font-weight="700" text-anchor="start" letter-spacing="1.5">QUOTA CHECKED AFTER THE CALL</text>
+<text x="110" y="205" font-size="18" fill="#6b6e74" font-weight="600" text-anchor="start" letter-spacing="1.5">STEP</text>
+<text x="730" y="205" font-size="18" fill="#6b6e74" font-weight="600" text-anchor="end" letter-spacing="1.5">BILLED</text>
+<line x1="110" y1="220" x2="730" y2="220" stroke="#23262b" stroke-width="2"/>
+<text x="110" y="275" font-size="26" fill="#6b6e74" font-weight="600" text-anchor="start" >1</text>
+<text x="155" y="275" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >request arrives</text>
+<text x="730" y="275" font-size="26" fill="#6b6e74" font-weight="400" text-anchor="end" >no</text>
+<line x1="110" y1="300" x2="730" y2="300" stroke="#d6d2c8" stroke-width="2"/>
+<text x="110" y="345" font-size="26" fill="#6b6e74" font-weight="600" text-anchor="start" >2</text>
+<text x="155" y="345" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >model is called</text>
+<text x="730" y="345" font-size="26" fill="#d97b12" font-weight="700" text-anchor="end" >YES</text>
+<line x1="110" y1="370" x2="730" y2="370" stroke="#d6d2c8" stroke-width="2"/>
+<text x="110" y="415" font-size="26" fill="#6b6e74" font-weight="600" text-anchor="start" >3</text>
+<text x="155" y="415" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >quota check: over</text>
+<text x="730" y="415" font-size="26" fill="#6b6e74" font-weight="400" text-anchor="end" >no</text>
+<line x1="110" y1="440" x2="730" y2="440" stroke="#d6d2c8" stroke-width="2"/>
+<text x="110" y="485" font-size="26" fill="#6b6e74" font-weight="600" text-anchor="start" >4</text>
+<text x="155" y="485" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >refusal shown to the user</text>
+<text x="730" y="485" font-size="26" fill="#6b6e74" font-weight="400" text-anchor="end" >no</text>
+<line x1="110" y1="540" x2="730" y2="540" stroke="#23262b" stroke-width="3"/>
+<text x="110" y="595" font-size="20" fill="#23262b" font-weight="700" text-anchor="start" letter-spacing="1.5">BILLED FOR THIS REJECTION</text>
+<text x="110" y="680" font-size="64" fill="#d97b12" font-weight="700" text-anchor="start" >every time</text>
+<text x="110" y="770" font-size="22" fill="#6b6e74" font-weight="400" text-anchor="start" >The user sees a refusal. Your metrics look right.</text>
+<rect x="840" y="70" width="680" height="760" fill="#fbfaf6" stroke="#d6d2c8" stroke-width="2"/>
+<rect x="840" y="70" width="680" height="80" fill="#23262b"/>
+<text x="870" y="122" font-size="26" fill="#fbfaf6" font-weight="700" text-anchor="start" letter-spacing="1.5">QUOTA CHECKED BEFORE THE CALL</text>
+<text x="870" y="205" font-size="18" fill="#6b6e74" font-weight="600" text-anchor="start" letter-spacing="1.5">STEP</text>
+<text x="1490" y="205" font-size="18" fill="#6b6e74" font-weight="600" text-anchor="end" letter-spacing="1.5">BILLED</text>
+<line x1="870" y1="220" x2="1490" y2="220" stroke="#23262b" stroke-width="2"/>
+<text x="870" y="275" font-size="26" fill="#6b6e74" font-weight="600" text-anchor="start" >1</text>
+<text x="915" y="275" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >request arrives</text>
+<text x="1490" y="275" font-size="26" fill="#6b6e74" font-weight="400" text-anchor="end" >no</text>
+<line x1="870" y1="300" x2="1490" y2="300" stroke="#d6d2c8" stroke-width="2"/>
+<text x="870" y="345" font-size="26" fill="#6b6e74" font-weight="600" text-anchor="start" >2</text>
+<text x="915" y="345" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >quota check: over</text>
+<text x="1490" y="345" font-size="26" fill="#6b6e74" font-weight="400" text-anchor="end" >no</text>
+<line x1="870" y1="370" x2="1490" y2="370" stroke="#d6d2c8" stroke-width="2"/>
+<text x="870" y="415" font-size="26" fill="#6b6e74" font-weight="600" text-anchor="start" >3</text>
+<text x="915" y="415" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >request rejected</text>
+<text x="1490" y="415" font-size="26" fill="#6b6e74" font-weight="400" text-anchor="end" >no</text>
+<line x1="870" y1="440" x2="1490" y2="440" stroke="#d6d2c8" stroke-width="2"/>
+<text x="870" y="485" font-size="26" fill="#6b6e74" font-weight="600" text-anchor="start" >4</text>
+<text x="915" y="485" font-size="26" fill="#23262b" font-weight="400" text-anchor="start" >model never called</text>
+<text x="1490" y="485" font-size="26" fill="#6b6e74" font-weight="400" text-anchor="end" >no</text>
+<line x1="870" y1="540" x2="1490" y2="540" stroke="#23262b" stroke-width="3"/>
+<text x="870" y="595" font-size="20" fill="#23262b" font-weight="700" text-anchor="start" letter-spacing="1.5">BILLED FOR THIS REJECTION</text>
+<text x="870" y="680" font-size="64" fill="#23262b" font-weight="700" text-anchor="start" >nothing</text>
+<text x="870" y="770" font-size="22" fill="#6b6e74" font-weight="400" text-anchor="start" >The quota decides whether the call happens.</text>
+</svg>
