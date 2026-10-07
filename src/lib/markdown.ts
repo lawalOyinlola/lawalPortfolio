@@ -113,6 +113,11 @@ function escapeAttr(value: string): string {
  */
 const rehypeInlineThemedSvg: Plugin<[], Root> = () => {
   return (tree: Root) => {
+    // Counts inlined diagrams in this document so each gets a unique id
+    // namespace: the same file embedded twice on one page would otherwise emit
+    // duplicate ids, and a marker could then resolve to the wrong instance.
+    let instance = 0;
+
     visit(tree, "element", (node, index, parent) => {
       if (node.tagName !== "img" || !parent || typeof index !== "number") return;
       const src = node.properties?.src;
@@ -124,13 +129,17 @@ const rehypeInlineThemedSvg: Plugin<[], Root> = () => {
 
       let svg = fs.readFileSync(file, "utf8").replace(/<\?xml[^>]*>\s*/, "");
       const rootTag = svg.match(/<svg\b[^>]*>/)?.[0];
-      if (!rootTag || !/\sclass="[^"]*\bdg\b/.test(rootTag)) return;
+      if (!rootTag || !/\sclass=["'][^"']*\bdg\b/.test(rootTag)) return;
 
-      const prefix = src.replace(/^\/images\//, "").replace(/\.svg$/, "").replace(/[^a-z0-9]+/gi, "-");
+      // Path plus a per-instance counter, and quote-agnostic rewrites, so ids
+      // defined with either quote style are prefixed in step with their refs.
+      const prefix =
+        src.replace(/^\/images\//, "").replace(/\.svg$/, "").replace(/[^a-z0-9]+/gi, "-") +
+        `-${instance++}`;
       svg = svg
-        .replace(/\sid="([^"]+)"/g, ` id="${prefix}-$1"`)
-        .replace(/url\(#([^)]+)\)/g, `url(#${prefix}-$1)`)
-        .replace(/href="#([^"]+)"/g, `href="#${prefix}-$1"`);
+        .replace(/\sid=(["'])([^"']+)\1/g, (_m, q, id) => ` id=${q}${prefix}-${id}${q}`)
+        .replace(/url\(#([^)]+)\)/g, (_m, id) => `url(#${prefix}-${id})`)
+        .replace(/href=(["'])#([^"']+)\1/g, (_m, q, id) => ` href=${q}#${prefix}-${id}${q}`);
 
       const alt = typeof node.properties?.alt === "string" ? node.properties.alt : "";
       const style = typeof node.properties?.style === "string" ? node.properties.style : "";
