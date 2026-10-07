@@ -2,10 +2,10 @@
 title: "What my WAF actually blocked, and what my app already stops on its own"
 description: "I ran 26 attack payloads against a production app with ModSecurity on and off. It blocked 12: five my app already rejected, and seven it stopped a step earlier than the app's own defences. The class behind most real breaches never showed up in either column."
 date: 2026-09-14
-updated: 2026-09-20
+updated: 2026-10-07
 tags: [security, webdev, devops, cybersecurity]
-cover: /images/blog/what-my-waf-actually-blocked/coverimage.png
-coverAlt: "12 payloads the WAF blocked, 7 the app didn't already stop. What twelve blocked requests actually proved: measuring a WAF against an app that already defends itself."
+cover: /images/blog/what-my-waf-actually-blocked/coverimage.jpg
+coverAlt: "An empty airport security checkpoint at night under yellow overhead signs. On the X-ray monitor, two identical envelopes pass through side by side. Headline: A WAF buys you time."
 draft: false
 devto_id: 4651595
 devto_url: https://dev.to/lawaloyinlola/what-my-waf-actually-blocked-and-what-my-app-already-stops-on-its-own-2ij2
@@ -74,7 +74,7 @@ That is not the WAF failing quietly. It is the WAF having no job to do. A reques
 
 That class is called broken object level authorisation, or insecure direct object reference in the older naming. It is mundane to exploit, since it requires changing one value in a URL, and it appears in breach writeups constantly for exactly the reason above: it is invisible to this kind of control by construction.
 
-![What actually stops each attack class: application, WAF, or neither](/images/blog/what-my-waf-actually-blocked/what-stops-each-class.svg)
+![What actually stops each attack class at tuned paranoia level 1. SQL injection: input validation rejects all six payloads, and the WAF blocks four too. Reflected XSS: React escapes it on render, and the WAF blocks it in transit too. Stored XSS and command payloads: stored as inert text, and the WAF stops them entering. Auth bypass and JWT: stopped by the application; the WAF has no rule for it, since it sees well-formed requests. Injection in a URL path: the UUID validator rejects it, but it is a WAF gap because the rules read arguments, not paths. IDOR: tenant isolation returns 404, and no WAF rule can tell it apart. In total the WAF blocked 12 of 26: five the app had already rejected, and seven it stopped before the app's own downstream defences.](/images/blog/what-my-waf-actually-blocked/what-stops-each-class.png)
 
 ## The tuning, which was not where I expected
 
@@ -86,7 +86,7 @@ The fix was one targeted exclusion restoring those verbs for the API paths, and 
 
 Raising the paranoia level to two then answered a question I would otherwise have guessed at. It caught nothing the tuned level one had missed. It fired more rules on attacks already being blocked, and it introduced two fresh false positives on legitimate traffic: a strong password that happened to contain a comment sequence, and a business name containing an ampersand. More paranoia, in this specific application, was pure cost.
 
-![The tuning curve: attacks blocked stays flat, false positives do not](/images/blog/what-my-waf-actually-blocked/paranoia-tradeoff.svg)
+![Tuning versus paranoia level, as a departures-board style table of three operating points. Untuned paranoia level 1 blocked 12 attacks with 2 false positives, legitimate PATCH requests blocked by the method rule. Tuned level 1, with one method exclusion, blocked 12 with 0 false positives and is the operating point. Level 2 blocked 12 with 2 false positives, a password and a business name.](/images/blog/what-my-waf-actually-blocked/paranoia-tradeoff.png)
 
 One genuine bypass did turn up. Injection payloads the firewall caught in a query string or JSON body sailed past it when the identical payload sat in a URL path segment instead, because the core injection rules inspect arguments rather than path segments. In this application the UUID validator rejects those anyway, so nothing was exposed. Against an application that consumed a raw path segment, that is a live bypass at every level I tested.
 

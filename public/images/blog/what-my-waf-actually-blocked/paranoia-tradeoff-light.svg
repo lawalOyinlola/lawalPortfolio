@@ -1,0 +1,60 @@
+<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<rect width="960" height="540" fill="#ffffff"/>
+<text x="40" y="44" font-size="22" font-weight="700" fill="#1a3c5e" text-anchor="start" >Tuning versus paranoia level</text>
+<text x="40" y="68" font-size="13.5" font-weight="400" fill="#555555" text-anchor="start" >Attack payloads blocked versus false positives on legitimate traffic, at each operating point.</text>
+<line x1="40" y1="84" x2="920" y2="84" stroke="#c99a2e" stroke-width="2"/>
+<rect x="40" y="104" width="880" height="296" rx="8" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<rect x="40" y="238" width="880" height="80" fill="#f5f2e8"/>
+<rect x="40" y="238" width="5" height="80" fill="#c99a2e"/>
+<text x="64" y="138" font-size="11" font-weight="700" fill="#8a6d1a" text-anchor="start" letter-spacing="1.2">OPERATING POINT</text>
+<text x="440" y="138" font-size="11" font-weight="700" fill="#8a6d1a" text-anchor="middle" letter-spacing="1.2">BLOCKED</text>
+<text x="602" y="138" font-size="11" font-weight="700" fill="#8a6d1a" text-anchor="middle" letter-spacing="1.2">FALSE POS.</text>
+<text x="690" y="138" font-size="11" font-weight="700" fill="#8a6d1a" text-anchor="start" letter-spacing="1.2">NOTE</text>
+<line x1="56" y1="152" x2="904" y2="152" stroke="#e0e0e0" stroke-width="1"/>
+<text x="64" y="199" font-size="18" font-weight="700" fill="#1a3c5e" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">PL1 UNTUNED</text>
+<text x="64" y="219" font-size="11.5" font-weight="400" fill="#555555" text-anchor="start" >Out of the box</text>
+<rect x="400" y="172" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="418" y="209" font-size="32" font-weight="700" fill="#1a3c5e" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">1</text>
+<line x1="400" y1="198" x2="436" y2="198" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="441" y="172" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="459" y="209" font-size="32" font-weight="700" fill="#1a3c5e" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">2</text>
+<line x1="441" y1="198" x2="477" y2="198" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="562" y="172" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<line x1="562" y1="198" x2="598" y2="198" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="603" y="172" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="621" y="209" font-size="32" font-weight="700" fill="#b23b3b" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">2</text>
+<line x1="603" y1="198" x2="639" y2="198" stroke="#e0e0e0" stroke-width="1.5"/>
+<text x="690" y="195" font-size="13" font-weight="400" fill="#555555" text-anchor="start" >Legit PATCH blocked</text>
+<text x="690" y="212" font-size="13" font-weight="400" fill="#555555" text-anchor="start" >by the method rule</text>
+<text x="64" y="279" font-size="18" font-weight="700" fill="#1a3c5e" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">PL1 TUNED</text>
+<text x="64" y="299" font-size="11.5" font-weight="400" fill="#555555" text-anchor="start" >One method exclusion</text>
+<rect x="400" y="252" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="418" y="289" font-size="32" font-weight="700" fill="#1a3c5e" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">1</text>
+<line x1="400" y1="278" x2="436" y2="278" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="441" y="252" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="459" y="289" font-size="32" font-weight="700" fill="#1a3c5e" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">2</text>
+<line x1="441" y1="278" x2="477" y2="278" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="562" y="252" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<line x1="562" y1="278" x2="598" y2="278" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="603" y="252" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="621" y="289" font-size="32" font-weight="700" fill="#2e7d46" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">0</text>
+<line x1="603" y1="278" x2="639" y2="278" stroke="#e0e0e0" stroke-width="1.5"/>
+<text x="690" y="283" font-size="13" font-weight="700" fill="#8a6d1a" text-anchor="start" >The operating point</text>
+<text x="64" y="359" font-size="18" font-weight="700" fill="#1a3c5e" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">PL2</text>
+<text x="64" y="379" font-size="11.5" font-weight="400" fill="#555555" text-anchor="start" >Higher paranoia</text>
+<rect x="400" y="332" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="418" y="369" font-size="32" font-weight="700" fill="#1a3c5e" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">1</text>
+<line x1="400" y1="358" x2="436" y2="358" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="441" y="332" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="459" y="369" font-size="32" font-weight="700" fill="#1a3c5e" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">2</text>
+<line x1="441" y1="358" x2="477" y2="358" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="562" y="332" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<line x1="562" y1="358" x2="598" y2="358" stroke="#e0e0e0" stroke-width="1.5"/>
+<rect x="603" y="332" width="36" height="52" rx="4" fill="#ffffff" stroke="#c8d3e0" stroke-width="1"/>
+<text x="621" y="369" font-size="32" font-weight="700" fill="#b23b3b" text-anchor="middle" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">2</text>
+<line x1="603" y1="358" x2="639" y2="358" stroke="#e0e0e0" stroke-width="1.5"/>
+<text x="690" y="363" font-size="13" font-weight="400" fill="#555555" text-anchor="start" >A password, a business name</text>
+<text x="40" y="438" font-size="15" font-weight="700" fill="#1a3c5e" text-anchor="start" >Attacks blocked never moved from 12. More paranoia, in this application, was pure cost.</text>
+<text x="40" y="466" font-size="12" font-weight="400" fill="#555555" text-anchor="start" >Untuned PL1 also returned 403 on a thirteenth case, a cross-tenant PATCH, but by the method rule rather than by attack detection.</text>
+<text x="40" y="484" font-size="12" font-weight="400" fill="#555555" text-anchor="start" >It is the same misfire behind the two false positives, so it is not counted as coverage.</text>
+</svg>
