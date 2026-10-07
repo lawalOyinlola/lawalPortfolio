@@ -332,6 +332,12 @@ html[data-hide-logo="true"] .logo-btn {
     @apply rounded-none border-0 bg-transparent;
   }
 
+  /* Theme-aware diagrams that rehypeInlineThemedSvg inlined in place of their
+     <img>: the same frameless treatment, so swapping one in changes nothing. */
+  .prose svg.dg {
+    @apply rounded-none border-0 bg-transparent;
+  }
+
   /* Collapsible long listings (wordlists, the defacement source). */
   .prose details {
     @apply my-8 overflow-hidden rounded-xl border border-border bg-muted/60;
@@ -356,16 +362,19 @@ html[data-hide-logo="true"] .logo-btn {
 
   /* Made interactive by ImageZoom; the attribute only exists once JS has run,
      so without JS nothing advertises a zoom that can't happen. */
-  .prose img[data-zoomable] {
+  .prose img[data-zoomable],
+  .prose svg[data-zoomable] {
     @apply cursor-zoom-in transition-[transform,box-shadow,border-color] duration-300;
   }
 
-  .prose img[data-zoomable]:hover {
+  .prose img[data-zoomable]:hover,
+  .prose svg[data-zoomable]:hover {
     @apply -translate-y-0.5 shadow-lg;
     border-color: color-mix(in oklab, var(--post-accent, var(--ring)) 35%, transparent);
   }
 
-  .prose img[data-zoomable]:focus-visible {
+  .prose img[data-zoomable]:focus-visible,
+  .prose svg[data-zoomable]:focus-visible {
     outline: 2px solid var(--post-accent, var(--ring));
     outline-offset: 4px;
   }
@@ -732,11 +741,38 @@ html[data-hide-logo="true"] .logo-btn {
 @media (prefers-reduced-motion: reduce) {
   .image-zoom,
   .image-zoom::backdrop,
-  .prose img[data-zoomable] {
+  .prose img[data-zoomable],
+  .prose svg[data-zoomable] {
     transition: none;
   }
 
-  .prose img[data-zoomable]:hover {
+  .prose img[data-zoomable]:hover,
+  .prose svg[data-zoomable]:hover {
     transform: none;
   }
 }
+
+.image-zoom svg.dg {
+  @apply block h-auto w-full;
+}
+
+/* ---------------------------------------------------------------------------
+   Theme-aware diagrams. scripts/theme-svg.mjs tags every element whose colour
+   must change on a dark page with dg-<kind>-<role> (t text, f fill, s stroke).
+   The file's own colours are the light theme, so only dark needs rules, and
+   the roles are shared by every lab. A new role needs a rule here and an entry
+   in the script's ROLES table.
+--------------------------------------------------------------------------- */
+
+.dark svg.dg .dg-t-ink { fill: #dbe5f1; }
+.dark svg.dg .dg-t-body { fill: #a9b1bc; }
+.dark svg.dg .dg-t-gold { fill: #e3bd5c; }
+.dark svg.dg .dg-t-slate { fill: #9aa7b8; }
+.dark svg.dg .dg-t-faint { fill: #7c8899; }
+
+.dark svg.dg .dg-f-callout { fill: #1f1a0e; }
+.dark svg.dg .dg-f-rose-tint { fill: #2a1219; }
+
+.dark svg.dg .dg-s-line { stroke: #3a4352; }
+.dark svg.dg .dg-s-green { stroke: #3f9d5c; }
+.dark svg.dg .dg-s-rose { stroke: #f0476b; }
