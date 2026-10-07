@@ -84,16 +84,19 @@ if (files.length === 0) {
   process.exit(1);
 }
 
+// Attributes are read with either quote style: a hand-edited SVG may use single
+// quotes, and a colour the reader could not see would be left unthemed with no
+// "unmapped" warning, which is the one failure this tool must not have.
 function attr(tag, name) {
-  const m = tag.match(new RegExp(`\\s${name}="([^"]*)"`));
-  return m ? m[1].trim().toLowerCase() : null;
+  const m = tag.match(new RegExp(`\\s${name}=(?:"([^"]*)"|'([^']*)')`));
+  return m ? (m[1] ?? m[2]).trim().toLowerCase() : null;
 }
 
 function addClasses(tag, classes) {
   if (classes.length === 0) return tag;
-  const existing = tag.match(/\sclass="([^"]*)"/);
+  const existing = tag.match(/\sclass=(?:"([^"]*)"|'([^']*)')/);
   if (existing) {
-    const have = new Set(existing[1].split(/\s+/).filter(Boolean));
+    const have = new Set((existing[1] ?? existing[2]).split(/\s+/).filter(Boolean));
     const merged = [...have, ...classes.filter((c) => !have.has(c))].join(" ");
     return tag.replace(existing[0], ` class="${merged}"`);
   }
