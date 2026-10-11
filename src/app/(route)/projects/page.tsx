@@ -1,9 +1,7 @@
 import { notFound, redirect } from "next/navigation";
-import { PROJECTS } from "@/app/constants/projects";
-
-const defaultProject = PROJECTS.find((p) => p.featured) ?? PROJECTS[0];
+import { PROJECTS_HREF } from "@/app/constants/projects";
 
 export default function ProjectsIndexPage() {
-  if (!defaultProject) notFound();
-  redirect(`/projects/${defaultProject.slug}`);
+  if (PROJECTS_HREF === "/projects") notFound();
+  redirect(PROJECTS_HREF);
 }

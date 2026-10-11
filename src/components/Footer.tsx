@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { usePathname, useRouter } from "next/navigation";
-import { BRAND } from "@/app/constants";
+import { BRAND, PROJECTS_HREF } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { handleNavigation } from "@/lib/navigation";
 import { handleEmailClick, handleDirectionalFocus } from "@/lib/utils";
@@ -42,7 +42,7 @@ const EXPLORE_LINKS = [
     href: "/about",
     anchor: "tools-tech",
   },
-  { label: "Projects", href: "/projects" },
+  { label: "Projects", href: PROJECTS_HREF },
   { label: "Security", href: "/security" },
   { label: "Labs", href: "/security/labs" },
   { label: "Blog", href: "/blog" },

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PROJECTS_HREF } from "@/app/constants";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const LINKS = [
-  { href: "/projects", label: "Projects" },
+  { href: PROJECTS_HREF, label: "Projects" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQ" },
