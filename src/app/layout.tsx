@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LoadingProvider } from "@/components/providers/LoadingContext";
 import AppLayout from "@/components/AppLayout";
 import { Toaster } from "@/components/ui/sonner";
+import { INTRO_SCRIPT } from "@/lib/intro";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -104,8 +105,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ppMori.variable}`}>
+    // suppressHydrationWarning: INTRO_SCRIPT sets data-intro on <html>
+    // before React hydrates.
+    <html lang="en" className={`${ppMori.variable}`} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
         <JsonLd />
       </head>
       <body

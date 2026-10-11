@@ -11,7 +11,7 @@ import {
   WhatsappLogoIcon,
 } from "@phosphor-icons/react";
 import type { Icon } from "@phosphor-icons/react";
-import { BRAND } from "@/app/constants";
+import { BRAND, PROJECTS_HREF } from "@/app/constants";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { handleNavigation } from "@/lib/navigation";
@@ -27,7 +27,7 @@ interface MenuOverlayProps {
 const NAV_LINKS: { label: string; href: string; anchor?: string }[] = [
   { label: "HOME", href: "/" },
   { label: "ABOUT", href: "/about" },
-  { label: "PROJECTS", href: "/projects" },
+  { label: "PROJECTS", href: PROJECTS_HREF },
   { label: "BLOG", href: "/blog" },
   { label: "TOOLS & TECH", href: "/about", anchor: "tools-tech" },
   { label: "FAQ", href: "/faq" },

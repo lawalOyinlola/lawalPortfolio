@@ -39,7 +39,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
     <div>
       {/* Logo Button */}
       {ready && (
-        <div className="logo-btn fixed top-4.5 left-4.5 z-20 transition-opacity duration-200 shadow-sm">
+        <div className="logo-btn fixed top-4.5 left-4.5 z-20 transition-opacity duration-200">
           <Magnetic>
             <LogoButton ready />
           </Magnetic>

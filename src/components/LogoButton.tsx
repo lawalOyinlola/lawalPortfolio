@@ -51,7 +51,7 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
         scaleX: -1,
         ease: "expo.inOut",
         duration: 1.6,
-        stagger: { amount: 0.8, from: "start" },
+        stagger: { amount: 0.8, from: "end" },
         delay: 1.4,
       });
 
@@ -69,7 +69,7 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
       className={buttonVariants({
         variant: "outline",
         size: "lg",
-        className: "text-lg gap-2.5 cursor-pointer",
+        className: "text-lg gap-2.5 cursor-pointer shadow-sm",
       })}
     >
       <Image src="/icons/menuLogo.svg" alt="Logo Icon" width={20} height={20} />

@@ -180,6 +180,37 @@ html[data-hide-logo="true"] .logo-btn {
   pointer-events: none;
 }
 
+/* Repeat visits skip the intro text: set before first paint by INTRO_SCRIPT
+   (src/lib/intro.ts), so the server-rendered line never flashes. */
+html[data-intro="skip"] .pl-line {
+  visibility: hidden;
+}
+
+/* Without JS the intro and the GSAP entrances never run, so skip straight to
+   the end state. Entrance elements start at opacity-0 and are listed here by
+   their animation hook class: add new ones when they're introduced. */
+@media (scripting: none) {
+  .preloader {
+    display: none !important;
+  }
+  .app-shell {
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+  .app-content,
+  .hero-anim,
+  .hero-item,
+  .sh-item,
+  .tool-chip,
+  .tag-item,
+  .explore-item,
+  .point-item,
+  .project-detail-item {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+
 @keyframes tv-static-shift {
   0% {
     background-position: 0 0;
