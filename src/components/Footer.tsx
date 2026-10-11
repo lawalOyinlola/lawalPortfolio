@@ -83,7 +83,7 @@ function Footer({ className }: FooterProps) {
           scaleX: -1,
           ease: "expo.inOut",
           duration: 1.6,
-          stagger: { amount: 0.8, from: "start" },
+          stagger: { amount: 0.8, from: "end" },
           paused: true,
         },
       );

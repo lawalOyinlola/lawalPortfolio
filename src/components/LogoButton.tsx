@@ -51,7 +51,7 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
         scaleX: -1,
         ease: "expo.inOut",
         duration: 1.6,
-        stagger: { amount: 0.8, from: "start" },
+        stagger: { amount: 0.8, from: "end" },
         delay: 1.4,
       });
 
