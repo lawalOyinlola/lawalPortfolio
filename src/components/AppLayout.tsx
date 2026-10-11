@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 import Preloader from "./Preloader";
@@ -12,22 +12,30 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  const { loading, setLoading } = useLoading();
-  const [forceUnlock, setForceUnlock] = useState(false);
+  // The page is revealed as the columns start lifting (`loading` goes false),
+  // and the overlay only unmounts once they're gone (`showPreloader`).
+  const { loading, setLoading, showPreloader, setShowPreloader } = useLoading();
   const pathname = usePathname();
   const mainRef = useRef<HTMLElement>(null);
 
+  const handleReveal = useCallback(() => setLoading(false), [setLoading]);
+  const handleComplete = useCallback(
+    () => setShowPreloader(false),
+    [setShowPreloader],
+  );
+
+  // Fallback: if the intro never finishes (script error, GSAP failing to
+  // load), don't leave the page hidden behind it. The full intro runs about
+  // 7.5s from hydration, so this leaves room for a slow, janky device
+  // without ever cutting a healthy intro short.
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    if (loading) {
-      timeoutId = setTimeout(() => {
-        setForceUnlock(true);
-      }, 10000); // 10s fallback
-    } else {
-      setForceUnlock(false);
-    }
+    if (!showPreloader) return;
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      setShowPreloader(false);
+    }, 15000);
     return () => clearTimeout(timeoutId);
-  }, [loading]);
+  }, [showPreloader, setLoading, setShowPreloader]);
 
   // Accessibility: Reset focus to main container on page change (if no anchor)
   useEffect(() => {
@@ -49,24 +57,28 @@ export default function AppLayout({ children }: AppLayoutProps) {
   }, [pathname, loading]);
 
   return (
-    <main
-      ref={mainRef}
-      className={`relative min-h-screen overflow-x-clip bg-background ${loading && !forceUnlock ? "overflow-hidden h-screen" : ""}`}
-    >
-      {loading && <Preloader setComplete={() => setLoading(false)} />}
+    <>
+      {showPreloader && (
+        <Preloader onReveal={handleReveal} onComplete={handleComplete} />
+      )}
 
-      <div
-        className={`relative z-10 bg-background transition-opacity duration-800 ${loading ? "opacity-0 invisible" : "opacity-100 visible"}`}
+      <main
+        ref={mainRef}
+        className={`app-shell relative min-h-screen overflow-x-clip bg-background ${loading ? "overflow-hidden h-screen" : ""}`}
       >
-        <Navbar ready={!loading} />
-        {children}
-        {/* Tail section that reveals footer underneath */}
         <div
-          id="footer-reveal-sentinel"
-          className="h-[20vh] pointer-events-none"
-        />
-        <Footer className="sticky inset-x-0 bottom-0 h-screen z-0" />
-      </div>
-    </main>
+          className={`app-content relative z-10 bg-background ${loading ? "opacity-0 invisible" : "opacity-100 visible"}`}
+        >
+          <Navbar ready={!loading} />
+          {children}
+          {/* Tail section that reveals footer underneath */}
+          <div
+            id="footer-reveal-sentinel"
+            className="h-[20vh] pointer-events-none"
+          />
+          <Footer className="sticky inset-x-0 bottom-0 h-screen z-0" />
+        </div>
+      </main>
+    </>
   );
 }
