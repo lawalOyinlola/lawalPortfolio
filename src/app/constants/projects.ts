@@ -543,3 +543,11 @@ export const PROJECTS: Project[] = [
 ];
 
 export const FEATURED_PROJECTS = PROJECTS.filter((p) => p.featured);
+
+// /projects has no page of its own and redirects here. Nav links point at
+// this directly: following the redirect client-side first paints the empty
+// /projects route, which shows only the footer until the redirect lands.
+const DEFAULT_PROJECT = FEATURED_PROJECTS[0] ?? PROJECTS[0];
+export const PROJECTS_HREF = DEFAULT_PROJECT
+  ? `/projects/${DEFAULT_PROJECT.slug}`
+  : "/projects";
