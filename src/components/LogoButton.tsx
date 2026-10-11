@@ -69,7 +69,7 @@ const LogoButton = ({ ready = true }: LogoButtonProps) => {
       className={buttonVariants({
         variant: "outline",
         size: "lg",
-        className: "text-lg gap-2.5 cursor-pointer",
+        className: "text-lg gap-2.5 cursor-pointer shadow-sm",
       })}
     >
       <Image src="/icons/menuLogo.svg" alt="Logo Icon" width={20} height={20} />
