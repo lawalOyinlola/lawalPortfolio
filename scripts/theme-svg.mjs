@@ -98,8 +98,33 @@ function attr(tag, name) {
 function styleColour(tag, prop) {
   const style = attr(tag, "style");
   if (!style) return null;
-  const m = style.match(new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*([^;]+)`));
-  return m ? m[1].trim().toLowerCase() : null;
+  // The last declaration wins in the cascade, so a repeated property resolves
+  // to its final value, the same colour the browser would paint.
+  const matches = [...style.matchAll(new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*([^;]+)`, "g"))];
+  return matches.length ? matches[matches.length - 1][1].trim().toLowerCase() : null;
+}
+
+// Move a mapped colour out of the style attribute onto the matching
+// presentation attribute. An inline style out-specifies the theme class, so the
+// dark override would never apply while the colour stays in style; the
+// presentation attribute still carries the light value anywhere CSS cannot
+// reach. Unrelated declarations and their casing are left as they were.
+function relocateStyleColour(tag, prop, colour) {
+  const m = tag.match(/\sstyle=(?:"([^"]*)"|'([^']*)')/);
+  if (m) {
+    const kept = (m[1] ?? m[2])
+      .split(";")
+      .map((d) => d.trim())
+      .filter(Boolean)
+      .filter((d) => !new RegExp(`^${prop}\\s*:`, "i").test(d));
+    tag = kept.length
+      ? tag.replace(m[0], ` style="${kept.join("; ")}"`)
+      : tag.replace(m[0], "");
+  }
+  const attrRe = new RegExp(`(\\s${prop}=)(?:"[^"]*"|'[^']*')`);
+  return attrRe.test(tag)
+    ? tag.replace(attrRe, `$1"${colour}"`)
+    : tag.replace(/^<(\w+)/, `<$1 ${prop}="${colour}"`);
 }
 
 function addClasses(tag, classes, staleKinds = []) {
@@ -141,19 +166,32 @@ for (const file of files) {
     if (!isText && !SHAPES.has(name)) return tag;
 
     const classes = [];
+    const relocations = [];
     const fillKind = isText ? "t" : inMarker(offset) ? "m" : "f";
     for (const [kind, prop] of [
       [fillKind, "fill"],
       ["s", "stroke"],
     ]) {
-      const colour = styleColour(tag, prop) ?? attr(tag, prop);
+      const styled = styleColour(tag, prop);
+      const colour = styled ?? attr(tag, prop);
       if (!colour) continue;
       const role = ROLES[kind][colour];
-      if (role) classes.push(`dg-${kind}-${role}`);
-      else if (!KEEP[kind].includes(colour)) unmapped.add(`${kind} ${colour}`);
+      if (role) {
+        classes.push(`dg-${kind}-${role}`);
+        // A mapped colour set through the style attribute has to move onto the
+        // presentation attribute, or its specificity beats the theme class.
+        if (styled !== null) relocations.push([prop, colour]);
+      } else if (!KEEP[kind].includes(colour)) {
+        unmapped.add(`${kind} ${colour}`);
+      }
     }
-    // Pass the kinds we evaluated so their stale generated classes are cleared.
-    return addClasses(tag, classes, [fillKind, "s"]);
+    // Decisions above read the original tag; apply any relocations first, then
+    // the classes (passing the kinds evaluated so stale ones are cleared).
+    let result = tag;
+    for (const [prop, colour] of relocations) {
+      result = relocateStyleColour(result, prop, colour);
+    }
+    return addClasses(result, classes, [fillKind, "s"]);
   });
 
   for (const u of unmapped) {
