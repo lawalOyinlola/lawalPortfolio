@@ -1,7 +1,7 @@
 ---
 title: "The Foundation Lab: One Security Lab Environment on Apple Silicon"
 description: "The shared base every lab in this portfolio builds on: UTM on an Apple Silicon Mac, an ARM-native Kali attacker, an Ubuntu Server box for the SIEM, x86 targets under emulation, an isolated network, and snapshots. Set it up once, then branch into any track."
-date: 2026-10-05
+date: 2026-10-01
 updated: 2026-10-05
 tags: [apple-silicon, utm, kali, homelab, virtualization]
 cover: /images/labs/apple-silicon-lab-foundation/utm-overview.png

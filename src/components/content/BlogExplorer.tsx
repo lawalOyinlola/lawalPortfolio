@@ -4,6 +4,19 @@ import { useId, useMemo, useRef, useState } from "react";
 import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getTagColor } from "@/lib/tag-colors";
 import PostCard, { type PostSummary } from "./PostCard";
+import SortControl, { type SortDir, type SortOption } from "./SortControl";
+
+const SORT_OPTIONS: SortOption[] = [
+  { key: "date", label: "Date", asc: "Oldest", desc: "Newest", defaultDir: "desc" },
+  { key: "title", label: "Title", asc: "A–Z", desc: "Z–A", defaultDir: "asc" },
+  {
+    key: "read",
+    label: "Read time",
+    asc: "Shortest",
+    desc: "Longest",
+    defaultDir: "asc",
+  },
+];
 
 /**
  * Search and tag filtering for the post list.
@@ -16,6 +29,8 @@ import PostCard, { type PostSummary } from "./PostCard";
 export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
   const [query, setQuery] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [sortKey, setSortKey] = useState("date");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const searchId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -52,9 +67,12 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
   const results = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return posts.filter((post) => {
+      // Union, not intersection: selecting two topics widens the list to posts
+      // in either, which matches both the "broaden" intent of a tag chip and
+      // the count badge beside it. See the note by the sort handler.
       const matchesTags =
         activeTags.length === 0 ||
-        activeTags.every((tag) => post.tags.includes(tag));
+        activeTags.some((tag) => post.tags.includes(tag));
       if (!matchesTags) return false;
       if (!needle) return true;
       return (
@@ -64,6 +82,18 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
       );
     });
   }, [posts, query, activeTags]);
+
+  const sorted = useMemo(() => {
+    const arr = [...results];
+    arr.sort((a, b) => {
+      let cmp: number;
+      if (sortKey === "title") cmp = a.title.localeCompare(b.title);
+      else if (sortKey === "read") cmp = a.readingMinutes - b.readingMinutes;
+      else cmp = a.dateISO.localeCompare(b.dateISO);
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+    return arr;
+  }, [results, sortKey, sortDir]);
 
   const isFiltered = query.trim().length > 0 || activeTags.length > 0;
 
@@ -80,6 +110,14 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
     setQuery("");
     setActiveTags([]);
     scrollToResults();
+  }
+
+  // Sort is a preference, not a filter: picking a new field selects it in its
+  // natural direction, reselecting the active field reverses it, and clearing
+  // the filters leaves it untouched.
+  function changeSort(key: string, dir: SortDir) {
+    setSortKey(key);
+    setSortDir(dir);
   }
 
   return (
@@ -119,6 +157,20 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
             </button>
           )}
         </div>
+
+        {posts.length > 1 && (
+          <>
+            <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+              Sort
+            </h2>
+            <SortControl
+              options={SORT_OPTIONS}
+              sortKey={sortKey}
+              sortDir={sortDir}
+              onChange={changeSort}
+            />
+          </>
+        )}
 
         <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
           Topics
@@ -171,7 +223,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
 
         {results.length > 0 ? (
           <ul className="mt-6 divide-y divide-border/60 border-y border-border/25">
-            {results.map((post, index) => (
+            {sorted.map((post, index) => (
               <li key={post.slug}>
                 <PostCard post={post} index={index} />
               </li>

@@ -139,7 +139,10 @@ const rehypeInlineThemedSvg: Plugin<[], Root> = () => {
       svg = svg
         .replace(/\sid=(["'])([^"']+)\1/g, (_m, q, id) => ` id=${q}${prefix}-${id}${q}`)
         .replace(/url\(#([^)]+)\)/g, (_m, id) => `url(#${prefix}-${id})`)
-        .replace(/href=(["'])#([^"']+)\1/g, (_m, q, id) => ` href=${q}#${prefix}-${id}${q}`);
+        .replace(
+          /(\s)((?:xlink:)?href)=(["'])#([^"']+)\3/g,
+          (_m, ws, name, q, id) => `${ws}${name}=${q}#${prefix}-${id}${q}`,
+        );
 
       const alt = typeof node.properties?.alt === "string" ? node.properties.alt : "";
       const style = typeof node.properties?.style === "string" ? node.properties.style : "";

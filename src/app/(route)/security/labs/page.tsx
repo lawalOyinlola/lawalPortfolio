@@ -49,6 +49,7 @@ export default function LabsPage() {
     platform: lab.frontmatter.platform,
     difficulty: lab.frontmatter.difficulty,
     target: lab.frontmatter.target,
+    dateISO: lab.frontmatter.date.toISOString(),
     dateLabel: formatPostDate(lab.frontmatter.date),
     readingMinutes: lab.readingMinutes,
     tags: lab.frontmatter.tags,
