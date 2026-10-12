@@ -2,10 +2,10 @@
 title: "Ethical hacking is not a toolset, it is a mindset with a permission slip"
 description: "Hacker, ethical hacker and penetration tester are not the same thing, and one of the differences is an invoice versus a criminal record. The mindset, the seven-stage method, and the black, grey and white box styles, laid out plainly."
 date: 2026-09-10
-updated: 2026-10-07
+updated: 2026-10-12
 tags: [cybersecurity, security, appsec, penetrationtesting]
-cover: /images/blog/ethical-hacking-is-not-a-toolset/coverimage.jpg
-coverAlt: "An overhead photo on a mustard-yellow backdrop: an open leather case of lock picks beside a signed and stamped letter with a fountain pen resting on it. Headline: Skill does not make it legal."
+cover: /images/blog/ethical-hacking-is-not-a-toolset/coverimage-v2.jpg
+coverAlt: "An overhead photo on a mustard-yellow backdrop: an open leather case of lock picks beside a stamped letter with a fountain pen resting on it. Headline: Skill does not make it legal."
 draft: false
 devto_id: 4625357
 devto_url: https://dev.to/lawaloyinlola/ethical-hacking-is-not-a-toolset-it-is-a-mindset-with-a-permission-slip-436a
