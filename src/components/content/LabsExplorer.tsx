@@ -6,6 +6,49 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getTagColor } from "@/lib/tag-colors";
+import SortControl, { type SortDir, type SortOption } from "./SortControl";
+
+/**
+ * "Series" is the default: it keeps the grouped, Foundation-first sections.
+ * The other fields flatten the labs into a single sorted grid.
+ */
+const LAB_SORT_OPTIONS: SortOption[] = [
+  { key: "series", label: "Series" },
+  {
+    key: "difficulty",
+    label: "Difficulty",
+    asc: "Easiest",
+    desc: "Hardest",
+    defaultDir: "asc",
+  },
+  { key: "date", label: "Date", asc: "Oldest", desc: "Newest", defaultDir: "desc" },
+  { key: "title", label: "Title", asc: "A–Z", desc: "Z–A", defaultDir: "asc" },
+  {
+    key: "read",
+    label: "Read time",
+    asc: "Shortest",
+    desc: "Longest",
+    defaultDir: "asc",
+  },
+];
+
+// Named difficulties map to a rank so they sort by effort, not alphabetically
+// (Easy → Medium → Hard, not Easy → Hard → Medium). Synonyms share a rank;
+// anything unrecognised sorts last.
+const DIFFICULTY_RANK: Record<string, number> = {
+  easy: 0,
+  beginner: 0,
+  medium: 1,
+  intermediate: 1,
+  hard: 2,
+  advanced: 2,
+  insane: 3,
+  expert: 3,
+};
+
+function difficultyRank(difficulty: string): number {
+  return DIFFICULTY_RANK[difficulty.toLowerCase()] ?? 99;
+}
 
 /** Serializable lab shape passed from the server page. */
 export type LabSummary = {
@@ -15,6 +58,7 @@ export type LabSummary = {
   platform: string;
   difficulty: string;
   target: string;
+  dateISO: string;
   dateLabel: string;
   readingMinutes: number;
   tags: string[];
@@ -109,6 +153,8 @@ export default function LabsExplorer({
 }) {
   const [query, setQuery] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [sortKey, setSortKey] = useState("series");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
   const searchId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -138,9 +184,10 @@ export default function LabsExplorer({
   const results = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return labs.filter((lab) => {
+      // Union, not intersection: two topics widen the list to labs in either.
       const matchesTags =
         activeTags.length === 0 ||
-        activeTags.every((tag) => lab.tags.includes(tag));
+        activeTags.some((tag) => lab.tags.includes(tag));
       if (!matchesTags) return false;
       if (!needle) return true;
       const haystack = [
@@ -176,6 +223,11 @@ export default function LabsExplorer({
     scrollToResults();
   }
 
+  function changeSort(key: string, dir: SortDir) {
+    setSortKey(key);
+    setSortDir(dir);
+  }
+
   // Unfiltered view: group by series in declared order, ungrouped labs last.
   const grouped = useMemo(() => {
     // Only series declared in LAB_SERIES get their own section; a lab tagged
@@ -203,6 +255,50 @@ export default function LabsExplorer({
       }));
     return { sections, ungrouped };
   }, [labs, series]);
+
+  // Series rank from the declared order, so a "Series" sort over a filtered set
+  // still reads Foundation-first instead of falling back to file order.
+  const seriesRank = useMemo(() => {
+    const m = new Map<string, number>();
+    series.forEach((s, i) => m.set(s.name, i));
+    return m;
+  }, [series]);
+
+  const sortedResults = useMemo(() => {
+    const rankOf = (lab: LabSummary) =>
+      lab.series ? (seriesRank.get(lab.series) ?? 99) : 99;
+    const arr = [...results];
+    arr.sort((a, b) => {
+      // Series keeps its declared order regardless of direction: it is the
+      // grouped default, not an A↔Z axis.
+      if (sortKey === "series") {
+        return (
+          rankOf(a) - rankOf(b) ||
+          (a.order ?? 0) - (b.order ?? 0) ||
+          b.dateISO.localeCompare(a.dateISO)
+        );
+      }
+      let cmp: number;
+      if (sortKey === "title") cmp = a.title.localeCompare(b.title);
+      else if (sortKey === "read") cmp = a.readingMinutes - b.readingMinutes;
+      else if (sortKey === "difficulty")
+        // Equal difficulty falls back to the series order (Foundation before
+        // Pentest, both "Easy") rather than the title, so a difficulty sort
+        // never claims one same-rank lab is easier than another.
+        cmp =
+          difficultyRank(a.difficulty) - difficultyRank(b.difficulty) ||
+          (a.order ?? 0) - (b.order ?? 0) ||
+          a.title.localeCompare(b.title);
+      else cmp = a.dateISO.localeCompare(b.dateISO);
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+    return arr;
+  }, [results, sortKey, sortDir, seriesRank]);
+
+  // The grouped sections are the resting state: only shown when nothing is
+  // filtered and the default "Series" sort is active. Any other sort — or any
+  // active filter — flattens to a single ordered grid.
+  const showGrouped = sortKey === "series" && !isFiltered;
 
   return (
     <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-14">
@@ -239,6 +335,20 @@ export default function LabsExplorer({
             </button>
           )}
         </div>
+
+        {labs.length > 1 && (
+          <>
+            <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+              Sort
+            </h2>
+            <SortControl
+              options={LAB_SORT_OPTIONS}
+              sortKey={sortKey}
+              sortDir={sortDir}
+              onChange={changeSort}
+            />
+          </>
+        )}
 
         {tags.length > 0 && (
           <>
@@ -293,10 +403,10 @@ export default function LabsExplorer({
             : `${labs.length} ${labs.length === 1 ? "lab" : "labs"}`}
         </p>
 
-        {isFiltered ? (
-          results.length > 0 ? (
+        {!showGrouped ? (
+          sortedResults.length > 0 ? (
             <div className="mt-6">
-              <Grid labs={results} />
+              <Grid labs={sortedResults} />
             </div>
           ) : (
             <div className="mt-6 border-y border-border/25 py-20 text-center">

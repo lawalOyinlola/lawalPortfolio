@@ -628,6 +628,28 @@ html[data-intro="skip"] .pl-line {
     border-color: var(--tag);
   }
 
+  /* Sort toggles on the index pages. Neutral by design: they reorder results
+     rather than filter them, so they carry the ring colour, not a topic accent.
+     Clicking the active one flips its direction, and its label names the order. */
+  .sort-chip {
+    @apply inline-flex cursor-pointer items-center gap-1 rounded-md border border-border/40 px-2 py-1 text-xs font-medium text-foreground/70 transition-colors duration-200;
+  }
+
+  .sort-chip:hover {
+    @apply text-primary;
+    border-color: color-mix(in oklab, var(--ring) 34%, transparent);
+  }
+
+  .sort-chip:active {
+    transform: scale(0.97);
+  }
+
+  .sort-chip-active {
+    @apply text-primary;
+    border-color: color-mix(in oklab, var(--ring) 45%, transparent);
+    background-color: color-mix(in oklab, var(--ring) 7%, transparent);
+  }
+
   /* Reader actions under a post. Neutral by default so the accent stays with
      the writing; the like fills with the post accent once it is on. */
   .reaction-chip {
