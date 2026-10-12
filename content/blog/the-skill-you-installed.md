@@ -1,11 +1,11 @@
 ---
 title: "Your coding agent runs as you. So does everything you install into it."
 description: "A skill passed every scanner, and the scanners were right at the moment they looked. Why the artefact you review and the instruction that runs are two different objects, and how to inventory what your coding agent can actually reach."
-date: 2026-10-07
+date: 2026-10-12
 tags: [security, ai, appsec, webdev]
 cover: /images/blog/the-skill-you-installed/coverimage.jpg
 coverAlt: "A weathered wooden signpost at dusk with a cardboard tag showing a green tick tied to it. Its blank arrow points down a wet country road that disappears into fog. Headline: The scanners were right."
-draft: true
+draft: false
 ---
 
 Your coding agent runs as you. Not as a service account with a carefully scoped role, not in a sandbox somebody signed off on. As you, with your filesystem, your credentials, your repository and your ability to push code.
