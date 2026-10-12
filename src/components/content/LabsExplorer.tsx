@@ -47,7 +47,7 @@ const DIFFICULTY_RANK: Record<string, number> = {
 };
 
 function difficultyRank(difficulty: string): number {
-  return DIFFICULTY_RANK[difficulty.toLowerCase()] ?? 99;
+  return DIFFICULTY_RANK[difficulty.toLowerCase()] ?? Number.POSITIVE_INFINITY;
 }
 
 /** Serializable lab shape passed from the server page. */
@@ -278,17 +278,23 @@ export default function LabsExplorer({
           b.dateISO.localeCompare(a.dateISO)
         );
       }
+      if (sortKey === "difficulty") {
+        const ra = difficultyRank(a.difficulty);
+        const rb = difficultyRank(b.difficulty);
+        const aKnown = Number.isFinite(ra);
+        const bKnown = Number.isFinite(rb);
+        // Unknown difficulties sort last in both directions, so reversing to
+        // "Hardest first" never floats an unlabelled lab to the top.
+        if (aKnown !== bKnown) return aKnown ? -1 : 1;
+        // Only the rank comparison follows the direction. Equal rank (and two
+        // unknowns) fall back to the series order, never reversed, so the sort
+        // never claims one same-rank lab is easier than another.
+        if (aKnown && ra !== rb) return sortDir === "asc" ? ra - rb : rb - ra;
+        return (a.order ?? 0) - (b.order ?? 0) || a.title.localeCompare(b.title);
+      }
       let cmp: number;
       if (sortKey === "title") cmp = a.title.localeCompare(b.title);
       else if (sortKey === "read") cmp = a.readingMinutes - b.readingMinutes;
-      else if (sortKey === "difficulty")
-        // Equal difficulty falls back to the series order (Foundation before
-        // Pentest, both "Easy") rather than the title, so a difficulty sort
-        // never claims one same-rank lab is easier than another.
-        cmp =
-          difficultyRank(a.difficulty) - difficultyRank(b.difficulty) ||
-          (a.order ?? 0) - (b.order ?? 0) ||
-          a.title.localeCompare(b.title);
       else cmp = a.dateISO.localeCompare(b.dateISO);
       return sortDir === "asc" ? cmp : -cmp;
     });
