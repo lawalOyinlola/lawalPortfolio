@@ -92,16 +92,34 @@ function attr(tag, name) {
   return m ? (m[1] ?? m[2]).trim().toLowerCase() : null;
 }
 
-function addClasses(tag, classes) {
-  if (classes.length === 0) return tag;
+// A fill or stroke set through the style attribute, which wins over the
+// presentation attribute in the cascade. Read here too, so a colour hidden in
+// an inline style is themed and cannot slip past --check unhandled.
+function styleColour(tag, prop) {
+  const style = attr(tag, "style");
+  if (!style) return null;
+  const m = style.match(new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*([^;]+)`));
+  return m ? m[1].trim().toLowerCase() : null;
+}
+
+function addClasses(tag, classes, staleKinds = []) {
   const existing = tag.match(/\sclass=(?:"([^"]*)"|'([^']*)')/);
-  if (existing) {
-    const have = new Set((existing[1] ?? existing[2]).split(/\s+/).filter(Boolean));
-    const merged = [...have, ...classes.filter((c) => !have.has(c))].join(" ");
-    return tag.replace(existing[0], ` class="${merged}"`);
-  }
+  const have = existing ? (existing[1] ?? existing[2]).split(/\s+/).filter(Boolean) : [];
+
+  // Drop any generated class for the kinds we are re-evaluating, so a colour
+  // that changed (or now maps to KEEP) does not leave its old dg-* class
+  // behind. Unrelated classes, and generated classes for other kinds, stay.
+  const stale = staleKinds.map((k) => `dg-${k}-`);
+  const kept = have.filter((c) => !stale.some((p) => c.startsWith(p)));
+  const merged = [...kept, ...classes.filter((c) => !kept.includes(c))];
+
+  // Unchanged: leave the tag byte-for-byte so --check and idempotency hold.
+  if (merged.join(" ") === have.join(" ")) return tag;
+  // Everything was stale and nothing replaces it: drop the class attribute.
+  if (merged.length === 0) return tag.replace(existing[0], "");
+  if (existing) return tag.replace(existing[0], ` class="${merged.join(" ")}"`);
   // Insert straight after the tag name so the attribute order stays readable.
-  return tag.replace(/^<(\w+)/, `<$1 class="${classes.join(" ")}"`);
+  return tag.replace(/^<(\w+)/, `<$1 class="${merged.join(" ")}"`);
 }
 
 let problems = 0;
@@ -124,16 +142,18 @@ for (const file of files) {
 
     const classes = [];
     const fillKind = isText ? "t" : inMarker(offset) ? "m" : "f";
-    for (const [kind, colour] of [
-      [fillKind, attr(tag, "fill")],
-      ["s", attr(tag, "stroke")],
+    for (const [kind, prop] of [
+      [fillKind, "fill"],
+      ["s", "stroke"],
     ]) {
+      const colour = styleColour(tag, prop) ?? attr(tag, prop);
       if (!colour) continue;
       const role = ROLES[kind][colour];
       if (role) classes.push(`dg-${kind}-${role}`);
       else if (!KEEP[kind].includes(colour)) unmapped.add(`${kind} ${colour}`);
     }
-    return addClasses(tag, classes);
+    // Pass the kinds we evaluated so their stale generated classes are cleared.
+    return addClasses(tag, classes, [fillKind, "s"]);
   });
 
   for (const u of unmapped) {
