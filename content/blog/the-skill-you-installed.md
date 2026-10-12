@@ -6,6 +6,9 @@ tags: [security, ai, appsec, webdev]
 cover: /images/blog/the-skill-you-installed/coverimage.jpg
 coverAlt: "A weathered wooden signpost at dusk with a cardboard tag showing a green tick tied to it. Its blank arrow points down a wet country road that disappears into fog. Headline: The scanners were right."
 draft: false
+devto_id: 4837402
+devto_url: https://dev.to/lawaloyinlola/your-coding-agent-runs-as-you-so-does-everything-you-install-into-it-4ii3
+devto_published: true
 ---
 
 Your coding agent runs as you. Not as a service account with a carefully scoped role, not in a sandbox somebody signed off on. As you, with your filesystem, your credentials, your repository and your ability to push code.
