@@ -101,8 +101,8 @@ export default function Tools() {
         {/* Header */}
         <SectionHeader
           subtitle="Stack"
-          title="Tool & Tech"
-          description="The tools I reach for every day, from AI copilots to databases, animations, and deployment pipelines."
+          title="Tools & Tech"
+          description="What I reach for, from the editor to the pipeline to the lab."
           titleClassName="text-background"
           subtitleClassName="text-background/50"
           descriptionClassName="text-muted-foreground"

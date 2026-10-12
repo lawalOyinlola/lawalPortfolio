@@ -217,10 +217,8 @@ function Footer({ className }: FooterProps) {
               <span className="font-semibold text-background -scale-x-100 inline-block">
                 {BRAND.shortName}
               </span>{" "}
-              represents a commitment to precision, performance, and
-              reliability. Every line of code is written with the intent to make
-              technology <em>feel</em> effortless: stable under pressure,
-              scalable by design, and secure by default.
+              builds the product, hardens the systems behind it, and secures the
+              people and process in between. Fast for users, hard on attackers.
             </p>
           </div>
 
