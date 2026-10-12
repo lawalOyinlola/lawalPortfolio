@@ -68,9 +68,8 @@ export default function Adaptability() {
           subtitle="Why it matters"
           title="Adaptability"
           description={`
-              From academia to production FinTech, ${BRAND.shortName} is proof
-              that the best engineers are built by curiosity, shaped by
-              adversity, and measured by impact.`}
+              From academia to production FinTech, and now into security,
+              ${BRAND.shortName} learns how a system works, then how it fails.`}
         />
 
         {/* Two-column layout: metrics left, narrative right */}
@@ -112,16 +111,16 @@ export default function Adaptability() {
             <div className="flex flex-col divide-y divide-border">
               {[
                 {
-                  title: "Reliability under pressure",
-                  body: "Stable systems that hold when it matters most, from SafulPay's payment flows to Trakkam's live WebSocket fleet tracking.",
+                  title: "The product",
+                  body: "Fast, accessible interfaces people trust with their money and their data, from SafulPay's payment flows to Trakkam's live fleet tracking.",
                 },
                 {
-                  title: "Scalable by design",
-                  body: "Architecture decisions made with growth in mind, where components, APIs, and data flows are built to extend.",
+                  title: "The systems behind it",
+                  body: "APIs, infrastructure and pipelines hardened as they're built: security headers, rate limits, access control in the data model, and scanning in CI.",
                 },
                 {
-                  title: "Secure by default",
-                  body: "Security isn't a layer added at the end. It's baked into every sprint, every commit.",
+                  title: "The people and process in between",
+                  body: "Who can do what, who did what, and whether anyone can prove it: role-based access, audit trails, and risk explained to the people who own it.",
                 },
               ].map((p) => (
                 <div
