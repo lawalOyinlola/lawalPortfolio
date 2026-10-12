@@ -28,8 +28,9 @@ const NAV_LINKS: { label: string; href: string; anchor?: string }[] = [
   { label: "HOME", href: "/" },
   { label: "ABOUT", href: "/about" },
   { label: "PROJECTS", href: PROJECTS_HREF },
+  { label: "SECURITY", href: "/security" },
+  { label: "LABS", href: "/security/labs" },
   { label: "BLOG", href: "/blog" },
-  { label: "TOOLS & TECH", href: "/about", anchor: "tools-tech" },
   { label: "FAQ", href: "/faq" },
 ];
 
@@ -303,10 +304,10 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
                         handleNavClick(href, anchor);
                       }
                     }}
-                    // On short desktop screens (a 1280x720 laptop) six links at full
-                    // size overflow the fixed menu box and the top one is clipped;
-                    // tie the size to the viewport height there instead.
-                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black text-left block [@media(min-width:600px)_and_(max-height:800px)]:text-[min(5vw,4.8vh)]"
+                    // On short desktop screens (a 1280x720 laptop) the seven links at
+                    // full size overflow the fixed menu box and the top one is
+                    // clipped; tie the size to the viewport height there instead.
+                    className="title tracking-tighter hover:text-chart-3 transition-colors text-black text-left block [@media(min-width:600px)_and_(max-height:800px)]:text-[min(5vw,4.2vh)]"
                   >
                     <HoverFlipText text={label} />
                   </a>
@@ -316,10 +317,9 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
               {/* Top Right Text */}
               <div className="md:w-1/4 flex-none hidden md:block">
                 <p className="text-xs md:text-base italic font-extralight leading-relaxed max-w-sm">
-                  As Your Engineering Reliability Operator, {BrandName} bridges
-                  creativity with engineering discipline, turning complex ideas
-                  into dependable digital products that work flawlessly every
-                  time.
+                  Frontend craft, full-stack delivery and application security.
+                  {BrandName} builds the thing, then tries to break it before
+                  anyone else does.
                 </p>
               </div>
             </div>
