@@ -97,10 +97,10 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
 
         <div className="hero-item opacity-0 flex flex-col gap-6">
           <h1 className="bold-title text-background leading-tight">
-            Frontend Engineer
+            Software Engineer
             <br />
             <span className="text-background/50 font-extralight normal-case italic">
-              &amp; UI Architect
+              &amp; Application Security
             </span>
           </h1>
 
