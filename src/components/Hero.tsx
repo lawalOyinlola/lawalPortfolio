@@ -66,13 +66,15 @@ const Hero = ({ ready = true }: HeroProps) => {
         <h1 ref={textRef} className="header">
           Engineering isn&apos;t just about writing code. It&apos;s about
           building systems people can depend on.{" "}
+          {/* Once the hero's grid closes on scroll, this accent sentence is the
+              only part still readable on the dark columns, so it has to stand
+              on its own. */}
           <span className="text-accent font-normal">
             <span className="-scale-x-100 inline-block">{BRAND.shortName}</span>{" "}
-            represents a commitment to precision, performance, and reliability.
-            Every line of code is written with the intent to make technology
-            feel effortless.
+            builds the product, hardens the systems behind it, and secures the
+            people and process in between.
           </span>{" "}
-          Stable under pressure, scalable by design, and secure by default.
+          Fast for users, hard on attackers.
         </h1>
       </div>
     </section>
