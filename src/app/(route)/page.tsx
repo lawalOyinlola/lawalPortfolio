@@ -1,37 +1,47 @@
-"use client";
+import { getLabPosts } from "@/lib/content";
+import HomeClient from "./HomeClient";
 
-import { useLoading } from "@/components/providers/LoadingContext";
-import Hero from "@/components/Hero";
-import Product from "@/components/Product";
-import Clients from "@/components/Clients";
-import ScrollAnimation from "@/components/ScrollAnimation";
-import Projects from "@/components/Projects";
-import Faqs from "@/components/Faqs";
-import FaqJsonLd from "@/components/FaqJsonLd";
-import BrandStats from "@/components/BrandStats";
-import ContactsRef from "@/components/ContactsRef";
-import { FAQS } from "@/app/constants";
+// The lab with the fullest end-to-end write-up (and a cover that ties back to
+// the intro). Falls back to the newest lab with a cover if it's ever removed.
+const FEATURED_LAB_SLUG = "building-a-pentest-lab-on-apple-silicon";
 
-const HOME_FAQ_LIMIT = 5;
+// Extras that only exist for the featured lab: its screen recording (cut and
+// cropped from the LinkedIn clip) and the written report.
+const FEATURED_LAB_EXTRAS = {
+  video: {
+    webm: "/videos/pentest-defacement.webm",
+    mp4: "/videos/pentest-defacement.mp4",
+    poster: "/videos/pentest-defacement-poster.jpg",
+    label:
+      "Screen recording: the target's default Metasploitable page is replaced by a green terminal-style page reading SYSTEM COMPROMISED, I AM LAWAL, with the target, the attack vector and root access listed underneath.",
+  },
+  reportHref: "/files/apple-silicon-pentest-lab-report.pdf",
+};
 
 export default function Home() {
-  const { loading } = useLoading();
+  const labs = getLabPosts();
+  const lab =
+    labs.find((l) => l.slug === FEATURED_LAB_SLUG) ??
+    labs.find((l) => l.frontmatter.cover) ??
+    labs[0];
 
   return (
-    <div>
-      <Hero ready={!loading} />
-      <Product />
-      <Clients />
-      <ScrollAnimation ready={!loading} />
-      <Projects />
-      <FaqJsonLd items={FAQS.slice(0, HOME_FAQ_LIMIT)} />
-      <Faqs limit={HOME_FAQ_LIMIT} showSeeAll />
-      <BrandStats>
-        <ContactsRef
-          scrollTriggerSelector="#stats-contact-section"
-          scrollTriggerStart="84% top"
-        />
-      </BrandStats>
-    </div>
+    <HomeClient
+      securityLab={
+        lab
+          ? {
+              slug: lab.slug,
+              title: lab.frontmatter.title,
+              platform: lab.frontmatter.platform,
+              difficulty: lab.frontmatter.difficulty,
+              target: lab.frontmatter.target,
+              cves: lab.frontmatter.cves,
+              cover: lab.frontmatter.cover,
+              coverAlt: lab.frontmatter.coverAlt,
+              ...(lab.slug === FEATURED_LAB_SLUG ? FEATURED_LAB_EXTRAS : {}),
+            }
+          : null
+      }
+    />
   );
 }

@@ -15,23 +15,23 @@ export const BRAND_STATS: Stat[] = [
     name: "Projects Delivered",
     value: `${PROJECTS.length}`,
     description:
-      "Exciting project, attention to details. Each developed to leave a mark.",
+      "Shipped to real users across FinTech, fleet tracking and AI platforms.",
   },
   {
-    name: "Client's Loyalty",
-    value: "96%",
+    name: "Lighthouse Score",
+    value: "100",
     description:
-      "Our clients trust us with their projects and keep coming back.",
+      "SafulPay's corporate site, up from 68, in all four Lighthouse categories.",
   },
   {
-    name: "Years of Experience",
+    name: "Years Building",
     value: `${YEARS_OF_EXPERIENCE}+`,
-    description: `We have been in the industry for over ${YEARS_OF_EXPERIENCE} years, delivering top-notch solutions.`,
+    description:
+      "From IT operations to production software to application security.",
   },
   {
     name: "Countries Reached",
     value: `${COUNTRIES_REACHED}+`,
-    description:
-      "We build global impact solutions from Sierra Leone and Nigeria.",
+    description: "Products in daily use in Nigeria and Sierra Leone.",
   },
 ];
