@@ -205,7 +205,8 @@ html[data-intro="skip"] .pl-line {
   .tag-item,
   .explore-item,
   .point-item,
-  .project-detail-item {
+  .project-detail-item,
+  .sec-item {
     opacity: 1 !important;
     visibility: visible !important;
   }
