@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "./Navbar";
 import Preloader from "./Preloader";
 import Footer from "./Footer";
@@ -36,6 +37,29 @@ export default function AppLayout({ children }: AppLayoutProps) {
     }, 15000);
     return () => clearTimeout(timeoutId);
   }, [showPreloader, setLoading, setShowPreloader]);
+
+  // ScrollTrigger measures positions once and only re-measures on window
+  // resize. Anything that changes height after mount (a layout waiting on the
+  // motion preference, an FAQ opening, a late image) would leave every trigger
+  // below it firing early, so re-measure whenever the page's height changes.
+  useEffect(() => {
+    const content = mainRef.current;
+    if (!content) return;
+    let frame = 0;
+    let lastHeight = content.offsetHeight;
+    const observer = new ResizeObserver(() => {
+      const height = content.offsetHeight;
+      if (height === lastHeight) return;
+      lastHeight = height;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => ScrollTrigger.refresh());
+    });
+    observer.observe(content);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   // Accessibility: Reset focus to main container on page change (if no anchor)
   useEffect(() => {
