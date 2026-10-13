@@ -690,6 +690,70 @@ html[data-intro="skip"] .pl-line {
   .post-row:hover {
     background-color: color-mix(in oklab, var(--post-accent, var(--ring)) 3%, transparent);
   }
+
+  /* Page controls under the index lists. Same neutral family as .sort-chip:
+     they move through the results rather than filter them. */
+  .page-step {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 text-xs uppercase tracking-widest text-primary transition-colors duration-200 disabled:cursor-default disabled:text-muted-foreground/50;
+  }
+
+  .page-chip {
+    @apply inline-flex size-11 cursor-pointer items-center justify-center rounded-full font-mono text-xs tabular-nums text-muted-foreground transition-colors duration-200 hover:text-primary;
+  }
+
+  .page-chip:active {
+    transform: scale(0.95);
+  }
+
+  .page-chip-active {
+    @apply bg-primary text-background hover:text-background;
+  }
+}
+
+/* Covers on the index pages open with the same side wipe the project images
+   use, driven by scroll where the browser can do it without script. Where it
+   can't, the cover is simply there. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .cover-wipe {
+      animation: cover-wipe linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+    }
+  }
+}
+
+@keyframes cover-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+/* The tool strip on /security: two copies of the list side by side, moved by
+   exactly one copy's width so the loop has no seam. Paused on hover and
+   focus, and not moving at all for reduced motion. */
+.marquee-track {
+  animation: marquee 48s linear infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
 
 @keyframes post-row-in {
