@@ -101,11 +101,14 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
       else cmp = a.dateISO.localeCompare(b.dateISO);
       return sortDir === "asc" ? cmp : -cmp;
     });
-    // A featured post sits on top of the default newest-first order, where
-    // its badge says why it is out of date order. Any other sort is literal.
+    // Featured posts sit on top of the default newest-first order, newest
+    // featured first, where the badge says why they are out of date order.
+    // Any other sort is literal.
     if (sortKey === "date" && sortDir === "desc") {
-      const pinned = arr.findIndex((post) => post.pinned);
-      if (pinned > 0) arr.unshift(...arr.splice(pinned, 1));
+      return [
+        ...arr.filter((post) => post.pinned),
+        ...arr.filter((post) => !post.pinned),
+      ];
     }
     return arr;
   }, [results, sortKey, sortDir]);
