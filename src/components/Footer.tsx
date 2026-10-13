@@ -187,7 +187,7 @@ function Footer({ className }: FooterProps) {
     return () => {
       document.removeEventListener("focusin", handleFocusIn);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <footer
