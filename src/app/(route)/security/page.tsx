@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRightIcon,
@@ -83,6 +84,27 @@ const CASE_STUDY_THEMES = [
   "Technical skills labs",
 ];
 
+/**
+ * Shown as a static badge with links out rather than Credly's embed: the
+ * embed is a third-party script and iframe, which the site's CSP blocks by
+ * design. The badge image is a local copy of Credly's own.
+ */
+const CREDENTIAL = {
+  name: "Google Cybersecurity Professional Certificate",
+  issuer: "Google",
+  badge: "/images/credentials/google-cybersecurity-certificate.png",
+  links: [
+    {
+      label: "Verify on Credly",
+      href: "https://www.credly.com/badges/99d514e9-c306-4f55-95db-efd37a099b53/public_url",
+    },
+    {
+      label: "Coursera record",
+      href: "https://www.coursera.org/account/accomplishments/specialization/PZZDNMRKGNAL",
+    },
+  ],
+};
+
 /** How many posts the Writing section shows before handing off to /blog. */
 const WRITING_LIMIT = 4;
 
@@ -152,6 +174,40 @@ export default function SecurityPage() {
                   </li>
                 ))}
               </ol>
+
+              <div className="mt-6 flex items-center gap-4">
+                <Image
+                  src={CREDENTIAL.badge}
+                  alt=""
+                  width={56}
+                  height={54}
+                  className="size-14 shrink-0 object-contain"
+                />
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-sm font-semibold leading-snug">
+                    {CREDENTIAL.name}
+                  </span>
+                  <span className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] uppercase tracking-widest text-background/60">
+                    <span>{CREDENTIAL.issuer}</span>
+                    {CREDENTIAL.links.map((link) => (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener"
+                        className="group inline-flex items-center gap-1 text-background/80 transition-colors hover:text-background"
+                      >
+                        {link.label}
+                        <ArrowUpRightIcon
+                          weight="bold"
+                          aria-hidden
+                          className="size-3 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                        />
+                      </a>
+                    ))}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
