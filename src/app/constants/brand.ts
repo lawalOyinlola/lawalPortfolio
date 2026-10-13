@@ -64,6 +64,8 @@ export const BRAND = {
     "Governance, Risk & Compliance (GRC)",
     "FinTech UI Development",
   ],
-  tagline: ["Logic", "Architecture", "Workmanship", "Agility", "Longevity"],
+  // One word per letter of LAWAL, shown above the footer letters and on the
+  // About hero. Keep each to ~11 characters so the footer labels fit at 375px.
+  tagline: ["Logic", "Access", "Workmanship", "Assurance", "Longevity"],
   yearFounded: 2023,
 };

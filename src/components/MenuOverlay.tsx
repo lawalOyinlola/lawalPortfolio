@@ -317,9 +317,8 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
               {/* Top Right Text */}
               <div className="md:w-1/4 flex-none hidden md:block">
                 <p className="text-xs md:text-base italic font-extralight leading-relaxed max-w-sm">
-                  Frontend craft, full-stack delivery and application security.
-                  {BrandName} builds the thing, then tries to break it before
-                  anyone else does.
+                  {BrandName} builds software people can depend on, then tries
+                  every lock before an attacker does.
                 </p>
               </div>
             </div>
