@@ -22,6 +22,10 @@ export interface SectionHeaderProps extends Omit<
   titleClassName?: string;
   subtitleClassName?: string;
   descriptionClassName?: string;
+  /** The heading level. A page's own header passes "h1"; sections keep "h2". */
+  as?: "h1" | "h2";
+  /** An id for the heading, so a section can point aria-labelledby at it. */
+  titleId?: string;
 }
 
 export function SectionHeader({
@@ -31,6 +35,8 @@ export function SectionHeader({
   titleClassName,
   subtitleClassName,
   descriptionClassName,
+  as: Heading = "h2",
+  titleId,
   className,
   ...props
 }: SectionHeaderProps) {
@@ -146,8 +152,9 @@ export function SectionHeader({
         </div>
       )}
       <div className="w-fit">
-        <h2
+        <Heading
           ref={titleRef}
+          id={titleId}
           aria-label={titleText}
           className={cn(
             "sh-heading bold-title leading-tight text-primary",
@@ -156,7 +163,7 @@ export function SectionHeader({
           )}
         >
           {title}
-        </h2>
+        </Heading>
       </div>
       {description && (
         <div className="sh-item opacity-0">

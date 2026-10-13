@@ -3,6 +3,7 @@
 import { useId, useMemo, useRef, useState } from "react";
 import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getTagColor } from "@/lib/tag-colors";
+import Pagination from "./Pagination";
 import PostCard, { type PostSummary } from "./PostCard";
 import SortControl, { type SortDir, type SortOption } from "./SortControl";
 
@@ -19,6 +20,13 @@ const SORT_OPTIONS: SortOption[] = [
 ];
 
 /**
+ * Up to SINGLE_PAGE_MAX posts read as one list with no page controls. Past
+ * that, the list splits into pages of PAGE_SIZE.
+ */
+const SINGLE_PAGE_MAX = 15;
+const PAGE_SIZE = 10;
+
+/**
  * Search and tag filtering for the post list.
  *
  * Everything runs against the already-rendered array: the whole blog is a
@@ -31,6 +39,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState("date");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [page, setPage] = useState(1);
   const searchId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -92,10 +101,33 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
       else cmp = a.dateISO.localeCompare(b.dateISO);
       return sortDir === "asc" ? cmp : -cmp;
     });
+    // Featured posts sit on top of the default newest-first order, newest
+    // featured first, where the badge says why they are out of date order.
+    // Any other sort is literal.
+    if (sortKey === "date" && sortDir === "desc") {
+      return [
+        ...arr.filter((post) => post.pinned),
+        ...arr.filter((post) => !post.pinned),
+      ];
+    }
     return arr;
   }, [results, sortKey, sortDir]);
 
   const isFiltered = query.trim().length > 0 || activeTags.length > 0;
+
+  const pageSize =
+    sorted.length > SINGLE_PAGE_MAX ? PAGE_SIZE : Math.max(sorted.length, 1);
+  const pageCount = Math.ceil(sorted.length / pageSize) || 1;
+  const currentPage = Math.min(page, pageCount);
+  const pageItems = sorted.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  function changePage(next: number) {
+    setPage(next);
+    scrollToResults();
+  }
 
   function toggleTag(tag: string) {
     setActiveTags((current) =>
@@ -103,12 +135,14 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
         ? current.filter((t) => t !== tag)
         : [...current, tag],
     );
+    setPage(1);
     scrollToResults();
   }
 
   function clearAll() {
     setQuery("");
     setActiveTags([]);
+    setPage(1);
     scrollToResults();
   }
 
@@ -118,6 +152,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
   function changeSort(key: string, dir: SortDir) {
     setSortKey(key);
     setSortDir(dir);
+    setPage(1);
   }
 
   return (
@@ -142,14 +177,20 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
             id={searchId}
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setPage(1);
+            }}
             placeholder="WAF, careers, tooling"
             className="search-field w-full rounded-full border border-border bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
           />
           {query && (
             <button
               type="button"
-              onClick={() => setQuery("")}
+              onClick={() => {
+                setQuery("");
+                setPage(1);
+              }}
               aria-label="Clear search"
               className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:text-primary"
             >
@@ -219,16 +260,25 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
           {isFiltered
             ? `${results.length} of ${posts.length} ${posts.length === 1 ? "post" : "posts"}`
             : `${posts.length} ${posts.length === 1 ? "post" : "posts"}`}
+          {pageCount > 1 && ` · page ${currentPage} of ${pageCount}`}
         </p>
 
         {results.length > 0 ? (
-          <ul className="mt-6 divide-y divide-border/60 border-y border-border/25">
-            {sorted.map((post, index) => (
-              <li key={post.slug}>
-                <PostCard post={post} index={index} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="mt-6 divide-y divide-border/60 border-y border-border/25">
+              {pageItems.map((post, index) => (
+                <li key={post.slug}>
+                  <PostCard post={post} index={index} />
+                </li>
+              ))}
+            </ul>
+            <Pagination
+              page={currentPage}
+              pageCount={pageCount}
+              onChange={changePage}
+              label="Posts"
+            />
+          </>
         ) : (
           <div className="mt-6 border-y border-border/25 py-20 text-center">
             <p className="text-base text-primary">Nothing matches that yet.</p>

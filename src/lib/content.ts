@@ -77,7 +77,17 @@ function requireCoverAlt(
   }
 }
 
-export const blogFrontmatterSchema = baseFrontmatter.superRefine(requireCoverAlt);
+export const blogFrontmatterSchema = baseFrontmatter
+  .extend({
+    /**
+     * Pins the post to the top of the blog index under a Featured badge. If
+     * several are marked, they lead newest first; see `toPostSummaries`.
+     * Site-only: the dev.to sync builds its payload field by field and never
+     * sends this.
+     */
+    featured: z.boolean().default(false),
+  })
+  .superRefine(requireCoverAlt);
 
 /**
  * `status` is the publication gate, not decoration. HackTheBox forbids writeups
@@ -291,4 +301,62 @@ export function formatPostDate(date: Date): string {
     year: "numeric",
     timeZone: "UTC",
   }).format(date);
+}
+
+/** The parts of a post the index lists need, flattened so it can cross to a client component. */
+export type PostSummary = {
+  slug: string;
+  title: string;
+  description: string;
+  dateISO: string;
+  dateLabel: string;
+  readingMinutes: number;
+  tags: string[];
+  cover: string | null;
+  /** See `toPostSummaries` for which posts carry one. */
+  badge: "Featured" | "Latest" | null;
+  /** Marked `featured: true`: held above the rest in newest-first order. */
+  pinned: boolean;
+};
+
+/**
+ * Flatten a post for the lists. The Date objects and the raw file body stay
+ * on the server where they belong.
+ */
+function toPostSummary(post: BlogPost): PostSummary {
+  return {
+    slug: post.slug,
+    title: post.frontmatter.title,
+    description: post.frontmatter.description,
+    dateISO: post.frontmatter.date.toISOString(),
+    dateLabel: formatPostDate(post.frontmatter.date),
+    readingMinutes: post.readingMinutes,
+    tags: post.frontmatter.tags,
+    cover: post.frontmatter.cover ?? null,
+    badge: null,
+    pinned: false,
+  };
+}
+
+/**
+ * Flatten a newest-first list and call out what leads it. Every post marked
+ * `featured: true` takes a Featured badge and moves to the top, newest
+ * featured first, ahead of the rest in their usual newest-first order. With
+ * none marked, the newest post is labelled Latest instead, so the two badges
+ * never appear together.
+ */
+export function toPostSummaries(posts: BlogPost[]): PostSummary[] {
+  const featured: PostSummary[] = [];
+  const rest: PostSummary[] = [];
+  for (const post of posts) {
+    if (post.frontmatter.featured) {
+      featured.push({ ...toPostSummary(post), badge: "Featured", pinned: true });
+    } else {
+      rest.push(toPostSummary(post));
+    }
+  }
+  if (featured.length === 0 && rest[0]) {
+    rest[0] = { ...rest[0], badge: "Latest" };
+  }
+  return [...featured, ...rest];
 }

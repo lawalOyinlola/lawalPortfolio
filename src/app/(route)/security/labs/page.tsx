@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BRAND, LAB_SERIES } from "@/app/constants";
+import { BRAND, LAB_NODES, LAB_SERIES } from "@/app/constants";
 import { formatPostDate, getLabPosts } from "@/lib/content";
 import LabMap from "@/components/content/LabMap";
 import LabsExplorer, {
   type LabSummary,
 } from "@/components/content/LabsExplorer";
 import ContactsRef from "@/components/ContactsRef";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const title = "Labs";
 const description = `Hands-on security lab writeups by ${BRAND.name}: self-hosted environments and retired boxes, each taken end to end from recon to root, with the defensive lesson behind every step.`;
@@ -62,27 +63,45 @@ export default function LabsPage() {
   }));
 
   const liveSlugs = posts.map((lab) => lab.slug);
+  const liveCount = LAB_NODES.filter((node) =>
+    liveSlugs.includes(node.slug),
+  ).length;
 
   return (
     <article className="min-h-screen relative bg-background z-1">
       <div className="h-24 md:h-32" aria-hidden />
 
       <div className="wrapper mx-auto">
-        <header className="max-w-2xl">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">
-            <Link href="/security" className="hover:text-primary">
-              Security
-            </Link>{" "}
-            / Labs
-          </p>
-          <h1 className="bold-title mt-1 text-primary">Labs</h1>
-          <p className="mt-4 max-w-[60ch] text-sm leading-loose text-muted-foreground">
-            A connected set of security labs built on one machine, not a pile of
-            one-off writeups. A shared foundation stands up the environment once;
-            each track then reuses it to go end to end, from recon to root or
-            from attack to alert, with the control that stops it named at every
-            step. The map shows how they fit together.
-          </p>
+        <header className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <SectionHeader
+            as="h1"
+            subtitle={
+              <>
+                <Link href="/security" className="hover:text-primary">
+                  Security
+                </Link>{" "}
+                / Labs
+              </>
+            }
+            title="Labs"
+            description="A connected set of security labs built on one machine, not a pile of one-off writeups. A shared foundation stands up the environment once; each track then reuses it to go end to end, from recon to root or from attack to alert, with the control that stops it named at every step. The map shows how they fit together."
+            descriptionClassName="max-w-[60ch] text-muted-foreground"
+            className="max-w-2xl"
+          />
+          <dl className="flex shrink-0 gap-10 border-t border-border/40 pt-5 text-[11px] uppercase tracking-widest md:mb-3 md:border-t-0 md:pt-0 md:text-right">
+            <div className="flex flex-col gap-1">
+              <dt className="text-muted-foreground">Live</dt>
+              <dd className="font-mono text-sm tabular-nums text-primary">
+                {String(liveCount).padStart(2, "0")}
+              </dd>
+            </div>
+            <div className="flex flex-col gap-1">
+              <dt className="text-muted-foreground">On the map</dt>
+              <dd className="font-mono text-sm tabular-nums text-primary">
+                {String(LAB_NODES.length).padStart(2, "0")}
+              </dd>
+            </div>
+          </dl>
         </header>
 
         {labs.length === 0 ? (
