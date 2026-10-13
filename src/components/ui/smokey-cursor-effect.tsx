@@ -6,6 +6,48 @@ interface FluidCursorEffectProps {
   triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
+// A WebGL1 context is stored under the WebGL2 type too. The WebGL2-only enums
+// (HALF_FLOAT, RGBA16F, RG, RED…) are only read when isWebGL2 is true.
+type GL = WebGL2RenderingContext;
+type Uniforms = Record<string, WebGLUniformLocation | null>;
+type RGB = { r: number; g: number; b: number };
+type TextureFormat = { internalFormat: number; format: number };
+
+interface Pointer {
+  id: number;
+  texcoordX: number;
+  texcoordY: number;
+  prevTexcoordX: number;
+  prevTexcoordY: number;
+  deltaX: number;
+  deltaY: number;
+  down: boolean;
+  moved: boolean;
+  color: RGB;
+}
+
+interface FBO {
+  texture: WebGLTexture | null;
+  fbo: WebGLFramebuffer | null;
+  width: number;
+  height: number;
+  texelSizeX: number;
+  texelSizeY: number;
+  attach(id: number): number;
+  dispose(): void;
+}
+
+interface DoubleFBO {
+  width: number;
+  height: number;
+  texelSizeX: number;
+  texelSizeY: number;
+  read: FBO;
+  write: FBO;
+  swap(): void;
+  dispose(): void;
+}
+
 const FluidCursorEffect = ({
   resetKey,
   triggerRef,
@@ -16,31 +58,39 @@ const FluidCursorEffect = ({
   const [error, setError] = useState<string | null>(null);
   const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
 
-  // Configuration
-  const config = {
-    SIM_RESOLUTION: 128,
-    DYE_RESOLUTION: 1440,
-    CAPTURE_RESOLUTION: 512,
-    DENSITY_DISSIPATION: 3.5,
-    VELOCITY_DISSIPATION: 2,
-    PRESSURE: 0.1,
-    PRESSURE_ITERATIONS: 20,
-    CURL: 3,
-    SPLAT_RADIUS: 0.2,
-    SPLAT_FORCE: 6000,
-    SHADING: true,
-    COLOR_UPDATE_SPEED: 10,
-    PAUSED: false,
-    BACK_COLOR: { r: 0, g: 0, b: 0 },
-    TRANSPARENT: true,
-  };
-
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    let gl: any, ext: any;
-    const pointers = [
+    // Lives inside the effect because initializeWebGL lowers the resolution
+    // and turns shading off on devices without linear filtering.
+    const config = {
+      SIM_RESOLUTION: 128,
+      DYE_RESOLUTION: 1440,
+      CAPTURE_RESOLUTION: 512,
+      DENSITY_DISSIPATION: 3.5,
+      VELOCITY_DISSIPATION: 2,
+      PRESSURE: 0.1,
+      PRESSURE_ITERATIONS: 20,
+      CURL: 3,
+      SPLAT_RADIUS: 0.2,
+      SPLAT_FORCE: 6000,
+      SHADING: true,
+      COLOR_UPDATE_SPEED: 10,
+      PAUSED: false,
+      BACK_COLOR: { r: 0, g: 0, b: 0 },
+      TRANSPARENT: true,
+    };
+
+    let gl!: GL;
+    let ext!: {
+      formatRGBA: TextureFormat;
+      formatRG: TextureFormat;
+      formatR: TextureFormat;
+      halfFloatTexType: number;
+      supportLinearFiltering: boolean;
+    };
+    const pointers: Pointer[] = [
       {
         id: -1,
         texcoordX: 0,
@@ -54,25 +104,27 @@ const FluidCursorEffect = ({
         color: { r: 0, g: 0, b: 0 },
       },
     ];
-    let dye: any,
-      velocity: any,
-      divergence: any,
-      curlFBO: any,
-      pressureFBO: any;
+    // Assigned during init(); the cleanup below still guards each one because
+    // init can throw before they exist.
+    let dye!: DoubleFBO,
+      velocity!: DoubleFBO,
+      divergence!: FBO,
+      curlFBO!: FBO,
+      pressureFBO!: DoubleFBO;
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
 
     // Programs
-    let copyProgram: any,
-      clearProgram: any,
-      splatProgram: any,
-      advectionProgram: any;
-    let divergenceProgram: any,
-      curlProgram: any,
-      vorticityProgram: any,
-      pressureProgram: any;
-    let gradienSubtractProgram: any, displayMaterial: any;
-    let blit: any;
+    let copyProgram!: Program,
+      clearProgram!: Program,
+      splatProgram!: Program,
+      advectionProgram!: Program;
+    let divergenceProgram!: Program,
+      curlProgram!: Program,
+      vorticityProgram!: Program,
+      pressureProgram!: Program;
+    let gradienSubtractProgram!: Program, displayMaterial!: Material;
+    let blit!: (target: FBO | null, doClear?: boolean) => void;
 
     const initializeWebGL = () => {
       const params = {
@@ -83,14 +135,18 @@ const FluidCursorEffect = ({
         preserveDrawingBuffer: false,
       };
 
-      gl =
+      const context =
         canvas.getContext("webgl2", params) ||
         canvas.getContext("webgl", params) ||
-        canvas.getContext("experimental-webgl", params);
+        (canvas.getContext(
+          "experimental-webgl",
+          params,
+        ) as WebGLRenderingContext | null);
 
-      if (!gl) {
+      if (!context) {
         throw new Error("Unable to initialize WebGL.");
       }
+      gl = context as GL;
 
       const isWebGL2 = "drawBuffers" in gl;
       let supportLinearFiltering = false;
@@ -129,6 +185,10 @@ const FluidCursorEffect = ({
         formatR = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
       }
 
+      if (!formatRGBA || !formatRG || !formatR) {
+        throw new Error("No supported render texture format.");
+      }
+
       ext = {
         formatRGBA,
         formatRG,
@@ -146,11 +206,11 @@ const FluidCursorEffect = ({
     };
 
     const getSupportedFormat = (
-      gl: any,
-      internalFormat: any,
-      format: any,
-      type: any,
-    ) => {
+      gl: GL,
+      internalFormat: number,
+      format: number,
+      type: number,
+    ): TextureFormat | null => {
       if (!supportRenderTextureFormat(gl, internalFormat, format, type)) {
         if ("drawBuffers" in gl) {
           switch (internalFormat) {
@@ -168,10 +228,10 @@ const FluidCursorEffect = ({
     };
 
     const supportRenderTextureFormat = (
-      gl: any,
-      internalFormat: any,
-      format: any,
-      type: any,
+      gl: GL,
+      internalFormat: number,
+      format: number,
+      type: number,
     ) => {
       const texture = gl.createTexture();
       if (!texture) return false;
@@ -208,7 +268,11 @@ const FluidCursorEffect = ({
       return status === gl.FRAMEBUFFER_COMPLETE;
     };
 
-    const compileShader = (type: any, source: any, keywords: any = null) => {
+    const compileShader = (
+      type: number,
+      source: string,
+      keywords: string[] | null = null,
+    ) => {
       let shaderSource = source;
       if (keywords) {
         let keywordsString = "";
@@ -228,7 +292,10 @@ const FluidCursorEffect = ({
       return shader;
     };
 
-    const createProgram = (vertexShader: any, fragmentShader: any) => {
+    const createProgram = (
+      vertexShader: WebGLShader | null,
+      fragmentShader: WebGLShader | null,
+    ) => {
       if (!vertexShader || !fragmentShader) return null;
       const program = gl.createProgram();
       if (!program) return null;
@@ -241,8 +308,8 @@ const FluidCursorEffect = ({
       return program;
     };
 
-    const getUniforms = (program: any) => {
-      let uniforms: any = {};
+    const getUniforms = (program: WebGLProgram) => {
+      const uniforms: Uniforms = {};
       const uniformCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
       for (let i = 0; i < uniformCount; i++) {
         const uniformInfo = gl.getActiveUniform(program, i);
@@ -258,8 +325,11 @@ const FluidCursorEffect = ({
 
     class Program {
       program: WebGLProgram | null;
-      uniforms: any;
-      constructor(vertexShader: WebGLShader, fragmentShader: WebGLShader) {
+      uniforms: Uniforms;
+      constructor(
+        vertexShader: WebGLShader | null,
+        fragmentShader: WebGLShader | null,
+      ) {
         this.program = createProgram(vertexShader, fragmentShader);
         this.uniforms = this.program ? getUniforms(this.program) : {};
       }
@@ -277,12 +347,15 @@ const FluidCursorEffect = ({
     }
 
     class Material {
-      vertexShader: WebGLShader;
+      vertexShader: WebGLShader | null;
       fragmentShaderSource: string;
       programs: { [key: number]: WebGLProgram };
       activeProgram: WebGLProgram | null;
-      uniforms: any;
-      constructor(vertexShader: WebGLShader, fragmentShaderSource: string) {
+      uniforms: Uniforms;
+      constructor(
+        vertexShader: WebGLShader | null,
+        fragmentShaderSource: string,
+      ) {
         this.vertexShader = vertexShader;
         this.fragmentShaderSource = fragmentShaderSource;
         this.programs = {};
@@ -685,7 +758,7 @@ const FluidCursorEffect = ({
       gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
       gl.enableVertexAttribArray(0);
 
-      blit = (target: any, doClear: any = false) => {
+      blit = (target: FBO | null, doClear = false) => {
         if (!gl) return;
         if (!target) {
           gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -703,13 +776,13 @@ const FluidCursorEffect = ({
     };
 
     const createFBO = (
-      w: any,
-      h: any,
-      internalFormat: any,
-      format: any,
-      type: any,
-      param: any,
-    ) => {
+      w: number,
+      h: number,
+      internalFormat: number,
+      format: number,
+      type: number,
+      param: number,
+    ): FBO => {
       gl.activeTexture(gl.TEXTURE0);
       const texture = gl.createTexture();
       gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -750,7 +823,7 @@ const FluidCursorEffect = ({
         height: h,
         texelSizeX,
         texelSizeY,
-        attach(id: any) {
+        attach(id: number) {
           gl.activeTexture(gl.TEXTURE0 + id);
           gl.bindTexture(gl.TEXTURE_2D, texture);
           return id;
@@ -763,13 +836,13 @@ const FluidCursorEffect = ({
     };
 
     const createDoubleFBO = (
-      w: any,
-      h: any,
-      internalFormat: any,
-      format: any,
-      type: any,
-      param: any,
-    ) => {
+      w: number,
+      h: number,
+      internalFormat: number,
+      format: number,
+      type: number,
+      param: number,
+    ): DoubleFBO => {
       const fbo1 = createFBO(w, h, internalFormat, format, type, param);
       const fbo2 = createFBO(w, h, internalFormat, format, type, param);
       return {
@@ -791,11 +864,11 @@ const FluidCursorEffect = ({
       };
     };
 
-    const getResolution = (resolution: any) => {
+    const getResolution = (resolution: number) => {
       const w = gl.drawingBufferWidth;
       const h = gl.drawingBufferHeight;
       const aspectRatio = w / h;
-      let aspect = aspectRatio < 1 ? 1 / aspectRatio : aspectRatio;
+      const aspect = aspectRatio < 1 ? 1 / aspectRatio : aspectRatio;
       const min = Math.round(resolution);
       const max = Math.round(resolution * aspect);
       if (w > h) {
@@ -804,7 +877,7 @@ const FluidCursorEffect = ({
       return { width: min, height: max };
     };
 
-    const scaleByPixelRatio = (input: any) => {
+    const scaleByPixelRatio = (input: number) => {
       const pixelRatio = window.devicePixelRatio || 1;
       return Math.floor(input * pixelRatio);
     };
@@ -874,7 +947,7 @@ const FluidCursorEffect = ({
       displayMaterial.setKeywords(displayKeywords);
     };
 
-    const HSVtoRGB = (h: any, s: any, v: any) => {
+    const HSVtoRGB = (h: number, s: number, v: number): RGB => {
       let r = 0,
         g = 0,
         b = 0;
@@ -927,7 +1000,7 @@ const FluidCursorEffect = ({
       return c;
     };
 
-    const wrap = (value: any, min: any, max: any) => {
+    const wrap = (value: number, min: number, max: number) => {
       const range = max - min;
       if (range === 0) return min;
       return ((value - min) % range) + min;
@@ -952,7 +1025,7 @@ const FluidCursorEffect = ({
       return false;
     };
 
-    const updateColors = (dt: any) => {
+    const updateColors = (dt: number) => {
       colorUpdateTimer += dt * config.COLOR_UPDATE_SPEED;
       if (colorUpdateTimer >= 1) {
         colorUpdateTimer = wrap(colorUpdateTimer, 0, 1);
@@ -971,7 +1044,7 @@ const FluidCursorEffect = ({
       }
     };
 
-    const step = (dt: any) => {
+    const step = (dt: number) => {
       gl.disable(gl.BLEND);
 
       // Curl
@@ -1164,13 +1237,13 @@ const FluidCursorEffect = ({
       dye.swap();
     };
 
-    const render = (target: any) => {
+    const render = (target: FBO | null) => {
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       gl.enable(gl.BLEND);
       drawDisplay(target);
     };
 
-    const drawDisplay = (target: any) => {
+    const drawDisplay = (target: FBO | null) => {
       const width = target ? target.width : gl.drawingBufferWidth;
       const height = target ? target.height : gl.drawingBufferHeight;
       displayMaterial.bind();
@@ -1183,13 +1256,13 @@ const FluidCursorEffect = ({
       blit(target, false);
     };
 
-    const splatPointer = (pointer: any) => {
+    const splatPointer = (pointer: Pointer) => {
       const dx = pointer.deltaX * config.SPLAT_FORCE;
       const dy = pointer.deltaY * config.SPLAT_FORCE;
       splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color);
     };
 
-    const clickSplat = (pointer: any) => {
+    const clickSplat = (pointer: Pointer) => {
       const color = generateColor();
       color.r *= 10;
       color.g *= 10;
@@ -1199,7 +1272,7 @@ const FluidCursorEffect = ({
       splat(pointer.texcoordX, pointer.texcoordY, dx, dy, color);
     };
 
-    const splat = (x: any, y: any, dx: any, dy: any, color: any) => {
+    const splat = (x: number, y: number, dx: number, dy: number, color: RGB) => {
       splatProgram.bind();
       if (splatProgram.uniforms.uTarget) {
         gl.uniform1i(splatProgram.uniforms.uTarget, velocity.read.attach(0));
@@ -1235,17 +1308,17 @@ const FluidCursorEffect = ({
       dye.swap();
     };
 
-    const correctRadius = (radius: any) => {
+    const correctRadius = (radius: number) => {
       const aspectRatio = canvas.width / canvas.height;
       if (aspectRatio > 1) radius *= aspectRatio;
       return radius;
     };
 
     const updatePointerDownData = (
-      pointer: any,
-      id: any,
-      posX: any,
-      posY: any,
+      pointer: Pointer,
+      id: number,
+      posX: number,
+      posY: number,
     ) => {
       pointer.id = id;
       pointer.down = true;
@@ -1260,10 +1333,10 @@ const FluidCursorEffect = ({
     };
 
     const updatePointerMoveData = (
-      pointer: any,
-      posX: any,
-      posY: any,
-      color: any,
+      pointer: Pointer,
+      posX: number,
+      posY: number,
+      color: RGB,
     ) => {
       pointer.prevTexcoordX = pointer.texcoordX;
       pointer.prevTexcoordY = pointer.texcoordY;
@@ -1276,13 +1349,13 @@ const FluidCursorEffect = ({
       pointer.color = color;
     };
 
-    const correctDeltaX = (delta: any) => {
+    const correctDeltaX = (delta: number) => {
       const aspectRatio = canvas.width / canvas.height;
       if (aspectRatio < 1) delta *= aspectRatio;
       return delta;
     };
 
-    const correctDeltaY = (delta: any) => {
+    const correctDeltaY = (delta: number) => {
       const aspectRatio = canvas.width / canvas.height;
       if (aspectRatio > 1) delta /= aspectRatio;
       return delta;
@@ -1299,7 +1372,7 @@ const FluidCursorEffect = ({
     };
 
     const setupEventListeners = () => {
-      const handleMouseDown = (e: any) => {
+      const handleMouseDown = (e: MouseEvent) => {
         const pointer = pointers[0];
         const rect = triggerRef?.current?.getBoundingClientRect() || {
           left: 0,
@@ -1311,7 +1384,7 @@ const FluidCursorEffect = ({
         clickSplat(pointer);
       };
 
-      const handleMouseMove = (e: any) => {
+      const handleMouseMove = (e: MouseEvent) => {
         const pointer = pointers[0];
         const rect = triggerRef?.current?.getBoundingClientRect() || {
           left: 0,
@@ -1323,7 +1396,7 @@ const FluidCursorEffect = ({
         updatePointerMoveData(pointer, posX, posY, color);
       };
 
-      const handleTouchStart = (e: any) => {
+      const handleTouchStart = (e: TouchEvent) => {
         const touches = e.targetTouches;
         const pointer = pointers[0];
         const rect = triggerRef?.current?.getBoundingClientRect() || {
@@ -1337,7 +1410,7 @@ const FluidCursorEffect = ({
         }
       };
 
-      const handleTouchMove = (e: any) => {
+      const handleTouchMove = (e: TouchEvent) => {
         const touches = e.targetTouches;
         const pointer = pointers[0];
         const rect = triggerRef?.current?.getBoundingClientRect() || {
@@ -1356,25 +1429,30 @@ const FluidCursorEffect = ({
         pointer.down = false;
       };
 
-      const target = triggerRef?.current || window;
+      const target: EventTarget = triggerRef?.current || window;
 
-      target.addEventListener("mousedown", handleMouseDown);
-      target.addEventListener("mousemove", handleMouseMove);
-      target.addEventListener("touchstart", handleTouchStart as any, {
-        passive: false,
-      });
-      target.addEventListener("touchmove", handleTouchMove as any, {
-        passive: false,
-      });
-      target.addEventListener("touchend", handleTouchEnd);
-
-      return () => {
-        target.removeEventListener("mousedown", handleMouseDown);
-        target.removeEventListener("mousemove", handleMouseMove);
-        target.removeEventListener("touchstart", handleTouchStart as any);
-        target.removeEventListener("touchmove", handleTouchMove as any);
-        target.removeEventListener("touchend", handleTouchEnd);
+      // The target is an element or the window, so TypeScript only sees the
+      // generic EventTarget signature. This keeps each handler typed against
+      // the event it actually receives.
+      const listen = <K extends keyof GlobalEventHandlersEventMap>(
+        type: K,
+        handler: (e: GlobalEventHandlersEventMap[K]) => void,
+        options?: AddEventListenerOptions,
+      ) => {
+        target.addEventListener(type, handler as EventListener, options);
+        return () =>
+          target.removeEventListener(type, handler as EventListener);
       };
+
+      const unlisten = [
+        listen("mousedown", handleMouseDown),
+        listen("mousemove", handleMouseMove),
+        listen("touchstart", handleTouchStart, { passive: false }),
+        listen("touchmove", handleTouchMove, { passive: false }),
+        listen("touchend", handleTouchEnd),
+      ];
+
+      return () => unlisten.forEach((off) => off());
     };
 
     const init = () => {
@@ -1388,9 +1466,9 @@ const FluidCursorEffect = ({
         updateFrame();
         setIsInitialized(true);
         return cleanup;
-      } catch (error: any) {
+      } catch (error) {
         console.error("Failed to initialize fluid simulation:", error);
-        setError(error.message);
+        setError(error instanceof Error ? error.message : String(error));
         return null;
       }
     };
