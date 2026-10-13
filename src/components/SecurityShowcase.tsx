@@ -78,23 +78,31 @@ function LabVideo({
       el.pause();
       return;
     }
-    // Reduced motion never autoplays; the button still plays it on request.
-    if (reducedMotion) return;
+    // The observer runs either way so a recording played on request still
+    // stops once it scrolls away.
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          // Autoplay can still be refused (data saver, low power mode); the
-          // poster stays up and the button offers to play it.
-          el.play().catch(() => setPaused(true));
-        } else {
+        if (!entry.isIntersecting) {
           el.pause();
+          return;
         }
+        // Reduced motion never autoplays; the button still plays it on request.
+        if (reducedMotion) return;
+        // Autoplay can still be refused (data saver, low power mode); the
+        // poster stays up and the button offers to play it.
+        el.play().catch(() => setPaused(true));
       },
       { threshold: 0.35 },
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, [reducedMotion, paused]);
+
+  // Switching to reduced motion stops whatever is playing. Kept apart from the
+  // effect above so pressing play (which changes `paused`) isn't undone.
+  useEffect(() => {
+    if (reducedMotion) videoRef.current?.pause();
+  }, [reducedMotion]);
 
   return (
     <>
@@ -254,7 +262,7 @@ export default function SecurityShowcase({ lab }: SecurityShowcaseProps) {
           <div className="flex w-full flex-col gap-3 md:w-3/5">
             <div
               ref={mediaRef}
-              className="group relative aspect-[1024/524] overflow-hidden bg-black"
+              className="group relative aspect-1024/524 overflow-hidden bg-black"
             >
               {lab.video ? (
                 <LabVideo
@@ -280,10 +288,12 @@ export default function SecurityShowcase({ lab }: SecurityShowcaseProps) {
                 className="absolute inset-0"
               />
             </div>
-            <p className="sec-item opacity-0 font-mono text-[10px] uppercase tracking-widest text-background/40">
-              Recorded in my own isolated lab, against a deliberately vulnerable
-              VM
-            </p>
+            {lab.video && (
+              <p className="sec-item opacity-0 font-mono text-[10px] uppercase tracking-widest text-background/40">
+                Recorded in my own isolated lab, against a deliberately
+                vulnerable VM
+              </p>
+            )}
           </div>
 
           <div className="flex w-full flex-col justify-between gap-6 md:w-2/5">

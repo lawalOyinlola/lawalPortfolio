@@ -205,8 +205,17 @@ function Projects() {
             },
       });
 
-      // A reload part-way down the page starts on the right project.
-      showProject(Math.round(trigger.progress * (COUNT - 1)));
+      // A reload part-way down the page starts on the right project. Applied
+      // directly rather than through showProject: reverting the previous run
+      // restores the initial inline styles (panel 0 showing) while indexRef
+      // still holds the old index, so showProject would return early.
+      const initial = Math.round(trigger.progress * (COUNT - 1));
+      transitionRef.current?.kill();
+      transitionRef.current = null;
+      indexRef.current = initial;
+      setActiveIndex(initial);
+      gsap.set(".project-panel", { autoAlpha: 0 });
+      gsap.set(`.panel-${initial}`, { autoAlpha: 1 });
 
       return () => trigger.kill();
     },
