@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -29,31 +29,14 @@ export default function ExploreProjects({
 }) {
   const otherProjects = PROJECTS.filter((p) => p.slug !== currentProjectSlug);
   const { prefersReducedMotion } = usePrefersReducedMotion();
-  const autoplayRef = useRef<ReturnType<typeof Autoplay> | null>(null);
-
-  const plugins = useMemo(() => {
-    if (prefersReducedMotion) {
-      autoplayRef.current = null;
-      return [];
-    }
-
-    if (!autoplayRef.current) {
-      autoplayRef.current = Autoplay({
-        delay: 3000,
-      });
-    }
-
-    return [autoplayRef.current];
-  }, [prefersReducedMotion]);
+  // Embla destroys its plugins when the carousel unmounts or the plugin list
+  // changes, which clears Autoplay's timer, so no manual cleanup is needed.
+  const plugins = useMemo(
+    () => (prefersReducedMotion ? [] : [Autoplay({ delay: 3000 })]),
+    [prefersReducedMotion],
+  );
 
   const containerRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    return () => {
-      autoplayRef.current?.stop?.();
-      autoplayRef.current = null;
-    };
-  }, []);
 
   useGSAP(
     () => {
