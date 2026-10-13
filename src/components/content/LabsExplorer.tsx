@@ -6,7 +6,11 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getTagColor } from "@/lib/tag-colors";
+import Pagination from "./Pagination";
 import SortControl, { type SortDir, type SortOption } from "./SortControl";
+
+/** Labs per page. The controls stay hidden until the list runs past this. */
+const PAGE_SIZE = 6;
 
 /**
  * "Series" is the default: it keeps the grouped, Foundation-first sections.
@@ -75,16 +79,17 @@ export type LabSeries = {
   blurb: string;
 };
 
-function LabCard({ lab }: { lab: LabSummary }) {
-  const accentStyle = lab.tags[0]
-    ? ({ "--post-accent": getTagColor(lab.tags[0]) } as CSSProperties)
-    : undefined;
+function LabCard({ lab, index }: { lab: LabSummary; index: number }) {
+  const style = {
+    ...(lab.tags[0] ? { "--post-accent": getTagColor(lab.tags[0]) } : {}),
+    "--i": index,
+  } as CSSProperties;
 
   return (
     <Link
       href={`/security/labs/${lab.slug}`}
-      style={accentStyle}
-      className="group relative flex flex-col gap-5 py-7 pr-1 transition-colors duration-300 md:flex-row md:items-start md:gap-8 md:py-8"
+      style={style}
+      className="post-row group relative flex flex-col gap-5 py-7 pr-1 transition-colors duration-300 md:flex-row md:items-start md:gap-8 md:py-8 md:pl-2"
     >
       {/* Content first in the DOM, so on desktop it reads left of the cover. */}
       <div className="flex flex-1 flex-col gap-2.5">
@@ -112,7 +117,7 @@ function LabCard({ lab }: { lab: LabSummary }) {
       </div>
 
       {lab.cover && (
-        <div className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
+        <div className="cover-wipe relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
           <Image
             src={lab.cover}
             alt={lab.coverAlt ?? ""}
@@ -129,9 +134,9 @@ function LabCard({ lab }: { lab: LabSummary }) {
 function Grid({ labs }: { labs: LabSummary[] }) {
   return (
     <ul className="flex flex-col divide-y divide-border/60 border-y border-border/25">
-      {labs.map((lab) => (
+      {labs.map((lab, index) => (
         <li key={lab.slug}>
-          <LabCard lab={lab} />
+          <LabCard lab={lab} index={index} />
         </li>
       ))}
     </ul>
@@ -155,6 +160,7 @@ export default function LabsExplorer({
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState("series");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [page, setPage] = useState(1);
   const searchId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -214,47 +220,27 @@ export default function LabsExplorer({
         ? current.filter((t) => t !== tag)
         : [...current, tag],
     );
+    setPage(1);
     scrollToResults();
   }
 
   function clearAll() {
     setQuery("");
     setActiveTags([]);
+    setPage(1);
     scrollToResults();
   }
 
   function changeSort(key: string, dir: SortDir) {
     setSortKey(key);
     setSortDir(dir);
+    setPage(1);
   }
 
-  // Unfiltered view: group by series in declared order, ungrouped labs last.
-  const grouped = useMemo(() => {
-    // Only series declared in LAB_SERIES get their own section; a lab tagged
-    // with an unknown series still shows up, under "More", rather than
-    // silently disappearing from the page.
-    const knownNames = new Set(series.map((s) => s.name));
-    const byName = new Map<string, LabSummary[]>();
-    const ungrouped: LabSummary[] = [];
-    for (const lab of labs) {
-      if (lab.series && knownNames.has(lab.series)) {
-        const arr = byName.get(lab.series) ?? [];
-        arr.push(lab);
-        byName.set(lab.series, arr);
-      } else {
-        ungrouped.push(lab);
-      }
-    }
-    const sections = series
-      .filter((s) => byName.has(s.name))
-      .map((s) => ({
-        ...s,
-        labs: [...(byName.get(s.name) ?? [])].sort(
-          (a, b) => (a.order ?? 0) - (b.order ?? 0),
-        ),
-      }));
-    return { sections, ungrouped };
-  }, [labs, series]);
+  function changePage(next: number) {
+    setPage(next);
+    scrollToResults();
+  }
 
   // Series rank from the declared order, so a "Series" sort over a filtered set
   // still reads Foundation-first instead of falling back to file order.
@@ -306,6 +292,48 @@ export default function LabsExplorer({
   // active filter — flattens to a single ordered grid.
   const showGrouped = sortKey === "series" && !isFiltered;
 
+  const pageCount = Math.max(1, Math.ceil(sortedResults.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const pageItems = useMemo(
+    () =>
+      sortedResults.slice(
+        (currentPage - 1) * PAGE_SIZE,
+        currentPage * PAGE_SIZE,
+      ),
+    [sortedResults, currentPage],
+  );
+
+  // Unfiltered view: group the current page by series in declared order,
+  // ungrouped labs last. The page is already in series order, so a series that
+  // runs across two pages simply continues under the same heading on the next.
+  const grouped = useMemo(() => {
+    // Only series declared in LAB_SERIES get their own section; a lab tagged
+    // with an unknown series still shows up, under "More", rather than
+    // silently disappearing from the page.
+    const knownNames = new Set(series.map((s) => s.name));
+    const byName = new Map<string, LabSummary[]>();
+    const ungrouped: LabSummary[] = [];
+    for (const lab of pageItems) {
+      if (lab.series && knownNames.has(lab.series)) {
+        const arr = byName.get(lab.series) ?? [];
+        arr.push(lab);
+        byName.set(lab.series, arr);
+      } else {
+        ungrouped.push(lab);
+      }
+    }
+    const sections = series
+      .filter((s) => byName.has(s.name))
+      .map((s) => ({
+        ...s,
+        labs: [...(byName.get(s.name) ?? [])].sort(
+          (a, b) => (a.order ?? 0) - (b.order ?? 0),
+        ),
+      }));
+    return { sections, ungrouped };
+  }, [pageItems, series]);
+
+
   return (
     <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-14">
       <aside className="lg:sticky lg:top-28 lg:order-2 lg:w-76 lg:shrink-0">
@@ -326,14 +354,20 @@ export default function LabsExplorer({
             id={searchId}
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setPage(1);
+            }}
             placeholder="Wazuh, phishing, UTM"
             className="search-field w-full rounded-full border border-border bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
           />
           {query && (
             <button
               type="button"
-              onClick={() => setQuery("")}
+              onClick={() => {
+                setQuery("");
+                setPage(1);
+              }}
               aria-label="Clear search"
               className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:text-primary"
             >
@@ -407,12 +441,13 @@ export default function LabsExplorer({
           {isFiltered
             ? `${results.length} of ${labs.length} ${labs.length === 1 ? "lab" : "labs"}`
             : `${labs.length} ${labs.length === 1 ? "lab" : "labs"}`}
+          {pageCount > 1 && ` · page ${currentPage} of ${pageCount}`}
         </p>
 
         {!showGrouped ? (
           sortedResults.length > 0 ? (
             <div className="mt-6">
-              <Grid labs={sortedResults} />
+              <Grid labs={pageItems} />
             </div>
           ) : (
             <div className="mt-6 border-y border-border/25 py-20 text-center">
@@ -457,6 +492,13 @@ export default function LabsExplorer({
             )}
           </div>
         )}
+
+        <Pagination
+          page={currentPage}
+          pageCount={pageCount}
+          onChange={changePage}
+          label="Labs"
+        />
       </div>
     </div>
   );
