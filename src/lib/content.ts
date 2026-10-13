@@ -80,8 +80,8 @@ function requireCoverAlt(
 export const blogFrontmatterSchema = baseFrontmatter
   .extend({
     /**
-     * Pins the post to the top of the blog index under a Featured badge. Only
-     * one post shows as featured; if several are marked, the newest wins.
+     * Pins the post to the top of the blog index under a Featured badge. If
+     * several are marked, they lead newest first; see `toPostSummaries`.
      * Site-only: the dev.to sync builds its payload field by field and never
      * sends this.
      */
@@ -313,9 +313,9 @@ export type PostSummary = {
   readingMinutes: number;
   tags: string[];
   cover: string | null;
-  /** Set on at most one post in a list; see `toPostSummaries`. */
+  /** See `toPostSummaries` for which posts carry one. */
   badge: "Featured" | "Latest" | null;
-  /** Marked `featured: true` and chosen as the one to show. */
+  /** Marked `featured: true`: held above the rest in newest-first order. */
   pinned: boolean;
 };
 
@@ -339,19 +339,24 @@ function toPostSummary(post: BlogPost): PostSummary {
 }
 
 /**
- * Flatten a newest-first list and call out exactly one post in it. A post
- * marked `featured: true` takes the Featured badge and moves to the top (the
- * newest one, if several are marked). With none marked, the newest post is
- * labelled Latest and is already on top.
+ * Flatten a newest-first list and call out what leads it. Every post marked
+ * `featured: true` takes a Featured badge and moves to the top, newest
+ * featured first, ahead of the rest in their usual newest-first order. With
+ * none marked, the newest post is labelled Latest instead, so the two badges
+ * never appear together.
  */
 export function toPostSummaries(posts: BlogPost[]): PostSummary[] {
-  const summaries = posts.map(toPostSummary);
-  const featuredIndex = posts.findIndex((post) => post.frontmatter.featured);
-  if (featuredIndex >= 0) {
-    const [featured] = summaries.splice(featuredIndex, 1);
-    summaries.unshift({ ...featured, badge: "Featured", pinned: true });
-  } else if (summaries[0]) {
-    summaries[0] = { ...summaries[0], badge: "Latest" };
+  const featured: PostSummary[] = [];
+  const rest: PostSummary[] = [];
+  for (const post of posts) {
+    if (post.frontmatter.featured) {
+      featured.push({ ...toPostSummary(post), badge: "Featured", pinned: true });
+    } else {
+      rest.push(toPostSummary(post));
+    }
   }
-  return summaries;
+  if (featured.length === 0 && rest[0]) {
+    rest[0] = { ...rest[0], badge: "Latest" };
+  }
+  return [...featured, ...rest];
 }
