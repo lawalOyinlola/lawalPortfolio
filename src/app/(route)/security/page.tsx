@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowRightIcon,
+  ArrowUpRightIcon,
+  GithubLogoIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import { BRAND } from "@/app/constants";
 import { getBlogPosts, getLabPosts, toPostSummaries } from "@/lib/content";
 import ContactsRef from "@/components/ContactsRef";
@@ -63,6 +67,20 @@ const RULES = [
     title: "Report",
     body: "Every test ends in writing the people who have to fix things can act on.",
   },
+];
+
+/**
+ * The wider case-study record, kept on GitHub in CAR form (Context, Action,
+ * Result). Linked rather than mirrored: the repo is the source of truth and
+ * grows on its own schedule.
+ */
+const CASE_STUDIES_URL = `${BRAND.socials.github.href}/cybersecurity-portfolio`;
+
+const CASE_STUDY_THEMES = [
+  "Application security engineering",
+  "Incident analysis",
+  "Governance, risk and compliance",
+  "Technical skills labs",
 ];
 
 /** How many posts the Writing section shows before handing off to /blog. */
@@ -183,6 +201,60 @@ export default function SecurityPage() {
               />
             </div>
           )}
+        </section>
+
+        <section
+          aria-labelledby="case-studies-heading"
+          className="mt-20 md:mt-28"
+        >
+          {/* One real link, stretched over the card with ::after, so the whole
+              card is clickable without reading every line as the link name. */}
+          <div className="group relative grid gap-8 rounded-2xl border border-border/40 p-6 transition-colors duration-300 hover:border-primary/30 hover:bg-muted/40 md:grid-cols-12 md:gap-10 md:p-10"
+          >
+            <div className="flex flex-col gap-3 md:col-span-7">
+              <span className="inline-flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
+                <GithubLogoIcon weight="fill" aria-hidden className="size-4" />
+                Case studies on GitHub
+              </span>
+              <h2
+                id="case-studies-heading"
+                className="text-2xl font-semibold leading-tight tracking-tight text-primary md:text-[2rem]"
+              >
+                The full record, written up as context, action and result
+              </h2>
+              <p className="max-w-[56ch] text-sm leading-relaxed text-muted-foreground md:text-base">
+                Threat models, incident analyses, audits, and the CI/CD
+                pipeline and WAF work behind posts here. Each one says what the
+                situation was, what I did, and what came of it.
+              </p>
+              <a
+                href={CASE_STUDIES_URL}
+                target="_blank"
+                rel="noopener"
+                className="mt-2 inline-flex w-fit items-center gap-1.5 text-xs uppercase tracking-widest text-primary after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-ring"
+              >
+                Open the portfolio on GitHub
+                <ArrowUpRightIcon
+                  weight="bold"
+                  aria-hidden
+                  className="size-3.5 text-[#be123c] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 dark:text-[#fb7185]"
+                />
+              </a>
+            </div>
+            <ol className="flex flex-col divide-y divide-border/40 self-end border-y border-border/40 md:col-span-5">
+              {CASE_STUDY_THEMES.map((theme, i) => (
+                <li
+                  key={theme}
+                  className="grid grid-cols-[2.25rem_1fr] gap-x-3 py-3 text-sm text-primary"
+                >
+                  <span className="pt-0.5 font-mono text-[11px] tabular-nums text-muted-foreground">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {theme}
+                </li>
+              ))}
+            </ol>
+          </div>
         </section>
 
         {writing.length > 0 && (
