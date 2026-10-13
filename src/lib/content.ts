@@ -77,7 +77,17 @@ function requireCoverAlt(
   }
 }
 
-export const blogFrontmatterSchema = baseFrontmatter.superRefine(requireCoverAlt);
+export const blogFrontmatterSchema = baseFrontmatter
+  .extend({
+    /**
+     * Pins the post to the top of the blog index under a Featured badge. Only
+     * one post shows as featured; if several are marked, the newest wins.
+     * Site-only: the dev.to sync builds its payload field by field and never
+     * sends this.
+     */
+    featured: z.boolean().default(false),
+  })
+  .superRefine(requireCoverAlt);
 
 /**
  * `status` is the publication gate, not decoration. HackTheBox forbids writeups
@@ -303,13 +313,17 @@ export type PostSummary = {
   readingMinutes: number;
   tags: string[];
   cover: string | null;
+  /** Set on at most one post in a list; see `toPostSummaries`. */
+  badge: "Featured" | "Latest" | null;
+  /** Marked `featured: true` and chosen as the one to show. */
+  pinned: boolean;
 };
 
 /**
  * Flatten a post for the lists. The Date objects and the raw file body stay
  * on the server where they belong.
  */
-export function toPostSummary(post: BlogPost): PostSummary {
+function toPostSummary(post: BlogPost): PostSummary {
   return {
     slug: post.slug,
     title: post.frontmatter.title,
@@ -319,5 +333,25 @@ export function toPostSummary(post: BlogPost): PostSummary {
     readingMinutes: post.readingMinutes,
     tags: post.frontmatter.tags,
     cover: post.frontmatter.cover ?? null,
+    badge: null,
+    pinned: false,
   };
+}
+
+/**
+ * Flatten a newest-first list and call out exactly one post in it. A post
+ * marked `featured: true` takes the Featured badge and moves to the top (the
+ * newest one, if several are marked). With none marked, the newest post is
+ * labelled Latest and is already on top.
+ */
+export function toPostSummaries(posts: BlogPost[]): PostSummary[] {
+  const summaries = posts.map(toPostSummary);
+  const featuredIndex = posts.findIndex((post) => post.frontmatter.featured);
+  if (featuredIndex >= 0) {
+    const [featured] = summaries.splice(featuredIndex, 1);
+    summaries.unshift({ ...featured, badge: "Featured", pinned: true });
+  } else if (summaries[0]) {
+    summaries[0] = { ...summaries[0], badge: "Latest" };
+  }
+  return summaries;
 }

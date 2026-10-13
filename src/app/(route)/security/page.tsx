@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { BRAND } from "@/app/constants";
-import { getBlogPosts, getLabPosts, toPostSummary } from "@/lib/content";
+import { getBlogPosts, getLabPosts, toPostSummaries } from "@/lib/content";
 import ContactsRef from "@/components/ContactsRef";
-import PostCard, { PostTile } from "@/components/content/PostCard";
+import { PostTile } from "@/components/content/PostCard";
 import LabIndex from "@/components/security/LabIndex";
 import ToolMarquee from "@/components/security/ToolMarquee";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -76,9 +76,7 @@ export default function SecurityPage() {
   const securityPosts = getBlogPosts().filter((post) =>
     post.frontmatter.tags.some((tag) => SECURITY_TAGS.has(tag.toLowerCase())),
   );
-  const [leadPost, ...morePosts] = securityPosts
-    .slice(0, WRITING_LIMIT)
-    .map(toPostSummary);
+  const writing = toPostSummaries(securityPosts).slice(0, WRITING_LIMIT);
 
   // Every tool the labs used, then every CVE they exploited, once each.
   const toolStrip = [
@@ -185,7 +183,7 @@ export default function SecurityPage() {
           )}
         </section>
 
-        {leadPost && (
+        {writing.length > 0 && (
           <section
             aria-labelledby="writing-heading"
             className="mt-24 pb-24 md:mt-32 md:pb-32"
@@ -211,19 +209,13 @@ export default function SecurityPage() {
               </Link>
             </div>
 
-            <div className="mt-8 border-t border-border/25">
-              <PostCard post={leadPost} featured headingAs="h3" />
-            </div>
-
-            {morePosts.length > 0 && (
-              <ul className="grid gap-x-8 gap-y-10 border-t border-border/25 pt-10 sm:grid-cols-2 lg:grid-cols-3">
-                {morePosts.map((post, i) => (
-                  <li key={post.slug}>
-                    <PostTile post={post} index={i} />
-                  </li>
-                ))}
-              </ul>
-            )}
+            <ul className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4 md:mt-14">
+              {writing.map((post, i) => (
+                <li key={post.slug}>
+                  <PostTile post={post} index={i} />
+                </li>
+              ))}
+            </ul>
           </section>
         )}
       </div>

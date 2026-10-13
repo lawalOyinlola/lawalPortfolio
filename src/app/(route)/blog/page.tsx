@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { BRAND } from "@/app/constants";
-import { getBlogPosts, toPostSummary } from "@/lib/content";
+import { getBlogPosts, toPostSummaries } from "@/lib/content";
 import { RssSimpleIcon } from "@phosphor-icons/react/dist/ssr";
 import BlogExplorer from "@/components/content/BlogExplorer";
 import ContactsRef from "@/components/ContactsRef";
@@ -43,7 +43,11 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
-  const posts = getBlogPosts().map(toPostSummary);
+  const allPosts = getBlogPosts();
+  const posts = toPostSummaries(allPosts);
+  // Looked up by slug rather than taken as posts[0]: a featured post is
+  // pinned above newer ones.
+  const newest = posts.find((post) => post.slug === allPosts[0]?.slug);
 
   return (
     <article className="min-h-screen relative bg-background z-1">
@@ -59,7 +63,7 @@ export default function BlogPage() {
             descriptionClassName="max-w-[58ch] text-muted-foreground"
             className="max-w-2xl"
           />
-          {posts[0] && (
+          {newest && (
             <div className="flex shrink-0 flex-col gap-4 border-t border-border/40 pt-5 md:mb-3 md:items-end md:border-t-0 md:pt-0">
               <dl className="flex gap-10 text-[11px] uppercase tracking-widest md:text-right">
                 <div className="flex flex-col gap-1">
@@ -71,7 +75,7 @@ export default function BlogPage() {
                 <div className="flex flex-col gap-1">
                   <dt className="text-muted-foreground">Last published</dt>
                   <dd className="text-sm text-primary">
-                    <time dateTime={posts[0].dateISO}>{posts[0].dateLabel}</time>
+                    <time dateTime={newest.dateISO}>{newest.dateLabel}</time>
                   </dd>
                 </div>
               </dl>
