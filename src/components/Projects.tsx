@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect, useMemo } from "react";
+import { useRef, useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
@@ -10,21 +10,23 @@ import { SplitText } from "gsap/SplitText";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FEATURED_PROJECTS } from "@/app/constants";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, SplitText);
 }
 
 const COUNT = FEATURED_PROJECTS.length;
-const TRANSITION = 0.6;
-const HOLD = 0.4;
+// Scroll distance per project after the first, in vh. The section is one
+// screen (sticky) plus this much for every further project.
+const STEP_VH = 80;
 
 function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
   const panelsRef = useRef<HTMLDivElement>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef(0);
-  const lockedRef = useRef(false);
+  const transitionRef = useRef<gsap.core.Timeline | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const router = useRouter();
@@ -61,243 +63,190 @@ function Projects() {
     { scope: sectionRef },
   );
 
-  const goTo = useCallback((target: number) => {
-    if (target < 0 || target >= COUNT) return;
-    if (target === indexRef.current) return;
-    if (lockedRef.current) return;
+  // Swap the visible panel. Scrolling never waits on this: a new change
+  // finishes the running transition instantly and starts the next one, so
+  // fast scrolling stays in step with the page.
+  const showProject = useCallback(
+    (target: number) => {
+      const prev = indexRef.current;
+      if (target === prev) return;
+      indexRef.current = target;
+      setActiveIndex(target);
 
-    lockedRef.current = true;
-    const prev = indexRef.current;
-    const dir = target > prev ? 1 : -1;
-    indexRef.current = target;
-    setActiveIndex(target);
+      transitionRef.current?.progress(1).kill();
+      transitionRef.current = null;
 
-    if (sectionRef.current) {
-      const sectionTop = sectionRef.current.offsetTop;
-      const dur = Math.min(TRANSITION + Math.abs(target - prev) * 0.15, 1.2);
-      gsap.to(window, {
-        scrollTo: {
-          y: sectionTop + target * window.innerHeight,
-          autoKill: false,
-        },
-        duration: dur,
-        ease: "power3.inOut",
-        overwrite: true,
-      });
-    }
-
-    const exitLabel = "exit";
-    const enterLabel = "enter";
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        gsap.delayedCall(HOLD, () => {
-          lockedRef.current = false;
-        });
-      },
-    });
-
-    // ── EXIT: animate each element out ──
-    tl.addLabel(exitLabel);
-
-    // Name: flip characters out
-    tl.to(
-      `.name-char-${prev}`,
-      {
-        scaleX: -1,
-        opacity: 0,
-        duration: 0.5,
-        ease: "expo.inOut",
-        stagger: { amount: 0.3, from: dir > 0 ? "start" : "end" },
-      },
-      exitLabel,
-    );
-
-    // Image: clip-path wipe out in the direction of travel
-    tl.to(
-      `.img-${prev}`,
-      {
-        clipPath: dir > 0 ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)",
-        duration: 0.55,
-        ease: "power3.inOut",
-      },
-      exitLabel,
-    );
-
-    // Category: fade up and out
-    tl.to(
-      `.cat-${prev}`,
-      { opacity: 0, y: -12, duration: 0.3, ease: "power2.in" },
-      exitLabel,
-    );
-
-    // Description: fade down and out
-    tl.to(
-      `.desc-${prev}`,
-      { opacity: 0, y: 15, duration: 0.35, ease: "power2.in" },
-      `${exitLabel}+=0.05`,
-    );
-
-    // Tags: stagger fade out
-    tl.to(
-      `.tag-p${prev}`,
-      {
-        opacity: 0,
-        y: 10,
-        duration: 0.25,
-        ease: "power2.in",
-        stagger: 0.04,
-      },
-      `${exitLabel}+=0.05`,
-    );
-
-    // Hide the outgoing panel after all exit animations
-    tl.set(`.panel-${prev}`, { autoAlpha: 0 });
-
-    // ── ENTER: reveal the incoming panel, then animate each element in ──
-    tl.addLabel(enterLabel, "-=0.2");
-
-    // Show the panel container
-    tl.set(`.panel-${target}`, { autoAlpha: 1 }, enterLabel);
-
-    // Image: clip-path wipe in from the opposite side
-    tl.fromTo(
-      `.img-${target}`,
-      {
-        clipPath: dir > 0 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)",
-      },
-      {
-        clipPath: "inset(0 0 0 0)",
-        duration: 0.6,
-        ease: "power3.inOut",
-      },
-      enterLabel,
-    );
-
-    // Category: fade in from below
-    tl.fromTo(
-      `.cat-${target}`,
-      { opacity: 0, y: 12 },
-      { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
-      `${enterLabel}+=0.1`,
-    );
-
-    // Name: flip characters in
-    tl.fromTo(
-      `.name-char-${target}`,
-      { scaleX: -1, opacity: 0.5 },
-      {
-        scaleX: 1,
-        opacity: 1,
-        duration: 0.6,
-        ease: "expo.inOut",
-        stagger: { amount: 0.3, from: dir > 0 ? "end" : "start" },
-      },
-      `${enterLabel}+=0.1`,
-    );
-
-    // Description: rise up into place
-    tl.fromTo(
-      `.desc-${target}`,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
-      `${enterLabel}+=0.2`,
-    );
-
-    // Tags: stagger in from left
-    tl.fromTo(
-      `.tag-p${target}`,
-      { opacity: 0, y: 12 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.3,
-        ease: "power2.out",
-        stagger: 0.06,
-      },
-      `${enterLabel}+=0.25`,
-    );
-  }, []);
-
-  // Sync project index with scroll position for natural/fast scrolling
-  useEffect(() => {
-    const sync = () => {
-      const section = sectionRef.current;
-      if (!section || lockedRef.current) return;
-
-      const scrollIn = window.scrollY - section.offsetTop;
-      const expected = Math.min(
-        Math.max(Math.round(scrollIn / window.innerHeight), 0),
-        COUNT - 1,
-      );
-
-      if (expected !== indexRef.current) {
-        // Immediate visual update to ensure the correct panel is visible
-        const panels =
-          document.querySelectorAll<HTMLDivElement>(".project-panel");
-        panels.forEach((p, i) => {
-          gsap.set(p, { autoAlpha: i === expected ? 1 : 0 });
-        });
-
-        // Ensure characters and elements of the expected panel are in their "normal" state
-        for (let idx = 0; idx < COUNT; idx++) {
-          document.querySelectorAll(`.name-char-${idx}`).forEach((el) => {
-            gsap.set(el, { scaleX: 1, opacity: 1 });
-          });
-          document.querySelectorAll(`.img-${idx}`).forEach((el) => {
-            gsap.set(el, { clipPath: "inset(0 0 0 0)" });
-          });
-          document
-            .querySelectorAll(`.cat-${idx}, .desc-${idx}`)
-            .forEach((el) => {
-              gsap.set(el, { opacity: 1, y: 0 });
-            });
-          document.querySelectorAll(`.tag-p${idx}`).forEach((el) => {
-            gsap.set(el, { opacity: 1, y: 0 });
-          });
-        }
-
-        indexRef.current = expected;
-        setActiveIndex(expected);
-      }
-    };
-
-    window.addEventListener("scroll", sync, { passive: true });
-    return () => window.removeEventListener("scroll", sync);
-  }, []);
-
-  // Intercept wheel events for discrete project switching
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      const section = sectionRef.current;
-      if (!section) return;
-
-      const rect = section.getBoundingClientRect();
-      const stickyEngaged = rect.top <= 5 && rect.bottom >= window.innerHeight;
-
-      if (!stickyEngaged) return;
-
-      if (lockedRef.current) {
-        e.preventDefault();
+      if (prefersReducedMotion) {
+        gsap.set(".project-panel", { autoAlpha: 0 });
+        gsap.set(`.panel-${target}`, { autoAlpha: 1 });
         return;
       }
 
-      if (e.deltaY > 0 && indexRef.current < COUNT - 1) {
-        e.preventDefault();
-        goTo(indexRef.current + 1);
-      } else if (e.deltaY < 0 && indexRef.current > 0) {
-        e.preventDefault();
-        goTo(indexRef.current - 1);
+      // Forward moves everything right to left (like the image wipe), back
+      // moves it left to right: the outgoing project leaves in the direction
+      // of travel and the next one arrives from the opposite side.
+      const dir = target > prev ? 1 : -1;
+      const lead = dir > 0 ? "end" : "start";
+      const tl = gsap.timeline({
+        defaults: { overwrite: "auto" },
+        onComplete: () => {
+          transitionRef.current = null;
+        },
+      });
+      transitionRef.current = tl;
+
+      // Anything other than the two panels involved stays hidden, even after
+      // an interrupted sequence.
+      for (let i = 0; i < COUNT; i++) {
+        if (i !== prev && i !== target)
+          tl.set(`.panel-${i}`, { autoAlpha: 0 }, 0);
       }
-    };
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    return () => window.removeEventListener("wheel", handleWheel);
-  }, [goTo]);
+
+      // EXIT. inOut rather than in: an ease-in exit sits still for its first
+      // ~150ms, which reads as lag right after the scroll that triggered it.
+      tl.addLabel("exit", 0)
+        .to(
+          `.name-char-${prev}`,
+          {
+            scaleX: -1,
+            x: -dir * 24,
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.inOut",
+            stagger: { amount: 0.15, from: lead },
+          },
+          "exit",
+        )
+        .to(
+          `.img-${prev}`,
+          {
+            clipPath: dir > 0 ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)",
+            duration: 0.35,
+            ease: "power2.inOut",
+          },
+          "exit",
+        )
+        .to(
+          `.cat-${prev}, .desc-${prev}, .tag-p${prev}`,
+          { opacity: 0, x: -dir * 16, duration: 0.25, ease: "power2.inOut" },
+          "exit",
+        )
+        .set(`.panel-${prev}`, { autoAlpha: 0 })
+
+        // ENTER
+        .addLabel("enter", "-=0.1")
+        .set(`.panel-${target}`, { autoAlpha: 1 }, "enter")
+        .fromTo(
+          `.img-${target}`,
+          { clipPath: dir > 0 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)" },
+          { clipPath: "inset(0 0% 0 0%)", duration: 0.5, ease: "power3.out" },
+          "enter",
+        )
+        .fromTo(
+          `.name-char-${target}`,
+          { scaleX: -1, x: dir * 24, opacity: 0.5 },
+          {
+            scaleX: 1,
+            x: 0,
+            opacity: 1,
+            duration: 0.5,
+            ease: "expo.out",
+            stagger: { amount: 0.2, from: lead },
+          },
+          "enter",
+        )
+        .fromTo(
+          `.cat-${target}, .desc-${target}`,
+          { opacity: 0, x: dir * 16 },
+          { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" },
+          "enter+=0.05",
+        )
+        .fromTo(
+          `.tag-p${target}`,
+          { opacity: 0, x: dir * 12 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.3,
+            ease: "power2.out",
+            stagger: { each: 0.04, from: lead },
+          },
+          "enter+=0.1",
+        );
+    },
+    [prefersReducedMotion],
+  );
+
+  // Scroll position picks the project; the browser keeps full control of the
+  // scroll itself. Once scrolling stops, a short snap settles on the nearest
+  // project so a panel is never left half-way.
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section || COUNT < 2) return;
+
+      const trigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          showProject(Math.round(self.progress * (COUNT - 1)));
+        },
+        snap: prefersReducedMotion
+          ? undefined
+          : {
+              snapTo: 1 / (COUNT - 1),
+              // Nearest project, not the next one in the scroll direction:
+              // a small nudge shouldn't pull the page a whole step.
+              directional: false,
+              duration: { min: 0.2, max: 0.45 },
+              delay: 0.12,
+              ease: "power2.out",
+            },
+      });
+
+      // A reload part-way down the page starts on the right project.
+      showProject(Math.round(trigger.progress * (COUNT - 1)));
+
+      return () => trigger.kill();
+    },
+    // revertOnUpdate: the motion preference resolves after hydration, and
+    // without it the first trigger (built for reduced motion) would stay alive
+    // beside the new one and swap panels instantly.
+    {
+      scope: sectionRef,
+      dependencies: [showProject, prefersReducedMotion],
+      revertOnUpdate: true,
+    },
+  );
+
+  // Tabs and keys scroll to a project's position, so every input goes through
+  // the same path as scrolling.
+  const scrollToProject = useCallback(
+    (target: number) => {
+      const section = sectionRef.current;
+      if (!section || target < 0 || target >= COUNT) return;
+      const y =
+        section.getBoundingClientRect().top +
+        window.scrollY +
+        target * window.innerHeight * (STEP_VH / 100);
+
+      if (prefersReducedMotion) {
+        window.scrollTo({ top: y });
+        return;
+      }
+      gsap.to(window, {
+        scrollTo: { y, autoKill: true },
+        duration: 0.6,
+        ease: "power3.inOut",
+        overwrite: true,
+      });
+    },
+    [prefersReducedMotion],
+  );
 
   const handleTabKeyDown = useCallback(
     (e: React.KeyboardEvent, index: number) => {
-      if (lockedRef.current) return;
-
       let newIndex = index;
       if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         if (index >= COUNT - 1) return;
@@ -314,7 +263,7 @@ function Projects() {
       }
 
       e.preventDefault();
-      goTo(newIndex);
+      scrollToProject(newIndex);
 
       // Move focus to the new tab
       setTimeout(() => {
@@ -322,7 +271,7 @@ function Projects() {
         if (nextTab) nextTab.focus();
       }, 0);
     },
-    [goTo],
+    [scrollToProject],
   );
 
   // Handle mini-nav visibility via ScrollTrigger
@@ -365,7 +314,12 @@ function Projects() {
       const area = panelsRef.current;
       if (!cursor || !area) return;
 
-      gsap.set(cursor, { xPercent: -50, yPercent: -50, scale: 0, autoAlpha: 0 });
+      gsap.set(cursor, {
+        xPercent: -50,
+        yPercent: -50,
+        scale: 0,
+        autoAlpha: 0,
+      });
 
       const xTo = gsap.quickTo(cursor, "x", { duration: 0.45, ease: "power3" });
       const yTo = gsap.quickTo(cursor, "y", { duration: 0.45, ease: "power3" });
@@ -413,39 +367,57 @@ function Projects() {
     <section
       ref={sectionRef}
       className="relative z-1 bg-muted flex justify-center"
-      style={{ height: `${COUNT * 100}vh` }}
+      style={{ height: `calc(100vh + ${(COUNT - 1) * STEP_VH}vh)` }}
       aria-label="Featured projects"
     >
-      <div className="wrapper sticky top-0 h-screen flex flex-col justify-center gap-2 md:gap-4.5 max-sm:py-10">
-        <h2 className="font-semibold tracking-tight uppercase text-sm">
-          Projects
-        </h2>
+      <div className="wrapper sticky top-0 h-screen flex flex-col justify-center gap-2 md:gap-4.5 max-sm:pt-18 max-sm:pb-20">
+        {/* Pairs with the Security section that follows ("Then I test").
+            The progress indicator replaces the old numbered tabs. */}
+        <div className="flex items-end justify-between gap-6">
+          {/* On phones the fixed logo sits where the small label would be */}
+          <SectionHeader
+            subtitle="Projects"
+            title="I build"
+            subtitleClassName="max-sm:hidden"
+          />
 
-        {/* Numbered Tabs */}
-        <div
-          className="flex items-center gap-8 md:gap-10 max-sm:hidden"
-          role="tablist"
-        >
-          {FEATURED_PROJECTS.map((project, index) => (
-            <button
-              key={project.name}
-              role="tab"
-              aria-selected={activeIndex === index}
-              aria-controls={`panel-${index}`}
-              id={`tab-${index}`}
-              aria-label={`Project ${index + 1}: ${project.name}`}
-              onClick={() => goTo(index)}
-              onKeyDown={(e) => handleTabKeyDown(e, index)}
-              tabIndex={activeIndex === index ? 0 : -1}
-              className={`title transition-all cursor-pointer min-h-10 md:min-h-19 ${
-                activeIndex !== index
-                  ? "text-[clamp(1.5rem,4vw,2.25rem)] text-muted-foreground"
-                  : ""
-              }`}
+          <div className="flex flex-col items-end gap-2 pb-2 md:pb-3">
+            <span
+              className="font-mono text-xs tabular-nums text-muted-foreground"
+              aria-hidden
             >
-              {String(index + 1).padStart(2, "0")}.
-            </button>
-          ))}
+              <span className="text-foreground">
+                {String(activeIndex + 1).padStart(2, "0")}
+              </span>{" "}
+              / {String(COUNT).padStart(2, "0")}
+            </span>
+            <div className="flex items-center gap-1.5" role="tablist">
+              {FEATURED_PROJECTS.map((project, index) => (
+                <button
+                  key={project.name}
+                  role="tab"
+                  aria-selected={activeIndex === index}
+                  aria-controls={`panel-${index}`}
+                  id={`tab-${index}`}
+                  aria-label={`Project ${index + 1}: ${project.name}`}
+                  onClick={() => scrollToProject(index)}
+                  onKeyDown={(e) => handleTabKeyDown(e, index)}
+                  tabIndex={activeIndex === index ? 0 : -1}
+                  className="group flex h-8 w-6 md:w-9 cursor-pointer items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+                >
+                  {/* Filled up to the current project, so it reads as
+                      progress through the set */}
+                  <span className="relative h-0.5 w-full overflow-hidden bg-foreground/15 transition-colors duration-200 group-hover:bg-foreground/30">
+                    <span
+                      className={`absolute inset-0 origin-left transition-[transform,background-color] duration-300 ease-out ${
+                        index <= activeIndex ? "scale-x-100" : "scale-x-0"
+                      } ${index === activeIndex ? "bg-foreground" : "bg-foreground/40"}`}
+                    />
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Stacked Project Panels */}
@@ -492,7 +464,11 @@ function Projects() {
                       {project.name}
                     </h3>
                   </div>
-                  <p className={`desc-${i} text-sm md:text-base mt-2 md:mt-0`}>
+                  {/* Clamped on phones, where the full text pushes the tags off
+                      screen; the project page has the rest */}
+                  <p
+                    className={`desc-${i} text-sm md:text-base mt-2 md:mt-0 max-sm:line-clamp-4`}
+                  >
                     {project.description}
                   </p>
                 </div>
