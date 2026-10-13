@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { BRAND } from "@/app/constants";
-import { formatPostDate, getBlogPosts, getLabPosts } from "@/lib/content";
+import { getBlogPosts, getLabPosts, toPostSummary } from "@/lib/content";
 import ContactsRef from "@/components/ContactsRef";
+import PostCard, { PostTile } from "@/components/content/PostCard";
+import LabIndex from "@/components/security/LabIndex";
+import ToolMarquee from "@/components/security/ToolMarquee";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const title = "Security";
 const description = `The security side of ${BRAND.name}'s work: application security from the builder's side, hands-on lab writeups, and the method behind them — permission, scope, and a report anyone can act on.`;
@@ -43,110 +48,182 @@ const SECURITY_TAGS = new Set([
   "penetrationtesting",
 ]);
 
+// The discipline from the intro, broken out so it reads as the rules every
+// lab and post on this page is held to.
+const RULES = [
+  {
+    title: "Permission",
+    body: "I only test what I own or have written permission to test.",
+  },
+  {
+    title: "Scope",
+    body: "I stay inside what was agreed, even when something interesting sits just past it.",
+  },
+  {
+    title: "Report",
+    body: "Every test ends in writing the people who have to fix things can act on.",
+  },
+];
+
+/** How many posts the Writing section shows before handing off to /blog. */
+const WRITING_LIMIT = 4;
+
 export default function SecurityPage() {
-  const labs = getLabPosts();
+  // Build order, the same numbering the labs page and its map use.
+  const labs = [...getLabPosts()].sort(
+    (a, b) => (a.frontmatter.order ?? 99) - (b.frontmatter.order ?? 99),
+  );
   const securityPosts = getBlogPosts().filter((post) =>
     post.frontmatter.tags.some((tag) => SECURITY_TAGS.has(tag.toLowerCase())),
   );
+  const [leadPost, ...morePosts] = securityPosts
+    .slice(0, WRITING_LIMIT)
+    .map(toPostSummary);
+
+  // Every tool the labs used, then every CVE they exploited, once each.
+  const toolStrip = [
+    ...new Set([
+      ...labs.flatMap((lab) => lab.frontmatter.tools),
+      ...labs.flatMap((lab) => lab.frontmatter.cves),
+    ]),
+  ];
 
   return (
     <article className="min-h-screen relative bg-background z-1">
-      <div className="h-24 md:h-32" aria-hidden />
+      <section
+        aria-labelledby="security-title"
+        className="relative overflow-hidden rounded-b-[2rem] bg-foreground text-background md:rounded-b-[4rem]"
+      >
+        <div className="wrapper mx-auto flex flex-col gap-14 pb-10 pt-32 md:gap-20 md:pb-14 md:pt-44">
+          <div className="grid gap-10 md:grid-cols-12 md:gap-12">
+            <div className="md:col-span-7">
+              <SectionHeader
+                as="h1"
+                subtitle="Security"
+                title="I break what I build"
+                titleId="security-title"
+                titleClassName="text-background text-balance"
+                subtitleClassName="text-background/50"
+                description="Application security from the builder's side. I build software secure by default, then take it apart in a lab I control to see what actually holds, and write down what I find."
+                descriptionClassName="max-w-[52ch] text-base leading-relaxed text-background/70 md:text-lg"
+                className="max-w-none"
+              />
+            </div>
+
+            <div className="md:col-span-5 md:self-end">
+              <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-background/50">
+                Rules of engagement
+              </h2>
+              <ol className="mt-4 flex flex-col divide-y divide-background/10 border-y border-background/10">
+                {RULES.map((rule, i) => (
+                  <li
+                    key={rule.title}
+                    className="grid grid-cols-[2.25rem_1fr] gap-x-3 py-4"
+                  >
+                    <span className="pt-0.5 font-mono text-[11px] tabular-nums text-[#fb7185] dark:text-[#be123c]">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="flex flex-col gap-1">
+                      <span className="text-sm font-semibold uppercase tracking-wide">
+                        {rule.title}
+                      </span>
+                      <span className="text-sm leading-relaxed text-background/60">
+                        {rule.body}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+
+          <ToolMarquee items={toolStrip} />
+        </div>
+      </section>
 
       <div className="wrapper mx-auto">
-        <header className="max-w-2xl">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">
-            Security
-          </p>
-          <h1 className="bold-title mt-1 text-primary">Security</h1>
-          <p className="mt-4 max-w-[60ch] text-sm leading-loose text-muted-foreground">
-            I build software secure by default, and I break it to understand
-            how. That means application security from the builder&rsquo;s side,
-            hands-on lab work, and a discipline that matters more than any tool:
-            test only with permission, stay inside scope, and write a report the
-            people who have to fix things can actually act on.
-          </p>
-        </header>
-
-        <section aria-labelledby="labs-heading" className="mt-16">
-          <div className="flex items-baseline justify-between gap-4">
-            <h2
-              id="labs-heading"
-              className="text-xs font-semibold uppercase tracking-[0.2em] text-primary"
-            >
-              Labs
-            </h2>
+        <section aria-labelledby="labs-heading" className="mt-20 md:mt-28">
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <SectionHeader
+              subtitle={`${labs.length} ${labs.length === 1 ? "lab" : "labs"}, one machine`}
+              title="Labs"
+                titleId="labs-heading"
+              description="Each one starts from the same isolated network, goes end to end, and names the control that would have stopped it."
+              descriptionClassName="max-w-[52ch] text-muted-foreground"
+            />
             <Link
               href="/security/labs"
-              className="text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary"
+              className="group inline-flex shrink-0 items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary md:pb-3"
             >
-              All labs →
+              Labs and the map
+              <ArrowRightIcon
+                weight="bold"
+                aria-hidden
+                className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+              />
             </Link>
           </div>
 
           {labs.length === 0 ? (
-            <p className="mt-6 text-sm text-muted-foreground">
+            <p className="mt-10 text-sm text-muted-foreground">
               First writeup is on its way.
             </p>
           ) : (
-            <ul className="mt-6 grid gap-px overflow-hidden rounded-2xl bg-border/60 sm:grid-cols-2">
-              {labs.map((lab) => (
-                <li key={lab.slug} className="bg-background">
-                  <Link
-                    href={`/security/labs/${lab.slug}`}
-                    className="group flex h-full flex-col gap-2 p-6 transition-colors duration-300 hover:bg-muted/40"
-                  >
-                    <span className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-                      <span className="rounded-full border border-[#be123c]/30 bg-[#be123c]/5 px-2.5 py-0.5 text-[#be123c]">
-                        {lab.frontmatter.platform}
-                      </span>
-                      <span className="rounded-full border border-border/40 px-2.5 py-0.5">
-                        {lab.frontmatter.difficulty}
-                      </span>
-                    </span>
-                    <span className="text-base font-semibold leading-snug text-primary underline-offset-4 group-hover:underline">
-                      {lab.frontmatter.title}
-                    </span>
-                    <span className="max-w-[46ch] text-sm leading-relaxed text-muted-foreground">
-                      {lab.frontmatter.description}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-10 md:mt-14">
+              <LabIndex
+                labs={labs.map((lab) => ({
+                  slug: lab.slug,
+                  title: lab.frontmatter.title,
+                  platform: lab.frontmatter.platform,
+                  difficulty: lab.frontmatter.difficulty,
+                  target: lab.frontmatter.target,
+                  cover: lab.frontmatter.cover ?? null,
+                  coverAlt: lab.frontmatter.coverAlt ?? null,
+                }))}
+              />
+            </div>
           )}
         </section>
 
-        {securityPosts.length > 0 && (
-          <section aria-labelledby="writing-heading" className="mt-16">
-            <h2
-              id="writing-heading"
-              className="text-xs font-semibold uppercase tracking-[0.2em] text-primary"
-            >
-              Writing
-            </h2>
-            <ul className="mt-6 flex flex-col divide-y divide-border/60">
-              {securityPosts.map((post) => (
-                <li key={post.slug}>
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="group flex flex-col gap-1 py-5 transition-colors"
-                  >
-                    <span className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
-                      {formatPostDate(post.frontmatter.date)}
-                      <span aria-hidden>·</span>
-                      {post.readingMinutes} min
-                    </span>
-                    <span className="text-base font-semibold leading-snug text-primary underline-offset-4 group-hover:underline">
-                      {post.frontmatter.title}
-                    </span>
-                    <span className="max-w-[64ch] text-sm leading-relaxed text-muted-foreground">
-                      {post.frontmatter.description}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+        {leadPost && (
+          <section
+            aria-labelledby="writing-heading"
+            className="mt-24 pb-24 md:mt-32 md:pb-32"
+          >
+            <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+              <SectionHeader
+                subtitle="From the blog"
+                title="Writing"
+                titleId="writing-heading"
+                description="What the labs taught me, written for the people who build the software rather than the people who attack it."
+                descriptionClassName="max-w-[52ch] text-muted-foreground"
+              />
+              <Link
+                href="/blog"
+                className="group inline-flex shrink-0 items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary md:pb-3"
+              >
+                All {securityPosts.length} posts
+                <ArrowRightIcon
+                  weight="bold"
+                  aria-hidden
+                  className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                />
+              </Link>
+            </div>
+
+            <div className="mt-8 border-t border-border/25">
+              <PostCard post={leadPost} featured headingAs="h3" />
+            </div>
+
+            {morePosts.length > 0 && (
+              <ul className="grid gap-x-8 gap-y-10 border-t border-border/25 pt-10 sm:grid-cols-2 lg:grid-cols-3">
+                {morePosts.map((post, i) => (
+                  <li key={post.slug}>
+                    <PostTile post={post} index={i} />
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         )}
       </div>
