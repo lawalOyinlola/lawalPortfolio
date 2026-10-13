@@ -292,3 +292,32 @@ export function formatPostDate(date: Date): string {
     timeZone: "UTC",
   }).format(date);
 }
+
+/** The parts of a post the index lists need, flattened so it can cross to a client component. */
+export type PostSummary = {
+  slug: string;
+  title: string;
+  description: string;
+  dateISO: string;
+  dateLabel: string;
+  readingMinutes: number;
+  tags: string[];
+  cover: string | null;
+};
+
+/**
+ * Flatten a post for the lists. The Date objects and the raw file body stay
+ * on the server where they belong.
+ */
+export function toPostSummary(post: BlogPost): PostSummary {
+  return {
+    slug: post.slug,
+    title: post.frontmatter.title,
+    description: post.frontmatter.description,
+    dateISO: post.frontmatter.date.toISOString(),
+    dateLabel: formatPostDate(post.frontmatter.date),
+    readingMinutes: post.readingMinutes,
+    tags: post.frontmatter.tags,
+    cover: post.frontmatter.cover ?? null,
+  };
+}
