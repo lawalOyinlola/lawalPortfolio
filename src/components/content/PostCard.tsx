@@ -12,13 +12,21 @@ import TagPill from "./TagPill";
 export type { PostSummary };
 
 /**
- * The Featured or Latest label. At most one post carries it at a time; see
- * `toPostSummaries`.
+ * The Featured or Latest label. Featured posts all carry one; with none
+ * featured, only the newest is labelled Latest. See `toPostSummaries`.
  */
-function PostBadge({ badge }: { badge: PostSummary["badge"] }) {
+function PostBadge({
+  badge,
+  className = "",
+}: {
+  badge: PostSummary["badge"];
+  className?: string;
+}) {
   if (!badge) return null;
   return (
-    <span className="rounded-full bg-(--post-accent,var(--ring)) px-2.5 py-0.5 font-semibold text-background">
+    <span
+      className={`rounded-full bg-(--post-accent,var(--ring)) px-2.5 py-0.5 font-semibold text-background ${className}`}
+    >
       {badge}
     </span>
   );
@@ -128,8 +136,17 @@ export function PostTile({
           />
         </CoverReveal>
       )}
+      {/* On a tile the badge rides on the cover, so the date line beneath
+          keeps one line at narrow column widths. Top right, because cover
+          headlines sit top left (docs/imagery.md). No cover, no ride. */}
+      {cover && (
+        <PostBadge
+          badge={post.badge}
+          className="absolute right-3 top-3 z-10 text-[10px] uppercase tracking-widest shadow-sm"
+        />
+      )}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
-        <PostBadge badge={post.badge} />
+        {!cover && <PostBadge badge={post.badge} />}
         <time dateTime={dateISO}>{dateLabel}</time>
         <span aria-hidden>·</span>
         <span>{post.readingMinutes} min read</span>
