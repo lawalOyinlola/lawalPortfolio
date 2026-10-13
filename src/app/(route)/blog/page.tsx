@@ -7,7 +7,7 @@ import ContactsRef from "@/components/ContactsRef";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const title = "Blog";
-const description = `Writing by ${BRAND.name} on frontend engineering, performance, accessibility and security, and the reasoning behind the work rather than just the result.`;
+const description = `Writing by ${BRAND.name} on software and frontend engineering, performance, accessibility and security, and on the communication and leadership that hold technical work together.`;
 
 export const metadata: Metadata = {
   title,
@@ -59,7 +59,7 @@ export default function BlogPage() {
             as="h1"
             subtitle="Writing"
             title="Blog"
-            description="Notes on what I build and break: frontend engineering, performance, accessibility, and the security side of the craft. Posts live here first and are syndicated elsewhere."
+            description="Notes on what I build, break and learn along the way. Software and frontend engineering, performance, accessibility and security, plus the parts of the job that never show up in a diff, like leading a team and explaining a technical decision to people who don't write code. Posts live here first and are syndicated elsewhere."
             descriptionClassName="max-w-[58ch] text-muted-foreground"
             className="max-w-2xl"
           />
