@@ -118,7 +118,7 @@ function LabCard({ lab, index }: { lab: LabSummary; index: number }) {
       </div>
 
       {lab.cover && (
-        <CoverReveal className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
+        <CoverReveal revealKey={lab.cover} className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
           <Image
             src={lab.cover}
             alt={lab.coverAlt ?? ""}
