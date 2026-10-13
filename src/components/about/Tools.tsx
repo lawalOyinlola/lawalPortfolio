@@ -85,11 +85,80 @@ export default function Tools() {
   );
 
   return (
-    <section
-      ref={sectionRef}
-      id="tools-tech"
-      className="relative z-1 flex-center bg-foreground text-background overflow-hidden"
-    >
+    <>
+      <section
+        ref={sectionRef}
+        id="tools-tech"
+        className="relative z-1 flex-center bg-foreground text-background overflow-hidden"
+      >
+        <div className="wrapper tools-wrapper flex flex-col gap-13.5">
+          {/* Header */}
+          <SectionHeader
+            subtitle="Stack"
+            title="Tools & Tech"
+            description="What I reach for, from the editor to the pipeline to the lab."
+            titleClassName="text-background"
+            subtitleClassName="text-background/50"
+            descriptionClassName="text-muted-foreground"
+          />
+
+          {/* Category list */}
+          <div className="flex flex-col divide-y divide-background/10">
+            {TOOL_CATEGORIES.map(({ category, tools }) => (
+              <div
+                key={category}
+                className="tool-category py-8 flex flex-col md:flex-row md:items-start gap-6"
+              >
+                {/* Category label */}
+                <div className="md:w-52 flex-none">
+                  <span className="tool-cat-label text-xs uppercase tracking-widest text-background/50">
+                    {category}
+                  </span>
+                </div>
+
+                {/* Tool chips */}
+                <div className="flex flex-wrap gap-3">
+                  {tools.map((tool) => (
+                    <div
+                      key={tool.name}
+                      className="tool-chip opacity-0 group cursor-target flex items-center gap-2.5 border border-background/10 bg-background/5 hover:bg-(--tool-color-fade) px-3.5 py-2 transition-all duration-500 cursor-default hover:border-(--tool-color) hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-sm"
+                      style={
+                        {
+                          "--tool-color": tool.color ?? "currentColor",
+                          "--tool-color-fade": tool.color
+                            ? `${tool.color}15`
+                            : "rgba(255,255,255,0.05)",
+                        } as ToolChipStyle
+                      }
+                    >
+                      {/* Icon */}
+                      <div className="relative size-5 flex-none transition-transform duration-300 group-hover:scale-110">
+                        <Image
+                          src={tool.icon}
+                          alt={tool.name}
+                          fill
+                          className="object-contain opacity-40 grayscale brightness-800 group-hover:grayscale-0 group-hover:brightness-100 group-hover:opacity-100 transition-all duration-300"
+                          unoptimized
+                        />
+                      </div>
+
+                      {/* Label */}
+                      <span className="text-xs text-background/50 group-hover:text-(--tool-color) transition-colors duration-300 whitespace-nowrap font-medium">
+                        {tool.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      {/* A sibling after the section, not a child: React attaches a parent
+          element's ref only after its children's layout effects have run, so
+          a child cursor would find sectionRef still empty on a client-side
+          navigation. It's position: fixed, so where it sits in the DOM doesn't
+          change how it looks. */}
       <TargetCursor
         containerRef={sectionRef}
         spinDuration={2}
@@ -97,68 +166,6 @@ export default function Tools() {
         parallaxOn
         hoverDuration={0.2}
       />
-      <div className="wrapper tools-wrapper flex flex-col gap-13.5">
-        {/* Header */}
-        <SectionHeader
-          subtitle="Stack"
-          title="Tools & Tech"
-          description="What I reach for, from the editor to the pipeline to the lab."
-          titleClassName="text-background"
-          subtitleClassName="text-background/50"
-          descriptionClassName="text-muted-foreground"
-        />
-
-        {/* Category list */}
-        <div className="flex flex-col divide-y divide-background/10">
-          {TOOL_CATEGORIES.map(({ category, tools }) => (
-            <div
-              key={category}
-              className="tool-category py-8 flex flex-col md:flex-row md:items-start gap-6"
-            >
-              {/* Category label */}
-              <div className="md:w-52 flex-none">
-                <span className="tool-cat-label text-xs uppercase tracking-widest text-background/50">
-                  {category}
-                </span>
-              </div>
-
-              {/* Tool chips */}
-              <div className="flex flex-wrap gap-3">
-                {tools.map((tool) => (
-                  <div
-                    key={tool.name}
-                    className="tool-chip opacity-0 group cursor-target flex items-center gap-2.5 border border-background/10 bg-background/5 hover:bg-(--tool-color-fade) px-3.5 py-2 transition-all duration-500 cursor-default hover:border-(--tool-color) hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-sm"
-                    style={
-                      {
-                        "--tool-color": tool.color ?? "currentColor",
-                        "--tool-color-fade": tool.color
-                          ? `${tool.color}15`
-                          : "rgba(255,255,255,0.05)",
-                      } as ToolChipStyle
-                    }
-                  >
-                    {/* Icon */}
-                    <div className="relative size-5 flex-none transition-transform duration-300 group-hover:scale-110">
-                      <Image
-                        src={tool.icon}
-                        alt={tool.name}
-                        fill
-                        className="object-contain opacity-40 grayscale brightness-800 group-hover:grayscale-0 group-hover:brightness-100 group-hover:opacity-100 transition-all duration-300"
-                        unoptimized
-                      />
-                    </div>
-
-                    {/* Label */}
-                    <span className="text-xs text-background/50 group-hover:text-(--tool-color) transition-colors duration-300 whitespace-nowrap font-medium">
-                      {tool.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+    </>
   );
 }
