@@ -53,7 +53,7 @@ export default function PostCard({
         // self-start is load-bearing: without it the flex row stretches this
         // box to the text column's height, the 16/9 ratio loses, and
         // object-cover crops the sides off the cover art.
-        <CoverReveal className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
+        <CoverReveal revealKey={cover} className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
           <Image
             src={cover}
             // Decorative here on purpose: the title and description beside it
@@ -126,7 +126,7 @@ export function PostTile({
   return (
     <article style={style} className="post-row group relative flex flex-col gap-4">
       {cover && (
-        <CoverReveal className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted ring-1 ring-border/15">
+        <CoverReveal revealKey={cover} className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted ring-1 ring-border/15">
           <Image
             src={cover}
             alt=""
