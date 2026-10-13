@@ -150,7 +150,7 @@ export function SectionHeader({
           ref={titleRef}
           aria-label={titleText}
           className={cn(
-            "bold-title leading-tight text-primary",
+            "sh-heading bold-title leading-tight text-primary",
             isHydrated ? "" : "opacity-0",
             titleClassName,
           )}
