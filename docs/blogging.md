@@ -226,6 +226,7 @@ the old file in a follow-up commit.
 | `cover` | Optional. Also becomes the social card and the dev.to cover. |
 | `coverAlt` | **Required whenever `cover` is set.** |
 | `draft` | `true` keeps it off the live site and out of the sync. Still visible in `pnpm dev`. |
+| `featured` | Optional. `true` pins the post to the top of `/blog` with a Featured badge. One post shows as featured at a time (the newest marked one); with none marked, the newest post gets a Latest badge instead. Site-only, never sent to dev.to. |
 | `devto_published` | Your publish switch for dev.to. `false` = draft over there, `true` = public. |
 
 ### The sync writes these
