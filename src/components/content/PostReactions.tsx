@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   ChatCircleIcon,
   HeartIcon,
@@ -24,6 +24,13 @@ import { BRAND } from "@/app/constants";
 
 const STORAGE_PREFIX = "post-liked:";
 
+// The storage event only fires for writes from other tabs, which keeps a like
+// made in one tab in step with the same post open in another.
+function subscribeToStorage(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  return () => window.removeEventListener("storage", onChange);
+}
+
 export default function PostReactions({
   slug,
   title,
@@ -33,22 +40,33 @@ export default function PostReactions({
   title: string;
   devtoUrl: string | null;
 }) {
-  const [liked, setLiked] = useState(false);
+  // The server snapshot keeps the server and the first client render
+  // identical; React swaps in the stored value once hydration is done.
+  // Storage is unavailable in private windows and can throw outright, so a
+  // failure just means the default state.
+  const stored = useSyncExternalStore(
+    subscribeToStorage,
+    () => {
+      try {
+        return localStorage.getItem(STORAGE_PREFIX + slug) === "1";
+      } catch {
+        /* no storage, no memory of a like: not worth surfacing */
+        return false;
+      }
+    },
+    () => false,
+  );
+  // A click this session wins over storage, so the button still answers when
+  // the write fails. Keyed by slug so it never leaks onto another post.
+  const [clicked, setClicked] = useState<{
+    slug: string;
+    liked: boolean;
+  } | null>(null);
+  const liked = clicked?.slug === slug ? clicked.liked : stored;
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">(
     "idle",
   );
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Reading in an effect rather than in useState keeps the server and the
-  // first client render identical; storage is unavailable in private windows
-  // and can throw outright, so a failure just means the default state.
-  useEffect(() => {
-    try {
-      setLiked(localStorage.getItem(STORAGE_PREFIX + slug) === "1");
-    } catch {
-      /* no storage, no memory of a like: not worth surfacing */
-    }
-  }, [slug]);
 
   useEffect(() => {
     return () => {
@@ -61,7 +79,7 @@ export default function PostReactions({
   // replayed safely.
   function toggleLike() {
     const next = !liked;
-    setLiked(next);
+    setClicked({ slug, liked: next });
     try {
       if (next) localStorage.setItem(STORAGE_PREFIX + slug, "1");
       else localStorage.removeItem(STORAGE_PREFIX + slug);
