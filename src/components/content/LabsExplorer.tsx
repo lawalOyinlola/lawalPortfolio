@@ -6,6 +6,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getTagColor } from "@/lib/tag-colors";
+import CoverReveal from "./CoverReveal";
 import Pagination from "./Pagination";
 import SortControl, { type SortDir, type SortOption } from "./SortControl";
 
@@ -117,7 +118,7 @@ function LabCard({ lab, index }: { lab: LabSummary; index: number }) {
       </div>
 
       {lab.cover && (
-        <div className="cover-wipe relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
+        <CoverReveal className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
           <Image
             src={lab.cover}
             alt={lab.coverAlt ?? ""}
@@ -125,7 +126,7 @@ function LabCard({ lab, index }: { lab: LabSummary; index: number }) {
             sizes="(max-width: 768px) 100vw, 288px"
             className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
           />
-        </div>
+        </CoverReveal>
       )}
     </Link>
   );
