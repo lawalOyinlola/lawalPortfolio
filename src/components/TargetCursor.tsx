@@ -1,13 +1,8 @@
-import React, {
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
+import { useIsHydrated } from "../hooks/useIsHydrated";
 
 export interface TargetCursorProps {
   targetSelector?: string;
@@ -38,11 +33,7 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
   );
   const tickerFnRef = useRef<(() => void) | null>(null);
   const activeStrengthRef = useRef({ current: 0 });
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const isHydrated = useIsHydrated();
 
   const isMobile = useMemo(() => {
     if (typeof window === "undefined") return false;
@@ -62,14 +53,12 @@ const TargetCursor: React.FC<TargetCursorProps> = ({
 
   const constants = useMemo(() => ({ borderWidth: 3, cornerSize: 12 }), []);
 
-  const moveCursor = useCallback((x: number, y: number) => {
-    if (!cursorRef.current) return;
-    gsap.to(cursorRef.current, { x, y, duration: 0.1, ease: "power3.out" });
-  }, []);
-
   useGSAP(
     () => {
       if (isMobile || !cursorRef.current || prefersReducedMotion) return;
+      // A container was asked for but isn't attached yet. Falling through
+      // would hide the system cursor across the whole page, so do nothing.
+      if (containerRef && !containerRef.current) return;
 
       const originalCursor = document.body.style.cursor;
 
