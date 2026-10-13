@@ -711,23 +711,16 @@ html[data-intro="skip"] .pl-line {
 }
 
 /* Covers on the index pages open with the same side wipe the project images
-   use, driven by scroll where the browser can do it without script. Where it
-   can't, the cover is simply there. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .cover-wipe {
-      animation: cover-wipe linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 80%;
-    }
-  }
-}
-
-@keyframes cover-wipe {
-  from {
+   use, once: CoverReveal sets data-revealed on the frame the first time it
+   scrolls into view and never clears it. Only hidden where script will run to reveal
+   it, and never for reduced motion. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .cover-reveal > .cover-wipe {
     clip-path: inset(0 100% 0 0);
+    transition: clip-path 1s cubic-bezier(0.65, 0, 0.35, 1);
   }
-  to {
+
+  .cover-reveal[data-revealed] > .cover-wipe {
     clip-path: inset(0 0% 0 0);
   }
 }
