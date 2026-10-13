@@ -76,6 +76,8 @@ export default function SecurityPage() {
   const securityPosts = getBlogPosts().filter((post) =>
     post.frontmatter.tags.some((tag) => SECURITY_TAGS.has(tag.toLowerCase())),
   );
+  // Featured security posts first (newest featured leading), then the newest
+  // of the rest to fill the row; with none featured, the newest is Latest.
   const writing = toPostSummaries(securityPosts).slice(0, WRITING_LIMIT);
 
   // Every tool the labs used, then every CVE they exploited, once each.
