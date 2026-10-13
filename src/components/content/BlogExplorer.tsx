@@ -20,9 +20,10 @@ const SORT_OPTIONS: SortOption[] = [
 ];
 
 /**
- * Posts per page. The controls only appear once the list runs past this, so
- * until then the index reads as one list.
+ * Up to SINGLE_PAGE_MAX posts read as one list with no page controls. Past
+ * that, the list splits into pages of PAGE_SIZE.
  */
+const SINGLE_PAGE_MAX = 15;
 const PAGE_SIZE = 10;
 
 /**
@@ -100,21 +101,25 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
       else cmp = a.dateISO.localeCompare(b.dateISO);
       return sortDir === "asc" ? cmp : -cmp;
     });
+    // A featured post sits on top of the default newest-first order, where
+    // its badge says why it is out of date order. Any other sort is literal.
+    if (sortKey === "date" && sortDir === "desc") {
+      const pinned = arr.findIndex((post) => post.pinned);
+      if (pinned > 0) arr.unshift(...arr.splice(pinned, 1));
+    }
     return arr;
   }, [results, sortKey, sortDir]);
 
   const isFiltered = query.trim().length > 0 || activeTags.length > 0;
 
-  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const pageSize =
+    sorted.length > SINGLE_PAGE_MAX ? PAGE_SIZE : Math.max(sorted.length, 1);
+  const pageCount = Math.ceil(sorted.length / pageSize) || 1;
   const currentPage = Math.min(page, pageCount);
   const pageItems = sorted.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE,
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
   );
-  // The newest post leads the resting view only: once someone searches,
-  // filters, reorders or pages, every result is the same size again.
-  const hasFeature =
-    !isFiltered && sortKey === "date" && sortDir === "desc" && currentPage === 1;
 
   function changePage(next: number) {
     setPage(next);
@@ -260,11 +265,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
             <ul className="mt-6 divide-y divide-border/60 border-y border-border/25">
               {pageItems.map((post, index) => (
                 <li key={post.slug}>
-                  <PostCard
-                    post={post}
-                    index={index}
-                    featured={hasFeature && index === 0}
-                  />
+                  <PostCard post={post} index={index} />
                 </li>
               ))}
             </ul>
