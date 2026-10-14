@@ -16,24 +16,30 @@ import { LAB_EDGES, LAB_NODES, type LabNode } from "@/app/constants";
  */
 
 const VIEW_W = 960;
-const VIEW_H = 560;
+const VIEW_H = 750;
 const NODE_W = 176;
 const NODE_H = 66;
 
 /** Presentational layout — tweak freely; edges recompute from these. */
 const POS: Record<string, { x: number; y: number }> = {
-  foundation: { x: 242, y: 72 },
-  pentest: { x: 70, y: 220 },
-  detection: { x: 400, y: 220 },
-  phishing: { x: 250, y: 398 },
-  aisoc: { x: 452, y: 398 },
-  "cloud-foundation": { x: 718, y: 96 },
-  rag: { x: 718, y: 250 },
+  cicd: { x: 100, y: 94 },
+  waf: { x: 392, y: 94 },
+  aiapp: { x: 684, y: 94 },
+  foundation: { x: 242, y: 262 },
+  pentest: { x: 70, y: 410 },
+  detection: { x: 400, y: 410 },
+  phishing: { x: 250, y: 588 },
+  aisoc: { x: 452, y: 588 },
+  "cloud-foundation": { x: 718, y: 286 },
+  rag: { x: 718, y: 440 },
 };
 
+// AppSec runs across the top so the map reads in the same order as the labs
+// page: the work on a real app first, then the home lab, then the cloud.
 const GROUPS = [
-  { label: "Local · UTM on Apple Silicon", x: 20, y: 40, w: 616, h: 500 },
-  { label: "Cloud · Azure", x: 680, y: 40, w: 256, h: 360 },
+  { label: "AppSec · Securing what I build", x: 20, y: 40, w: 916, h: 150 },
+  { label: "Local · UTM on Apple Silicon", x: 20, y: 230, w: 616, h: 500 },
+  { label: "Cloud · Azure", x: 680, y: 230, w: 256, h: 360 },
 ];
 
 function center(id: string) {
@@ -41,10 +47,19 @@ function center(id: string) {
   return { cx: p.x + NODE_W / 2, cy: p.y + NODE_H / 2 };
 }
 
-/** Smooth vertical-ish connector between two node boxes. */
+/**
+ * Connector between two node boxes: side to side for nodes on the same row,
+ * otherwise a smooth vertical-ish curve from the bottom of one to the top of
+ * the other.
+ */
 function edgePath(fromId: string, toId: string) {
   const a = center(fromId);
   const b = center(toId);
+  if (POS[fromId].y === POS[toId].y) {
+    const x1 = POS[fromId].x + NODE_W;
+    const x2 = POS[toId].x;
+    return `M ${x1} ${a.cy} L ${x2} ${b.cy}`;
+  }
   const y1 = POS[fromId].y + NODE_H; // bottom of source
   const y2 = POS[toId].y; // top of target
   const my = (y1 + y2) / 2;
