@@ -38,13 +38,20 @@ const ROLES = {
     "#8a2f2f": "red-deep", // text inside a pale red callout
     "#2e7d46": "green", // section labels on the page
     "#5a4a2a": "brown", // headings on a pale card
+    "#777777": "muted", // captions and notes
+    "#4a7a4a": "green", // labels inside a pale green panel
   },
   f: {
     "#f5f2e8": "callout", // pale gold callout panel
     "#fdf2f4": "rose-tint", // pale rose highlight panel
     "#fbecec": "rose-tint",
+    "#fbf2f1": "rose-tint",
     "#faf7f2": "cream", // pale cards
     "#faf4e6": "cream",
+    "#f7f9fb": "mist", // pale blue-grey cards
+    "#ffffff": "paper", // white cards drawn on the page
+    "#f4f7f1": "green-tint", // pale green panel
+    "#e8edf3": "track", // empty bar tracks and the hatch behind them
   },
   s: {
     "#c8d3e0": "line", // outlines and frames
@@ -57,6 +64,8 @@ const ROLES = {
     "#5a4a2a": "brown",
     "#c7a9a9": "red-soft", // outlines inside a red-themed panel
     "#a9c7b5": "green-soft", // outlines inside a green-themed panel
+    "#555555": "body", // thin outlines on small labels
+    "#4a7a4a": "green",
   },
   m: {
     "#1a3c5e": "ink",
@@ -68,7 +77,7 @@ const ROLES = {
 // unclassed: solid box fills, and the light text that sits on them.
 const KEEP = {
   t: ["#ffffff", "#d7e0ec", "#b9c7da", "#ece2cc", "#e2d6bb", "#f3d6d6", "#9fb0c6", "#c99a2e"],
-  f: ["#1a3c5e", "#2e7d46", "#5a4a2a", "#c99a2e", "#b23b3b", "none"],
+  f: ["#1a3c5e", "#2e7d46", "#5a4a2a", "#c99a2e", "#b23b3b", "none", "url(#hatch)"],
   s: ["#c99a2e", "#3b5a7a", "none"],
   m: ["#b23b3b", "#c99a2e"],
 };

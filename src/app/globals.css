@@ -388,9 +388,29 @@ html[data-intro="skip"] .pl-line {
     color: var(--post-accent, var(--ring));
   }
 
-  /* Pull the fenced block flush inside the disclosure frame. */
-  .prose details > pre {
-    @apply my-0 rounded-none border-0 bg-transparent;
+  /* Content inside an open disclosure sits in from the frame instead of
+     running edge to edge. Margin rather than padding, so lists keep their own
+     indent for the markers. */
+  .prose details > :not(summary) {
+    @apply mx-5 md:mx-6;
+  }
+
+  .prose details > summary + * {
+    @apply mt-4;
+  }
+
+  .prose details[open] {
+    @apply pb-5;
+  }
+
+  /* A long listing that is the whole disclosure (wordlists, the defacement
+     source) stays flush inside the frame. */
+  .prose details:has(> summary + pre:last-child) {
+    @apply pb-0;
+  }
+
+  .prose details > summary + pre:last-child {
+    @apply m-0 rounded-none border-0 bg-transparent;
   }
 
   /* Made interactive by ImageZoom; the attribute only exists once JS has run,
@@ -897,6 +917,12 @@ html[data-intro="skip"] .pl-line {
 .dark svg.dg .dg-t-brown { fill: #e2c98f; }
 
 .dark svg.dg .dg-f-cream { fill: #1a1813; }
+.dark svg.dg .dg-f-mist { fill: #161b22; }
+.dark svg.dg .dg-f-paper { fill: #111418; }
+.dark svg.dg .dg-f-green-tint { fill: #0f1d15; }
+.dark svg.dg .dg-f-track { fill: #222a34; }
+.dark svg.dg .dg-t-muted { fill: #8b95a3; }
+.dark svg.dg .dg-s-body { stroke: #6b7480; }
 
 .dark svg.dg .dg-s-red { stroke: #e0605a; }
 .dark svg.dg .dg-s-ink { stroke: #7f9bbd; }
