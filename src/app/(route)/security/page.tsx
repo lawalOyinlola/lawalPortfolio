@@ -66,7 +66,7 @@ const RULES = [
   },
   {
     title: "Report",
-    body: "Every test ends in writing the people who have to fix things can act on.",
+    body: "Every test ends in a written report: what I found, why it matters, and how to fix it.",
   },
 ];
 
