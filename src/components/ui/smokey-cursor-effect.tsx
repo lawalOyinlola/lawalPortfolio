@@ -1272,7 +1272,13 @@ const FluidCursorEffect = ({
       splat(pointer.texcoordX, pointer.texcoordY, dx, dy, color);
     };
 
-    const splat = (x: number, y: number, dx: number, dy: number, color: RGB) => {
+    const splat = (
+      x: number,
+      y: number,
+      dx: number,
+      dy: number,
+      color: RGB,
+    ) => {
       splatProgram.bind();
       if (splatProgram.uniforms.uTarget) {
         gl.uniform1i(splatProgram.uniforms.uTarget, velocity.read.attach(0));
@@ -1440,8 +1446,7 @@ const FluidCursorEffect = ({
         options?: AddEventListenerOptions,
       ) => {
         target.addEventListener(type, handler as EventListener, options);
-        return () =>
-          target.removeEventListener(type, handler as EventListener);
+        return () => target.removeEventListener(type, handler as EventListener);
       };
 
       const unlisten = [
@@ -1525,7 +1530,7 @@ const FluidCursorEffect = ({
 
       {/* Status indicator */}
       {!isInitialized && (
-        <div className="absolute top-4 end-4 z-50 bg-blue-500/20 text-blue-200 px-4 py-2 rounded-lg border border-blue-500/30 text-[10px] uppercase tracking-widest">
+        <div className="absolute top-4 inset-e-4 z-50 bg-blue-500/20 text-blue-200 px-4 py-2 rounded-lg border border-blue-500/30 text-[10px] uppercase tracking-widest">
           Initializing Fluid...
         </div>
       )}
