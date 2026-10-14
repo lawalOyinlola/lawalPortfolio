@@ -6,7 +6,7 @@ import {
   ArrowUpRightIcon,
   GithubLogoIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { BRAND } from "@/app/constants";
+import { BRAND, LAB_SERIES } from "@/app/constants";
 import { getBlogPosts, getLabPosts, toPostSummaries } from "@/lib/content";
 import ContactsRef from "@/components/ContactsRef";
 import { PostTile } from "@/components/content/PostCard";
@@ -109,9 +109,16 @@ const CREDENTIAL = {
 const WRITING_LIMIT = 4;
 
 export default function SecurityPage() {
-  // Build order, the same numbering the labs page and its map use.
+  // Series order, then build order within a series: the same reading order
+  // the labs page and its map use, AppSec first.
+  const seriesRank = (series?: string) => {
+    const i = LAB_SERIES.findIndex((s) => s.name === series);
+    return i === -1 ? LAB_SERIES.length : i;
+  };
   const labs = [...getLabPosts()].sort(
-    (a, b) => (a.frontmatter.order ?? 99) - (b.frontmatter.order ?? 99),
+    (a, b) =>
+      seriesRank(a.frontmatter.series) - seriesRank(b.frontmatter.series) ||
+      (a.frontmatter.order ?? 99) - (b.frontmatter.order ?? 99),
   );
   const securityPosts = getBlogPosts().filter((post) =>
     post.frontmatter.tags.some((tag) => SECURITY_TAGS.has(tag.toLowerCase())),
@@ -219,10 +226,10 @@ export default function SecurityPage() {
         <section aria-labelledby="labs-heading" className="mt-20 md:mt-28">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <SectionHeader
-              subtitle={`${labs.length} ${labs.length === 1 ? "lab" : "labs"}, one machine`}
+              subtitle={`${labs.length} ${labs.length === 1 ? "lab" : "labs"}`}
               title="Labs"
                 titleId="labs-heading"
-              description="Each one starts from the same isolated network, goes end to end, and names the control that would have stopped it."
+              description="Each one goes end to end and names the control that would have stopped it."
               descriptionClassName="max-w-[52ch] text-muted-foreground"
             />
             <Link
