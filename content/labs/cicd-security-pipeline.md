@@ -529,7 +529,7 @@ Three tests, each with a result you can read for yourself.
 
 ```bash
 git switch -c test/secrets-gate
-printf 'api_key = "%s"\n' "$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)" > leak-test.txt
+printf 'api_key = "%s0"\n' "$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom | head -c 31)" > leak-test.txt
 gitleaks detect --no-git --source leak-test.txt --redact   # expect one finding, generic-api-key
 git add leak-test.txt && git commit -m "test: fake key for the secrets gate"
 git push -u origin test/secrets-gate && gh pr create --fill
