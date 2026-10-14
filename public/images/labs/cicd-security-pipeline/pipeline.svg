@@ -1,0 +1,112 @@
+<svg class="dg" viewBox="0 0 980 680" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+
+  <text class="dg-t-ink" x="40" y="44" font-size="22" font-weight="700" fill="#1a3c5e">Security pipeline</text>
+  <text class="dg-t-body" x="40" y="68" font-size="13.5" fill="#555555">Five scan jobs on three triggers. Additive, and independently disableable.</text>
+  <line x1="40" y1="84" x2="940" y2="84" stroke="#c99a2e" stroke-width="2"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="7.5" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path class="dg-m-ink" d="M0,0 L8,3 L0,6 Z" fill="#1a3c5e"/>
+    </marker>
+  </defs>
+
+  <!-- triggers -->
+  <g>
+    <rect x="205" y="110" width="170" height="34" rx="17" fill="#c99a2e"/>
+    <text x="290" y="132" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Pull request</text>
+
+    <rect x="405" y="110" width="170" height="34" rx="17" fill="#c99a2e"/>
+    <text x="490" y="132" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Push to main</text>
+
+    <rect x="605" y="110" width="170" height="34" rx="17" fill="#c99a2e"/>
+    <text x="690" y="132" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">Weekly schedule</text>
+  </g>
+
+  <!-- triggers converge to a single trunk -->
+  <g class="dg-s-ink" stroke="#1a3c5e" stroke-width="1.6" fill="none">
+    <line x1="290" y1="144" x2="290" y2="170"/>
+    <line x1="490" y1="144" x2="490" y2="170"/>
+    <line x1="690" y1="144" x2="690" y2="170"/>
+    <line x1="290" y1="170" x2="690" y2="170"/>
+    <line x1="490" y1="170" x2="490" y2="196"/>
+    <!-- fan out to five jobs -->
+    <line x1="124" y1="196" x2="856" y2="196"/>
+    <line x1="124" y1="196" x2="124" y2="220" marker-end="url(#arrow)"/>
+    <line x1="307" y1="196" x2="307" y2="220" marker-end="url(#arrow)"/>
+    <line x1="490" y1="196" x2="490" y2="220" marker-end="url(#arrow)"/>
+    <line x1="673" y1="196" x2="673" y2="220" marker-end="url(#arrow)"/>
+    <line x1="856" y1="196" x2="856" y2="220" marker-end="url(#arrow)"/>
+  </g>
+  <text class="dg-t-muted" x="920" y="188" font-size="11" fill="#777777" font-style="italic" text-anchor="end">five jobs, run in parallel</text>
+
+  <!-- scan jobs -->
+  <g>
+    <rect class="dg-f-mist dg-s-ink" x="40" y="222" width="168" height="92" rx="6" fill="#f7f9fb" stroke="#1a3c5e" stroke-width="2"/>
+    <text class="dg-t-ink" x="124" y="252" font-size="14" font-weight="700" fill="#1a3c5e" text-anchor="middle">Static analysis</text>
+    <text class="dg-t-muted" x="124" y="274" font-size="10.5" fill="#777777" text-anchor="middle">application source</text>
+    <text class="dg-t-muted" x="124" y="291" font-size="10.5" fill="#777777" text-anchor="middle">OWASP, TS, React rule sets</text>
+
+    <rect class="dg-f-mist dg-s-ink" x="223" y="222" width="168" height="92" rx="6" fill="#f7f9fb" stroke="#1a3c5e" stroke-width="2"/>
+    <text class="dg-t-ink" x="307" y="252" font-size="14" font-weight="700" fill="#1a3c5e" text-anchor="middle">Dependencies</text>
+    <text class="dg-t-muted" x="307" y="274" font-size="10.5" fill="#777777" text-anchor="middle">backend project</text>
+    <text class="dg-t-muted" x="307" y="291" font-size="10.5" fill="#777777" text-anchor="middle">production and dev scope</text>
+
+    <rect class="dg-f-mist dg-s-ink" x="406" y="222" width="168" height="92" rx="6" fill="#f7f9fb" stroke="#1a3c5e" stroke-width="2"/>
+    <text class="dg-t-ink" x="490" y="252" font-size="14" font-weight="700" fill="#1a3c5e" text-anchor="middle">Dependencies</text>
+    <text class="dg-t-muted" x="490" y="274" font-size="10.5" fill="#777777" text-anchor="middle">frontend project</text>
+    <text class="dg-t-muted" x="490" y="291" font-size="10.5" fill="#777777" text-anchor="middle">production and dev scope</text>
+
+    <rect class="dg-f-mist dg-s-ink" x="589" y="222" width="168" height="92" rx="6" fill="#f7f9fb" stroke="#1a3c5e" stroke-width="2"/>
+    <text class="dg-t-ink" x="673" y="252" font-size="14" font-weight="700" fill="#1a3c5e" text-anchor="middle">Upstream images</text>
+    <text class="dg-t-muted" x="673" y="274" font-size="10.5" fill="#777777" text-anchor="middle">pinned third-party images</text>
+    <text class="dg-t-muted" x="673" y="291" font-size="10.5" fill="#777777" text-anchor="middle">read from a tracked manifest</text>
+
+    <rect class="dg-f-mist dg-s-ink" x="772" y="222" width="168" height="92" rx="6" fill="#f7f9fb" stroke="#1a3c5e" stroke-width="2"/>
+    <text class="dg-t-ink" x="856" y="252" font-size="14" font-weight="700" fill="#1a3c5e" text-anchor="middle">Secrets</text>
+    <text class="dg-t-muted" x="856" y="274" font-size="10.5" fill="#777777" text-anchor="middle">full git history</text>
+    <text class="dg-t-muted" x="856" y="291" font-size="10.5" fill="#777777" text-anchor="middle">not just the working tree</text>
+  </g>
+
+  <!-- jobs converge into the report -->
+  <g class="dg-s-ink" stroke="#1a3c5e" stroke-width="1.6" fill="none">
+    <line x1="124" y1="314" x2="124" y2="348"/>
+    <line x1="307" y1="314" x2="307" y2="348"/>
+    <line x1="490" y1="314" x2="490" y2="348"/>
+    <line x1="673" y1="314" x2="673" y2="348"/>
+    <line x1="856" y1="314" x2="856" y2="348"/>
+    <line x1="124" y1="348" x2="856" y2="348"/>
+    <line x1="490" y1="348" x2="490" y2="372" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- report -->
+  <rect class="dg-f-paper" x="215" y="374" width="550" height="62" rx="6" fill="#ffffff" stroke="#c99a2e" stroke-width="3"/>
+  <text class="dg-t-ink" x="490" y="400" font-size="14" font-weight="700" fill="#1a3c5e" text-anchor="middle">Job summary and pull request comment</text>
+  <text class="dg-t-muted" x="490" y="420" font-size="10.5" fill="#777777" text-anchor="middle">no native security dashboard on this plan, so results surface where the team already looks</text>
+
+  <!-- policy gate -->
+  <line class="dg-s-ink" x1="490" y1="436" x2="490" y2="454" stroke="#1a3c5e" stroke-width="1.6"/>
+  <rect class="dg-f-paper dg-s-body" x="422" y="454" width="136" height="24" rx="12" fill="#ffffff" stroke="#555555" stroke-width="1.2"/>
+  <text class="dg-t-body" x="490" y="470" font-size="11.5" font-weight="700" fill="#555555" text-anchor="middle">severity policy</text>
+
+  <g class="dg-s-ink" stroke="#1a3c5e" stroke-width="1.6" fill="none">
+    <line x1="490" y1="478" x2="490" y2="494"/>
+    <line x1="260" y1="494" x2="720" y2="494"/>
+    <line x1="260" y1="494" x2="260" y2="514" marker-end="url(#arrow)"/>
+    <line x1="720" y1="494" x2="720" y2="514" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- block -->
+  <rect class="dg-f-rose-tint dg-s-red" x="70" y="516" width="380" height="104" rx="6" fill="#fbf2f1" stroke="#b23b3b" stroke-width="2"/>
+  <text class="dg-t-red" x="260" y="544" font-size="14" font-weight="700" fill="#b23b3b" text-anchor="middle">Blocks the build</text>
+  <text class="dg-t-body-strong" x="260" y="567" font-size="11.5" fill="#333333" text-anchor="middle">any secret finding</text>
+  <text class="dg-t-body-strong" x="260" y="585" font-size="11.5" fill="#333333" text-anchor="middle">critical dependency finding with a published fix</text>
+  <text class="dg-t-body-strong" x="260" y="603" font-size="11.5" fill="#333333" text-anchor="middle">ERROR-severity static analysis finding</text>
+
+  <!-- warn -->
+  <rect class="dg-f-green-tint dg-s-green" x="530" y="516" width="380" height="104" rx="6" fill="#f4f7f1" stroke="#4a7a4a" stroke-width="2"/>
+  <text class="dg-t-green" x="720" y="544" font-size="14" font-weight="700" fill="#4a7a4a" text-anchor="middle">Warns, does not block</text>
+  <text class="dg-t-body-strong" x="720" y="567" font-size="11.5" fill="#333333" text-anchor="middle">everything else, tracked to a review date</text>
+  <text class="dg-t-body-strong" x="720" y="585" font-size="11.5" fill="#333333" text-anchor="middle">tightens as the fixable backlog shrinks</text>
+
+  <text class="dg-t-body" x="40" y="656" font-size="11.5" fill="#555555">Severity policy set against the measured baseline, not tool defaults. Disabling this workflow changes nothing about how the team builds or deploys.</text>
+</svg>

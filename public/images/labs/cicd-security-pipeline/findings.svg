@@ -1,0 +1,66 @@
+<svg class="dg" viewBox="0 0 960 686" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect class="dg-f-track" width="6" height="6" fill="#e8edf3"/>
+      <line class="dg-s-ink" x1="0" y1="0" x2="0" y2="6" stroke="#1a3c5e" stroke-width="3"/>
+    </pattern>
+  </defs>
+
+  <text class="dg-t-ink" x="40" y="44" font-size="22" font-weight="700" fill="#1a3c5e">Security findings, baseline to current</text>
+  <text class="dg-t-body" x="40" y="68" font-size="13.5" fill="#555555">Each bar shows what remains as a share of that row's own baseline. Indented rows are subsets of the row above.</text>
+  <line x1="40" y1="84" x2="920" y2="84" stroke="#c99a2e" stroke-width="2"/>
+
+  <!-- legend -->
+  <rect class="dg-f-track dg-s-line" x="40" y="104" width="14" height="14" rx="2" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+  <text class="dg-t-body-strong" x="61" y="115.5" font-size="11.5" fill="#333333">Baseline</text>
+  <rect x="140" y="104" width="14" height="14" rx="2" fill="#1a3c5e"/>
+  <text class="dg-t-body-strong" x="161" y="115.5" font-size="11.5" fill="#333333">Remaining, warn-only and tracked</text>
+  <rect class="dg-s-ink" x="370.75" y="104.75" width="12.5" height="12.5" rx="2" fill="url(#hatch)" stroke="#1a3c5e" stroke-width="1.5"/>
+  <text class="dg-t-body-strong" x="391" y="115.5" font-size="11.5" fill="#333333">Remaining, accepted or false positive</text>
+  <circle cx="627" cy="111" r="6.5" fill="#2e7d46"/>
+  <text class="dg-t-body-strong" x="640" y="115.5" font-size="11.5" fill="#333333">Zero</text>
+
+  <text class="dg-t-gold" x="40" y="158" font-size="11" font-weight="700" fill="#8a6d1a" letter-spacing="1.5">CODE</text>
+  <!-- Static analysis findings: 8 -> 1 -->
+  <text class="dg-t-ink" x="40" y="184" font-size="14.5" font-weight="700" fill="#1a3c5e">Static analysis findings</text>
+  <text class="dg-t-body" x="920" y="184" font-size="12" fill="#555555" text-anchor="end">8 &#8594; 1  (&#8722;88%), documented false positive</text>
+  <rect class="dg-f-track dg-s-line" x="40" y="194" width="880" height="20" rx="3" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+  <rect class="dg-s-ink" x="40.75" y="194.75" width="108.5" height="18.5" rx="3" fill="url(#hatch)" stroke="#1a3c5e" stroke-width="1.5"/>
+  <text class="dg-t-ink" x="158.0" y="208.5" font-size="11.5" font-weight="700" fill="#1a3c5e">1</text>
+  <text class="dg-t-gold" x="40" y="252" font-size="11" font-weight="700" fill="#8a6d1a" letter-spacing="1.5">DEPENDENCIES</text>
+  <!-- All scopes, including build tooling: 125 -> 4 -->
+  <text class="dg-t-ink" x="40" y="278" font-size="14.5" font-weight="700" fill="#1a3c5e">All scopes, including build tooling</text>
+  <text class="dg-t-body" x="920" y="278" font-size="12" fill="#555555" text-anchor="end">125 &#8594; 4  (&#8722;97%), accepted, dev-only</text>
+  <rect class="dg-f-track dg-s-line" x="40" y="288" width="880" height="20" rx="3" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+  <rect class="dg-s-ink" x="40.75" y="288.75" width="26.7" height="18.5" rx="3" fill="url(#hatch)" stroke="#1a3c5e" stroke-width="1.5"/>
+  <text class="dg-t-ink" x="76.2" y="302.5" font-size="11.5" font-weight="700" fill="#1a3c5e">4</text>
+  <!-- of which production scope: 104 -> 0 -->
+  <text class="dg-t-ink" x="64" y="338" font-size="13.5" font-weight="400" fill="#1a3c5e">of which production scope</text>
+  <text class="dg-t-body" x="920" y="338" font-size="12" fill="#555555" text-anchor="end">104 &#8594; 0  (&#8722;100%)</text>
+  <rect class="dg-f-track dg-s-line" x="64" y="348" width="856" height="20" rx="3" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+  <circle cx="75" cy="358" r="6.5" fill="#2e7d46"/>
+  <text class="dg-t-green" x="90" y="362.5" font-size="11.5" font-weight="700" fill="#2e7d46">0</text>
+  <text class="dg-t-gold" x="40" y="406" font-size="11" font-weight="700" fill="#8a6d1a" letter-spacing="1.5">UPSTREAM CONTAINER IMAGE</text>
+  <!-- All severities: 184 -> 122 -->
+  <text class="dg-t-ink" x="40" y="432" font-size="14.5" font-weight="700" fill="#1a3c5e">All severities</text>
+  <text class="dg-t-body" x="920" y="432" font-size="12" fill="#555555" text-anchor="end">184 &#8594; 122  (&#8722;34%), warn-only, tracked to a review date</text>
+  <rect class="dg-f-track dg-s-line" x="40" y="442" width="880" height="20" rx="3" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+  <rect x="40" y="442" width="583.5" height="20" rx="3" fill="#1a3c5e"/>
+  <text class="dg-t-ink" x="631.5" y="456.5" font-size="11.5" font-weight="700" fill="#1a3c5e">122</text>
+  <!-- of which critical: 3 -> 1 -->
+  <text class="dg-t-ink" x="64" y="492" font-size="13.5" font-weight="400" fill="#1a3c5e">of which critical</text>
+  <text class="dg-t-body" x="920" y="492" font-size="12" fill="#555555" text-anchor="end">3 &#8594; 1  (&#8722;67%), accepted, no fixed version exists</text>
+  <rect class="dg-f-track dg-s-line" x="64" y="502" width="856" height="20" rx="3" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+  <rect class="dg-s-ink" x="64.75" y="502.75" width="283.8" height="18.5" rx="3" fill="url(#hatch)" stroke="#1a3c5e" stroke-width="1.5"/>
+  <text class="dg-t-ink" x="357.3" y="516.5" font-size="11.5" font-weight="700" fill="#1a3c5e">1</text>
+  <text class="dg-t-gold" x="40" y="560" font-size="11" font-weight="700" fill="#8a6d1a" letter-spacing="1.5">SECRETS</text>
+  <!-- Full git history: 15 -> 0 -->
+  <text class="dg-t-ink" x="40" y="586" font-size="14.5" font-weight="700" fill="#1a3c5e">Full git history</text>
+  <text class="dg-t-body" x="920" y="586" font-size="12" fill="#555555" text-anchor="end">15 &#8594; 0  (&#8722;100%)</text>
+  <rect class="dg-f-track dg-s-line" x="40" y="596" width="880" height="20" rx="3" fill="#e8edf3" stroke="#c8d3e0" stroke-width="1"/>
+  <circle cx="51" cy="606" r="6.5" fill="#2e7d46"/>
+  <text class="dg-t-green" x="66" y="610.5" font-size="11.5" font-weight="700" fill="#2e7d46">0</text>
+
+  <text class="dg-t-body" x="40" y="656" font-size="11.5" fill="#555555">The remaining image critical has no fixed version to upgrade into. It is an accepted, documented risk with a review date, not a suppression.</text>
+</svg>
