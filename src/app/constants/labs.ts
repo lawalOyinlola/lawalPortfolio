@@ -9,7 +9,7 @@
  * lab's `.md` is all it takes to activate its node.
  */
 
-export type LabEnv = "local" | "cloud";
+export type LabEnv = "appsec" | "local" | "cloud";
 
 /**
  * Series are the sections the labs landing page groups into, in this order.
@@ -17,6 +17,11 @@ export type LabEnv = "local" | "cloud";
  * must match exactly). Labs without a series fall to an ungrouped "More" block.
  */
 export const LAB_SERIES = [
+  {
+    name: "AppSec labs · Securing what I build",
+    blurb:
+      "Security added to software as it is built: scanning and a deploy gate at build time, a WAF at runtime, and an AI feature attacked and then contained, each measured rather than assumed.",
+  },
   {
     name: "Local labs · UTM on Apple Silicon",
     blurb:
@@ -53,6 +58,30 @@ export type LabEdge = {
  * slugs; publishing a lab under that slug activates the node with no code change.
  */
 export const LAB_NODES: LabNode[] = [
+  {
+    id: "cicd",
+    label: "CI/CD Pipeline",
+    kicker: "Scans, policy, deploy gate",
+    slug: "cicd-security-pipeline",
+    env: "appsec",
+    kind: "foundation",
+  },
+  {
+    id: "waf",
+    label: "WAF Runtime",
+    kicker: "ModSecurity in front of it",
+    slug: "waf-runtime-defence",
+    env: "appsec",
+    kind: "track",
+  },
+  {
+    id: "aiapp",
+    label: "AI Assistant",
+    kicker: "Inject it, then contain it",
+    slug: "ai-assistant-injection-lab",
+    env: "appsec",
+    kind: "track",
+  },
   {
     id: "foundation",
     label: "Foundation",
@@ -112,6 +141,8 @@ export const LAB_NODES: LabNode[] = [
 ];
 
 export const LAB_EDGES: LabEdge[] = [
+  { from: "cicd", to: "waf" },
+  { from: "waf", to: "aiapp" },
   { from: "foundation", to: "pentest" },
   { from: "foundation", to: "detection" },
   { from: "detection", to: "phishing" },
