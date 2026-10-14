@@ -116,7 +116,7 @@ export default function LabIndex({ labs }: { labs: LabIndexItem[] }) {
               ) : (
                 // No cover yet: the target itself, set large, so the frame
                 // still says something about the lab instead of going blank.
-                <div className="flex h-full flex-col justify-between p-8 text-background">
+                <div className="flex h-full flex-col justify-between p-8 pb-16 text-background">
                   <span className="font-mono text-xs uppercase tracking-widest text-background/50">
                     Target
                   </span>
