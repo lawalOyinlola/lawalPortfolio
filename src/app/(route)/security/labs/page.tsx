@@ -84,7 +84,7 @@ export default function LabsPage() {
               </>
             }
             title="Labs"
-            description="A connected set of security labs built on one machine, not a pile of one-off writeups. A shared foundation stands up the environment once; each track then reuses it to go end to end, from recon to root or from attack to alert, with the control that stops it named at every step. The map shows how they fit together."
+            description="A connected set of security labs, not a pile of one-off writeups. The AppSec labs add security to software as it is built, from the build pipeline to the edge to an AI feature. The home labs share one foundation on a single machine, and each track reuses it to go end to end, from recon to root or from attack to alert. Every step names the control that stops it, and the map shows how they fit together."
             descriptionClassName="max-w-[60ch] text-muted-foreground"
             className="max-w-2xl"
           />
