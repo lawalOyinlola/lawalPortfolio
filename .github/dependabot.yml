@@ -1,11 +1,35 @@
+# Dependabot version updates. Security fixes are separate: they come from
+# "Dependabot security updates" in Settings → Code security, open as soon as
+# an advisory is published, and ignore the cooldown below.
 version: 2
+
 updates:
-  - package-ecosystem: npm
+  - package-ecosystem: npm # also handles pnpm-lock.yaml
     directory: /
     schedule:
       interval: weekly
+      day: monday
+    # Wait two weeks after a release before proposing it. Malicious or broken
+    # releases are usually caught and pulled within days; this keeps them out.
+    cooldown:
+      default-days: 14
     open-pull-requests-limit: 5
+    groups:
+      # One PR for all routine minor/patch bumps instead of one per package
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "chore(deps)"
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+      day: monday
+    cooldown:
+      default-days: 14
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "chore(ci)"

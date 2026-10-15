@@ -1,0 +1,79 @@
+# Runs on every pull request and every push to main. Each job below is meant
+# to be a required status check on main (Settings → Branches), so nothing
+# merges until all of them pass.
+#
+# Third-party actions are pinned to a full commit SHA, not a tag: a tag can be
+# moved by whoever controls the action, a SHA can't. Dependabot keeps these
+# SHAs current (see .github/dependabot.yml) and the comment shows the version.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Read-only token by default; no job here needs to write anything.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Lint, typecheck and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      # Version comes from "packageManager" in package.json
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          cache: true
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+
+      - name: Lint
+        run: pnpm lint
+
+      # No secrets here on purpose: every env var the site reads is optional,
+      # so the build succeeds without them, a fork's PR can't read production
+      # credentials, and a missing env var can't break CI.
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      # Fails on a high or critical advisory. Reads pnpm-lock.yaml only;
+      # nothing is installed or executed. Dev dependencies are audited too:
+      # tailwindcss, @tailwindcss/postcss and typescript all run during
+      # `next build`, so they are part of the build supply chain.
+      - name: Audit dependencies
+        run: pnpm audit --audit-level high
