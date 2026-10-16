@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const SEEN_KEY = "menuHintSeen";
 // Wait for the page to settle before pointing at anything.
@@ -34,10 +34,15 @@ function rememberMenu() {
  */
 export default function MenuHint({ menuOpen }: { menuOpen: boolean }) {
   const [visible, setVisible] = useState(false);
+  // Set when the menu opens, so a show timer still pending cannot bring the
+  // hint back. A ref rather than storage, which may be unavailable.
+  const dismissedRef = useRef(false);
 
   useEffect(() => {
     if (hasSeenMenu()) return;
-    const show = setTimeout(() => setVisible(true), SHOW_AFTER_MS);
+    const show = setTimeout(() => {
+      if (!dismissedRef.current) setVisible(true);
+    }, SHOW_AFTER_MS);
     const hide = setTimeout(() => setVisible(false), SHOW_AFTER_MS + SHOW_FOR_MS);
     return () => {
       clearTimeout(show);
@@ -47,6 +52,7 @@ export default function MenuHint({ menuOpen }: { menuOpen: boolean }) {
 
   useEffect(() => {
     if (!menuOpen) return;
+    dismissedRef.current = true;
     rememberMenu();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- the menu opening is the event that dismisses the hint
     setVisible(false);
