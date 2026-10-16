@@ -1,0 +1,94 @@
+<svg class="dg" viewBox="0 0 980 640" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+
+  <text class="dg-t-ink" x="40" y="44" font-size="22" font-weight="700" fill="#1a3c5e">What the WAF stopped, and what actually worked</text>
+  <text class="dg-t-body" x="40" y="68" font-size="13.5" fill="#555555">Twenty attacks against Juice Shop, grouped by what each did to the app with no WAF in the way. Tuned, paranoia level 1.</text>
+  <line x1="40" y1="84" x2="940" y2="84" stroke="#c99a2e" stroke-width="2"/>
+
+  <text class="dg-t-ink" x="40" y="116" font-size="14" font-weight="700" fill="#1a3c5e">Worked against the app: 11 attacks, 6 stopped</text>
+  <rect x="40" y="136" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="50" y="155" font-size="12" font-weight="700" fill="#ffffff">S1</text>
+  <text x="50" y="172" font-size="10.5" fill="#ffffff">Login bypass</text>
+  <rect x="192" y="136" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="202" y="155" font-size="12" font-weight="700" fill="#ffffff">S2</text>
+  <text x="202" y="172" font-size="10.5" fill="#ffffff">UNION extraction</text>
+  <rect x="344" y="136" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="354" y="155" font-size="12" font-weight="700" fill="#ffffff">S3</text>
+  <text x="354" y="172" font-size="10.5" fill="#ffffff">Tautology in query</text>
+  <rect x="496" y="136" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="506" y="155" font-size="12" font-weight="700" fill="#ffffff">X2</text>
+  <text x="506" y="172" font-size="10.5" fill="#ffffff">Stored script tag</text>
+  <rect x="648" y="136" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="658" y="155" font-size="12" font-weight="700" fill="#ffffff">X3</text>
+  <text x="658" y="172" font-size="10.5" fill="#ffffff">Stored event handler</text>
+  <rect x="800" y="136" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="810" y="155" font-size="12" font-weight="700" fill="#ffffff">J1</text>
+  <text x="810" y="172" font-size="10.5" fill="#ffffff">NoSQL $ne rewrite</text>
+  <rect x="40" y="196" width="140" height="46" rx="5" fill="#b23b3b"/>
+  <text x="50" y="215" font-size="12" font-weight="700" fill="#ffffff">T1</text>
+  <text x="50" y="232" font-size="10.5" fill="#ffffff">Null byte in path</text>
+  <rect x="118" y="189" width="70" height="15" rx="7.5" fill="#c99a2e"/>
+  <text x="153" y="200" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">VP-1</text>
+  <rect x="192" y="196" width="140" height="46" rx="5" fill="#b23b3b"/>
+  <text x="202" y="215" font-size="12" font-weight="700" fill="#ffffff">E1</text>
+  <text x="202" y="232" font-size="10.5" fill="#ffffff">Public signing key</text>
+  <rect x="344" y="196" width="140" height="46" rx="5" fill="#b23b3b"/>
+  <text x="354" y="215" font-size="12" font-weight="700" fill="#ffffff">E2</text>
+  <text x="354" y="232" font-size="10.5" fill="#ffffff">Open redirect</text>
+  <rect x="422" y="189" width="70" height="15" rx="7.5" fill="#c99a2e"/>
+  <text x="457" y="200" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">PL2</text>
+  <rect x="496" y="196" width="140" height="46" rx="5" fill="#b23b3b"/>
+  <text x="506" y="215" font-size="12" font-weight="700" fill="#ffffff">A1</text>
+  <text x="506" y="232" font-size="10.5" fill="#ffffff">Read another basket</text>
+  <rect x="648" y="196" width="140" height="46" rx="5" fill="#b23b3b"/>
+  <text x="658" y="215" font-size="12" font-weight="700" fill="#ffffff">A2</text>
+  <text x="658" y="232" font-size="10.5" fill="#ffffff">Register as admin</text>
+
+  <text class="dg-t-ink" x="40" y="296" font-size="14" font-weight="700" fill="#1a3c5e">Did nothing to the app: 3 attacks, 3 stopped anyway</text>
+  <rect x="40" y="316" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="50" y="335" font-size="12" font-weight="700" fill="#ffffff">T2</text>
+  <text x="50" y="352" font-size="10.5" fill="#ffffff">../ in a query</text>
+  <rect x="192" y="316" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="202" y="335" font-size="12" font-weight="700" fill="#ffffff">C1</text>
+  <text x="202" y="352" font-size="10.5" fill="#ffffff">Shell metacharacters</text>
+  <rect x="344" y="316" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="354" y="335" font-size="12" font-weight="700" fill="#ffffff">C2</text>
+  <text x="354" y="352" font-size="10.5" fill="#ffffff">Command substitution</text>
+
+  <text class="dg-t-ink" x="40" y="406" font-size="14" font-weight="700" fill="#1a3c5e">No observable effect either way: 6 attacks, 5 stopped</text>
+  <rect x="40" y="426" width="140" height="46" rx="5" fill="#b23b3b"/>
+  <text x="50" y="445" font-size="12" font-weight="700" fill="#ffffff">S4</text>
+  <text x="50" y="462" font-size="10.5" fill="#ffffff">Tautology in a path</text>
+  <rect x="118" y="419" width="70" height="15" rx="7.5" fill="#c99a2e"/>
+  <text x="153" y="430" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">PL2</text>
+  <rect x="192" y="426" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="202" y="445" font-size="12" font-weight="700" fill="#ffffff">X1</text>
+  <text x="202" y="462" font-size="10.5" fill="#ffffff">Script tag in query</text>
+  <rect x="344" y="426" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="354" y="445" font-size="12" font-weight="700" fill="#ffffff">C3</text>
+  <text x="354" y="462" font-size="10.5" fill="#ffffff">Log4Shell header</text>
+  <rect x="496" y="426" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="506" y="445" font-size="12" font-weight="700" fill="#ffffff">R1</text>
+  <text x="506" y="462" font-size="10.5" fill="#ffffff">Metadata address</text>
+  <rect x="648" y="426" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="658" y="445" font-size="12" font-weight="700" fill="#ffffff">U1</text>
+  <text x="658" y="462" font-size="10.5" fill="#ffffff">sqlmap user agent</text>
+  <rect x="800" y="426" width="140" height="46" rx="5" fill="#2e7d46"/>
+  <text x="810" y="445" font-size="12" font-weight="700" fill="#ffffff">U2</text>
+  <text x="810" y="462" font-size="10.5" fill="#ffffff">Nikto user agent</text>
+
+  <!-- legend -->
+  <rect x="40" y="508" width="16" height="16" rx="3" fill="#2e7d46"/>
+  <text class="dg-t-body" x="64" y="521" font-size="12" fill="#555555">Stopped (tuned, level 1)</text>
+  <rect x="236" y="508" width="16" height="16" rx="3" fill="#b23b3b"/>
+  <text class="dg-t-body" x="260" y="521" font-size="12" fill="#555555">Not stopped</text>
+  <rect x="376" y="508" width="34" height="15" rx="7.5" fill="#c99a2e"/>
+  <text x="393" y="519" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">PL2</text>
+  <text class="dg-t-body" x="420" y="521" font-size="12" fill="#555555">Stopped at paranoia level 2</text>
+  <rect x="640" y="508" width="34" height="15" rx="7.5" fill="#c99a2e"/>
+  <text x="657" y="519" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">VP-1</text>
+  <text class="dg-t-body" x="684" y="521" font-size="12" fill="#555555">Stopped by a virtual patch</text>
+
+  <rect class="dg-f-callout" x="40" y="548" width="900" height="64" rx="6" fill="#f5f2e8"/>
+  <text class="dg-t-gold" x="56" y="574" font-size="12.5" font-weight="700" fill="#8a6d1a">Five that worked got past a tuned level 1</text>
+  <text class="dg-t-gold" x="56" y="594" font-size="11.5" fill="#8a6d1a">A1, A2 and E1 are well-formed requests for things the app should have refused; no setting I tried stops them. Overall: 14 of 20 attacks stopped, 0 of 9 legitimate requests.</text>
+</svg>
