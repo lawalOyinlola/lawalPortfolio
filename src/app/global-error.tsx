@@ -1,7 +1,7 @@
 "use client"; // Error boundaries must be Client Components
 
 import { useEffect } from "react";
-import ErrorScreen, { RetryButton } from "@/components/ErrorScreen";
+import ErrorScreen, { digestOf, RetryButton } from "@/components/ErrorScreen";
 import { ppMori } from "./fonts";
 import "./globals.css";
 
@@ -15,7 +15,7 @@ export default function GlobalError({
   error,
   retry,
 }: {
-  error: Error & { digest?: string };
+  error: unknown;
   retry: () => void;
 }) {
   useEffect(() => {
@@ -32,8 +32,10 @@ export default function GlobalError({
           status="500"
           statusText="Something broke"
           title="That's on my side"
-          description="The site hit an error while loading. It is not something you did. Try again, and if it keeps happening, the reference below is what finds it in the logs."
-          reference={error.digest}
+          description="The site failed to load. It isn't something you did. Try again, or come back in a few minutes. If it keeps happening, email me the reference and I'll find out why."
+          digest={digestOf(error)}
+          plainLinks
+          report
           actions={<RetryButton onClick={retry} />}
         />
       </body>
