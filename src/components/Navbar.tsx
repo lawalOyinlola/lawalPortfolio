@@ -12,6 +12,7 @@ import { scrollToAnchor } from "@/lib/navigation";
 import LogoButton from "./LogoButton";
 import { Button, buttonVariants } from "./ui/button";
 import { MenuOverlay } from "./MenuOverlay";
+import MenuHint from "./MenuHint";
 import { ProjectModal } from "./ProjectModal";
 import Magnetic from "./ui/Magnetic";
 import { HoverPushText } from "./ui/hover-push-text";
@@ -66,7 +67,8 @@ const Navbar = ({ ready = true }: NavbarProps) => {
             isOpen={isProjectOpen}
             onClose={() => setIsProjectOpen(false)}
           />
-          <div className="max-w-30 xl:max-w-70 w-full">
+          <div className="relative max-w-30 xl:max-w-70 w-full">
+            <MenuHint menuOpen={isMenuOpen} />
             <Magnetic
               className={`relative ${!isProjectOpen ? "z-30" : "z-20"}`}
             >

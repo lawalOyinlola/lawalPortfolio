@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { cn } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { usePageRevealed } from "@/lib/pageReveal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
@@ -43,6 +44,7 @@ export function SectionHeader({
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
+  const pageRevealed = usePageRevealed();
 
   // Helper to extract text from ReactNode for aria-label and SplitText check
   const getTextContent = (node: React.ReactNode): string => {
@@ -65,6 +67,12 @@ export function SectionHeader({
   useGSAP(
     () => {
       if (!isHydrated) return;
+      // Still behind the page transition: wait for it, with the title kept
+      // out of sight so it does not show plain and then jump into the flip.
+      if (!pageRevealed) {
+        if (titleRef.current) gsap.set(titleRef.current, { visibility: "hidden" });
+        return;
+      }
       const items = gsap.utils.toArray<HTMLElement>(".sh-item");
 
       if (prefersReducedMotion) {
@@ -128,7 +136,7 @@ export function SectionHeader({
     },
     {
       scope: containerRef,
-      dependencies: [isHydrated, prefersReducedMotion, titleText],
+      dependencies: [isHydrated, prefersReducedMotion, titleText, pageRevealed],
       revertOnUpdate: true,
     },
   );

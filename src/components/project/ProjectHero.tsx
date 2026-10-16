@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import Image from "next/image";
 import { Project } from "@/app/constants/projects";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { usePageRevealed } from "@/lib/pageReveal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP);
@@ -14,9 +15,11 @@ if (typeof window !== "undefined") {
 export default function ProjectHero({ project }: { project: Project }) {
   const containerRef = useRef<HTMLElement>(null);
   const { prefersReducedMotion } = usePrefersReducedMotion();
+  const pageRevealed = usePageRevealed();
 
   useGSAP(
     () => {
+      if (!pageRevealed) return;
       if (prefersReducedMotion) {
         gsap.set(".hero-anim", { opacity: 1, y: 0 });
         return;
@@ -35,7 +38,7 @@ export default function ProjectHero({ project }: { project: Project }) {
         },
       );
     },
-    { scope: containerRef, dependencies: [prefersReducedMotion] },
+    { scope: containerRef, dependencies: [prefersReducedMotion, pageRevealed] },
   );
   return (
     <section ref={containerRef} id="introduction" className="flex-center">

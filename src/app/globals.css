@@ -932,3 +932,52 @@ html[data-intro="skip"] .pl-line {
 
 .dark svg.dg .dg-m-ink { fill: #7f9bbd; }
 .dark svg.dg .dg-m-green { fill: #3f9d5c; }
+
+/* The menu hint: a slow float, and the arrow drawing itself in once. Both are
+   dropped for reduced motion, which leaves the note and arrow still. */
+@keyframes menu-hint-float {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-3deg);
+  }
+  50% {
+    transform: translate(5px, -8px) rotate(-1deg);
+  }
+}
+
+@keyframes menu-hint-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.menu-hint {
+  transform-origin: left bottom;
+  animation: menu-hint-float 3.4s ease-in-out infinite;
+  text-shadow:
+    0 0 6px var(--background),
+    0 0 3px var(--background);
+}
+
+.menu-hint-arrow path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: menu-hint-draw 0.9s 0.6s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-hint {
+    animation: none;
+    transform: rotate(-3deg);
+  }
+  .menu-hint-arrow path {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+}
+
+@media (scripting: none) {
+  .menu-hint {
+    display: none;
+  }
+}

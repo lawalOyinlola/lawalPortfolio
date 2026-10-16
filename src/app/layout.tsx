@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ppMori } from "./fonts";
+import { caveat, ppMori } from "./fonts";
 import { BRAND } from "./constants";
 import JsonLd from "@/components/JsonLd";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -107,7 +107,7 @@ export default function RootLayout({
   return (
     // suppressHydrationWarning: INTRO_SCRIPT sets data-intro on <html>
     // before React hydrates.
-    <html lang="en" className={`${ppMori.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${ppMori.variable} ${caveat.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
         <JsonLd />

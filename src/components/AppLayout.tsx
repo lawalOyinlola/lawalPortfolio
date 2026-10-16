@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "./Navbar";
 import Preloader from "./Preloader";
 import Footer from "./Footer";
+import PageTransition from "./PageTransition";
 import { useLoading } from "./providers/LoadingContext";
 
 interface AppLayoutProps {
@@ -85,6 +86,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {showPreloader && (
         <Preloader onReveal={handleReveal} onComplete={handleComplete} />
       )}
+
+      <PageTransition />
 
       <main
         ref={mainRef}
