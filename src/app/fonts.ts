@@ -1,4 +1,5 @@
 import localFont from "next/font/local";
+import { Caveat } from "next/font/google";
 
 export const ppMori = localFont({
   src: [
@@ -44,4 +45,11 @@ export const ppMori = localFont({
     },
   ],
   variable: "--font-pp-mori",
+});
+
+// Handwriting, for the one hand-drawn note on the site (the menu hint).
+export const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+  display: "swap",
 });
