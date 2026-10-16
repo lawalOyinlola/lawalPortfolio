@@ -28,9 +28,11 @@ export default function ToolMarquee({ items }: { items: string[] }) {
           className="flex items-center whitespace-nowrap font-mono text-xs uppercase tracking-widest text-background/55 md:text-sm"
         >
           <span
-            className={item.startsWith("CVE-")
+            className={
+              item.startsWith("CVE-")
                 ? "text-[#fb7185] dark:text-[#be123c]"
-                : undefined}
+                : undefined
+            }
           >
             {item}
           </span>
