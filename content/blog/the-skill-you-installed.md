@@ -2,6 +2,7 @@
 title: "Your coding agent runs as you. So does everything you install into it."
 description: "A skill passed every scanner, and the scanners were right at the moment they looked. Why the artefact you review and the instruction that runs are two different objects, and how to inventory what your coding agent can actually reach."
 date: 2026-10-12
+updated: 2026-10-16
 tags: [security, ai, appsec, webdev]
 cover: /images/blog/the-skill-you-installed/coverimage.jpg
 coverAlt: "A weathered wooden signpost at dusk with a cardboard tag showing a green tick tied to it. Its blank arrow points down a wet country road that disappears into fog. Headline: The scanners were right."
@@ -69,9 +70,11 @@ You want to know two things: every URL reachable from anything you have installe
 bash ci/scripts/vet-agent-installs.sh
 ```
 
-It walks the skill and plugin directories, follows symlinked skills, reads the MCP server configuration including the per-project servers that are nested inside your global configuration file, and prints two lists: the URLs, and each server's command with its arguments.
+It walks the skill and plugin directories, follows symlinked skills, reads the MCP server configuration including the per-project servers that are nested inside your global configuration file, and prints two lists: the URLs, and each server's command with its arguments. Then it flags one kind of finding for you: any server launched through a package runner such as `npx`, `uvx` or `pipx run` without an exact version.
 
-Then you read the output and account for every line. A URL that is not an immutable reference or a vendored copy is a finding. An executable source that is not integrity-locked is a finding. A documentation link from a vendor's own domain is probably fine, and "probably fine, and I looked" is a materially different position from "I never checked".
+That last check came from a reader after this post went out. A lot of shared configurations launch MCP servers with something like `npx -y some-server` and no version, which means every start of your agent can pull whatever the registry is serving that day. It is the same gap as the documentation link, one layer down: the server you looked at last week is not necessarily the server that starts tomorrow. The first version of the script printed those lines and left you to notice them. Now it names them, along with tags like `@latest`, version ranges, and git sources without a commit hash. An exact version stops that drift, but it is not an integrity lock, because the package's own dependencies can still move, so vendoring a reviewed copy remains the stronger fix.
+
+Then you read the rest of the output and account for every line. A URL that is not an immutable reference or a vendored copy is a finding. An executable source that is not integrity-locked is a finding. A documentation link from a vendor's own domain is probably fine, and "probably fine, and I looked" is a materially different position from "I never checked".
 
 One detail from building that script is worth passing on, because it is the kind of thing that distinguishes a tool you can trust from one you merely ran.
 
