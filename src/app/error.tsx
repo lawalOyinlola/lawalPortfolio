@@ -1,7 +1,7 @@
 "use client"; // Error boundaries must be Client Components
 
 import { useEffect } from "react";
-import ErrorScreen, { RetryButton } from "@/components/ErrorScreen";
+import ErrorScreen, { digestOf, RetryButton } from "@/components/ErrorScreen";
 
 /**
  * Catches a runtime error in any page under the root layout, so the navbar
@@ -15,7 +15,7 @@ export default function ErrorPage({
   error,
   retry,
 }: {
-  error: Error & { digest?: string };
+  error: unknown;
   retry: () => void;
 }) {
   useEffect(() => {
@@ -27,8 +27,9 @@ export default function ErrorPage({
       status="500"
       statusText="Something broke"
       title="That's on my side"
-      description="This page hit an error while loading. It is not something you did. Try again, and if it keeps happening, the reference below is what finds it in the logs."
-      reference={error.digest}
+      description="This page failed to load. It isn't something you did. Try again, or pick another page below. If it keeps happening, email me the reference and I'll find out why."
+      digest={digestOf(error)}
+      report
       actions={<RetryButton onClick={retry} />}
     />
   );
