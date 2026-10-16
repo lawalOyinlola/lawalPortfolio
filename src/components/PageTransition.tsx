@@ -26,11 +26,9 @@ function internalTarget(anchor: HTMLAnchorElement) {
   if (url.origin !== window.location.origin) return null;
   // Anchors on the same or another page keep their own scrolling behaviour.
   if (url.hash) return null;
-  if (
-    url.pathname === window.location.pathname &&
-    url.search === window.location.search
-  )
-    return null;
+  // Same page, even with a different query: the cover lifts when the pathname
+  // changes, so a query-only change would leave it waiting for the timeout.
+  if (url.pathname === window.location.pathname) return null;
   return url.pathname + url.search;
 }
 
