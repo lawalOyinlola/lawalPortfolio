@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { usePageRevealed } from "@/lib/pageReveal";
 
 /**
  * Covers that have already opened during this visit, by key. Filtering,
@@ -32,10 +33,13 @@ export default function CoverReveal({
   // Read once at mount. On the first load the set is empty on both server and
   // client, so hydration matches; it only fills in on later remounts.
   const [seen] = useState(() => revealed.has(revealKey));
+  // Not while a page transition still covers the page, or the wipe would be
+  // used up before anyone could see it.
+  const pageRevealed = usePageRevealed();
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || seen) return;
+    if (!el || seen || !pageRevealed) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
@@ -47,7 +51,7 @@ export default function CoverReveal({
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [revealKey, seen]);
+  }, [revealKey, seen, pageRevealed]);
 
   // The wipe clips an inner layer, not the observed frame: a clipped target
   // reports no intersection, so it would never be told to open.
