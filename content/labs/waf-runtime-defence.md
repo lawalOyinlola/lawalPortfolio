@@ -508,7 +508,7 @@ These three are the same class, and they are the ones that fill breach reports. 
 You cannot fix the file server today, but you can describe this exact shape. That is a virtual patch: a rule that blocks a known exploit at the edge while the real fix waits for a release.
 
 ```apache
-SecRule REQUEST_URI_RAW "@rx ^/ftp/.*%(?:25)?00" \
+SecRule REQUEST_URI_RAW "@rx ^/ftp/[^?]*%(?:25)?00" \
   "id:1000010,\
    phase:1,\
    deny,\
@@ -520,7 +520,7 @@ SecRule REQUEST_URI_RAW "@rx ^/ftp/.*%(?:25)?00" \
    tag:'virtual-patch'"
 ```
 
-It matches an encoded null byte, single or double encoded, in a path under `/ftp/`, and nothing else. It denies at once rather than adding to a score, because there is no ambiguity to weigh: no legitimate file name contains a null byte. `N9`, a download of a public file, is in the suite for exactly this reason: a virtual patch is only as good as the proof that it did not break the normal case.
+It matches an encoded null byte, single or double encoded, in the path under `/ftp/`, and nothing else: `[^?]*` stops at the query string, so a `%00` in a parameter is left to the other rules. It denies at once rather than adding to a score, because there is no ambiguity to weigh: no legitimate file name contains a null byte. `N9`, a download of a public file, is in the suite for exactly this reason: a virtual patch is only as good as the proof that it did not break the normal case.
 
 ```bash
 ./attack/run-phase.sh block-pl1-patched On 1 patched
