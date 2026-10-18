@@ -80,15 +80,23 @@ flowchart LR
 
 ### How the security labs fit together
 
-The labs are a hub-and-spoke set built on one machine: a shared foundation stands the
-environment up once, and each track reuses it.
+The labs come in series. The home labs are a hub-and-spoke set built on one machine: a shared
+foundation stands the environment up once, and each track reuses it. The AppSec labs work on a
+web app instead, starting with the CI/CD pipeline that checks what goes into it and moving on to
+defending it at runtime. A cloud series on Azure is planned after both.
 
 ```mermaid
 flowchart TD
-  F["Foundation<br/>UTM · network · Kali · server"] --> P["Pentest<br/>(offensive)"]
-  F --> D["Detection & SIEM<br/>(defensive)"]
-  D --> Ph["Phishing bridge<br/>(purple)"]
-  D --> AI["AI-augmented SOC<br/>(defensive)"]
+  subgraph AppSec
+    C["CI/CD pipeline<br/>(build time)"] --> W["WAF<br/>(runtime)"]
+    W --> AA["AI assistant<br/>(injection)"]
+  end
+  subgraph Home
+    F["Foundation<br/>UTM · network · Kali · server"] --> P["Pentest<br/>(offensive)"]
+    F --> D["Detection & SIEM<br/>(defensive)"]
+    D --> Ph["Phishing bridge<br/>(purple)"]
+    D --> AI["AI-augmented SOC<br/>(defensive)"]
+  end
 ```
 
 ### Key features

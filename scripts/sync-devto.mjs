@@ -136,6 +136,18 @@ async function api(pathname, options = {}) {
  * frontmatter would reformat dates and quoting across every post.
  */
 function writeBackSyncFields(file, { id, url, published }) {
+  // Both values come from the API and land in frontmatter verbatim. A newline
+  // or an unexpected host would write extra keys or a link nobody checked.
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    throw new Error(`Unexpected article id from dev.to: ${JSON.stringify(id)}`);
+  }
+  if (
+    typeof url !== "string" ||
+    !/^https:\/\/dev\.to\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/.test(url)
+  ) {
+    throw new Error(`Unexpected article url from dev.to: ${JSON.stringify(url)}`);
+  }
+
   const raw = readFileSync(file, "utf8");
   const end = raw.indexOf("\n---", 3);
   if (!raw.startsWith("---") || end === -1) {
