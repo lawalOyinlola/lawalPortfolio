@@ -27,6 +27,7 @@ as one piece and looks different from its neighbours on the index.
 | `what-my-waf-actually-blocked` | airport checkpoint at night | security signage, navy and signal yellow |
 | `ethical-hacking-is-not-a-toolset` | lock picks and a signed letter | white report cards, navy, mustard and red |
 | `from-zero-to-tech-lead` | gouache illustration, desk at night | no diagrams; real screenshots only |
+| `cicd-security-pipeline` (lab) | the refused-deploy screenshot, framed on navy with gold outlines | navy and brass gold, themed |
 
 Add a row when a post gets its imagery.
 
@@ -38,7 +39,13 @@ Add a row when a post gets its imagery.
   wider loses its sides. Never ship a cover under 2000px wide.
 - **Format:** JPEG at quality 80, which lands between about 0.7 and 1.6 MB.
   Keep it `.jpg` or `.png`; it is also the social card.
-- **Path:** `public/images/blog/<slug>/coverimage.jpg`.
+- **Path:** `public/images/blog/<slug>/coverimage.jpg`, or
+  `public/images/labs/<slug>/coverimage.png` for a lab.
+- **Labs use a real screenshot instead**, of the moment the lab is about: the
+  defaced page, the alert chain, the deploy refusing a cancelled scan. Framing
+  it is fine (a background in the diagrams' colours, a shadow, outlines on the
+  part that matters); editing what the screenshot shows is not. The CI/CD
+  cover is a 2400×1350 PNG, which keeps the UI text sharper than a JPEG.
 - **Headline:** one short line taken from the post, top left, in large type.
   Not the post's title, which the page already shows beside it.
 - **No other readable text.** Image generators garble body text, so screens,
@@ -130,7 +137,8 @@ node scripts/theme-svg.mjs --check public/images/labs/<lab>/*.svg  # verify
   the script and a rule in `globals.css`, then run it again.
 - Solid boxes and the light text on them are deliberately left unclassed; they
   read the same on either page.
-- Converted so far: the Foundation lab. Convert the rest one lab at a time.
+- Every lab's diagrams are converted. Run the script on each new lab's SVGs
+  before linking them, and `--check` all of them after any colour change.
 
 Blog diagrams do not need this: each has its own background and is linked as
 a PNG, which dev.to copies.
