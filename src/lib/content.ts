@@ -203,8 +203,17 @@ function parseFile<T>(
   // would reach the page, its metadata and the RSS feed just the same.
   assertNoLeakedFlags(raw, source);
 
+  // The slug becomes a URL path segment in every link to the page. Holding it
+  // to lowercase kebab case keeps a stray filename from reaching an href.
+  const slug = file.replace(/\.mdx?$/, "");
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    throw new Error(
+      `[content] ${source}: the filename must be lowercase kebab case`,
+    );
+  }
+
   return {
-    slug: file.replace(/\.mdx?$/, ""),
+    slug,
     collection,
     format: file.endsWith(".mdx") ? "mdx" : "md",
     frontmatter: parsed.data,
