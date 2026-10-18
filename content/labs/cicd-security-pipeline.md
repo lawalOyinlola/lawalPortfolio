@@ -549,7 +549,7 @@ A required check is matched by name, so let the workflow report at least once be
 gh api repos/OWNER/REPO/commits/main/check-runs --jq '.check_runs[].name'
 ```
 
-Require the blocking jobs (static analysis, each dependency scan, and secrets), require a pull request before merging, block force-pushes and deletions, and include administrators. On a small team the bypass that gets used is the owner's, under time pressure. You can set this under **Settings → Branches**, or with the API:
+Require every scan job: static analysis, each dependency scan, secrets and the upstream image scan. The image scan is still warn-only, because its gate never fails on findings, but requiring it means the job has to run and finish, so a broken or deleted image job blocks the merge instead of passing silently. Leave out the report and manifest jobs, which scan nothing, and the deploy, which only runs on main. Then require a pull request before merging, block force-pushes and deletions, and include administrators. On a small team the bypass that gets used is the owner's, under time pressure. You can set this under **Settings → Branches**, or with the API:
 
 ```bash
 gh api -X PUT repos/OWNER/REPO/branches/main/protection --input - <<'JSON'
@@ -608,7 +608,7 @@ gh api repos/OWNER/REPO/branches/main/protection \
 
 A `404` means the branch has no protection at all. Check that every name in `checks` matches a job that actually runs.
 
-![The branch protection read back from the GitHub API as JSON: admins true, force pushes false, and five required checks, two dependency scans, static analysis, secrets and the upstream image scan.](/images/labs/cicd-security-pipeline/cicd-14.png)
+![The branch protection read back from the GitHub API as JSON: admins true, force pushes false, and five required checks: two dependency scans, static analysis, secrets and the upstream image scan, which is required to run even though its findings only warn.](/images/labs/cicd-security-pipeline/cicd-14.png)
 
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
