@@ -2,6 +2,8 @@
 title: "The CI/CD Security Lab: Scanning, Policy and a Deploy Gate That Fails Closed"
 description: "Add static analysis, dependency, container and full-history secrets scanning to an app that already ships, set the blocking policy from a measured baseline instead of tool defaults, triage every finding, and gate the deploy so that only an explicit pass gets through."
 date: 2026-10-14
+cover: /images/labs/cicd-security-pipeline/coverimage.png
+coverAlt: "A GitHub Actions screenshot framed on a navy background, with two parts outlined in gold. At the top, two runs for the same commit: Deploy failed and Security cancelled. At the bottom, the failed deploy's annotation: Security scan for the commit finished as 'cancelled'. Only 'success' deploys."
 tags: [appsec, devsecops, ci-cd, github-actions, semgrep, trivy, gitleaks, supply-chain]
 platform: "Self-hosted"
 target: "A Next.js + NestJS web app"
@@ -14,7 +16,7 @@ skills: [sast, dependency-scanning, container-scanning, secrets-scanning, ci-cd-
 status: own-lab
 series: "AppSec labs · Securing what I build"
 order: 0
-draft: true
+draft: false
 ---
 
 This lab adds a security pipeline to a web app that already ships: static analysis, dependency and container scanning, and a full-history secrets scan on every pull request, every push to main and once a week. Then it wires the deploy so that it refuses anything the scan has not explicitly passed. That last step sounds like a formality, and it is the one that broke. Days after I built the original on a production app, a scan was cancelled halfway through, the deploy gate read the cancellation as a pass, and the deploy went ahead. In module 6 you build that gate, break it the same way, and fix it so that it accepts exactly one answer.
@@ -28,12 +30,24 @@ The order matters as much as the tools. You audit the app before writing any YAM
 
 **A repository you own, with an app in it.** The workflow expects two Node projects, `backend/` and `frontend/`, each with its own `package.json` and lockfile, because that is the layout it was built for. A different layout changes the list of project folders in one job and nothing else.
 
-**No app of your own?** Fork [OWASP Juice Shop](https://github.com/juice-shop/juice-shop). It is deliberately vulnerable, so every scanner has plenty to report. Four things to know before you start:
+**No app of your own?** Fork [OWASP Juice Shop](https://github.com/juice-shop/juice-shop). It is deliberately vulnerable, so every scanner has plenty to report. Six things to know before you start:
 
 - Its two projects are the repository root and `frontend/`, so use `.` and `frontend` wherever this guide says `backend` and `frontend`. The root scan also reads `frontend/`, so findings there are counted twice; that is fine for practice.
-- It ships **no lockfiles**: its `.npmrc` sets `package-lock=false`. Trivy reads lockfiles, not `package.json`, so it finds nothing until you generate them. Module 1 shows how.
+- It ships **no lockfiles**: its `.npmrc` sets `package-lock=false`. Trivy reads lockfiles, not `package.json`, so it finds nothing until you generate them. Module 1 shows how. Its `.gitignore` also lists `package-lock.json`, so commit the new lockfiles with `git add -f`.
 - A fork brings the upstream project's workflows with it. Delete everything in `.github/workflows/` before you enable Actions on the fork, or they all run.
-- Every vulnerability in it is there on purpose, so most of your triage will read "accepted: intentional training vulnerability". The mechanics are the same; the judgement calls are thinner than on a real codebase.
+- Its default branch is `master`, while the workflow triggers, the deploy gate and the branch protection in this guide all say `main`. Rename it in your fork before you start, using the commands below this list.
+- In a fork, `gh pr create` and GitHub's own "Compare & pull request" button aim at the upstream project by default, which would send your lab changes to Juice Shop's maintainers. Run `gh repo set-default` once, and check the base repository before every pull request.
+- Every vulnerability in it is there on purpose, so most of your triage will read "accepted: intentional training vulnerability". The mechanics are the same; the judgement calls are thinner than on a real codebase. Module 5 has a shortcut for accepting them in bulk.
+
+To rename the branch and point `gh` at your fork (use your own username and repository name):
+
+```bash
+gh api -X POST repos/YOU/YOUR-FORK/branches/master/rename -f new_name=main
+git branch -m master main
+git fetch origin && git branch -u origin/main main
+git remote set-head origin -a
+gh repo set-default YOU/YOUR-FORK
+```
 
 **If you are doing this on a real product and want to write it up,** publish against a stand-in like the one above, and keep real hostnames, tenant details and configuration out of anything public.
 
@@ -327,6 +341,8 @@ Commit the workflow and its three files on a branch and open a pull request. Exp
 
 **Checkpoint:** all five scan jobs run on the pull request, and one comment appears with a result for each check.
 
+![The github-actions bot comment on a pull request, titled Security scan, with a table of four checks: static analysis, dependencies, upstream images and secrets, each marked pass, followed by a link to the full reports and the policy file.](/images/labs/cicd-security-pipeline/cicd-5.png)
+
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
 <ul>
@@ -354,6 +370,28 @@ const html = renderTrusted(template); // nosemgrep: <full rule ID from the repor
 ```
 
 A suppression with no reason attached is not triage. It is a deleted finding nobody will look at again, and six months from now someone will ask why a critical is still open. The answer should already be in the repository.
+
+**Only if you are using Juice Shop: accept the deliberate findings in bulk.** If you are working on a real product, skip this and go straight to the real-product notes below. A scan of its full history reports a couple of hundred secrets, all of them training material, and writing a reason for each would take a day and teach you nothing. So accept them as a batch, say so in the policy file's triage log, and keep the one-by-one treatment for a codebase where each finding could be real. Three commands do it, using the baseline reports from module 2:
+
+```bash
+# Secrets: every fingerprint in the report, under one comment
+{ echo "# Deliberate training secrets. Accepted as a batch, stand-in run."
+  jq -r '.[].Fingerprint' ~/scan-baseline/gitleaks.json | sort -u; } > .gitleaksignore
+
+# Dependencies: the criticals that have a fix, each with an expiry date
+{ echo "# Deliberate training vulnerabilities. Accepted, stand-in run."
+  jq -r '[.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL" and .FixedVersion) | .VulnerabilityID] | unique[] | . + " exp:YYYY-MM-DD"' \
+    ~/scan-baseline/trivy-.-all.json; } > security/.trivyignore
+
+# Static analysis: the files with ERROR findings, plus the tests
+{ echo "# Deliberate training vulnerabilities. Accepted as a batch, stand-in run."
+  echo "test/"
+  jq -r '.results[] | select(.extra.severity=="ERROR") | .path' ~/scan-baseline/semgrep.json | grep -v '^\.github/' | sort -u; } > .semgrepignore
+```
+
+Replace `YYYY-MM-DD` with a review date a few months out. The `test/` line is there because a custom `.semgrepignore` replaces Semgrep's built-in defaults, which skip test folders. Leave it out and about twenty more ERROR findings appear from the test suite. On a trial run against a fresh clone, these three took the blocking counts for secrets, critical dependencies and ERROR-severity static analysis to zero. That is the right way to get a stand-in repository green, and the wrong way to treat a product you ship. A whole-file ignore also hides any new finding in those files, which a training app can live with and a product cannot. On a real codebase, suppress each accepted finding with a `nosemgrep` comment that names the rule, or have the gate report only findings that are new since a commit with `semgrep scan --baseline-commit`.
+
+If you run these three commands before you open the pull request, the first run is green. If you want to watch it fail first and then go green, which makes a better screenshot for module 4, open the pull request before you create the ignore files and add them in a second commit.
 
 **On the real product:**
 
@@ -434,6 +472,10 @@ gh run cancel "$RUN"
 
 Watch the deploy workflow. The security run finishes as `cancelled`, which is not on the list, so the gate prints `Security scan did not fail. Deploying.` and ships a commit that was never fully scanned.
 
+![The Actions run list for one commit. The Security run is marked cancelled with a grey warning icon, and the Deploy run for the same commit is green.](/images/labs/cicd-security-pipeline/cicd-9.png)
+
+Two runs for the same commit, one cancelled and one that shipped. That pair is the bug.
+
 **On the real product, nobody cancelled anything by hand.** The concurrency setting was `cancel-in-progress: true` everywhere, meant to stop duplicate scans on a busy branch, and a merge to main cancelled the security run for that merge commit mid-scan while the deploy for that exact commit was waiting on it. The gate saw `cancelled`, did not recognise it as a failure, and let the deploy through. No vulnerable code reached production, because the same commit had already been scanned clean on its pull request. But a commit that had genuinely failed its scan could have got the same free pass.
 
 **Fix it on both sides,** because the cause and the logic are two separate bugs.
@@ -477,6 +519,14 @@ The logic is the real fix, and it is what makes that remaining gap safe. A list 
 Every path that is not an explicit `success` ends in `exit 1`: a cancelled or failed scan, a scan that never started, one still running after twenty minutes, and an API error such as a wrong workflow file name.
 
 **Re-test in both directions.** Run the break test again: the deploy now stops with `finished as 'cancelled'. Only 'success' deploys.` Then push a clean commit and let its scan finish: the deploy must still go through. A fix that only proves the bad path is blocked has not proved the gate still opens. To ship the commit whose scan you cancelled, re-run its scan with `gh run rerun "$RUN"`, then re-run its deploy once the scan passes.
+
+![After the fix, the run list shows the Security run cancelled and the Deploy run failed for the same commit. Below it, the failed Deploy run's annotations read: Security scan for the commit finished as cancelled. Only success deploys.](/images/labs/cicd-security-pipeline/cicd-10.png)
+
+The same cancel, and this time the deploy fails with the reason in plain words.
+
+![After the fix, a clean commit and the fix commit before it, each with a green Security run and a green Deploy run.](/images/labs/cicd-security-pipeline/cicd-11.png)
+
+And a commit whose scan was left alone still deploys, which is the half of the test that shows the gate opens.
 
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
@@ -537,6 +587,8 @@ git push -u origin test/secrets-gate && gh pr create --fill
 
 The Secrets job fails, the pull request comment shows it, and because that check is required, GitHub will not let you merge. Clean up with `gh pr close --delete-branch`.
 
+![A pull request with the github-actions Security scan comment showing static analysis, dependencies and upstream images passing and Secrets (Gitleaks) failing. Below it, the merge box reads Some checks were not successful, lists the Secrets check as failing and required, and the Merge pull request button is greyed out.](/images/labs/cicd-security-pipeline/cicd-12.png)
+
 **Nobody can skip the pipeline.** Commit directly to main and push:
 
 ```bash
@@ -544,6 +596,8 @@ git switch main && git pull
 git commit --allow-empty -m "test: direct push" && git push   # expect: protected branch update failed
 git reset HEAD~1
 ```
+
+![A terminal showing a git push to main refused with error GH006, Protected branch update failed: changes must be made through a pull request, and 5 of 5 required status checks are expected.](/images/labs/cicd-security-pipeline/cicd-13.png)
 
 **The protection is what you think it is.** Read it back from the API rather than trusting the settings page:
 
@@ -553,6 +607,8 @@ gh api repos/OWNER/REPO/branches/main/protection \
 ```
 
 A `404` means the branch has no protection at all. Check that every name in `checks` matches a job that actually runs.
+
+![The branch protection read back from the GitHub API as JSON: admins true, force pushes false, and five required checks, two dependency scans, static analysis, secrets and the upstream image scan.](/images/labs/cicd-security-pipeline/cicd-14.png)
 
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
@@ -599,6 +655,7 @@ This is build-time scanning of code and dependencies. It does not test the runni
 | Trivy reports 0 dependency findings | No lockfile in the scanned folder | Generate one with `npm install --package-lock=true --package-lock-only --ignore-scripts` and commit it |
 | Trivy and Dependabot disagree on the same commit | Trivy leaves dev dependencies out by default | Set `TRIVY_INCLUDE_DEV_DEPS: "true"` |
 | Trivy step fails with `cannot find ignorefile` | `security/.trivyignore` does not exist | Create it, even with only a comment in it |
+| `trivy image` fails with `read tcp ... operation timed out` | A layer download from the registry stalled on a slow connection | Run the command again, adding `--timeout 15m` if it keeps happening |
 | The image job errors before it scans anything | `security/images.txt` lists no images, so the matrix is empty | List at least one image, or delete both image jobs and take `images` out of the report job's `needs` |
 | SAST gate passes despite serious findings | Rules reporting `HIGH` or `CRITICAL` instead of `ERROR` | Count all three in the gate, as in module 4 |
 | `setup-python` fails on `cache: pip` | The cache needs a `requirements.txt` or `pyproject.toml` to hash | Remove the `cache` input |
@@ -607,6 +664,8 @@ This is build-time scanning of code and dependencies. It does not test the runni
 | SARIF upload fails with `403 Advanced Security must be enabled` | Private repository without GitHub Advanced Security | Report through job summaries and the pull request comment |
 | The pull request comment never appears on a fork's pull request | Workflows triggered from forks get a read-only token | Expected; read the job summaries instead |
 | Every pull request waits on a check that never arrives | A required check name that no job reports | Let the workflow run once, then copy the exact names from the check-runs API |
+| Every pull request waits after you change an upstream image tag | The image job's check name includes the tag, so the required name no longer exists | Update the required check list to the new name, as in module 7 |
+| `gh run cancel` says `Cannot cancel a workflow run that is completed` | The scan finished before the cancel arrived, often because the network stalled | Push another empty commit and cancel sooner, or press Cancel workflow on the Actions tab within the first minute |
 | Branch protection fails with `Upgrade to GitHub Pro or make this repository public` | Private repository on GitHub Free | Upgrade, or practise on a public repository |
 | Deploy gate fails at once with `Not Found (HTTP 404)` | The workflow file is not called `security.yml` | Match the file name in the API path to yours |
 | A scan on main shows as cancelled | `cancel-in-progress` true on main, or a pending run replaced by a newer one | The gate refuses that deploy. Re-run the scan, then the deploy |
@@ -638,7 +697,7 @@ Capture these as you go. The pull request comment (`cicd-5`) and the before and 
 
 ## Lab status
 
-The pipeline was built, and every finding triaged, on the real product, with the deploy gate fixed on both sides. This walkthrough has not yet been run end to end on a stand-in repository; the screenshots will come from that run.
+The pipeline was built, and every finding triaged, on the real product, with the deploy gate fixed on both sides. The walkthrough has since been run end to end on a stand-in repository, a fork of OWASP Juice Shop, and the screenshots come from that run. The pipeline, the broken gate, the fix and the branch protection all behaved as described here.
 
 ---
 
