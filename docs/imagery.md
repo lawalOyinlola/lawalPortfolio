@@ -28,6 +28,7 @@ as one piece and looks different from its neighbours on the index.
 | `ethical-hacking-is-not-a-toolset` | lock picks and a signed letter | white report cards, navy, mustard and red |
 | `from-zero-to-tech-lead` | gouache illustration, desk at night | no diagrams; real screenshots only |
 | `cicd-security-pipeline` (lab) | the refused-deploy screenshot, framed on navy with gold outlines | navy and brass gold, themed |
+| `waf-runtime-defence` (lab) | two terminal screenshots, the level 2 false positives with the 200-against-403 pair laid over them, on plum with rose outlines | navy and brass gold, themed |
 
 Add a row when a post gets its imagery.
 
@@ -44,8 +45,11 @@ Add a row when a post gets its imagery.
 - **Labs use a real screenshot instead**, of the moment the lab is about: the
   defaced page, the alert chain, the deploy refusing a cancelled scan. Framing
   it is fine (a background in the diagrams' colours, a shadow, outlines on the
-  part that matters); editing what the screenshot shows is not. The CI/CD
-  cover is a 2400×1350 PNG, which keeps the UI text sharper than a JPEG.
+  part that matters); editing what the screenshot shows is not. Two screenshots
+  can share a cover when the second sits over the first's empty corner. Each
+  lab gets its own ground colour, so the index does not read as one block.
+  Both covers are 2400×1350 PNGs, which keep terminal text sharper than a JPEG.
+  `tasks/frame-cover.py` makes them.
 - **Headline:** one short line taken from the post, top left, in large type.
   Not the post's title, which the page already shows beside it.
 - **No other readable text.** Image generators garble body text, so screens,
