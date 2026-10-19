@@ -281,7 +281,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
           }}
           role="dialog"
           aria-modal="true"
-          aria-label="Project inquiry contact"
+          aria-label="Build or security inquiry"
           className={`absolute bg-background text-foreground shadow-2xl z-10 flex flex-row pointer-events-auto rounded-none p-6 md:p-12.5 ${
             isMobileView ? "overflow-y-auto" : "overflow-visible"
           }`}
@@ -318,16 +318,17 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
             >
               <div className="w-full flex flex-col justify-center gap-4">
                 <h3 className="text-[clamp(1.75rem,5vw,2.5rem)] md:text-5xl font-semibold tracking-tight leading-tight">
-                  Got a big vision?
+                  Got a big idea,
                   <br />
-                  or a big idea?
+                  or a project to build?
                 </h3>
-                <p className="text-sm max-w-[28ch] opacity-80">
-                  We&apos;ll get you started, or help you dream bigger.
+                <p className="text-sm max-w-[34ch] opacity-80">
+                  Web apps and products that are fast, accessible and hard to
+                  break.
                 </p>
 
                 <ContactButtons
-                  text="Contact me!"
+                  text="Let's build it"
                   className="text-xs max-w-88"
                 />
               </div>
@@ -339,20 +340,22 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
             >
               <div className="w-full flex flex-col justify-center gap-4">
                 <span className="text-xs font-medium uppercase tracking-widest opacity-60">
-                  Get a quote
+                  Security
                 </span>
                 <h3 className="text-[clamp(1.75rem,5vw,2.5rem)] md:text-5xl font-semibold tracking-tight leading-tight">
-                  Have a project
+                  Shipping soon?
                   <br />
-                  in mind?
+                  Check it first.
                 </h3>
-                <p className="text-sm opacity-80">
-                  Let&apos;s get you accurate numbers,
-                  <br />
-                  strategic ideas, and let&apos;s co-create your project today.
+                <p className="text-sm max-w-[40ch] opacity-80">
+                  Secure code review, hardening, scanning in CI and a pre-launch
+                  review, with every control tested rather than assumed.
                 </p>
 
-                <ContactButtons className="text-xs max-w-88" />
+                <ContactButtons
+                  text="Book a review"
+                  className="text-xs max-w-88"
+                />
               </div>
             </div>
           </div>
