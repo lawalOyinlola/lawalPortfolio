@@ -182,7 +182,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   className="w-32"
                   variant={isProjectOpen ? "outline" : "default"}
                   aria-label={
-                    isProjectOpen ? "Close project modal" : "Open project modal"
+                    isProjectOpen ? "Close the work with me panel" : "Work with me"
                   }
                   aria-expanded={isProjectOpen}
                 >
@@ -201,7 +201,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                         : "scale-100 opacity-100 delay-800"
                     }`}
                   >
-                    Got a Project?
+                    Work with me
                   </span>
                 </Button>
               </Magnetic>

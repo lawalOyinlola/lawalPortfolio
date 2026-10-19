@@ -11,7 +11,7 @@ export function HoverPushText({
 }: HoverPushTextProps) {
   return (
     <span className={`relative inline-flex overflow-hidden ${className}`}>
-      <span className="w-full flex items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] group-hover:-translate-y-[120%]">
+      <span className="w-full flex items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.87,0,0.13,1)] group-hover:translate-y-[-120%]">
         {children}
       </span>
       <span

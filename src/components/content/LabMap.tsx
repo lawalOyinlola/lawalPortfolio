@@ -106,6 +106,11 @@ export default function LabMap({ liveSlugs }: { liveSlugs: string[] }) {
           The inner relative box is the tooltip's positioning context and
           tracks the svg exactly (svg is w-full of it), so tooltips stay
           aligned while the map is scrolled. */}
+      {/* Only below sm, where the map is wider than the screen. */}
+      <p className="mb-2 flex items-center justify-end gap-1.5 px-2 text-[11px] text-muted-foreground sm:hidden">
+        Scroll sideways to see the whole map
+        <span aria-hidden="true">→</span>
+      </p>
       <div className="overflow-x-auto">
         <div className="relative min-w-175 sm:min-w-0">
           <svg

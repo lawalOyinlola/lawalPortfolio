@@ -43,7 +43,10 @@ export default function MenuHint({ menuOpen }: { menuOpen: boolean }) {
     const show = setTimeout(() => {
       if (!dismissedRef.current) setVisible(true);
     }, SHOW_AFTER_MS);
-    const hide = setTimeout(() => setVisible(false), SHOW_AFTER_MS + SHOW_FOR_MS);
+    const hide = setTimeout(
+      () => setVisible(false),
+      SHOW_AFTER_MS + SHOW_FOR_MS,
+    );
     return () => {
       clearTimeout(show);
       clearTimeout(hide);
@@ -69,9 +72,12 @@ export default function MenuHint({ menuOpen }: { menuOpen: boolean }) {
         <p className="menu-hint-text pl-5 font-(family-name:--font-caveat) text-2xl leading-none text-foreground md:text-[1.75rem]">
           Menu is here
         </p>
+        {/* Drawn at 1:1 pixels and pulled 32px down past the hint, so the
+            curve swings out to the right and comes back to point at the
+            button's right edge (the button is 44px square, at x 0 to 44). */}
         <svg
-          viewBox="0 0 70 80"
-          className="menu-hint-arrow -mt-1 ml-1 h-16 w-14 text-foreground md:h-20 md:w-[4.4rem]"
+          viewBox="0 0 92 72"
+          className="menu-hint-arrow -mb-8 h-18 w-23 text-foreground"
           fill="none"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -83,8 +89,8 @@ export default function MenuHint({ menuOpen }: { menuOpen: boolean }) {
             { stroke: "currentColor", width: 2.6 },
           ].map(({ stroke, width }) => (
             <g key={stroke} stroke={stroke} strokeWidth={width}>
-              <path pathLength={1} d="M52 4C66 26 50 50 18 66" />
-              <path pathLength={1} d="M18 66L33 63M18 66L22 51" />
+              <path pathLength={1} d="M30 4C78 6 88 52 52 60" />
+              <path pathLength={1} d="M52 60L64 64M52 60L62 51" />
             </g>
           ))}
         </svg>
