@@ -2,6 +2,8 @@
 title: "The WAF Lab: ModSecurity and the Core Rule Set, Measured Against a Control"
 description: "Put ModSecurity and the OWASP Core Rule Set in front of a deliberately vulnerable app, run 20 attacks and 9 legitimate requests through it with the rule engine off, watching and blocking, then tune it, raise the paranoia level, write a virtual patch, and find the attacks no rule can see."
 date: 2026-10-16
+cover: /images/labs/waf-runtime-defence/coverimage.png
+coverAlt: "Two terminal screenshots framed on a deep plum background, outlined in rose. The large window is the tuned level 2 phase table, with three legitimate requests, N6, N7 and N8, marked BLOCKED and the footer reading 9 normal, 3 false positives. A smaller window overlaps its lower right: the same login attack sent to both ports prints 9080 to 200 and 8080 to 403, followed by NGINX's bare 403 Forbidden page."
 tags: [appsec, waf, modsecurity, owasp-crs, nginx, docker, defence-in-depth, virtual-patching]
 platform: "Self-hosted"
 target: "OWASP Juice Shop"
@@ -14,7 +16,7 @@ skills: [waf-tuning, owasp-crs, false-positive-analysis, virtual-patching, detec
 status: own-lab
 series: "AppSec labs · Securing what I build"
 order: 1
-draft: true
+draft: false
 ---
 
 This lab puts a web application firewall in front of an app and measures what it does, instead of assuming. You run the same 29 requests through two identical proxies, one with the rule engine off and one with it on, so every block is a difference between two observations. You watch the firewall without letting it block, turn blocking on and see what it breaks, tune it one rule at a time, raise its sensitivity and count the cost, write a virtual patch for a hole it cannot see, and finish by turning the whole policy into a test that fails when the configuration drifts.
@@ -41,11 +43,11 @@ docker compose version
 
 **Ports 8080 and 9080 free** on your machine. Change the published ports in `compose.yml` if they are not.
 
-**Get the lab files.** Everything in this guide is in one folder of my cybersecurity portfolio:
+**Get the lab files.** Everything in this guide is in one folder of my cybersecurity portfolio, next to the write-up of the production run:
 
 ```bash
 git clone https://github.com/lawalOyinlola/cybersecurity-portfolio.git
-cd cybersecurity-portfolio/labs/waf-runtime-defence
+cd cybersecurity-portfolio/labs/waf-runtime-defence/rig
 ```
 
 Every command below is run from that folder.
@@ -166,13 +168,15 @@ Run the baseline. `run-phase.sh` takes a phase label, the engine, the paranoia l
 ./attack/run-phase.sh baseline Off 1 none
 ```
 
-The table has one row per case. In the `APP` column, `EXPLOITED` means the attack worked against the app, `safe` means the app dealt with it, `n/a` means nothing observable could prove either way, and `ok` is a legitimate request answered normally. The `WAF` column is empty because the engine is off.
+The table has one row per case. In the `APP` column, `EXPLOITED` means the attack worked against the app, `safe` means the app dealt with it, `n/a` means nothing observable could prove either way, and `ok` is a legitimate request answered normally. The `WAF` column is empty because the engine is off. The footer counts all twenty attacks as `not stopped` for the same reason: nothing is in the way. Only the `APP` column says which of them mattered.
 
 Eleven of the twenty attacks worked: S1, S2, S3, X2, X3, T1, J1, E1, E2, A1 and A2. Three did nothing to the app (T2, C1, C2). Six have no observable effect (S4, X1, C3, R1, U1, U2). All nine legitimate requests were answered normally.
 
 That split is the lens for the rest of the lab. A firewall that stops the eleven is protecting you. One that stops only the nine that were harmless anyway is a pretty dashboard.
 
 **Checkpoint:** the baseline reports 11 `EXPLOITED`, 3 `safe`, 6 `n/a`, and 9 `ok`.
+
+![The baseline phase run with the rule engine off: a table of 29 requests. Eleven attacks are marked EXPLOITED against the app, three safe and six n/a, the WAF column is empty throughout, and all nine legitimate requests are ok. The footer reads 20 attacks, 0 stopped by the WAF, 9 normal, 0 false positives.](/images/labs/waf-runtime-defence/waf-2.png)
 
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
@@ -192,6 +196,8 @@ Now switch the rules on in `DetectionOnly`. Nothing is blocked, so every respons
 ```
 
 `WAF` now reads `would-block` for any request whose anomaly score reached the threshold, with the score and the rules that contributed. Of the twenty attacks, fourteen would be blocked: S1, S2, S3, X1, X2, X3, T2, C1, C2, C3, J1, R1, U1 and U2. Six pass: S4, T1, E1, E2, A1 and A2.
+
+The footer of the table still says `stopped by the WAF 14` for this phase, because it counts what the rules matched. In `DetectionOnly` read it as "would have been stopped": nothing was blocked, and every response matches the baseline.
 
 Read the other half first, because it is the half that decides whether you can ever turn blocking on. Of the nine legitimate requests, **five would be blocked**: N4, N5, N6, N7 and N8. The firewall has flagged a customer changing the quantity of something in their basket.
 
@@ -240,6 +246,8 @@ It prints `0`. The attack that read another customer's basket left no trace in t
 
 **Checkpoint:** fourteen attacks `would-block`, five legitimate requests flagged (N4 to N8), and nothing in the log for A1.
 
+![The detection phase run with the engine in DetectionOnly at paranoia level 1. Nothing is blocked, and the WAF column reads would-block for fourteen attacks, with their rule IDs and anomaly scores. The five legitimate requests N4 to N8 also read would-block, from rules 911100 and 942540. The footer reads 20 attacks, 14 matched by the WAF, which in this phase means would have been stopped, 6 not stopped, 9 normal, 5 false positives.](/images/labs/waf-runtime-defence/waf-3.png)
+
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
 <ul>
@@ -281,6 +289,8 @@ curl -s -X POST localhost:8080/rest/user/login \
 
 A bare NGINX `403 Forbidden` page. It says nothing about why, which is correct for an attacker and unhelpful for a customer, a point you will care about when you tune.
 
+![A terminal. The same login bypass sent to both ports prints 9080 to 200 and 8080 to 403. Sending it to port 8080 again prints NGINX's bare 403 Forbidden page.](/images/labs/waf-runtime-defence/waf-5.png)
+
 ### What it broke
 
 Five legitimate requests fail for two reasons.
@@ -289,6 +299,10 @@ Five legitimate requests fail for two reasons.
 - **N7 and N8** are a registration and a login with a strong password, `P@ss'w0rd!";--`, blocked by rule `942540`, which looks for SQL authentication bypass. The password contains a quote, a semicolon and two hyphens, which is exactly what a strong password with symbols looks like. Anyone whose password manager generates symbols is locked out of this shop.
 
 Try it in the browser: open `http://localhost:8080`, register with that password, and watch the Network tab in the developer tools. The registration form posts to the same endpoint as case N7, so expect the same answer, a `403`.
+
+![The shop's registration form filled in with a strong password, next to the browser's Network tab. The POST to localhost:8080/api/Users/ returned 403 Forbidden from nginx, with a text/html body.](/images/labs/waf-runtime-defence/waf-6.png)
+
+The same Network tab will also show a column of red `socket.io` requests. They are blocked too, by rule `920420`, which rejects request content types the policy does not list, and Juice Shop's polling requests are `text/plain`. It is a real false positive, but the channel only announces solved challenges, no customer needs it, and the suite has no case for it, so the lab leaves it alone. On a site where it mattered, it is the kind of block that stays invisible until someone opens the log.
 
 This is why module 3 exists. Had you gone straight to blocking on a live site, this is what your customers would have found first.
 
@@ -312,7 +326,7 @@ Every exclusion goes in `waf/modsec/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf`
 
 ### Exclusion 1: let the REST verbs through
 
-The method rule (`911100`) is a false positive on every route that updates or deletes. This exclusion allows the full verb set, but only under `/api/` and `/rest/`:
+The method rule (`911100`) is a false positive on every route that updates or deletes. This exclusion allows the full verb set, but only under `/api/` and `/rest/`. It is configuration, not a command, and it is already in `waf/tuning/excl-1.conf`, so read it here and do not paste it into a terminal:
 
 ```apache
 SecRule REQUEST_URI "@rx ^/(api|rest)/" \
@@ -336,7 +350,7 @@ Three of the five are fixed. `N7` and `N8`, the strong password, remain.
 
 ### Exclusion 2: passwords may contain the characters passwords contain
 
-Rule `942540` matches the quote, semicolon and comment markers in `P@ss'w0rd!";--`. Excluding the rule everywhere would blind it to a login form's `email` field, which is where the real injection in S1 lives. So the exclusion removes the rule from one field at a time, on the two endpoints that accept a password:
+Rule `942540` matches the quote, semicolon and comment markers in `P@ss'w0rd!";--`. Excluding the rule everywhere would blind it to a login form's `email` field, which is where the real injection in S1 lives. So the exclusion removes the rule from one field at a time, on the two endpoints that accept a password. This one is in `waf/tuning/tuned.conf`, and like the first it is read, not run:
 
 ```apache
 SecRule REQUEST_URI "@rx ^/(api/Users|rest/user/login)$" \
@@ -374,7 +388,7 @@ Zero false positives, and the same fourteen attacks still stopped. Nothing was t
 An exclusion is a hole you have chosen to cut, and a hole needs testing. This one is narrow, but it does mean rule `942540` no longer looks at the password. Prove that a real injection in the password field is still caught, by other rules:
 
 ```bash
-for pw in "' OR 1=1--" "x' OR 'a'='a" "P@ss'w0rd!\";--"; do
+for pw in "' OR 1=1--" "x' OR 'a'='a" $'P@ss\'w0rd!";--'; do
   printf '{"email":"a@b.c","password":%s}' "$(python3 -c 'import json,sys;print(json.dumps(sys.argv[1]))' "$pw")" > pw.json
   printf '%-18s ' "$pw"
   curl -s -o /dev/null -w '%{http_code}\n' -X POST localhost:8080/rest/user/login \
@@ -390,6 +404,8 @@ P@ss'w0rd!";--     401
 
 The two injections are still blocked, by the libinjection rule `942100`, which this exclusion did not touch. The strong password reaches the app, which answers `401` because the credentials are wrong. That is the right outcome for all three.
 
+The strong password is written as `$'...'` in the loop, not in double quotes, because zsh, the default shell on macOS, expands `!` inside double quotes and stops with `event not found`.
+
 ### A note on editing the file
 
 If you change the exclusions file by hand rather than through `run-phase.sh`, recreate the container afterwards:
@@ -401,6 +417,8 @@ docker compose up -d --force-recreate waf
 The file is mounted into the container on its own. If your editor, or `sed -i`, replaces the file instead of writing into it, the running container keeps looking at the old one and, in practice, stops being able to find it at all. A restart or recreate picks the new file up. `run-phase.sh` writes in place and recreates every time, for exactly this reason.
 
 **Checkpoint:** `block-pl1-tuned` reports 14 attacks stopped and 0 false positives, and the password check above prints `403`, `403`, `401`.
+
+![The tuned level 1 phase: 14 attacks BLOCKED with their rule IDs and scores, and the five legitimate requests N4 to N8 now ok with nothing flagged. The footer reads 20 attacks, 14 stopped by the WAF, 6 not stopped, 9 normal, 0 false positives. Below it, the password check prints 403 for the two injections and 401 for the strong password.](/images/labs/waf-runtime-defence/waf-7.png)
 
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
@@ -438,7 +456,7 @@ Level 2 reads ordinary English with an ampersand and an apostrophe as an attack.
 
 ### The price of using level 2
 
-You can run level 2 if you pay for it. Two more exclusions, written the same way:
+You can run level 2 if you pay for it. Two more exclusions, written the same way and already in `waf/tuning/tuned-pl2.conf`:
 
 ```apache
 SecRule REQUEST_URI "@rx ^/(api/Users|rest/user/login)$" \
@@ -475,6 +493,8 @@ The honest reading is that level 2 bought one real block (E2) and one harmless o
 My choice for this app is level 1, tuned, with the redirect fixed in code and the null-byte hole closed by the patch in module 7. Your app's answer may differ, and now you have a way to find it.
 
 **Checkpoint:** `block-pl2-tuned` reports 16 attacks stopped and 3 false positives (N6, N7, N8); `block-pl2-tuned-more` reports 16 and 0.
+
+![The tuned level 2 phase. S4 and E2 are newly BLOCKED, with rules 942101 and 931130. Three legitimate requests, N6, N7 and N8, are now BLOCKED as well, by rules 932200, 942210, 942180, 942340 and 942440. The footer reads 20 attacks, 16 stopped by the WAF, 4 not stopped, 9 normal, 3 false positives.](/images/labs/waf-runtime-defence/waf-8.png)
 
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
@@ -532,6 +552,15 @@ A virtual patch buys time and nothing more. It describes the exploit, not the we
 
 **Checkpoint:** `block-pl1-patched` reports T1 `BLOCKED`, N9 `ok`, 15 stopped, 0 false positives.
 
+![The virtual patch phase. T1 is now BLOCKED by rule 1000010, with no anomaly score because the rule denies at once. The footer reads 20 attacks, 15 stopped by the WAF, 5 not stopped (S4, E1, E2, A1, A2), 9 normal, 0 false positives, with N9 still ok.](/images/labs/waf-runtime-defence/waf-9.png)
+
+<div class="capture-note">
+<p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
+<ul>
+<li><label><input type="checkbox" data-shot-id="waf-9" /> <code>waf-9</code>: the virtual patch phase, T1 blocked by rule 1000010 and nothing else changed</label></li>
+</ul>
+</div>
+
 ---
 
 ## 8. Turn the policy into a test
@@ -550,6 +579,8 @@ FAIL block-pl1-untuned
   - false positives (5, allowed 0): N4, N5, N6, N7, N8
 PASS block-pl1-tuned: 14 required attacks stopped, 0 false positives
 ```
+
+![A terminal running check.py twice with the same policy. block-pl1-untuned prints FAIL with five false positives, N4 to N8. block-pl1-tuned prints PASS with 14 required attacks stopped and 0 false positives.](/images/labs/waf-runtime-defence/waf-10.png)
 
 The first fails with exit code 1 and names the five requests it broke. The second passes. Delete exclusion 2 from `waf/tuning/tuned.conf`, re-run the phase, and the check fails again for N7 and N8, which is the point: the next person to touch this file finds out in seconds, not from a customer.
 
@@ -570,7 +601,7 @@ docker compose down -v
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
 <ul>
-<li><label><input type="checkbox" data-shot-id="waf-9" /> <code>waf-9</code>: <code>check.py</code> failing on the untuned run and passing on the tuned one</label></li>
+<li><label><input type="checkbox" data-shot-id="waf-10" /> <code>waf-10</code>: <code>check.py</code> failing on the untuned run and passing on the tuned one</label></li>
 </ul>
 </div>
 
@@ -610,6 +641,9 @@ This is one rule set (CRS 4.30.0) on one engine (ModSecurity 3 on NGINX), at par
 | Symptom | Cause | Fix |
 |---|---|---|
 | `waflab-waf` exits at once; its log ends with `input in flex scanner failed` | The project folder is outside what Docker shares with its VM, so the exclusions file is mounted as an empty directory | Move the folder into your home directory and bring the rig up again |
+| `docker compose up -d` fails with `The container name "/waflab-juice" is already in use` | Containers from an earlier copy of the lab, started from another folder, still hold the names | Run `docker compose down` in that folder, or `docker rm -f waflab-juice waflab-control waflab-waf`, then start again |
+| `zsh: command not found: SecRule` | The rule text from module 5 or 6 was pasted into a terminal | It is configuration, not a command. The rules are already in `waf/tuning/`, and `run-phase.sh` installs them |
+| `zsh: event not found` on a line containing `!` inside double quotes | zsh expands `!` in double quotes | Use `$'...'` quoting or single quotes, as the password check does |
 | `run-phase.sh` stops with "Nothing answered on port ... after 90 seconds" | A container did not start | `docker compose ps -a`, then `docker compose logs waf` |
 | Every request returns `502` just after starting | Juice Shop is still starting | Wait about ten seconds |
 | `suite.py` stops with `setup failed on port ...` | Juice Shop is not answering, or is still restarting | Wait, then re-run the phase |
@@ -636,13 +670,14 @@ Capture these as you go. The same attack on both ports (`waf-5`) and the level 2
 | `waf-6` | The browser Network tab showing the strong-password registration blocked | <input type="checkbox" data-shot-id="waf-6" /> |
 | `waf-7` | The tuned level 1 table, fourteen stopped and no false positives | <input type="checkbox" data-shot-id="waf-7" /> |
 | `waf-8` | The level 2 table with its three false positives | <input type="checkbox" data-shot-id="waf-8" /> |
-| `waf-9` | `check.py` failing on the untuned run and passing on the tuned one | <input type="checkbox" data-shot-id="waf-9" /> |
+| `waf-9` | The virtual patch phase: T1 blocked by rule 1000010, 15 stopped | <input type="checkbox" data-shot-id="waf-9" /> |
+| `waf-10` | `check.py` failing on the untuned run and passing on the tuned one | <input type="checkbox" data-shot-id="waf-10" /> |
 
 ---
 
 ## Lab status
 
-The rig was built from a clean copy of the lab folder and run end to end, every phase, on Apple Silicon with Colima. The numbers in this guide are from that run, and the commands in it were run as written. The screenshots are still to capture.
+The rig was built from a clean copy of the lab folder and run end to end, every phase, on Apple Silicon with Colima. A second run of this guide, from a copy of the published folder, reproduced every number in the tables here, and the screenshots come from that run. It also caught two mistakes in the guide, which are fixed: a password check that zsh refused to run, and a start-up clash with containers left over from an earlier copy of the lab. The browser step in module 4 returned the `403` the guide describes.
 
 ---
 

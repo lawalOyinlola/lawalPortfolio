@@ -644,7 +644,7 @@ The table is not what I would point a reviewer to, though. The findings that mat
 
 ## What this does not cover
 
-This is build-time scanning of code and dependencies. It does not test the running app: there is no dynamic scan here, which is where a tool like OWASP ZAP comes in, and the runtime half of this series is the WAF lab. It does not sign builds or record where they came from. And it does not replace reading the code: the three development shortcuts in module 2 were the most serious findings on that app, and every scanner in this pipeline missed them.
+This is build-time scanning of code and dependencies. It does not test the running app: there is no dynamic scan here, which is where a tool like OWASP ZAP comes in, and the runtime half of this series is the [WAF lab](/security/labs/waf-runtime-defence). It does not sign builds or record where they came from. And it does not replace reading the code: the three development shortcuts in module 2 were the most serious findings on that app, and every scanner in this pipeline missed them.
 
 ---
 
@@ -705,7 +705,7 @@ The pipeline was built, and every finding triaged, on the real product, with the
 
 This is the first lab in the AppSec series, and the build-time half of it: the pipeline checks what goes into the product before it ships.
 
-- **Runtime defence with a WAF** (planned): the same app defended at runtime with ModSecurity and the OWASP Core Rule Set, attacked and measured. Until that lab is up, the results are in the post [What my WAF actually blocked](/blog/what-my-waf-actually-blocked).
+- **[Runtime defence with a WAF](/security/labs/waf-runtime-defence)**: ModSecurity and the OWASP Core Rule Set in front of a deliberately vulnerable app, attacked and measured against a control. The results from the production app are in the post [What my WAF actually blocked](/blog/what-my-waf-actually-blocked).
 - **AI app security** (planned): the same discipline applied to an AI feature, with prompt-injection tests that run in this pipeline.
 
 See how the series connect on the [interactive labs map](/security/labs).

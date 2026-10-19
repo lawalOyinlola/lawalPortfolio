@@ -2,7 +2,7 @@
 title: "What my WAF actually blocked, and what my app already stops on its own"
 description: "I ran 26 attack payloads against a production app with ModSecurity on and off. It blocked 12: five my app already rejected, and seven it stopped a step earlier than the app's own defences. The class behind most real breaches never showed up in either column."
 date: 2026-09-14
-updated: 2026-10-07
+updated: 2026-10-19
 tags: [security, webdev, devops, cybersecurity]
 cover: /images/blog/what-my-waf-actually-blocked/coverimage.jpg
 coverAlt: "An empty airport security checkpoint at night under yellow overhead signs. On the X-ray monitor, two identical envelopes pass through side by side. Headline: A WAF buys you time."
@@ -109,3 +109,7 @@ Every line that comes back is a query trusting an identifier from the request wi
 Twelve blocked requests looked like twelve wins. Five were the application agreeing with itself through an extra layer. Seven were the firewall genuinely doing something the code could not do until later. And the class that decides most real breaches never touched either column, because it was never a pattern-matching problem to begin with.
 
 A WAF buys you time. It does not buy you a query that checks who is asking.
+
+---
+
+The same measurement, rerun on a deliberately vulnerable app you can run yourself, is the [WAF lab](/security/labs/waf-runtime-defence): 20 attacks and 9 legitimate requests through ModSecurity with the engine off, watching, blocking, tuned and at a higher paranoia level.
