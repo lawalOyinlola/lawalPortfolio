@@ -197,6 +197,8 @@ Now switch the rules on in `DetectionOnly`. Nothing is blocked, so every respons
 
 `WAF` now reads `would-block` for any request whose anomaly score reached the threshold, with the score and the rules that contributed. Of the twenty attacks, fourteen would be blocked: S1, S2, S3, X1, X2, X3, T2, C1, C2, C3, J1, R1, U1 and U2. Six pass: S4, T1, E1, E2, A1 and A2.
 
+The footer of the table still says `stopped by the WAF 14` for this phase, because it counts what the rules matched. In `DetectionOnly` read it as "would have been stopped": nothing was blocked, and every response matches the baseline.
+
 Read the other half first, because it is the half that decides whether you can ever turn blocking on. Of the nine legitimate requests, **five would be blocked**: N4, N5, N6, N7 and N8. The firewall has flagged a customer changing the quantity of something in their basket.
 
 ### Read the evidence
@@ -244,7 +246,7 @@ It prints `0`. The attack that read another customer's basket left no trace in t
 
 **Checkpoint:** fourteen attacks `would-block`, five legitimate requests flagged (N4 to N8), and nothing in the log for A1.
 
-![The detection phase run with the engine in DetectionOnly at paranoia level 1. Fourteen attacks show would-block with their rule IDs and anomaly scores. The five legitimate requests N4 to N8 also show would-block, from rules 911100 and 942540. The footer reads 20 attacks, 14 stopped by the WAF, 6 not stopped, 9 normal, 5 false positives.](/images/labs/waf-runtime-defence/waf-3.png)
+![The detection phase run with the engine in DetectionOnly at paranoia level 1. Nothing is blocked, and the WAF column reads would-block for fourteen attacks, with their rule IDs and anomaly scores. The five legitimate requests N4 to N8 also read would-block, from rules 911100 and 942540. The footer reads 20 attacks, 14 matched by the WAF, which in this phase means would have been stopped, 6 not stopped, 9 normal, 5 false positives.](/images/labs/waf-runtime-defence/waf-3.png)
 
 <div class="capture-note">
 <p>Tick each box once you have captured that shot; it syncs with <a href="#appendix-screenshot-checklist">the screenshot checklist</a> automatically.</p>
