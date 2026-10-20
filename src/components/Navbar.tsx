@@ -85,7 +85,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   className={`absolute transition-all duration-300 ease-in-out ${
                     isMenuOpen
                       ? "rotate-0 scale-100 opacity-100"
-                      : "-rotate-90 scale-50 opacity-0 delay-800"
+                      : "-rotate-90 scale-50 opacity-0 delay-500"
                   }`}
                 />
                 <ListIcon
@@ -93,7 +93,7 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   className={`absolute transition-all duration-300 ease-in-out ${
                     isMenuOpen
                       ? "rotate-90 scale-50 opacity-0"
-                      : "rotate-0 scale-100 opacity-100 delay-800"
+                      : "rotate-0 scale-100 opacity-100 delay-500"
                   }`}
                 />
               </Button>
@@ -182,7 +182,9 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                   className="w-32"
                   variant={isProjectOpen ? "outline" : "default"}
                   aria-label={
-                    isProjectOpen ? "Close the work with me panel" : "Work with me"
+                    isProjectOpen
+                      ? "Close the work with me panel"
+                      : "Work with me"
                   }
                   aria-expanded={isProjectOpen}
                 >
@@ -191,14 +193,14 @@ const Navbar = ({ ready = true }: NavbarProps) => {
                     className={`absolute transition-all duration-300 ease-in-out ${
                       isProjectOpen
                         ? "rotate-0 scale-100 opacity-100"
-                        : "-rotate-90 scale-50 opacity-0 delay-800"
+                        : "-rotate-90 scale-50 opacity-0 delay-500"
                     }`}
                   />
                   <span
                     className={`absolute transition-all duration-300 ease-in-out ${
                       isProjectOpen
                         ? "scale-40 opacity-0"
-                        : "scale-100 opacity-100 delay-800"
+                        : "scale-100 opacity-100 delay-500"
                     }`}
                   >
                     Work with me
