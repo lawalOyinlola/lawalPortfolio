@@ -88,10 +88,12 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
         />
       </div>
 
-      <div className="wrapper relative z-10 max-w-206 flex flex-col gap-8 mix-blend-difference">
+      {/* No blend mode here: blended over the coloured smoke, the text's
+          colour (and its contrast) would change with every cursor move. */}
+      <div className="wrapper relative z-10 max-w-206 flex flex-col gap-8">
         {/* Availability badge */}
         <div className="hero-item opacity-0 flex items-center gap-2 text-xs uppercase tracking-widest text-background/60">
-          <span className="inline-block size-2 rounded-full bg-green-400 animate-pulse" />
+          <span className="inline-block size-2 rounded-full bg-green-400 motion-safe:animate-pulse" />
           <span>Available for new projects</span>
         </div>
 
