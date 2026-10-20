@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useLoading } from "@/components/providers/LoadingContext";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { setPageRevealed } from "@/lib/pageReveal";
+import { EASE } from "@/lib/motion";
 
 // How far through the lift the page may start its own entrance animations: far
 // enough that the grid is nearly gone, early enough that nothing plays unseen.
@@ -105,7 +106,7 @@ export default function PageTransition() {
             ? gsap.to(columns, {
                 yPercent: 0,
                 duration: 0.4,
-                ease: "power3.inOut",
+                ease: EASE.inOut,
                 stagger,
                 onComplete: resolve,
               })
