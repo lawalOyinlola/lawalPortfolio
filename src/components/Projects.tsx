@@ -11,6 +11,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FEATURED_PROJECTS } from "@/app/constants";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { EASE } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, SplitText);
@@ -133,7 +134,7 @@ function Projects() {
         .fromTo(
           `.img-${target}`,
           { clipPath: dir > 0 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)" },
-          { clipPath: "inset(0 0% 0 0%)", duration: 0.5, ease: "power3.out" },
+          { clipPath: "inset(0 0% 0 0%)", duration: 0.5, ease: EASE.out },
           "enter",
         )
         .fromTo(
@@ -152,7 +153,7 @@ function Projects() {
         .fromTo(
           `.cat-${target}, .desc-${target}`,
           { opacity: 0, x: dir * 16 },
-          { opacity: 1, x: 0, duration: 0.35, ease: "power2.out" },
+          { opacity: 1, x: 0, duration: 0.35, ease: EASE.soft },
           "enter+=0.05",
         )
         .fromTo(
@@ -162,7 +163,7 @@ function Projects() {
             opacity: 1,
             x: 0,
             duration: 0.3,
-            ease: "power2.out",
+            ease: EASE.soft,
             stagger: { each: 0.04, from: lead },
           },
           "enter+=0.1",
@@ -195,7 +196,7 @@ function Projects() {
               directional: false,
               duration: { min: 0.2, max: 0.45 },
               delay: 0.12,
-              ease: "power2.out",
+              ease: EASE.soft,
             },
       });
 
@@ -241,7 +242,7 @@ function Projects() {
       gsap.to(window, {
         scrollTo: { y, autoKill: true },
         duration: 0.6,
-        ease: "power3.inOut",
+        ease: EASE.inOut,
         overwrite: true,
       });
     },
@@ -338,7 +339,7 @@ function Projects() {
           scale: 1,
           autoAlpha: 1,
           duration: 0.35,
-          ease: "power3.out",
+          ease: EASE.out,
         });
       };
 
@@ -373,7 +374,7 @@ function Projects() {
       style={{ height: `calc(100vh + ${(COUNT - 1) * STEP_VH}vh)` }}
       aria-label="Featured projects"
     >
-      <div className="wrapper sticky top-0 h-screen flex flex-col justify-center gap-2 md:gap-4.5 max-sm:pt-18 max-sm:pb-20">
+      <div className="wrapper sticky top-0 h-svh flex flex-col justify-center gap-2 md:gap-4.5 max-sm:pt-18 max-sm:pb-20">
         {/* Pairs with the Security section that follows ("Then I test").
             The progress indicator replaces the old numbered tabs. */}
         <div className="flex items-end justify-between gap-6">
@@ -482,9 +483,7 @@ function Projects() {
                     className={`tag-p${i} flex items-center md:items-start md:flex-col gap-2 md:gap-4 max-w-full md:max-w-43.5 md:py-4.5 md:pr-4`}
                   >
                     <div className="size-1.5 md:size-2.5 bg-foreground shrink-0" />
-                    <p className="text-[10px] md:text-xs leading-snug">
-                      {keypoint}
-                    </p>
+                    <p className="text-xs leading-snug">{keypoint}</p>
                   </div>
                 ))}
               </div>
