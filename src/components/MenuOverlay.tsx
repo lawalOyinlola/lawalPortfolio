@@ -60,6 +60,11 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
   const bgRef = useRef<HTMLDivElement>(null);
   const blocksRef = useRef<HTMLDivElement[]>([]);
   const contentRef = useRef<HTMLDivElement>(null);
+  // The running open or close, so a quick reopen can cancel the close
+  // before its onComplete hides the overlay again.
+  const animationRef = useRef<gsap.core.Timeline | gsap.core.Tween | null>(
+    null,
+  );
   const { width } = useWindowDimensions();
   const isMobileView = width > 0 && width < 600;
   const pathname = usePathname();
@@ -146,6 +151,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
   // Reduced motion gets a short fade, with nothing growing or moving.
   useGSAP(
     () => {
+      animationRef.current?.kill();
       const overlay = overlayRef.current;
       const blocks = blocksRef.current.slice(0, 3).filter(Boolean);
       const layers = [bgRef.current, ...blocks, contentRef.current];
@@ -158,7 +164,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
         if (prefersReducedMotion) {
           gsap.set(blocks, { scale: 1 });
           gsap.set(contentRef.current, { y: 0 });
-          gsap.fromTo(
+          animationRef.current = gsap.fromTo(
             layers,
             { opacity: 0 },
             { opacity: 1, duration: 0.2, ease: EASE.soft },
@@ -166,7 +172,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
           return;
         }
 
-        gsap
+        animationRef.current = gsap
           .timeline()
           .to(bgRef.current, { opacity: 1, duration: 0.35, ease: EASE.soft })
           .fromTo(
@@ -192,7 +198,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
           );
       } else {
         if (prefersReducedMotion) {
-          gsap.to(layers, {
+          animationRef.current = gsap.to(layers, {
             opacity: 0,
             duration: 0.15,
             ease: "power1.in",
@@ -201,7 +207,7 @@ export function MenuOverlay({ isOpen, onClose }: MenuOverlayProps) {
           return;
         }
 
-        gsap
+        animationRef.current = gsap
           .timeline({ onComplete: hide })
           .to(contentRef.current, {
             opacity: 0,
