@@ -299,10 +299,14 @@ export default function Preloader({ onReveal, onComplete }: PreloaderProps) {
       ref={containerRef}
       className="preloader fixed inset-0 z-99 flex items-center justify-center overflow-hidden"
     >
-      {/* Grid of columns that lifts away to reveal the page */}
+      {/* Grid of columns that lifts away to reveal the page. Each overlaps
+          the next by a pixel, so fractional widths never show hairline gaps. */}
       <div className="absolute inset-0 flex" aria-hidden="true">
         {[...Array(columnCount)].map((_, i) => (
-          <div key={i} className="column h-full flex-1 bg-foreground" />
+          <div
+            key={i}
+            className="column h-full flex-1 -mr-px last:mr-0 bg-foreground"
+          />
         ))}
       </div>
 
