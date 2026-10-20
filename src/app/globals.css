@@ -981,3 +981,19 @@ html[data-intro="skip"] .pl-line {
     display: none;
   }
 }
+
+/* About hero portrait: fades out at the sides and toward the bottom, so the
+   photo has no hard edges and the name set over its lower half stays on a
+   dark ground. On phones the photo fills the width, so only the bottom fades. */
+.about-portrait-mask {
+  mask-image: linear-gradient(to bottom, #000 50%, transparent 98%);
+}
+
+@media (width >= 48rem) {
+  .about-portrait-mask {
+    mask-image:
+      linear-gradient(to right, transparent, #000 24%, #000 76%, transparent),
+      linear-gradient(to bottom, #000 45%, transparent 88%);
+    mask-composite: intersect;
+  }
+}
