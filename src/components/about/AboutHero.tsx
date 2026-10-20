@@ -196,7 +196,7 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
           screen on phones. The mask fades it into the section on every open side, so
           the photo has no edges and the name over it stays legible. */}
       <div className="about-portrait-mask absolute inset-x-0 top-0 z-3 h-[72%] md:inset-x-auto md:left-1/2 md:aspect-3/4 md:h-full md:-translate-x-1/2">
-        <div className="portrait-parallax absolute inset-x-0 -top-[5%] h-[110%]">
+        <div className="portrait-parallax absolute inset-x-0 top-[-5%] h-[110%]">
           <div className="portrait-shift absolute inset-0">
             <Image
               src="/images/about/portrait.jpg"
