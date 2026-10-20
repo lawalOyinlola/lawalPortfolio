@@ -183,7 +183,7 @@ const GridAnimation = ({
               end: "10% top",
               scrub: 0.6,
             }
-          : { trigger: triggerEl, start: "5% top", end: "55% top", scrub: 0.6 },
+          : { trigger: triggerEl, start: "8% top", end: "80% top", scrub: 1 },
       });
 
       // Off screen, the ticker and the oscillation both stop: nothing runs
@@ -246,6 +246,10 @@ const GridAnimation = ({
       // Re-run when layout-affecting state changes. isMobile/isSE are debounced
       // in useWindowDimensions, so this won't thrash on every resize pixel.
       dependencies: [ready, scrubStart, prefersReducedMotion, isMobile, isSE],
+      // Without this the previous run (say, the one from before the intro was
+      // ready) is never cleaned up: its ticker keeps writing its own heights
+      // to the same columns, and whichever ticker runs last wins.
+      revertOnUpdate: true,
     },
   );
 
