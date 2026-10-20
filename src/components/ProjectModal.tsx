@@ -6,6 +6,8 @@ import { useGSAP } from "@gsap/react";
 import ContactButtons from "./ui/ContactButtons";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { EASE } from "@/lib/motion";
 import { handleDirectionalFocus } from "@/lib/utils";
 
 export interface ProjectModalProps {
@@ -21,6 +23,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
   const { width } = useWindowDimensions();
   const isMobileView = width > 0 && width < 600;
   const [slideSide, setSlideSide] = useState<"left" | "right">("left");
+  const { prefersReducedMotion } = usePrefersReducedMotion();
 
   useScrollLock(isOpen);
 
@@ -119,73 +122,97 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
     }
   }, [isOpen, onClose, isMobileView, updateSlideSideForElement]);
 
-  // GSAP animations, scoped to containerRef
+  // Content is readable after about 1.2s and the close takes about 0.85s:
+  // the blocks still have room to land, without the old 2s wait before the
+  // content appeared. The main box waits a beat longer than the connectors,
+  // and the overshoot is kept small so it settles rather than bounces.
+  // Reduced motion gets a short fade, with nothing growing or moving.
   useGSAP(
     () => {
+      const overlay = overlayRef.current;
+      const blocks = blocksRef.current.slice(0, 3).filter(Boolean);
+      const layers = [bgRef.current, ...blocks, contentRef.current];
+      const hide = () =>
+        gsap.set(overlay, { display: "none", pointerEvents: "none" });
+
       if (isOpen) {
         setSlideSide("left");
-        // Animate In
-        gsap.set(overlayRef.current, {
-          display: "flex",
-          pointerEvents: "auto",
-        });
+        gsap.set(overlay, { display: "flex", pointerEvents: "auto" });
 
-        const tl = gsap.timeline();
-        tl.to(bgRef.current, { opacity: 1, duration: 0.3, ease: "power2.out" })
+        if (prefersReducedMotion) {
+          gsap.set(blocks, { scale: 1 });
+          gsap.set(contentRef.current, { y: 0 });
+          gsap.fromTo(
+            layers,
+            { opacity: 0 },
+            { opacity: 1, duration: 0.2, ease: EASE.soft },
+          );
+          return;
+        }
+
+        gsap
+          .timeline()
+          .to(bgRef.current, { opacity: 1, duration: 0.35, ease: EASE.soft })
           .fromTo(
-            blocksRef.current.slice(0, 3),
+            blocks,
             { scale: 0, opacity: 0, transformOrigin: "bottom right" },
             {
               scale: 1,
               opacity: 1,
-              duration: 1,
-              stagger: 0.4,
-              ease: "back.out(1)",
+              duration: 0.75,
+              // The connectors follow each other closely; the main box, last,
+              // gets the extra pause.
+              stagger: (i, _target, list) =>
+                i === list.length - 1 ? 0.4 : i * 0.15,
+              ease: "back.out(0.6)",
             },
-            "-=0.2",
+            0.05,
           )
           .fromTo(
             contentRef.current,
             { opacity: 0, y: 15 },
-            { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
-            "-=0.1",
+            { opacity: 1, y: 0, duration: 0.35, ease: EASE.soft },
+            0.85,
           );
       } else {
-        // Animate Out
-        const tl = gsap.timeline({
-          onComplete: () => {
-            gsap.set(overlayRef.current, {
-              display: "none",
-              pointerEvents: "none",
-            });
-          },
-        });
-        tl.to(contentRef.current, {
-          opacity: 0,
-          y: -10,
-          duration: 0.6,
-          ease: "power2.in",
-        })
+        if (prefersReducedMotion) {
+          gsap.to(layers, {
+            opacity: 0,
+            duration: 0.15,
+            ease: "power1.in",
+            onComplete: hide,
+          });
+          return;
+        }
+
+        gsap
+          .timeline({ onComplete: hide })
+          .to(contentRef.current, {
+            opacity: 0,
+            y: -10,
+            duration: 0.25,
+            ease: "power2.in",
+          })
           .to(
-            blocksRef.current.slice(0, 3),
+            blocks,
             {
               scale: 0,
               opacity: 0,
-              duration: 0.5,
-              stagger: -0.2,
+              duration: 0.45,
+              stagger: -0.1,
               transformOrigin: "bottom right",
               ease: "power2.inOut",
             },
-            "-=0.4",
+            0.15,
           )
           .to(
             bgRef.current,
             { opacity: 0, duration: 0.3, ease: "power2.in" },
-            "-=0.1",
+            0.55,
           );
       }
     },
-    { scope: overlayRef, dependencies: [isOpen] },
+    { scope: overlayRef, dependencies: [isOpen, prefersReducedMotion] },
   );
 
   const updateSlideSide = (clientX: number, rect: DOMRect) => {
@@ -208,10 +235,9 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
         ref={bgRef}
         className="absolute inset-0 bg-foreground/65 opacity-0 backdrop-blur-md"
         onClick={onClose}
-        onKeyDown={(e) => e.key === "Enter" && onClose()}
-        role="button"
-        tabIndex={-1}
-        aria-label="Close menu"
+        // Pointer convenience only: Escape and the X button the trigger turns
+        // into are the accessible ways out, so this is not exposed as a button.
+        aria-hidden="true"
       />
 
       <div
