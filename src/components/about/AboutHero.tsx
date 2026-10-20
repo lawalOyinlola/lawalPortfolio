@@ -11,6 +11,7 @@ import FluidCursorEffect from "@/components/ui/smokey-cursor-effect";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { DURATION, EASE } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP);
@@ -44,24 +45,22 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
         {
           y: 0,
           autoAlpha: 1,
-          duration: 1,
+          duration: DURATION.slow,
           stagger: 0.15,
-          ease: "power3.out",
+          ease: EASE.out,
         },
       );
 
       if (tags.length > 0) {
         tl.fromTo(
           tags,
-          { autoAlpha: 0, x: -60, y: 10, scale: 0.9 },
+          { autoAlpha: 0, x: -24 },
           {
             autoAlpha: 1,
             x: 0,
-            y: 0,
-            scale: 1,
-            duration: 1,
-            stagger: 0.1,
-            ease: "back.out(2)",
+            duration: DURATION.slow,
+            stagger: 0.08,
+            ease: EASE.out,
           },
           "-=0.7",
         );
