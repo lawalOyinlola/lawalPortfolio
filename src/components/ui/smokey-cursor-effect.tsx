@@ -54,7 +54,6 @@ const FluidCursorEffect = ({
 }: FluidCursorEffectProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationIdRef = useRef<number | null>(null);
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
 
@@ -66,7 +65,9 @@ const FluidCursorEffect = ({
     // and turns shading off on devices without linear filtering.
     const config = {
       SIM_RESOLUTION: 128,
-      DYE_RESOLUTION: 1440,
+      // The dye is blurred smoke at 60% opacity: past this, extra texels cost
+      // fill rate without looking any different.
+      DYE_RESOLUTION: 720,
       CAPTURE_RESOLUTION: 512,
       DENSITY_DISSIPATION: 3.5,
       VELOCITY_DISSIPATION: 2,
@@ -877,8 +878,10 @@ const FluidCursorEffect = ({
       return { width: min, height: max };
     };
 
+    // Capped: a 3x screen would otherwise render the full-screen display
+    // pass at nine times the pixels for no visible gain on soft smoke.
     const scaleByPixelRatio = (input: number) => {
-      const pixelRatio = window.devicePixelRatio || 1;
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
       return Math.floor(input * pixelRatio);
     };
 
@@ -1367,7 +1370,12 @@ const FluidCursorEffect = ({
       return delta;
     };
 
+    // Only simulates while the canvas is on screen: scrolled past, the loop
+    // stops instead of running the GPU for a hero nobody can see.
+    let onScreen = true;
     const updateFrame = () => {
+      animationIdRef.current = null;
+      if (!onScreen) return;
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       updateColors(dt);
@@ -1376,6 +1384,14 @@ const FluidCursorEffect = ({
       render(null);
       animationIdRef.current = requestAnimationFrame(updateFrame);
     };
+
+    const visibility = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      if (onScreen && animationIdRef.current === null) {
+        lastUpdateTime = Date.now();
+        animationIdRef.current = requestAnimationFrame(updateFrame);
+      }
+    });
 
     const setupEventListeners = () => {
       const handleMouseDown = (e: MouseEvent) => {
@@ -1452,8 +1468,9 @@ const FluidCursorEffect = ({
       const unlisten = [
         listen("mousedown", handleMouseDown),
         listen("mousemove", handleMouseMove),
-        listen("touchstart", handleTouchStart, { passive: false }),
-        listen("touchmove", handleTouchMove, { passive: false }),
+        // Passive: neither calls preventDefault, so scrolling never waits on them.
+        listen("touchstart", handleTouchStart, { passive: true }),
+        listen("touchmove", handleTouchMove, { passive: true }),
         listen("touchend", handleTouchEnd),
       ];
 
@@ -1469,7 +1486,7 @@ const FluidCursorEffect = ({
         initFramebuffers();
         const cleanup = setupEventListeners();
         updateFrame();
-        setIsInitialized(true);
+        visibility.observe(canvas);
         return cleanup;
       } catch (error) {
         console.error("Failed to initialize fluid simulation:", error);
@@ -1481,6 +1498,7 @@ const FluidCursorEffect = ({
     const cleanup = init();
 
     return () => {
+      visibility.disconnect();
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
       }
@@ -1513,7 +1531,12 @@ const FluidCursorEffect = ({
     };
   }, [resetKey, triggerRef, prefersReducedMotion, isHydrated]);
 
-  if (error || prefersReducedMotion || !isHydrated) {
+  // Skipped on touch screens: there is no cursor to trail, and a full-screen
+  // simulation costs a phone's battery for a smudge under a fingertip.
+  const isCoarsePointer =
+    isHydrated && window.matchMedia("(pointer: coarse)").matches;
+
+  if (error || prefersReducedMotion || !isHydrated || isCoarsePointer) {
     return null;
   }
 
@@ -1527,13 +1550,6 @@ const FluidCursorEffect = ({
           className="w-full h-full block opacity-60 mix-blend-screen"
         />
       </div>
-
-      {/* Status indicator */}
-      {!isInitialized && (
-        <div className="absolute top-4 inset-e-4 z-50 bg-blue-500/20 text-blue-200 px-4 py-2 rounded-lg border border-blue-500/30 text-[10px] uppercase tracking-widest">
-          Initializing Fluid...
-        </div>
-      )}
     </div>
   );
 };
