@@ -15,6 +15,13 @@ const REVEAL_AT_PROGRESS = 0.6;
 // stalled request can never leave the site hidden behind it.
 const ARRIVAL_TIMEOUT_MS = 4000;
 
+// Moving around inside one of these (a post to the next post, the index to a
+// lab) is reading, not changing section: a quick fade keeps the grid from
+// becoming a toll paid on every click.
+const READING_AREAS = ["/blog", "/security/labs"];
+
+type Mode = "grid" | "fade";
+
 const nextFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
@@ -24,21 +31,30 @@ function internalTarget(anchor: HTMLAnchorElement) {
   if (anchor.hasAttribute("download")) return null;
   const url = new URL(anchor.href, window.location.href);
   if (url.origin !== window.location.origin) return null;
+  // Files such as /blog/rss.xml are not pages: the browser opens those itself.
+  if (/\.[a-z0-9]+$/i.test(url.pathname)) return null;
   // Anchors on the same or another page keep their own scrolling behaviour.
   if (url.hash) return null;
   // Same page, even with a different query: the cover lifts when the pathname
   // changes, so a query-only change would leave it waiting for the timeout.
   if (url.pathname === window.location.pathname) return null;
-  return url.pathname + url.search;
+  return { pathname: url.pathname, href: url.pathname + url.search };
+}
+
+function readingArea(pathname: string) {
+  return READING_AREAS.find(
+    (area) => pathname === area || pathname.startsWith(`${area}/`),
+  );
 }
 
 /**
  * Page changes from the footer, links and buttons on a page: the preloader's
  * grid rises to cover the screen, the route changes underneath it, then the
- * grid lifts away on the new page (always at the top). Links inside a dialog,
- * such as the menu overlay, are left alone since those already have their own
- * exit. Skipped for reduced motion, while the intro is still playing, and for
- * anything that is not a plain same-site page change.
+ * grid lifts away on the new page (always at the top). Within a reading area,
+ * and for reduced motion, a short fade stands in for the grid. Links inside a
+ * dialog, such as the menu overlay, are left alone since those already have
+ * their own exit. Skipped while the intro is still playing, and for anything
+ * that is not a plain same-site page change.
  */
 export default function PageTransition() {
   const router = useRouter();
@@ -67,22 +83,38 @@ export default function PageTransition() {
 
     const tweens: gsap.core.Tween[] = [];
 
-    const play = async (target: string) => {
+    const play = async (target: string, mode: Mode) => {
       busyRef.current = true;
+      // Fetched while the cover comes down, so it is usually ready on landing.
+      router.prefetch(target);
+
       const columns = overlay.querySelectorAll(".pt-col");
+      const fade = overlay.querySelector(".pt-fade");
       gsap.set(overlay, { display: "block" });
       gsap.set(columns, { yPercent: 100 });
+      gsap.set(fade, { opacity: 0 });
 
-      const stagger: gsap.StaggerVars = { grid: [1, columns.length], from: "center", amount: 0.3 };
+      const stagger: gsap.StaggerVars = {
+        grid: [1, columns.length],
+        from: "center",
+        amount: 0.15,
+      };
       await new Promise<void>((resolve) => {
         tweens.push(
-          gsap.to(columns, {
-            yPercent: 0,
-            duration: 0.55,
-            ease: "power3.inOut",
-            stagger,
-            onComplete: resolve,
-          }),
+          mode === "grid"
+            ? gsap.to(columns, {
+                yPercent: 0,
+                duration: 0.4,
+                ease: "power3.inOut",
+                stagger,
+                onComplete: resolve,
+              })
+            : gsap.to(fade, {
+                opacity: 1,
+                duration: 0.15,
+                ease: "power1.out",
+                onComplete: resolve,
+              }),
         );
       });
 
@@ -106,16 +138,26 @@ export default function PageTransition() {
       await nextFrame();
 
       await new Promise<void>((resolve) => {
-        const lift: gsap.core.Tween = gsap.to(columns, {
-          yPercent: -100,
-          duration: 0.9,
-          ease: "power4.inOut",
-          stagger,
-          onUpdate: () => {
-            if (lift.progress() >= REVEAL_AT_PROGRESS) setPageRevealed(true);
-          },
-          onComplete: resolve,
-        });
+        const onUpdate = () => {
+          if (lift.progress() >= REVEAL_AT_PROGRESS) setPageRevealed(true);
+        };
+        const lift: gsap.core.Tween =
+          mode === "grid"
+            ? gsap.to(columns, {
+                yPercent: -100,
+                duration: 0.65,
+                ease: "power4.inOut",
+                stagger: { ...stagger, amount: 0.2 },
+                onUpdate,
+                onComplete: resolve,
+              })
+            : gsap.to(fade, {
+                opacity: 0,
+                duration: 0.25,
+                ease: "power1.inOut",
+                onUpdate,
+                onComplete: resolve,
+              });
         tweens.push(lift);
       });
       setPageRevealed(true);
@@ -134,7 +176,6 @@ export default function PageTransition() {
       )
         return;
       if (busyRef.current || introRef.current) return;
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       const anchor = (event.target as Element | null)?.closest("a");
       if (!anchor || anchor.closest('[role="dialog"], [data-no-transition]'))
@@ -142,10 +183,17 @@ export default function PageTransition() {
       const target = internalTarget(anchor);
       if (!target) return;
 
+      const area = readingArea(target.pathname);
+      const mode: Mode =
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        (area && area === readingArea(window.location.pathname))
+          ? "fade"
+          : "grid";
+
       // Stop the link's own handler too: this takes over the navigation.
       event.preventDefault();
       event.stopPropagation();
-      void play(target);
+      void play(target.href, mode);
     };
 
     document.addEventListener("click", onClick, true);
@@ -165,11 +213,17 @@ export default function PageTransition() {
       aria-hidden="true"
       className="fixed inset-0 z-90 hidden overflow-hidden"
     >
+      {/* Each column overlaps the next by a pixel: at fractional widths,
+          edge-to-edge columns leave hairline gaps mid-animation. */}
       <div className="absolute inset-0 flex">
         {[...Array(columnCount)].map((_, i) => (
-          <div key={i} className="pt-col h-full flex-1 bg-foreground" />
+          <div
+            key={i}
+            className="pt-col h-full flex-1 -mr-px last:mr-0 bg-foreground"
+          />
         ))}
       </div>
+      <div className="pt-fade absolute inset-0 bg-background opacity-0" />
     </div>
   );
 }
