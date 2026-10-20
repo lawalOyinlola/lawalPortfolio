@@ -28,6 +28,12 @@ const FIXED_DELAYS: number[] = V_HEIGHTS.map(
   (_, i) => ((i * 53 + 7) % 100) / 66.7,
 );
 
+// Hero mode closes with the scroll rather than on a timer, so it can never
+// lag behind a fast scroll. The outermost columns start this far into the
+// scroll range after the centre ones.
+const HERO_CLOSE_STAGGER = 0.2;
+const HERO_CLOSE_EASE = "power2.inOut";
+
 function getColumnConfig(
   i: number,
   isMobile: boolean,
@@ -97,208 +103,143 @@ const GridAnimation = ({
         return;
       }
 
+      const triggerEl = triggerRef?.current ?? containerRef.current;
+      if (!triggerEl) return;
+
+      // Partners mode starts fully closed and only opens once it can scrub.
+      if (scrubStart && !ready) {
+        gsap.set(shutters, { yPercent: 0 });
+        return;
+      }
+
       const COLUMN_CONFIGS = V_HEIGHTS.map((_, i) =>
         getColumnConfig(i, isMobile, isSE),
       );
 
-      const oscillationTweens: gsap.core.Tween[] = [];
-      let introTimeline: gsap.core.Timeline | null = null;
-      let scrubTimeline: gsap.core.Timeline | null = null;
+      // Each column's resting height, moved by the intro and the oscillation.
+      // A ticker scales it by scroll progress and writes the result, so the
+      // time-based and scroll-based motion never fight over yPercent.
+      const heights = COLUMN_CONFIGS.map((c) => ({
+        y: scrubStart ? c.hi : -100,
+      }));
+      // quickSetter writes straight to the element: no tween is created per
+      // column per frame, which is what made the old ticker stutter.
+      const setters = shutters.map(
+        (shutter) =>
+          gsap.quickSetter(shutter, "yPercent") as (value: number) => void,
+      );
 
-      const triggerEl = triggerRef?.current ?? containerRef.current;
-      if (!triggerEl) return;
+      const oscillationTweens = heights.map((height, i) => {
+        const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
+        return gsap.fromTo(
+          height,
+          { y: hi },
+          {
+            y: lo,
+            duration: speed,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            delay,
+            paused: true,
+            immediateRender: false,
+          },
+        );
+      });
 
-      const setOscillationPaused = (paused: boolean) => {
-        oscillationTweens.forEach((tween) => {
-          tween.paused(paused);
-        });
+      // 0 → 1 as the section scrolls. Partners mode opens with it; hero mode
+      // closes with it, centre columns first.
+      const scroll = { p: 0 };
+      const closeEase = gsap.parseEase(HERO_CLOSE_EASE);
+      const closeDelays = COLUMN_CONFIGS.map(
+        (_, i) => (Math.abs(i - CENTER) / CENTER) * HERO_CLOSE_STAGGER,
+      );
+      const factor = (i: number) => {
+        if (scrubStart) return scroll.p;
+        const local = gsap.utils.clamp(
+          0,
+          1,
+          (scroll.p - closeDelays[i]) / (1 - HERO_CLOSE_STAGGER),
+        );
+        return 1 - closeEase(local);
       };
 
-      if (scrubStart) {
-        // --- PARTNERS SECTION MODE (Scrub to Open) ---
-        const scrubTargets = COLUMN_CONFIGS.map((c) => ({ y: c.hi }));
+      // Fully closed, nothing moves: skip the writes until scrolling resumes.
+      let wasSettled = false;
+      const render = () => {
+        const settled = scrubStart ? scroll.p === 0 : scroll.p === 1;
+        if (settled && wasSettled) return;
+        wasSettled = settled;
+        heights.forEach((height, i) => setters[i](height.y * factor(i)));
+      };
 
-        scrubTargets.forEach((target, i) => {
-          const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
-          const tween = gsap.fromTo(
-            target,
-            { y: hi },
-            {
-              y: lo,
-              duration: speed,
-              repeat: -1,
-              yoyo: true,
-              ease: "sine.inOut",
-              delay,
-              immediateRender: false,
-            },
-          );
-          oscillationTweens.push(tween);
-        });
+      const scrollTween = gsap.to(scroll, {
+        p: 1,
+        ease: "none",
+        scrollTrigger: scrubStart
+          ? {
+              trigger: triggerEl,
+              start: "top bottom",
+              end: "10% top",
+              scrub: 0.6,
+            }
+          : { trigger: triggerEl, start: "5% top", end: "55% top", scrub: 0.6 },
+      });
 
-        const mProxy = { m: 0 };
-        const tickerUpdater = () => {
-          shutters.forEach((shutter, i) => {
-            gsap.set(shutter, { yPercent: scrubTargets[i].y * mProxy.m });
-          });
-        };
-        gsap.ticker.add(tickerUpdater);
-
-        if (!ready) {
-          return () => {
-            gsap.ticker.remove(tickerUpdater);
-            oscillationTweens.forEach((t) => {
-              t.kill();
-            });
-          };
+      // Off screen, the ticker and the oscillation both stop: nothing runs
+      // for a section nobody can see.
+      let oscillating = scrubStart;
+      let active = false;
+      const setActive = (next: boolean) => {
+        if (next === active) return;
+        active = next;
+        if (active) {
+          wasSettled = false;
+          gsap.ticker.add(render);
+          if (oscillating) oscillationTweens.forEach((t) => t.play());
+        } else {
+          gsap.ticker.remove(render);
+          oscillationTweens.forEach((t) => t.pause());
         }
+      };
+      const visibility = ScrollTrigger.create({
+        trigger: triggerEl,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => setActive(self.isActive),
+      });
 
-        scrubTimeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: triggerEl,
-            start: "top bottom",
-            end: "10% top",
-            scrub: true,
+      let introTimeline: gsap.core.Timeline | null = null;
+      if (!scrubStart && ready) {
+        introTimeline = gsap.timeline({
+          onComplete: () => {
+            oscillating = true;
+            if (active) oscillationTweens.forEach((t) => t.play());
           },
         });
-        scrubTimeline.fromTo(mProxy, { m: 0 }, { m: 1, ease: "none" }, 0);
-
-        return () => {
-          scrubTimeline?.scrollTrigger?.kill();
-          scrubTimeline?.kill();
-          gsap.ticker.remove(tickerUpdater);
-          oscillationTweens.forEach((t) => {
-            t.kill();
-          });
-        };
-      } else {
-        // --- HERO SECTION MODE (Normal Intro) ---
-        let capturedHeights: number[] = [];
-        let closeTween: gsap.core.Tween | null = null;
-        let restoreTween: gsap.core.Tween | null = null;
-
-        shutters.forEach((shutter, i) => {
-          const { lo, hi, speed, delay } = COLUMN_CONFIGS[i];
-          const tween = gsap.fromTo(
-            shutter,
-            { yPercent: hi },
-            {
-              yPercent: lo,
-              duration: speed,
-              repeat: -1,
-              yoyo: true,
-              ease: "sine.inOut",
-              delay,
-              paused: true,
-              overwrite: "auto",
-              immediateRender: false,
-            },
+        heights.forEach((height, i) => {
+          const dist = Math.abs(i - CENTER) / CENTER;
+          introTimeline?.to(
+            height,
+            { y: COLUMN_CONFIGS[i].hi, duration: 2, ease: "power3.out" },
+            dist * 0.7,
           );
-          oscillationTweens.push(tween);
         });
-
-        const closeFromCurrent = () => {
-          capturedHeights = shutters.map((shutter) =>
-            Number(gsap.getProperty(shutter, "yPercent")),
-          );
-
-          introTimeline?.kill();
-          restoreTween?.kill();
-          closeTween?.kill();
-          setOscillationPaused(true);
-
-          closeTween = gsap.to(shutters, {
-            yPercent: 0,
-            duration: 2.4,
-            ease: "power2.inOut",
-            stagger: { amount: 0.14, from: "center" },
-            overwrite: "auto",
-          });
-        };
-
-        const restoreCaptured = () => {
-          const targets = capturedHeights.length
-            ? (i: number) => capturedHeights[i] ?? 0
-            : (i: number) => COLUMN_CONFIGS[i].hi;
-
-          introTimeline?.kill();
-          closeTween?.kill();
-          restoreTween?.kill();
-
-          restoreTween = gsap.to(shutters, {
-            yPercent: targets,
-            duration: 2.4,
-            ease: "power2.inOut",
-            stagger: { amount: 0.12, from: "center" },
-            overwrite: "auto",
-            onComplete: () => {
-              const currentRect = triggerEl.getBoundingClientRect();
-              if (currentRect.top > -currentRect.height * 0.1) {
-                setOscillationPaused(false);
-              }
-            },
-          });
-        };
-
-        const st = ScrollTrigger.create({
-          trigger: triggerEl,
-          start: "10% top",
-          onEnter: closeFromCurrent,
-          onLeaveBack: restoreCaptured,
-        });
-
-        const initScrollState = () => {
-          st.refresh();
-          const rect = triggerEl.getBoundingClientRect();
-          const isPastTrigger = rect.top <= -rect.height * 0.1;
-
-          if (isPastTrigger) {
-            gsap.set(shutters, { yPercent: 0 });
-            setOscillationPaused(true);
-          } else {
-            // Shutters are already pre-set to translateY(-100%) via inline style.
-            // Just run the intro animation from where they already are.
-            if (!ready) return;
-
-            introTimeline = gsap.timeline();
-            shutters.forEach((shutter, i) => {
-              const { hi } = COLUMN_CONFIGS[i];
-              const dist = Math.abs(i - CENTER) / CENTER;
-
-              introTimeline?.to(
-                shutter,
-                {
-                  yPercent: hi,
-                  duration: 2,
-                  ease: "power3.out",
-                },
-                dist * 0.7,
-              );
-            });
-
-            introTimeline.call(() => {
-              const currentRect = triggerEl.getBoundingClientRect();
-              if (currentRect.top > -currentRect.height * 0.1) {
-                setOscillationPaused(false);
-              }
-            });
-          }
-        };
-
-        initScrollState();
-        const timer = setTimeout(() => st.refresh(), 100);
-
-        return () => {
-          clearTimeout(timer);
-          st.kill();
-          introTimeline?.kill();
-          closeTween?.kill();
-          restoreTween?.kill();
-          oscillationTweens.forEach((t) => {
-            t.kill();
-          });
-        };
       }
+
+      render();
+      setActive(visibility.isActive);
+
+      return () => {
+        gsap.ticker.remove(render);
+        visibility.kill();
+        scrollTween.scrollTrigger?.kill();
+        scrollTween.kill();
+        introTimeline?.kill();
+        oscillationTweens.forEach((t) => {
+          t.kill();
+        });
+      };
     },
     {
       scope: containerRef,
