@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback, useMemo } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
@@ -29,7 +29,6 @@ function Projects() {
   const transitionRef = useRef<gsap.core.Timeline | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const router = useRouter();
   const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
 
   const cursorEnabled = useMemo(
@@ -39,11 +38,6 @@ function Projects() {
       !window.matchMedia("(pointer: coarse)").matches,
     [isHydrated, prefersReducedMotion],
   );
-
-  const openActiveProject = useCallback(() => {
-    const slug = FEATURED_PROJECTS[indexRef.current]?.slug;
-    if (slug) router.push(`/projects/${slug}`);
-  }, [router]);
 
   // Pre-split text on mount so name-char-i classes exist
   useGSAP(
@@ -430,11 +424,9 @@ function Projects() {
         </div>
 
         {/* Stacked Project Panels */}
-        <div
-          ref={panelsRef}
-          aria-live="polite"
-          className="relative flex-1 min-h-0"
-        >
+        {/* No aria-live: every scroll step would read a whole panel out.
+            The tabs above already say which project is showing. */}
+        <div ref={panelsRef} className="relative flex-1 min-h-0">
           {FEATURED_PROJECTS.map((project, i) => (
             <div
               key={project.name}
@@ -499,10 +491,11 @@ function Projects() {
             </div>
           ))}
 
-          {/* Click-anywhere overlay — opens the active project */}
-          <button
-            type="button"
-            onClick={openActiveProject}
+          {/* Click-anywhere overlay — opens the active project. A real link,
+              so it prefetches, opens in a new tab on cmd/middle-click and goes
+              through the page transition like every other link. */}
+          <Link
+            href={`/projects/${FEATURED_PROJECTS[activeIndex].slug}`}
             aria-label={`View ${FEATURED_PROJECTS[activeIndex].name} — open project page`}
             className="absolute inset-0 z-20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
             style={{ cursor: cursorEnabled ? "none" : "pointer" }}
