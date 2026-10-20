@@ -52,7 +52,7 @@ These are not optional, and they are the point of the exercise as much as the to
 
 Four pieces work together. GoPhish is the phishing framework: it sends the mail, hosts the fake login page, and records who opened, clicked, and submitted. Mailpit is a fake mail server that catches every message so nothing leaves the machine. On the defensive side, a custom Wazuh decoder parses GoPhish's log and rules fire when someone hits the fake page, while Suricata sees the same click cross the network when you open the phish from a separate VM.
 
-![A purple-team flow: Kali runs GoPhish and Mailpit and sends the lure; a second VM opens the inbox and clicks the link, which crosses the network to Kali's phishing page on port 8080; that click is seen twice, as a host log line in gophish.log shipped by the Wazuh agent and as a Suricata network event, and both feed Wazuh rules 100300 and 100301, tagged to MITRE ATT&CK T1566.](/images/labs/phishing-simulation-lab/phishing-flow.svg)
+![A purple-team flow: Kali runs GoPhish and Mailpit and sends the lure; a second VM opens the inbox and clicks the link, which crosses the network to Kali's phishing page on port 8080; the click is seen twice. The host log line in gophish.log, shipped by the Wazuh agent, raises Wazuh rules 100300 and 100301 through the gophish-access decoder, tagged to MITRE ATT&CK T1566; Suricata sees the same request as a separate network event. Both views reach Wazuh.](/images/labs/phishing-simulation-lab/phishing-flow.svg)
 
 The topology is the familiar three machines, each playing a new part:
 
@@ -320,10 +320,14 @@ curl -s -X POST "http://YOUR-KALI-IP:8080/?rid=<RID>" \
   -d "username=testuser&password=testpass" -o /dev/null -w "submit: %{http_code}\n"
 ```
 
-The click returns **200** (the page is served) and the submit returns **302** (GoPhish records the data, then redirects to the page you set). To get each target's real `<RID>` without guessing, read GoPhish's own API with the key from Account Settings:
+The click returns **200** (the page is served) and the submit returns **302** (GoPhish records the data, then redirects to the page you set). To get each target's real `<RID>` without guessing, read GoPhish's own API with the key from Account Settings. Resolve the campaign by name first, since its numeric id is not always `1` after you delete and recreate campaigns across lab runs:
 
 ```bash
-curl -s "http://YOUR-KALI-IP:3333/api/campaigns/1?api_key=<YOUR_API_KEY>" | \
+API="http://YOUR-KALI-IP:3333/api"; KEY="<YOUR_API_KEY>"
+# find the "Demo Phishing" campaign's id, then list each target's rid and status
+CID=$(curl -s "$API/campaigns/?api_key=$KEY" | \
+  python3 -c 'import json,sys; print(next(c["id"] for c in json.load(sys.stdin) if c["name"]=="Demo Phishing"))')
+curl -s "$API/campaigns/$CID?api_key=$KEY" | \
   python3 -c 'import json,sys; [print(r["email"], r["id"], r["status"]) for r in json.load(sys.stdin)["results"]]'
 ```
 
@@ -481,7 +485,7 @@ sudo systemctl restart wazuh-manager
 sudo systemctl status wazuh-manager --no-pager
 ```
 
-> **Rule IDs must be unique across the server.** If another lab already uses the 100300 block, shift these to the next free run (100310+). A duplicate ID, or any XML error in the decoder or rules, stops the manager from starting; `sudo tail -40 /var/ossec/logs/ossec.log` names the file and line.
+> **Rule IDs must be unique across the server.** If another lab already uses the 100300 block, shift all three (`100300`, `100301`, `100302`) to the next free run such as `100310`+, and update every reference that follows to match: the `rule.id` filter in step 6, the `id: '100300'` line in the logtest output, and the rule-ID mentions in the screenshots and the appendix checklist. A duplicate ID, or any XML error in the decoder or rules, stops the manager from starting; `sudo tail -40 /var/ossec/logs/ossec.log` names the file and line.
 
 ### 5. Prove the rule before trusting the dashboard
 
