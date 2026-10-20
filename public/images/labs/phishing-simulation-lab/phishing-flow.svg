@@ -26,7 +26,7 @@
   <rect class="dg-s-red-soft" x="76" y="196" width="196" height="30" rx="6" fill="none" stroke="#c7a9a9" stroke-width="1.2"/>
   <text class="dg-t-body-strong" x="86" y="215" font-size="12" fill="#333333">GoPhish  ·  :3333 admin  ·  :8080 phish</text>
   <rect class="dg-s-red-soft" x="76" y="232" width="196" height="30" rx="6" fill="none" stroke="#c7a9a9" stroke-width="1.2"/>
-  <text class="dg-t-body-strong" x="86" y="251" font-size="12" fill="#333333">MailHog  ·  :8025 fake inbox</text>
+  <text class="dg-t-body-strong" x="86" y="251" font-size="12" fill="#333333">Mailpit  ·  :8025 fake inbox</text>
 
   <!-- victim VM -->
   <text class="dg-t-gold" x="372" y="120" font-size="12" font-weight="700" fill="#8a6d1a" letter-spacing="1">VICTIM · THE CLICK</text>
