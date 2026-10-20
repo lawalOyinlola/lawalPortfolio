@@ -7,6 +7,7 @@ import { SplitText } from "gsap/SplitText";
 import GridAnimation from "./GridAnimation";
 import { BRAND } from "@/app/constants/brand";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { DURATION, EASE } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, SplitText);
@@ -28,24 +29,23 @@ const Hero = ({ ready = true }: HeroProps) => {
         return;
       }
 
-      // Split text into lines
-      const split = new SplitText(textRef.current, {
+      // Each line rises out of its own mask. autoSplit re-splits when the
+      // window resizes or the web font lands, and carries the animation over
+      // to the new lines, so the wraps are always the ones on screen.
+      const split = SplitText.create(textRef.current, {
         type: "lines",
-        linesClass: "overflow-hidden",
+        mask: "lines",
+        autoSplit: true,
+        onSplit: (self) =>
+          gsap.from(self.lines, {
+            yPercent: 110,
+            stagger: 0.12,
+            duration: DURATION.slow,
+            ease: EASE.out,
+            delay: 0.5,
+          }),
       });
 
-      // Animate lines with a subtle upward 3D-like flip
-      gsap.from(split.lines, {
-        opacity: 0,
-        y: 40,
-        rotateX: -80,
-        stagger: 0.2,
-        duration: 0.8,
-        ease: "power2.out",
-        delay: 0.5,
-      });
-
-      // Cleanup
       return () => split.revert();
     },
     { scope: sectionRef, dependencies: [ready, prefersReducedMotion] },
