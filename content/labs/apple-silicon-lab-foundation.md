@@ -288,7 +288,7 @@ The environment is now the shared base for every track. You do not need all the 
 
 - [**Pentest track**](/security/labs/building-a-pentest-lab-on-apple-silicon): recon to root against the x86 targets, two independent paths, every offensive step paired with the control that stops it. Uses Kali and the targets. (Published.)
 - [**Detection & SIEM track**](/security/labs/detection-siem-lab): stand up Wazuh on the Ubuntu Server box, ship agent and network logs, and catch the attacks from the pentest track. Adds the server. (Published.)
-- **Phishing bridge**: run a campaign and build the detection for it in one exercise. Uses both. (Planned.)
+- **[Phishing bridge](/security/labs/phishing-simulation-lab)**: run a campaign and build the detection for it in one exercise. Uses both.
 - **AI-augmented SOC**: layer network inventory, dashboards, and AI triage on top of the detection stack. (Planned.)
 
 Each track guide opens with a short foundation checklist that links back here, so you never lose your place in it.
@@ -340,4 +340,4 @@ Capture these as you go; they are the evidence that the environment is built and
 
 ## Lab status
 
-The foundation environment is built and in daily use across the tracks in this portfolio. The pentest and detection tracks run on it today, reusing the Ubuntu Server box set up here rather than standing up anything new. The phishing bridge and the AI-augmented SOC track are next and layer onto the same detection stack.
+The foundation environment is built and in daily use across the tracks in this portfolio. The pentest, detection, and phishing-bridge tracks run on it today, reusing the Ubuntu Server box set up here rather than standing up anything new. The AI-augmented SOC track is next and layers onto the same detection stack.
