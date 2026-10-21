@@ -6,9 +6,9 @@ tags: [security, appsec, devops, webdev]
 cover: /images/blog/the-three-questions-at-2am/coverimage.jpg
 coverAlt: "A two-colour risograph illustration of an empty corner shop at night, seen from a security camera mounted in the corner. A wall clock hangs above the door, and a very long receipt curls from the till across the floor. Headline: What happened? Who did it? When?"
 draft: false
-devto_published: false
+devto_published: true
 devto_id: 4888937
-devto_url: https://dev.to/lawaloyinlola/the-three-questions-you-get-asked-at-2am-12pi-temp-slug-4515877
+devto_url: https://dev.to/lawaloyinlola/the-three-questions-you-get-asked-at-2am-5dpm
 ---
 
 Something has gone wrong. A customer has emailed to say their account did something they did not do, or a support agent has noticed an export they cannot explain, or an engineer has found a record that changed at a time nobody was working.
