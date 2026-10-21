@@ -55,9 +55,18 @@ export default function ScrollMemory({ ready }: { ready: boolean }) {
   // Decided once, on the first render that can see the browser: whether this
   // load is a reload of the page that saved a position, recently enough.
   const pendingRef = useRef<Saved | null | undefined>(undefined);
+  const readyRef = useRef(ready);
+
+  useEffect(() => {
+    readyRef.current = ready;
+  }, [ready]);
 
   useEffect(() => {
     const save = () => {
+      // Under the preloader the page is one screen tall and scrollY is 0: a
+      // reload then (a quick double refresh) would overwrite the real spot.
+      // Keep the earlier record instead.
+      if (!readyRef.current) return;
       const section = sectionAtTop();
       const saved: Saved = {
         path: currentPath(),
