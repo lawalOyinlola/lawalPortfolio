@@ -370,6 +370,8 @@ function Projects() {
   return (
     <section
       ref={sectionRef}
+      // The about hero's "See my work" lands here.
+      id="projects"
       className="relative z-1 bg-muted flex justify-center"
       style={{ height: `calc(100vh + ${(COUNT - 1) * STEP_VH}vh)` }}
       aria-label="Featured projects"
