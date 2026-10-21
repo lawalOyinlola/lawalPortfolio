@@ -43,6 +43,9 @@ export default function Faqs({
   const listRef = useRef<HTMLDivElement>(null);
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const { prefersReducedMotion, isHydrated } = usePrefersReducedMotion();
+  // One level under the title, so the outline never skips a level: h2
+  // questions under the FAQ page's h1, h3 under a section's h2.
+  const QuestionHeading = headingLevel === "h1" ? "h2" : "h3";
 
   const visible = typeof limit === "number" ? items.slice(0, limit) : items;
   const hasMore =
@@ -140,7 +143,7 @@ export default function Faqs({
                 key={faq.question}
                 className="faq-row group grid grid-cols-[auto_minmax(0,1fr)_auto] gap-x-4 border-b border-border md:gap-x-6"
               >
-                <h3 className="col-span-3 grid grid-cols-subgrid">
+                <QuestionHeading className="col-span-3 grid grid-cols-subgrid">
                   <button
                     type="button"
                     id={buttonId}
@@ -171,7 +174,7 @@ export default function Faqs({
                       <PlusIcon className="size-4 md:size-5" weight="bold" />
                     </span>
                   </button>
-                </h3>
+                </QuestionHeading>
 
                 <div
                   id={panelId}
