@@ -167,9 +167,14 @@ export default function PageTransition() {
       arrivedRef.current = null;
 
       // Under the cover, so the jump is never seen. Landing on a section also
-      // moves focus there, as a same-page anchor does.
+      // moves focus there, as a same-page anchor does. The hash only carried
+      // the destination, so it comes off the address once the page is there:
+      // a reload then returns to where the visitor has scrolled since, not
+      // back to this section. It was in the URL until now so that the layout's
+      // own focus reset, which runs on arrival, left this focus alone.
       if (target.hash && document.getElementById(target.hash)) {
         scrollToAnchor(target.hash, "instant");
+        window.history.replaceState(null, "", target.href);
       } else {
         window.scrollTo({ top: 0, behavior: "instant" });
       }
