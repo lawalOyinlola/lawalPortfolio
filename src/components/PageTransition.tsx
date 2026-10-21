@@ -35,6 +35,19 @@ interface Target {
 const nextFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
+/**
+ * The fragment as an element id. A malformed escape such as "#50%" cannot be
+ * decoded, so it is used as written rather than throwing out of the click.
+ */
+function fragmentId(hash: string) {
+  const raw = hash.slice(1);
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw;
+  }
+}
+
 /** Where a click on this link would take the visitor, if it is a plain page change. */
 function internalTarget(anchor: HTMLAnchorElement): Target | null {
   if (anchor.target && anchor.target !== "_self") return null;
@@ -51,7 +64,7 @@ function internalTarget(anchor: HTMLAnchorElement): Target | null {
   return {
     pathname: url.pathname,
     href: url.pathname + url.search,
-    hash: decodeURIComponent(url.hash.slice(1)),
+    hash: fragmentId(url.hash),
   };
 }
 
