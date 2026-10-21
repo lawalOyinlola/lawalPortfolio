@@ -1,11 +1,14 @@
 ---
 title: "The three questions you get asked at 2am"
 description: "When something goes wrong, three questions get asked and most teams cannot answer any of them. Why application logs are not an audit trail, how the record becomes a liability, and five questions a non-technical leader can ask about it."
-date: 2026-10-07
+date: 2026-10-21
 tags: [security, appsec, devops, webdev]
 cover: /images/blog/the-three-questions-at-2am/coverimage.jpg
 coverAlt: "A two-colour risograph illustration of an empty corner shop at night, seen from a security camera mounted in the corner. A wall clock hangs above the door, and a very long receipt curls from the till across the floor. Headline: What happened? Who did it? When?"
-draft: true
+draft: false
+devto_published: false
+devto_id: 4888937
+devto_url: https://dev.to/lawaloyinlola/the-three-questions-you-get-asked-at-2am-12pi-temp-slug-4515877
 ---
 
 Something has gone wrong. A customer has emailed to say their account did something they did not do, or a support agent has noticed an export they cannot explain, or an engineer has found a record that changed at a time nobody was working.
@@ -78,7 +81,7 @@ The fix is not more dashboards. It is a short list of things that are worth inte
 - A spike in server errors, which is either an outage or an attack in progress
 - A new administrator, or any new privileged role
 - An unusual volume of data being exported
-- A sudden jump in what a metered third party is costing you, which is often the first visible sign of [abuse](/blog/the-ai-feature-that-bills-you)
+- A sudden jump in what a metered third party is costing you, which is often the first visible sign of abuse
 
 Send those to a person. Not to a channel, not to a dashboard, to a person whose phone will make a noise. Then tune them relentlessly, because an alert channel everyone has muted is worse than having no alerts at all: it looks like coverage, it appears on your security questionnaire as coverage, and it is not coverage.
 
