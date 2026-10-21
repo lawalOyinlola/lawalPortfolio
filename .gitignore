@@ -46,3 +46,6 @@ PORTFOLIO_SYNC.md
 
 # local working docs: plans, todo lists, security audits
 tasks/
+
+# lab infrastructure notes, runbooks and handoffs: local only
+labs_infra/

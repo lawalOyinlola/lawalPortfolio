@@ -2,12 +2,14 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import GridAnimation from "@/components/GridAnimation";
 import { BRAND } from "@/app/constants/brand";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ArrowDownIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { handleNavigation } from "@/lib/navigation";
+import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -249,7 +251,9 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
             </p>
 
             {/* Read as buttons, not as more text: the ask is filled, the
-                way into the page is outlined. */}
+                way to the work is outlined. The arrows say where each goes:
+                down for the contact section on this page, right for another
+                page (up-right stays for links that leave the site). */}
             <div className="hero-item invisible flex flex-wrap items-center gap-3">
               <Button
                 type="button"
@@ -260,20 +264,24 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
                 }
               >
                 Let&apos;s talk
-                <ArrowRightIcon className="group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="lg"
-                className="border-background/35 px-5 text-background hover:border-background hover:bg-transparent hover:text-background"
-                onClick={() =>
-                  handleNavigation("/about", "competence", pathname, router)
-                }
-              >
-                See my work
                 <ArrowDownIcon className="group-hover:translate-y-0.5 transition-transform" />
               </Button>
+              {/* The featured projects on the home page, rather than one
+                  project's page. A real link: it prefetches, opens in a new
+                  tab on cmd-click, and the page transition lands on the
+                  section under the cover. */}
+              <Link
+                href="/#projects"
+                // cn, not buttonVariants alone: cva only concatenates, so the
+                // ghost border and hover colours would not be overridden.
+                className={cn(
+                  buttonVariants({ variant: "ghost", size: "lg" }),
+                  "border-background/35 px-5 text-background hover:border-background hover:bg-transparent hover:text-background",
+                )}
+              >
+                See my work
+                <ArrowRightIcon className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
             </div>
           </div>
         </div>

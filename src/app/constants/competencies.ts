@@ -104,8 +104,9 @@ export const COMPETENCIES: Competency[] = [
 // Icon paths. Use /tool-icons/<name>.svg once you drop logos into /public/tool-icons/
 // or replace with CDN URLs e.g. https://cdn.simpleicons.org/<slug>
 const si = (slug: string) => `https://cdn.simpleicons.org/${slug}`;
+// set/name, not set:name: the colon form now answers 404.
 const iconify = (set: string, name: string) =>
-  `https://api.iconify.design/${set}:${name}.svg`;
+  `https://api.iconify.design/${set}/${name}.svg`;
 
 // Six categories, merged down from ten: each row should read as one job.
 export const TOOL_CATEGORIES: ToolCategory[] = [
