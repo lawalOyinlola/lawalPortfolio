@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useLoading } from "@/components/providers/LoadingContext";
 import { useWindowDimensions } from "@/hooks/useWindowDimensions";
 import { setPageRevealed } from "@/lib/pageReveal";
+import { scrollToAnchor } from "@/lib/navigation";
 import { EASE } from "@/lib/motion";
 
 // How far through the lift the page may start its own entrance animations: far
@@ -23,23 +24,35 @@ const READING_AREAS = ["/blog", "/security/labs"];
 
 type Mode = "grid" | "fade";
 
+interface Target {
+  pathname: string;
+  /** Path and query, without the hash. */
+  href: string;
+  /** The section to land on, if the link names one. */
+  hash: string;
+}
+
 const nextFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
 /** Where a click on this link would take the visitor, if it is a plain page change. */
-function internalTarget(anchor: HTMLAnchorElement) {
+function internalTarget(anchor: HTMLAnchorElement): Target | null {
   if (anchor.target && anchor.target !== "_self") return null;
   if (anchor.hasAttribute("download")) return null;
   const url = new URL(anchor.href, window.location.href);
   if (url.origin !== window.location.origin) return null;
   // Files such as /blog/rss.xml are not pages: the browser opens those itself.
   if (/\.[a-z0-9]+$/i.test(url.pathname)) return null;
-  // Anchors on the same or another page keep their own scrolling behaviour.
-  if (url.hash) return null;
-  // Same page, even with a different query: the cover lifts when the pathname
-  // changes, so a query-only change would leave it waiting for the timeout.
+  // Same page, even with a different query or an anchor: the cover lifts when
+  // the pathname changes, so it would wait for the timeout, and an anchor here
+  // keeps its own smooth scroll. An anchor on another page does go through
+  // the cover, which lands on that section instead of the top.
   if (url.pathname === window.location.pathname) return null;
-  return { pathname: url.pathname, href: url.pathname + url.search };
+  return {
+    pathname: url.pathname,
+    href: url.pathname + url.search,
+    hash: decodeURIComponent(url.hash.slice(1)),
+  };
 }
 
 function readingArea(pathname: string) {
@@ -51,7 +64,8 @@ function readingArea(pathname: string) {
 /**
  * Page changes from the footer, links and buttons on a page: the preloader's
  * grid rises to cover the screen, the route changes underneath it, then the
- * grid lifts away on the new page (always at the top). Within a reading area,
+ * grid lifts away on the new page, at the top or at the section the link
+ * names. Within a reading area,
  * and for reduced motion, a short fade stands in for the grid. Links inside a
  * dialog, such as the menu overlay, are left alone since those already have
  * their own exit. Skipped while the intro is still playing, and for anything
@@ -84,10 +98,10 @@ export default function PageTransition() {
 
     const tweens: gsap.core.Tween[] = [];
 
-    const play = async (target: string, mode: Mode) => {
+    const play = async (target: Target, mode: Mode) => {
       busyRef.current = true;
       // Fetched while the cover comes down, so it is usually ready on landing.
-      router.prefetch(target);
+      router.prefetch(target.href);
 
       const columns = overlay.querySelectorAll(".pt-col");
       const fade = overlay.querySelector(".pt-fade");
@@ -128,13 +142,24 @@ export default function PageTransition() {
       });
       // The home page runs its own entrance (the hero and its scroll
       // animations), which does not fit being held back, so it is left out.
-      if (target !== "/") setPageRevealed(false);
-      router.push(target);
+      if (target.pathname !== "/") setPageRevealed(false);
+      // With a section named, the scroll below places it; Next's own scroll
+      // would race it.
+      if (target.hash) {
+        router.push(`${target.href}#${target.hash}`, { scroll: false });
+      } else {
+        router.push(target.href);
+      }
       await arrived;
       arrivedRef.current = null;
 
-      // Under the cover, so the jump is never seen.
-      window.scrollTo({ top: 0, behavior: "instant" });
+      // Under the cover, so the jump is never seen. Landing on a section also
+      // moves focus there, as a same-page anchor does.
+      if (target.hash && document.getElementById(target.hash)) {
+        scrollToAnchor(target.hash, "instant");
+      } else {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
       await nextFrame();
       await nextFrame();
 
@@ -194,7 +219,7 @@ export default function PageTransition() {
       // Stop the link's own handler too: this takes over the navigation.
       event.preventDefault();
       event.stopPropagation();
-      void play(target.href, mode);
+      void play(target, mode);
     };
 
     document.addEventListener("click", onClick, true);
