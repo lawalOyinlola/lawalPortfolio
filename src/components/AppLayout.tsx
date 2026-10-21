@@ -7,6 +7,7 @@ import Navbar from "./Navbar";
 import Preloader from "./Preloader";
 import Footer from "./Footer";
 import PageTransition from "./PageTransition";
+import ScrollMemory from "./ScrollMemory";
 import { useLoading } from "./providers/LoadingContext";
 
 interface AppLayoutProps {
@@ -88,6 +89,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       )}
 
       <PageTransition />
+      <ScrollMemory ready={!loading} />
 
       <main
         ref={mainRef}
