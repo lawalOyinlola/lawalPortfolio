@@ -60,7 +60,7 @@ export default function LabTripwire({ className }: { className?: string }) {
           data-hairline="tripwire"
           role="img"
           aria-label={LABEL}
-          className="absolute left-[-17.5%] top-1/2 aspect-5/4 w-[135%] -translate-y-[52%] [--hairline-plate:var(--background)]"
+          className="absolute left-[-17.5%] top-1/2 aspect-5/4 w-[135%] translate-y-[-52%] [--hairline-plate:var(--background)]"
         />
       </div>
     </div>

@@ -9,9 +9,9 @@ import {
 import { BRAND, LAB_SERIES } from "@/app/constants";
 import { getBlogPosts, getLabPosts, toPostSummaries } from "@/lib/content";
 import ContactsRef from "@/components/ContactsRef";
-import { PostTile } from "@/components/content/PostCard";
 import LabIndex from "@/components/security/LabIndex";
 import ToolMarquee from "@/components/security/ToolMarquee";
+import WritingCarousel from "@/components/security/WritingCarousel";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
 const title = "Security";
@@ -105,8 +105,8 @@ const CREDENTIAL = {
   ],
 };
 
-/** How many posts the Writing section shows before handing off to /blog. */
-const WRITING_LIMIT = 4;
+/** How many posts the Writing carousel holds before handing off to /blog. */
+const WRITING_LIMIT = 8;
 
 export default function SecurityPage() {
   // Series order, then build order within a series: the same reading order
@@ -346,13 +346,9 @@ export default function SecurityPage() {
               </Link>
             </div>
 
-            <ul className="mt-10 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4 md:mt-14">
-              {writing.map((post, i) => (
-                <li key={post.slug}>
-                  <PostTile post={post} index={i} />
-                </li>
-              ))}
-            </ul>
+            <div className="mt-10 md:mt-14">
+              <WritingCarousel posts={writing} />
+            </div>
           </section>
         )}
       </div>

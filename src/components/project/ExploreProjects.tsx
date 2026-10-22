@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  type CarouselApi,
   Carousel,
   CarouselContent,
   CarouselItem,
@@ -13,6 +14,7 @@ import {
 import { PROJECTS } from "@/app/constants/projects";
 import Autoplay from "embla-carousel-autoplay";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useRatchet } from "@/hooks/useRatchet";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -35,6 +37,10 @@ export default function ExploreProjects({
     () => (prefersReducedMotion ? [] : [Autoplay({ delay: 3000 })]),
     [prefersReducedMotion],
   );
+  // Same ratchet as the Writing row on /security: the buttons, arrow keys and
+  // drags all catch, run past the stop and rattle back into it.
+  const [api, setApi] = useState<CarouselApi>();
+  const step = useRatchet(api, prefersReducedMotion);
 
   const containerRef = useRef<HTMLElement>(null);
 
@@ -83,9 +89,17 @@ export default function ExploreProjects({
           opts={{
             align: "start",
             loop: otherProjects.length > 1,
+            duration: 12,
           }}
           aria-label="Explore other projects carousel"
           plugins={plugins}
+          setApi={setApi}
+          onKeyDownCapture={(event) => {
+            if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+              event.preventDefault();
+              step(event.key === "ArrowRight" ? 1 : -1);
+            }
+          }}
           className="w-full relative group"
         >
           <CarouselContent className="-ml-4 md:-ml-6 py-4.5">
@@ -95,38 +109,42 @@ export default function ExploreProjects({
                 className="pl-4 md:pl-6 sm:basis-1/2 lg:basis-1/3"
                 aria-label={`Project ${index + 1} of ${otherProjects.length}: ${project.name}`}
               >
-                <Link
-                  href={`/projects/${project.slug}`}
-                  className="explore-item opacity-0 flex flex-col gap-5 group/card w-full"
-                >
-                  <div className="relative w-full aspect-4/3 overflow-hidden bg-foreground/5">
-                    <Image
-                      src={project.image}
-                      alt={project.name}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover/card:scale-102"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm md:text-base group-hover/card:opacity-80 transition-opacity">
-                      {project.name}
-                    </h3>
-                    <p className="text-xs text-foreground/60">
-                      {project.category}
-                    </p>
-                  </div>
-                </Link>
+                <div className="ratchet-slide">
+                  <Link
+                    href={`/projects/${project.slug}`}
+                    className="explore-item opacity-0 flex flex-col gap-5 group/card w-full"
+                  >
+                    <div className="relative w-full aspect-4/3 overflow-hidden bg-foreground/5">
+                      <Image
+                        src={project.image}
+                        alt={project.name}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover/card:scale-102"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-sm md:text-base group-hover/card:opacity-80 transition-opacity">
+                        {project.name}
+                      </h3>
+                      <p className="text-xs text-foreground/60">
+                        {project.category}
+                      </p>
+                    </div>
+                  </Link>
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>
 
           <div className="flex justify-end gap-2 mt-8 md:absolute md:-top-20 md:right-0 md:mt-0">
             <CarouselPrevious
+              onClick={() => step(-1)}
               size="icon-lg"
               className="static size-9 top-auto inset-s-auto translate-y-0 md:absolute md:top-10 md:inset-s-auto md:-left-20 md:transform-none bg-background text-foreground border-foreground/20 hover:bg-foreground hover:text-background"
             />
             <CarouselNext
+              onClick={() => step(1)}
               size="icon-lg"
               className="static size-9 top-auto inset-e-auto translate-y-0 md:absolute md:top-10 md:right-0 md:transform-none bg-background text-foreground border-foreground/20 hover:bg-foreground hover:text-background"
             />

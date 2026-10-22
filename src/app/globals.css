@@ -797,14 +797,14 @@ html[data-intro="skip"] .pl-line {
 }
 
 /* The tool strip on /security: two copies of the list side by side, moved by
-   exactly one copy's width so the loop has no seam. Paused on hover and
-   focus, and not moving at all for reduced motion. */
+   exactly one copy's width so the loop has no seam. Paused while the strip is
+   hovered (nothing in it takes focus; the pause button sits outside it), and
+   not moving at all for reduced motion. */
 .marquee-track {
   animation: marquee 48s linear infinite;
 }
 
-.marquee:hover .marquee-track,
-.marquee:focus-within .marquee-track {
+.marquee:hover .marquee-track {
   animation-play-state: paused;
 }
 

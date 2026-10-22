@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useMemo, useRef, useState } from "react";
-import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getTagColor } from "@/lib/tag-colors";
 import Pagination from "./Pagination";
 import PostCard, { type PostSummary } from "./PostCard";
@@ -40,7 +40,11 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
   const [sortKey, setSortKey] = useState("date");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [page, setPage] = useState(1);
+  // Below lg, search, sort and topics fold behind one toggle so the posts
+  // start near the top of the screen; from lg up they sit in the sidebar.
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const searchId = useId();
+  const filtersId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   /**
@@ -124,6 +128,14 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
     currentPage * pageSize,
   );
 
+  // The default view leads with one post, a size up: the featured one, or the
+  // newest. Any search, filter, other sort or later page is a plain list.
+  const lead =
+    !isFiltered && sortKey === "date" && sortDir === "desc" && currentPage === 1 && pageItems.length > 1
+      ? pageItems[0]
+      : null;
+  const activeCount = activeTags.length + (query.trim() ? 1 : 0);
+
   function changePage(next: number) {
     setPage(next);
     scrollToResults();
@@ -160,107 +172,134 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
       {/* Mirrors the table of contents on a post page: same width, same side,
           same sticky behaviour, so the two pages feel like one system. */}
       <aside className="lg:sticky lg:top-28 lg:order-2 lg:w-76 lg:shrink-0">
-        <label
-          htmlFor={searchId}
-          className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary"
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((open) => !open)}
+          aria-expanded={filtersOpen}
+          aria-controls={filtersId}
+          className="flex w-full items-center justify-between gap-4 border-y border-border/40 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary lg:hidden"
         >
-          Search
-        </label>
-        <div className="relative mt-3">
-          <MagnifyingGlassIcon
-            size={15}
+          <span>
+            Search and filter
+            {activeCount > 0 && (
+              <span className="ml-2 font-normal tabular-nums text-muted-foreground">
+                · {activeCount} on
+              </span>
+            )}
+          </span>
+          <CaretDownIcon
+            size={12}
             weight="bold"
             aria-hidden
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className={`transition-transform duration-200 ${filtersOpen ? "rotate-180" : ""}`}
           />
-          <input
-            id={searchId}
-            type="search"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setPage(1);
-            }}
-            placeholder="WAF, careers, tooling"
-            className="search-field w-full rounded-full border border-border bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => {
-                setQuery("");
+        </button>
+
+        <div id={filtersId} className={filtersOpen ? "pt-6 pb-2" : "hidden lg:block"}>
+          <label
+            htmlFor={searchId}
+            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary"
+          >
+            Search
+          </label>
+          <div className="relative mt-3">
+            <MagnifyingGlassIcon
+              size={15}
+              weight="bold"
+              aria-hidden
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <input
+              id={searchId}
+              type="search"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
                 setPage(1);
               }}
-              aria-label="Clear search"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:text-primary"
+              placeholder="WAF, careers, tooling"
+              className="search-field w-full rounded-full border border-border bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setPage(1);
+                }}
+                aria-label="Clear search"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:text-primary"
+              >
+                <XIcon size={13} weight="bold" aria-hidden />
+              </button>
+            )}
+          </div>
+
+          {posts.length > 1 && (
+            <>
+              <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+                Sort
+              </h2>
+              <SortControl
+                options={SORT_OPTIONS}
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onChange={changeSort}
+              />
+            </>
+          )}
+
+          <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+            Topics
+          </h2>
+          <ul className="mt-3 flex flex-wrap gap-1.5">
+            {tags.map(({ tag, count }) => {
+              const isActive = activeTags.includes(tag);
+              return (
+                <li key={tag}>
+                  <button
+                    type="button"
+                    onClick={() => toggleTag(tag)}
+                    aria-pressed={isActive}
+                    style={{ "--tag": getTagColor(tag) } as React.CSSProperties}
+                    className={`tag-filter ${isActive ? "tag-filter-active" : ""}`}
+                  >
+                    <span aria-hidden className="opacity-55">
+                      #
+                    </span>
+                    {tag}
+                    <span className="ml-0.5 tabular-nums opacity-55">
+                      {count}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          {isFiltered && (
+            <button
+              type="button"
+              onClick={clearAll}
+              className="mt-5 text-[10px] uppercase tracking-widest text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary"
             >
-              <XIcon size={13} weight="bold" aria-hidden />
+              Clear Filter
+              {activeTags.length > 1 && "s"}
             </button>
           )}
         </div>
-
-        {posts.length > 1 && (
-          <>
-            <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-              Sort
-            </h2>
-            <SortControl
-              options={SORT_OPTIONS}
-              sortKey={sortKey}
-              sortDir={sortDir}
-              onChange={changeSort}
-            />
-          </>
-        )}
-
-        <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-          Topics
-        </h2>
-        <ul className="mt-3 flex flex-wrap gap-1.5">
-          {tags.map(({ tag, count }) => {
-            const isActive = activeTags.includes(tag);
-            return (
-              <li key={tag}>
-                <button
-                  type="button"
-                  onClick={() => toggleTag(tag)}
-                  aria-pressed={isActive}
-                  style={{ "--tag": getTagColor(tag) } as React.CSSProperties}
-                  className={`tag-filter ${isActive ? "tag-filter-active" : ""}`}
-                >
-                  <span aria-hidden className="opacity-55">
-                    #
-                  </span>
-                  {tag}
-                  <span className="ml-0.5 tabular-nums opacity-55">
-                    {count}
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-
-        {isFiltered && (
-          <button
-            type="button"
-            onClick={clearAll}
-            className="mt-5 text-[10px] uppercase tracking-widest text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary"
-          >
-            Clear Filter
-            {activeTags.length > 1 && "s"}
-          </button>
-        )}
       </aside>
       <div ref={resultsRef} className="scroll-mt-28 lg:order-1">
         <p
           role="status"
           className="text-xs uppercase tracking-widest text-muted-foreground"
         >
-          {isFiltered
-            ? `${results.length} of ${posts.length} ${posts.length === 1 ? "post" : "posts"}`
-            : `${posts.length} ${posts.length === 1 ? "post" : "posts"}`}
-          {pageCount > 1 && ` · page ${currentPage} of ${pageCount}`}
+          {/* The header already counts the posts; this only speaks up when a
+              filter or a page changes what is shown. */}
+          {isFiltered &&
+            `${results.length} of ${posts.length} ${posts.length === 1 ? "post" : "posts"}`}
+          {pageCount > 1 &&
+            `${isFiltered ? " · " : ""}page ${currentPage} of ${pageCount}`}
         </p>
 
         {results.length > 0 ? (
@@ -268,7 +307,7 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
             <ul className="mt-6 divide-y divide-border/60 border-y border-border/25">
               {pageItems.map((post, index) => (
                 <li key={post.slug}>
-                  <PostCard post={post} index={index} />
+                  <PostCard post={post} index={index} lead={post === lead} />
                 </li>
               ))}
             </ul>

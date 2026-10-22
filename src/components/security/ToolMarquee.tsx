@@ -8,8 +8,10 @@ import { PauseIcon, PlayIcon } from "@phosphor-icons/react";
  * frontmatter and the CVEs it exploited, so the list grows as labs ship.
  *
  * It moves for longer than five seconds, so it carries its own pause button
- * as well as pausing on hover; reduced motion never moves it at all (see
- * `.marquee-track` in globals.css).
+ * as well as pausing while the strip itself is hovered; reduced motion never
+ * moves it at all (see `.marquee-track` in globals.css). The hover pause sits
+ * on the strip, not the whole row, or pressing play would leave it held by
+ * the pointer still on the button.
  */
 export default function ToolMarquee({ items }: { items: string[] }) {
   const [paused, setPaused] = useState(false);
@@ -45,8 +47,8 @@ export default function ToolMarquee({ items }: { items: string[] }) {
   );
 
   return (
-    <div className="marquee relative flex items-center gap-3 border-y border-background/10 py-4">
-      <div className="relative min-w-0 flex-1 overflow-hidden mask-[linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+    <div className="relative flex items-center gap-3 border-y border-background/10 py-4">
+      <div className="marquee relative min-w-0 flex-1 overflow-hidden mask-[linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
         <div
           className="marquee-track flex w-max"
           style={paused ? { animationPlayState: "paused" } : undefined}

@@ -3,6 +3,7 @@ import { BRAND } from "@/app/constants";
 import { getBlogPosts, toPostSummaries } from "@/lib/content";
 import { RssSimpleIcon } from "@phosphor-icons/react/dist/ssr";
 import BlogExplorer from "@/components/content/BlogExplorer";
+import BlogTypewriter from "@/components/content/BlogTypewriter";
 import ContactsRef from "@/components/ContactsRef";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
@@ -54,40 +55,44 @@ export default function BlogPage() {
       <div className="h-24 md:h-32" aria-hidden />
 
       <div className="wrapper mx-auto">
-        <header className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-          <SectionHeader
-            as="h1"
-            subtitle="Writing"
-            title="Blog"
-            description="Notes on what I build, break and learn along the way. Software and frontend engineering, performance, accessibility and security, plus the parts of the job that never show up in a diff, like leading a team and explaining a technical decision to people who don't write code. Posts live here first and are syndicated elsewhere."
-            descriptionClassName="max-w-[58ch] text-muted-foreground"
-            className="max-w-2xl"
-          />
-          {newest && (
-            <div className="flex shrink-0 flex-col gap-4 border-t border-border/40 pt-5 md:mb-3 md:items-end md:border-t-0 md:pt-0">
-              <dl className="flex gap-10 text-[11px] uppercase tracking-widest md:text-right">
-                <div className="flex flex-col gap-1">
-                  <dt className="text-muted-foreground">Posts</dt>
-                  <dd className="font-mono text-sm tabular-nums text-primary">
+        <header className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+          <div className="flex max-w-2xl flex-col gap-6">
+            <SectionHeader
+              as="h1"
+              subtitle="Writing"
+              title="Blog"
+              description="Notes on what I build, break and learn along the way. Software and frontend engineering, performance, accessibility and security, plus the parts of the job that never show up in a diff, like leading a team and explaining a technical decision to people who don't write code. Posts live here first and are syndicated elsewhere."
+              descriptionClassName="max-w-[58ch] text-muted-foreground"
+            />
+            {newest && (
+              <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-widest text-muted-foreground">
+                <span>
+                  <span className="font-mono tabular-nums text-primary">
                     {String(posts.length).padStart(2, "0")}
-                  </dd>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <dt className="text-muted-foreground">Last published</dt>
-                  <dd className="text-sm text-primary">
-                    <time dateTime={newest.dateISO}>{newest.dateLabel}</time>
-                  </dd>
-                </div>
-              </dl>
-              <a
-                href="/blog/rss.xml"
-                className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary"
-              >
-                <RssSimpleIcon weight="bold" aria-hidden className="size-3.5" />
-                RSS feed
-              </a>
-            </div>
-          )}
+                  </span>{" "}
+                  posts
+                </span>
+                <span aria-hidden>·</span>
+                <span>
+                  Last published{" "}
+                  <time dateTime={newest.dateISO} className="text-primary">
+                    {newest.dateLabel}
+                  </time>
+                </span>
+                <span aria-hidden>·</span>
+                <a
+                  href="/blog/rss.xml"
+                  className="inline-flex items-center gap-1.5 transition-colors hover:text-primary"
+                >
+                  <RssSimpleIcon weight="bold" aria-hidden className="size-3.5" />
+                  RSS feed
+                </a>
+              </p>
+            )}
+          </div>
+          {/* Hidden on phones, where it would push the first post a screen
+              further down; the posts are what this page is for. */}
+          <BlogTypewriter className="hidden w-96 shrink-0 self-end md:block lg:w-lg xl:w-xl" />
         </header>
 
         {posts.length === 0 ? (
