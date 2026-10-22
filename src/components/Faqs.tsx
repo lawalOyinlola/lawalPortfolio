@@ -8,6 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FAQS, type FAQ } from "@/app/constants";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import FaqRolodex from "@/components/FaqRolodex";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,8 @@ interface FaqsProps {
   description?: string;
   /** "h1" when the FAQ is the page itself; sections keep "h2". */
   headingLevel?: "h1" | "h2";
+  /** Shows the Rolodex under the header, open at the open question. */
+  figure?: boolean;
 }
 
 export default function Faqs({
@@ -38,6 +41,7 @@ export default function Faqs({
   subtitle = "FAQ",
   description = "Answers to the questions I hear most often from teams, founders, and recruiters.",
   headingLevel = "h2",
+  figure = false,
 }: FaqsProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -126,6 +130,16 @@ export default function Faqs({
                 →
               </span>
             </Link>
+          )}
+
+          {figure && (
+            // Every question gets a card, also where the list shows only the
+            // first few: the cards behind them say there are more.
+            <FaqRolodex
+              count={items.length}
+              openIndex={openIndex}
+              className="w-full max-w-sm self-center lg:max-w-md lg:self-start"
+            />
           )}
         </div>
 
