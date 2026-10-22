@@ -38,6 +38,9 @@
   --sidebar-accent-foreground: #171717;
   --sidebar-border: #e5e5e5;
   --sidebar-ring: #a1a1a1;
+  /* Selected text: the site's rose accent, with ink that clears 4.5:1 on it. */
+  --selection: #be123c;
+  --selection-foreground: #ffffff;
 }
 
 @theme inline {
@@ -119,6 +122,8 @@
   --sidebar-accent-foreground: #fafafa;
   --sidebar-border: #ffffff;
   --sidebar-ring: #737373;
+  --selection: #fb7185;
+  --selection-foreground: #0a0a0a;
 }
 
 @layer components {
@@ -145,7 +150,11 @@
 
 @layer base {
   * {
-    @apply border-border caret-primary selection:bg-ring/40;
+    @apply border-border caret-primary;
+  }
+  ::selection {
+    background-color: var(--selection);
+    color: var(--selection-foreground);
   }
   a,
   button,
