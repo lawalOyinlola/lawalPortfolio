@@ -282,6 +282,15 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
                 See my work
                 <ArrowRightIcon className="group-hover:translate-x-0.5 transition-transform" />
               </Link>
+              {/* The security half of the title, one step down from the two
+                  buttons so the hierarchy stays talk, work, then labs. */}
+              <Link
+                href="/security"
+                className="group inline-flex items-center gap-1.5 px-2 text-xs uppercase tracking-widest text-background/70 transition-colors hover:text-background"
+              >
+                See the labs
+                <ArrowRightIcon className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
             </div>
           </div>
         </div>
