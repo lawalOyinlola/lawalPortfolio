@@ -35,9 +35,17 @@ function PostBadge({
 export default function PostCard({
   post,
   index = 0,
+  lead = false,
 }: {
   post: PostSummary;
   index?: number;
+  /**
+   * The first row of the default view, loaded first since its cover is the
+   * first large image. From xl up, where the text column has room to spare,
+   * its cover and title go a size up; below that it is a plain row, so a long
+   * title never ends up squeezed into a narrow column.
+   */
+  lead?: boolean;
 }) {
   const { title, description, dateISO, dateLabel, tags, cover } = post;
   const accentStyle = tags[0]
@@ -53,7 +61,10 @@ export default function PostCard({
         // self-start is load-bearing: without it the flex row stretches this
         // box to the text column's height, the 16/9 ratio loses, and
         // object-cover crops the sides off the cover art.
-        <CoverReveal revealKey={cover} className="relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72">
+        <CoverReveal
+          revealKey={cover}
+          className={`relative aspect-video w-full shrink-0 self-start overflow-hidden rounded-xl bg-muted ring-1 ring-border/15 md:w-64 lg:w-72 ${lead ? "xl:w-96" : ""}`}
+        >
           <Image
             src={cover}
             // Decorative here on purpose: the title and description beside it
@@ -61,21 +72,35 @@ export default function PostCard({
             // out before the title on every card. The post page describes it.
             alt=""
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 256px, 288px"
+            loading={lead ? "eager" : undefined}
+            fetchPriority={lead ? "high" : undefined}
+            sizes={
+              lead
+                ? "(max-width: 768px) 100vw, (max-width: 1024px) 256px, (max-width: 1280px) 288px, 384px"
+                : "(max-width: 768px) 100vw, (max-width: 1024px) 256px, 288px"
+            }
             className="object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          />
+          {/* The badge rides on the cover, as on a tile: top right, because
+              cover headlines sit top left (docs/imagery.md). */}
+          <PostBadge
+            badge={post.badge}
+            className="absolute right-3 top-3 z-10 text-[10px] uppercase tracking-widest shadow-sm"
           />
         </CoverReveal>
       )}
 
       <div className="flex flex-1 flex-col gap-2.5">
         <div className="flex items-center gap-3 text-[11px] uppercase tracking-widest text-muted-foreground">
-          <PostBadge badge={post.badge} />
+          {!cover && <PostBadge badge={post.badge} />}
           <time dateTime={dateISO}>{dateLabel}</time>
           <span aria-hidden>·</span>
           <span>{post.readingMinutes} min read</span>
         </div>
 
-        <h2 className="max-w-[40ch] text-xl font-semibold leading-snug tracking-tight text-primary md:text-[1.6rem]">
+        <h2
+          className={`max-w-[40ch] font-semibold leading-snug tracking-tight text-primary text-xl md:text-[1.6rem] ${lead ? "text-balance xl:text-[1.9rem]" : ""}`}
+        >
           <Link
             href={`/blog/${post.slug}`}
             className="after:absolute after:inset-0 decoration-(--post-accent,var(--ring)) decoration-2 underline-offset-[6px] group-hover:underline"
