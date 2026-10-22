@@ -45,6 +45,7 @@ export default function FaqPage() {
       <Faqs
         id="faq"
         headingLevel="h1"
+        figure
         title="Frequently asked questions"
         subtitle="FAQ"
         description={`Everything I usually get asked before we start working together: engagement models, my stack, how I scope and ship, and what to expect after launch. Can't find what you're looking for? Reach out and I'll respond within 1 to 2 business days.`}
