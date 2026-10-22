@@ -6,10 +6,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import GridAnimation from "@/components/GridAnimation";
 import { BRAND } from "@/app/constants/brand";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ArrowDownIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { handleNavigation } from "@/lib/navigation";
-import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -243,6 +242,33 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
                 &amp; Application Security
               </span>
             </h1>
+
+            {/* The two halves of the title, one way in to each, at equal
+                weight: the work for the engineering, the labs for the
+                security. Real links, so they prefetch and open in a new tab
+                on cmd-click. The arrows point right: another page. */}
+            <nav
+              aria-label="See the work"
+              className="hero-item invisible flex flex-wrap items-center gap-x-8 gap-y-2 pt-1 text-xs uppercase tracking-widest"
+            >
+              {/* The featured projects on the home page, rather than one
+                  project's page; the page transition lands on the section
+                  under the cover. */}
+              <Link
+                href="/#projects"
+                className="group inline-flex items-center gap-1.5 border-b border-background/35 pb-1 text-background transition-colors hover:border-background"
+              >
+                See my work
+                <ArrowRightIcon className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <Link
+                href="/security"
+                className="group inline-flex items-center gap-1.5 border-b border-background/35 pb-1 text-background transition-colors hover:border-background"
+              >
+                See the labs
+                <ArrowRightIcon className="group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            </nav>
           </div>
 
           <div className="flex flex-col gap-4 md:max-w-sm md:justify-self-end">
@@ -250,11 +276,9 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
               {BRAND.description}
             </p>
 
-            {/* Read as buttons, not as more text: the ask is filled, the
-                way to the work is outlined. The arrows say where each goes:
-                down for the contact section on this page, right for another
-                page (up-right stays for links that leave the site). */}
-            <div className="hero-item invisible flex flex-wrap items-center gap-3">
+            {/* The one ask, filled, beside the line it answers. The arrow
+                points down: the contact section is on this page. */}
+            <div className="hero-item invisible">
               <Button
                 type="button"
                 size="lg"
@@ -266,31 +290,6 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
                 Let&apos;s talk
                 <ArrowDownIcon className="group-hover:translate-y-0.5 transition-transform" />
               </Button>
-              {/* The featured projects on the home page, rather than one
-                  project's page. A real link: it prefetches, opens in a new
-                  tab on cmd-click, and the page transition lands on the
-                  section under the cover. */}
-              <Link
-                href="/#projects"
-                // cn, not buttonVariants alone: cva only concatenates, so the
-                // ghost border and hover colours would not be overridden.
-                className={cn(
-                  buttonVariants({ variant: "ghost", size: "lg" }),
-                  "border-background/35 px-5 text-background hover:border-background hover:bg-transparent hover:text-background",
-                )}
-              >
-                See my work
-                <ArrowRightIcon className="group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              {/* The security half of the title, one step down from the two
-                  buttons so the hierarchy stays talk, work, then labs. */}
-              <Link
-                href="/security"
-                className="group inline-flex items-center gap-1.5 px-2 text-xs uppercase tracking-widest text-background/70 transition-colors hover:text-background"
-              >
-                See the labs
-                <ArrowRightIcon className="group-hover:translate-x-0.5 transition-transform" />
-              </Link>
             </div>
           </div>
         </div>
