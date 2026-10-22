@@ -22,7 +22,8 @@ interface HomeClientProps {
 }
 
 // Order: who I am, what I build (the work), then how I test it, proof from
-// others, the record, the answers, and finally the ask.
+// others, the record, the answers, and finally the ask. The grid sits between
+// the work and the security section so its dark bars run straight into it.
 export default function HomeClient({ securityLab }: HomeClientProps) {
   const { loading } = useLoading();
 
@@ -31,9 +32,9 @@ export default function HomeClient({ securityLab }: HomeClientProps) {
       <Hero ready={!loading} />
       <Product />
       <Projects />
+      <ScrollAnimation ready={!loading} />
       <SecurityShowcase lab={securityLab} />
       <Clients />
-      <ScrollAnimation ready={!loading} />
       <BrandStats />
       {/* Slides up over the last, pinned screen of BrandStats */}
       <div className="relative z-2 mt-[-100vh]">
