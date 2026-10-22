@@ -8,8 +8,8 @@
   <h1 align="center">LAWAL | Portfolio, Blog & Security Labs</h1>
 
   <p align="center">
-    The digital home of Oyinlola Lawal, a frontend engineer learning to break and
-    secure the things he builds.
+    The digital home of Oyinlola Lawal, a software engineer working in application
+    security: I build web products, then test them before anyone relies on them.
     <br />
     Part showcase, part workbench: high-performance interfaces, a writing habit, and
     hands-on security labs, all in one repo.
@@ -44,9 +44,9 @@
 
 This is the source for my personal site, and it has grown past "portfolio." It started as a
 place to show frontend work, and it still does that: the focus is performance, clean
-architecture, and animation that serves usability instead of fighting it. But it is also where
-I write about engineering and application security, and where I publish the write-ups from the
-security labs I build on my own hardware.
+architecture, and animation that serves usability instead of fighting it. It is now also where
+I write about software engineering and application security, and where I publish the write-ups
+from the security labs I build on my own hardware and against my own apps.
 
 I came to security from the frontend, so the through-line across all of it is the same
 instinct: understand how the machine actually works, because that is what shows you both where
@@ -55,8 +55,8 @@ it breaks and how to fix it. The site is the showcase; this repo is the workbenc
 Three things live here:
 
 - **The portfolio and site:** the pages, sections, and the design system behind them.
-- **The blog:** Markdown posts validated at build time and syndicated to dev.to, with the
-  canonical URL pointing back here.
+- **The blog:** Markdown posts on engineering, application security and leadership, validated
+  at build time and syndicated to dev.to, with the canonical URL pointing back here.
 - **The security labs:** reproducible lab write-ups under `/security/labs`, each taken end to
   end with the defensive lesson behind every step.
 
@@ -85,30 +85,36 @@ foundation stands the environment up once, and each track reuses it. The AppSec 
 web app instead, starting with the CI/CD pipeline that checks what goes into it and moving on to
 defending it at runtime. A cloud series on Azure is planned after both.
 
+Six labs are published: Foundation, Pentest, Detection & SIEM, Phishing Bridge, CI/CD pipeline
+and WAF. The AI assistant, AI-augmented SOC and Azure labs are planned; on the site's lab map
+they read as "planned" until a lab is published under their slug.
+
 ```mermaid
 flowchart TD
   subgraph AppSec
     C["CI/CD pipeline<br/>(build time)"] --> W["WAF<br/>(runtime)"]
-    W --> AA["AI assistant<br/>(injection)"]
+    W --> AA["AI assistant<br/>(injection, planned)"]
   end
   subgraph Home
     F["Foundation<br/>UTM · network · Kali · server"] --> P["Pentest<br/>(offensive)"]
     F --> D["Detection & SIEM<br/>(defensive)"]
     D --> Ph["Phishing bridge<br/>(purple)"]
-    D --> AI["AI-augmented SOC<br/>(defensive)"]
+    D --> AI["AI-augmented SOC<br/>(defensive, planned)"]
   end
 ```
 
 ### Key features
 
 - **Next.js 16 App Router:** React Server Components and static generation for fast first loads and good SEO.
-- **Markdown content, validated at build:** blog posts and lab write-ups live as plain Markdown, with syntax highlighting, a collapsible table of contents, image zoom, search, and tag filters.
+- **Markdown content, validated at build:** blog posts and lab write-ups live as plain Markdown, with syntax highlighting, a collapsible table of contents, image zoom, search, sorting, tag filters and pagination.
 - **Interactive labs hub:** `/security/labs` renders the portfolio as a clickable map where published labs link out and planned ones read as "coming soon."
 - **dev.to syndication:** `pnpm sync:devto` pushes posts to dev.to with the canonical URL pointing back here. See [docs/blogging.md](docs/blogging.md).
 - **Magnetic micro-interactions & cursor orchestration:** a `Magnetic` component and a `TargetCursor` built on GSAP for a physically reactive UI.
-- **GSAP animation:** staggered, scroll-driven sequences engineered for 60fps, with reduced-motion respected.
+- **GSAP animation:** staggered, scroll-driven sequences engineered for 60fps, with reduced-motion respected, and shared easing and duration tokens in `src/lib/motion.ts`.
+- **Page transitions and scroll memory:** the preloader grid covers route changes, cross-page anchors land on their section, and a reload returns to the same scroll position.
+- **Hairline figures:** small isometric line drawings (the labs tripwire, the FAQ rolodex, the blog typewriter) drawn by a vendored copy of the Hairline engine in `src/lib/hairline/`.
 - **SEO and AI discovery:** Metadata API, JSON-LD structured data, a sitemap, and `/llms.txt` for AI crawlers.
-- **Security by default:** a Content Security Policy and security headers on every response, plus CI that fails on high-severity dependency advisories or a committed secret.
+- **Security by default:** a Content Security Policy and security headers on every response, plus CI that fails on high-severity dependency advisories or a committed secret, and CodeQL static analysis.
 - **Accessible, responsive design:** built with WCAG guidelines in mind, fluid from large desktops to mobile with **Tailwind CSS**.
 
 ---
@@ -185,7 +191,8 @@ docs/
 public/
 └── images/               # Post and lab images, grouped by slug
 scripts/
-└── sync-devto.mjs        # Syndicates posts to dev.to
+├── sync-devto.mjs        # Syndicates posts to dev.to
+└── theme-svg.mjs         # Tags lab diagram colours so they switch in dark mode
 src/
 ├── app/
 │   ├── (route)/          # Pages: home, about, faq, projects, blog, security, security/labs
@@ -196,13 +203,16 @@ src/
 │   ├── robots.ts
 │   └── sitemap.ts
 ├── components/
-│   ├── content/          # Blog & lab UI: post cards, prose, TOC, image zoom, LabMap, explorers
-│   ├── ui/               # Primitives (buttons, carousel, Magnetic, tooltips)
+│   ├── content/          # Blog & lab UI: post cards, prose, TOC, image zoom, LabMap, explorers, pagination
+│   ├── security/         # /security page: lab index, writing carousel, tool marquee
+│   ├── ui/               # Primitives (buttons, carousel, Magnetic, tooltips, SectionHeader)
 │   └── *.tsx             # Page sections (Hero, Navbar, Footer, Projects, ...)
-├── hooks/                # useScrollLock, useWindowDimensions, usePrefersReducedMotion
+├── hooks/                # usePrefersReducedMotion, useIsHydrated, useRatchet, useScrollLock, useWindowDimensions
 └── lib/
     ├── content.ts        # Loads and validates posts and labs from content/
+    ├── hairline/         # Vendored Hairline drawing engine and the site's figures
     ├── markdown.ts       # The Markdown rendering pipeline
+    ├── motion.ts         # Shared easing and duration tokens
     └── tag-colors.ts     # Stable per-tag colours shared by the blog and labs
 ```
 
@@ -220,8 +230,10 @@ run `pnpm sync:devto` for blog posts. A post lands on dev.to as a draft until yo
 ## 🔒 Security
 
 - Security headers, including a Content Security Policy, are set in `next.config.ts`.
-- [`.github/workflows/security.yml`](.github/workflows/security.yml) runs `pnpm audit` and a gitleaks secret scan on every pull request and push to `main`.
-- Dependabot raises security updates automatically.
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs typecheck, lint, the production build and `pnpm audit --audit-level high` on every pull request and push to `main`.
+- [`.github/workflows/security.yml`](.github/workflows/security.yml) runs a full-history gitleaks secret scan and CodeQL (`security-extended` queries) on every pull request, every push to `main` and weekly.
+- Every third-party GitHub Action is pinned to a commit SHA.
+- Dependabot raises security updates as soon as an advisory is published. Routine version updates wait 14 days after a release and arrive grouped in one pull request.
 
 ---
 
