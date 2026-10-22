@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useId, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { getTagColor } from "@/lib/tag-colors";
 import CoverReveal from "./CoverReveal";
 import Pagination from "./Pagination";
@@ -162,7 +162,11 @@ export default function LabsExplorer({
   const [sortKey, setSortKey] = useState("series");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [page, setPage] = useState(1);
+  // Below lg the topics fold away, so the list starts near the top of the
+  // screen; from lg up they sit in the sidebar and are always shown.
+  const [topicsOpen, setTopicsOpen] = useState(false);
   const searchId = useId();
+  const topicsId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   function scrollToResults() {
@@ -393,10 +397,35 @@ export default function LabsExplorer({
 
         {tags.length > 0 && (
           <>
-            <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-              Topics
-            </h2>
-            <ul className="mt-3 flex flex-wrap gap-1.5">
+            <div className="mt-8 flex items-center justify-between gap-4">
+              <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+                Topics
+              </h2>
+              <button
+                type="button"
+                onClick={() => setTopicsOpen((open) => !open)}
+                aria-expanded={topicsOpen}
+                aria-controls={topicsId}
+                className="flex items-center gap-1.5 rounded-full border border-border/40 px-3 py-1 text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary active:scale-[0.98] lg:hidden"
+              >
+                {topicsOpen ? "Hide" : "Show"}
+                {activeTags.length > 0 && (
+                  <span className="tabular-nums text-primary">
+                    · {activeTags.length} on
+                  </span>
+                )}
+                <CaretDownIcon
+                  size={11}
+                  weight="bold"
+                  aria-hidden
+                  className={`transition-transform duration-200 ${topicsOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+            </div>
+            <ul
+              id={topicsId}
+              className={`mt-3 flex-wrap gap-1.5 lg:flex ${topicsOpen ? "flex" : "hidden"}`}
+            >
               {tags.map(({ tag, count }) => {
                 const isActive = activeTags.includes(tag);
                 return (
