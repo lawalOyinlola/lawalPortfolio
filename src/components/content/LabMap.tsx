@@ -92,7 +92,7 @@ export default function LabMap({ liveSlugs }: { liveSlugs: string[] }) {
 
   return (
     <figure
-      className="group/map my-10 overflow-hidden rounded-2xl border border-border/60 bg-muted/20 p-3 sm:p-5"
+      className="group/map mt-5 mb-10 overflow-hidden rounded-2xl border border-border/60 bg-muted/20 p-3 sm:p-5"
       style={{ "--post-accent": "#be123c" } as CSSProperties}
     >
       <figcaption className="sr-only">

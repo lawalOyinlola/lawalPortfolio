@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BRAND, LAB_NODES, LAB_SERIES } from "@/app/constants";
 import { formatPostDate, getLabPosts } from "@/lib/content";
 import LabMap from "@/components/content/LabMap";
+import LabTripwire from "@/components/content/LabTripwire";
 import LabsExplorer, {
   type LabSummary,
 } from "@/components/content/LabsExplorer";
@@ -88,20 +89,7 @@ export default function LabsPage() {
             descriptionClassName="max-w-[60ch] text-muted-foreground"
             className="max-w-2xl"
           />
-          <dl className="flex shrink-0 gap-10 border-t border-border/40 pt-5 text-[11px] uppercase tracking-widest md:mb-3 md:border-t-0 md:pt-0 md:text-right">
-            <div className="flex flex-col gap-1">
-              <dt className="text-muted-foreground">Live</dt>
-              <dd className="font-mono text-sm tabular-nums text-primary">
-                {String(liveCount).padStart(2, "0")}
-              </dd>
-            </div>
-            <div className="flex flex-col gap-1">
-              <dt className="text-muted-foreground">On the map</dt>
-              <dd className="font-mono text-sm tabular-nums text-primary">
-                {String(LAB_NODES.length).padStart(2, "0")}
-              </dd>
-            </div>
-          </dl>
+          <LabTripwire className="w-full shrink-0 md:w-96 md:self-end lg:w-lg xl:w-2xl 2xl:w-3xl" />
         </header>
 
         {labs.length === 0 ? (
@@ -110,6 +98,21 @@ export default function LabsPage() {
           </p>
         ) : (
           <>
+            {/* The map's legend: how much of it is live, read just above it. */}
+            <dl className="mt-14 flex justify-end gap-10 border-b border-border/40 pb-4 text-[11px] uppercase tracking-widest">
+              <div className="flex items-baseline gap-3">
+                <dt className="text-muted-foreground">Live</dt>
+                <dd className="font-mono text-sm tabular-nums text-primary">
+                  {String(liveCount).padStart(2, "0")}
+                </dd>
+              </div>
+              <div className="flex items-baseline gap-3">
+                <dt className="text-muted-foreground">On the map</dt>
+                <dd className="font-mono text-sm tabular-nums text-primary">
+                  {String(LAB_NODES.length).padStart(2, "0")}
+                </dd>
+              </div>
+            </dl>
             <LabMap liveSlugs={liveSlugs} />
             <LabsExplorer labs={labs} series={[...LAB_SERIES]} />
           </>
