@@ -38,7 +38,7 @@ export default function HomeClient({ securityLab }: HomeClientProps) {
       {/* Slides up over the last, pinned screen of BrandStats */}
       <div className="relative z-2 mt-[-100vh]">
         <FaqJsonLd items={FAQS.slice(0, HOME_FAQ_LIMIT)} />
-        <Faqs limit={HOME_FAQ_LIMIT} showSeeAll />
+        <Faqs limit={HOME_FAQ_LIMIT} showSeeAll figure />
       </div>
       <div id="contact" className="relative z-2">
         <ContactsRef />
