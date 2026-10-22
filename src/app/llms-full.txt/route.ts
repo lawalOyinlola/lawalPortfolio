@@ -1,4 +1,5 @@
 import { BRAND, FAQS, PROJECTS } from "@/app/constants";
+import { getBlogPosts, getLabPosts } from "@/lib/content";
 
 const projectsSection = PROJECTS.map((p) => {
   const links = [p.live && `Live: ${p.live}`, p.github && `GitHub: ${p.github}`]
@@ -16,6 +17,24 @@ Highlights:
 ${keypoints}`;
 }).join("\n\n");
 
+const labsSection = getLabPosts()
+  .map(
+    (lab) => `### ${lab.frontmatter.title}
+${BRAND.url}/security/labs/${lab.slug}
+
+${lab.frontmatter.description}`,
+  )
+  .join("\n\n");
+
+const blogSection = getBlogPosts()
+  .map(
+    (post) => `### ${post.frontmatter.title}
+${BRAND.url}/blog/${post.slug}
+
+${post.frontmatter.description}`,
+  )
+  .join("\n\n");
+
 const faqSection = FAQS.map((f) => `### ${f.question}\n${f.answer}`).join("\n\n");
 
 const content = `# ${BRAND.name} — ${BRAND.title}
@@ -26,10 +45,17 @@ const content = `# ${BRAND.name} — ${BRAND.title}
 - Résumé site: ${BRAND.resumeUrl}
 - GitHub: ${BRAND.socials.github.href}
 - LinkedIn: ${BRAND.socials.linkedin.href}
+- Security case studies: ${BRAND.socials.github.href}/cybersecurity-portfolio
 - Location: ${BRAND.address.join(" · ")}
 
 ## Projects
 ${projectsSection}
+
+## Security labs
+${labsSection}
+
+## Blog
+${blogSection}
 
 ## FAQ
 ${faqSection}
