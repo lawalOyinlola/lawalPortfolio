@@ -46,7 +46,8 @@ function nearestSnap(api: NonNullable<EmblaApi>) {
 export function useRatchet(api: EmblaApi, reducedMotion: boolean) {
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   // A move the last timeline was still holding back when it got cut short.
-  const pendingRef = useRef<(() => void) | null>(null);
+  // `jump` makes it land at once instead of scrolling there.
+  const pendingRef = useRef<((jump?: boolean) => void) | null>(null);
 
   const slides = useCallback(
     () => api?.rootNode().querySelectorAll<HTMLElement>(".ratchet-slide") ?? [],
@@ -67,7 +68,8 @@ export function useRatchet(api: EmblaApi, reducedMotion: boolean) {
     (dir: 1 | -1) => {
       if (!api) return;
       const canMove = dir === 1 ? api.canScrollNext() : api.canScrollPrev();
-      const move = () => (dir === 1 ? api.scrollNext() : api.scrollPrev());
+      const move = (jump = false) =>
+        dir === 1 ? api.scrollNext(jump) : api.scrollPrev(jump);
 
       if (reducedMotion) {
         if (!canMove) return;
@@ -132,6 +134,13 @@ export function useRatchet(api: EmblaApi, reducedMotion: boolean) {
     const onPointerUp = () => {
       start = null;
     };
+    // A cancelled press (the browser took the gesture, say for a page
+    // scroll) ends in no click, so nothing would consume `dragged`: clear it,
+    // or a later keyboard click on a link in the row would be swallowed.
+    const onPointerCancel = () => {
+      start = null;
+      dragged = false;
+    };
     const onClick = (event: MouseEvent) => {
       if (!dragged || !root.contains(event.target as Node)) return;
       event.preventDefault();
@@ -167,11 +176,13 @@ export function useRatchet(api: EmblaApi, reducedMotion: boolean) {
     };
     // On release Embla throws the row to a stop; it runs a little past it and
     // rattles back, like the buttons.
+    let frame = 0;
     const onEmblaUp = () => {
       held = false;
       if (reducedMotion) return;
       const from = api.scrollProgress();
-      requestAnimationFrame(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
         const travel = Math.sign(api.scrollProgress() - from);
         const targets = slides();
         if (!travel || !targets.length) return;
@@ -190,22 +201,39 @@ export function useRatchet(api: EmblaApi, reducedMotion: boolean) {
     root.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerCancel);
     // Window capture runs before the page transition's document capture.
     window.addEventListener("click", onClick, true);
     api.on("pointerDown", onEmblaDown);
     api.on("scroll", onScroll);
     api.on("pointerUp", onEmblaUp);
     return () => {
+      // A release measured on the next frame must not start a timeline after
+      // this cleanup, or after the unmount kill below.
+      cancelAnimationFrame(frame);
       root.removeEventListener("dragstart", onDragStart);
       root.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerCancel);
       window.removeEventListener("click", onClick, true);
       api.off("pointerDown", onEmblaDown);
       api.off("scroll", onScroll);
       api.off("pointerUp", onEmblaUp);
     };
   }, [api, reducedMotion, slides, takeOver]);
+
+  // Reduced motion switched on mid-step: stop the rattle, land any move it
+  // was holding back at once, and put the slides back where they belong.
+  useEffect(() => {
+    if (!reducedMotion) return;
+    tlRef.current?.kill();
+    const pending = pendingRef.current;
+    pendingRef.current = null;
+    pending?.(true);
+    const targets = slides();
+    if (targets.length) gsap.set(targets, { x: 0 });
+  }, [reducedMotion, slides]);
 
   useEffect(() => () => void tlRef.current?.kill(), []);
 
