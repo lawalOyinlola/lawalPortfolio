@@ -233,7 +233,7 @@ run `pnpm sync:devto` for blog posts. A post lands on dev.to as a draft until yo
 - [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs typecheck, lint, the production build and `pnpm audit --audit-level high` on every pull request and push to `main`.
 - [`.github/workflows/security.yml`](.github/workflows/security.yml) runs a full-history gitleaks secret scan and CodeQL (`security-extended` queries) on every pull request, every push to `main` and weekly.
 - Every third-party GitHub Action is pinned to a commit SHA.
-- Dependabot raises security updates as soon as an advisory is published. Routine version updates wait 14 days after a release and arrive grouped in one pull request.
+- Dependabot raises security updates as soon as an advisory is published. Routine version updates for npm and GitHub Actions wait 14 days after a release. npm minor and patch updates arrive grouped in one pull request, while npm major updates arrive one per package; GitHub Actions updates are grouped together.
 
 ---
 
