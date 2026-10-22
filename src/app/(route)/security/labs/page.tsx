@@ -89,7 +89,9 @@ export default function LabsPage() {
             descriptionClassName="max-w-[60ch] text-muted-foreground"
             className="max-w-2xl"
           />
-          <LabTripwire className="w-full shrink-0 md:w-96 md:self-end lg:w-lg xl:w-2xl 2xl:w-3xl" />
+          {/* Hidden on phones, where it would push the map and the labs a
+              screen further down. */}
+          <LabTripwire className="hidden shrink-0 md:block md:w-96 md:self-end lg:w-lg xl:w-2xl 2xl:w-3xl" />
         </header>
 
         {labs.length === 0 ? (
