@@ -162,11 +162,12 @@ export default function LabsExplorer({
   const [sortKey, setSortKey] = useState("series");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [page, setPage] = useState(1);
-  // Below lg the topics fold away, so the list starts near the top of the
-  // screen; from lg up they sit in the sidebar and are always shown.
-  const [topicsOpen, setTopicsOpen] = useState(false);
+  // Below lg, search, sort and topics fold behind one toggle so the labs
+  // start near the top of the screen; from lg up they sit in the sidebar.
+  // The same fold as the blog's.
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const searchId = useId();
-  const topicsId = useId();
+  const filtersId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
 
   function scrollToResults() {
@@ -218,6 +219,7 @@ export default function LabsExplorer({
   }, [labs, query, activeTags]);
 
   const isFiltered = query.trim().length > 0 || activeTags.length > 0;
+  const activeCount = activeTags.length + (query.trim() ? 1 : 0);
 
   function toggleTag(tag: string) {
     setActiveTags((current) =>
@@ -342,125 +344,125 @@ export default function LabsExplorer({
   return (
     <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-14">
       <aside className="lg:sticky lg:top-28 lg:order-2 lg:w-76 lg:shrink-0">
-        <label
-          htmlFor={searchId}
-          className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary"
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((open) => !open)}
+          aria-expanded={filtersOpen}
+          aria-controls={filtersId}
+          className="flex w-full items-center justify-between gap-4 border-y border-border/40 py-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary lg:hidden"
         >
-          Search
-        </label>
-        <div className="relative mt-3">
-          <MagnifyingGlassIcon
-            size={15}
+          <span>
+            Search and filter
+            {activeCount > 0 && (
+              <span className="ml-2 font-normal tabular-nums text-muted-foreground">
+                · {activeCount} on
+              </span>
+            )}
+          </span>
+          <CaretDownIcon
+            size={12}
             weight="bold"
             aria-hidden
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            className={`transition-transform duration-200 ${filtersOpen ? "rotate-180" : ""}`}
           />
-          <input
-            id={searchId}
-            type="search"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Wazuh, phishing, UTM"
-            className="search-field w-full rounded-full border border-border bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => {
-                setQuery("");
+        </button>
+
+        <div id={filtersId} className={filtersOpen ? "pt-6 pb-2" : "hidden lg:block"}>
+          <label
+            htmlFor={searchId}
+            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary"
+          >
+            Search
+          </label>
+          <div className="relative mt-3">
+            <MagnifyingGlassIcon
+              size={15}
+              weight="bold"
+              aria-hidden
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <input
+              id={searchId}
+              type="search"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
                 setPage(1);
               }}
-              aria-label="Clear search"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:text-primary"
+              placeholder="Wazuh, phishing, UTM"
+              className="search-field w-full rounded-full border border-border bg-transparent py-2 pl-9 pr-9 text-sm text-primary outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setPage(1);
+                }}
+                aria-label="Clear search"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:text-primary"
+              >
+                <XIcon size={13} weight="bold" aria-hidden />
+              </button>
+            )}
+          </div>
+
+          {labs.length > 1 && (
+            <>
+              <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+                Sort
+              </h2>
+              <SortControl
+                options={LAB_SORT_OPTIONS}
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onChange={changeSort}
+              />
+            </>
+          )}
+
+          {tags.length > 0 && (
+            <>
+              <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
+                Topics
+              </h2>
+              <ul className="mt-3 flex flex-wrap gap-1.5">
+                {tags.map(({ tag, count }) => {
+                  const isActive = activeTags.includes(tag);
+                  return (
+                    <li key={tag}>
+                      <button
+                        type="button"
+                        onClick={() => toggleTag(tag)}
+                        aria-pressed={isActive}
+                        style={{ "--tag": getTagColor(tag) } as CSSProperties}
+                        className={`tag-filter ${isActive ? "tag-filter-active" : ""}`}
+                      >
+                        <span aria-hidden className="opacity-55">
+                          #
+                        </span>
+                        {tag}
+                        <span className="ml-0.5 tabular-nums opacity-55">
+                          {count}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+
+          {isFiltered && (
+            <button
+              type="button"
+              onClick={clearAll}
+              className="mt-5 text-[10px] uppercase tracking-widest text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary"
             >
-              <XIcon size={13} weight="bold" aria-hidden />
+              Clear filter{activeTags.length > 1 && "s"}
             </button>
           )}
         </div>
-
-        {labs.length > 1 && (
-          <>
-            <h2 className="mt-8 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-              Sort
-            </h2>
-            <SortControl
-              options={LAB_SORT_OPTIONS}
-              sortKey={sortKey}
-              sortDir={sortDir}
-              onChange={changeSort}
-            />
-          </>
-        )}
-
-        {tags.length > 0 && (
-          <>
-            <div className="mt-8 flex items-center justify-between gap-4">
-              <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-                Topics
-              </h2>
-              <button
-                type="button"
-                onClick={() => setTopicsOpen((open) => !open)}
-                aria-expanded={topicsOpen}
-                aria-controls={topicsId}
-                className="flex items-center gap-1.5 rounded-full border border-border/40 px-3 py-1 text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary active:scale-[0.98] lg:hidden"
-              >
-                {topicsOpen ? "Hide" : "Show"}
-                {activeTags.length > 0 && (
-                  <span className="tabular-nums text-primary">
-                    · {activeTags.length} on
-                  </span>
-                )}
-                <CaretDownIcon
-                  size={11}
-                  weight="bold"
-                  aria-hidden
-                  className={`transition-transform duration-200 ${topicsOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-            </div>
-            <ul
-              id={topicsId}
-              className={`mt-3 flex-wrap gap-1.5 lg:flex ${topicsOpen ? "flex" : "hidden"}`}
-            >
-              {tags.map(({ tag, count }) => {
-                const isActive = activeTags.includes(tag);
-                return (
-                  <li key={tag}>
-                    <button
-                      type="button"
-                      onClick={() => toggleTag(tag)}
-                      aria-pressed={isActive}
-                      style={{ "--tag": getTagColor(tag) } as CSSProperties}
-                      className={`tag-filter ${isActive ? "tag-filter-active" : ""}`}
-                    >
-                      <span aria-hidden className="opacity-55">
-                        #
-                      </span>
-                      {tag}
-                      <span className="ml-0.5 tabular-nums opacity-55">
-                        {count}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
-
-        {isFiltered && (
-          <button
-            type="button"
-            onClick={clearAll}
-            className="mt-5 text-[10px] uppercase tracking-widest text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary"
-          >
-            Clear filter{activeTags.length > 1 && "s"}
-          </button>
-        )}
       </aside>
 
       <div ref={resultsRef} className="scroll-mt-28 lg:order-1">
