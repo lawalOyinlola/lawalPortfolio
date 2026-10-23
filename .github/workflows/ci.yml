@@ -1,4 +1,5 @@
-# Runs on every pull request and every push to main. Each job below is meant
+# Runs on every pull request and every push to main, and the dependency audit
+# also runs daily (see the schedule trigger below). Each job below is meant
 # to be a required status check on main (Settings → Branches), so nothing
 # merges until all of them pass.
 #
@@ -11,18 +12,27 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Daily, so an advisory published against unchanged code still fails a run
+  # (and emails the repo owner) instead of waiting for the next push. Only the
+  # audit job runs on this trigger; the code itself has not changed.
+  schedule:
+    - cron: "0 6 * * *" # every day, 06:00 UTC
+  workflow_dispatch:
 
 # Read-only token by default; no job here needs to write anything.
 permissions:
   contents: read
 
+# The event name keeps a scheduled run and a push to main from cancelling
+# each other, since both run on refs/heads/main.
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     name: Lint, typecheck and build
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
