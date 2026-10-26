@@ -1,0 +1,63 @@
+<svg viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <rect width="1080" height="1350" fill="#f4efe3"/>
+
+  <text x="70" y="104" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="22" font-weight="700" fill="#e8692a" letter-spacing="3">OCTOBER 2026</text>
+  <text x="70" y="166" font-size="50" font-weight="700" fill="#22262b">Awareness month,</text>
+  <text x="70" y="226" font-size="50" font-weight="700" fill="#22262b">in five advisories</text>
+  <line x1="70" y1="262" x2="1010" y2="262" stroke="#e8692a" stroke-width="4"/>
+
+  <!-- row 1: PHP2Shell -->
+  <rect x="70" y="290" width="940" height="180" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <text x="100" y="342" font-size="34" font-weight="700" fill="#22262b">PHP2Shell</text>
+  <text x="100" y="374" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" fill="#8a8a80">CVE-2026-109618, CVE-2026-109619</text>
+  <text x="100" y="412" font-size="22" fill="#5a5a52">Unauthenticated RCE in PHP itself. Exploit</text>
+  <text x="100" y="440" font-size="22" fill="#5a5a52">attempts reported 4 days before the patch.</text>
+  <rect x="790" y="318" width="190" height="72" fill="#e8692a"/>
+  <text x="885" y="364" font-size="34" font-weight="700" fill="#ffffff" text-anchor="middle">9.2</text>
+  <text x="885" y="420" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="16" font-weight="700" fill="#e8692a" text-anchor="middle">CRITICAL</text>
+
+  <!-- row 2: BeyondTrust -->
+  <rect x="70" y="486" width="940" height="180" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <text x="100" y="538" font-size="34" font-weight="700" fill="#22262b">BeyondTrust Remote Support</text>
+  <text x="100" y="570" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" fill="#8a8a80">CVE-2026-102764</text>
+  <text x="100" y="608" font-size="22" fill="#5a5a52">Authentication bypass, exploited in the wild.</text>
+  <text x="100" y="636" font-size="22" fill="#5a5a52">On CISA's KEV catalogue from 16 October.</text>
+  <rect x="790" y="514" width="190" height="72" fill="#22262b"/>
+  <text x="885" y="560" font-size="24" font-weight="700" fill="#f4efe3" text-anchor="middle">EXPLOITED</text>
+  <text x="885" y="616" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="16" font-weight="700" fill="#22262b" text-anchor="middle">CRITICAL (CISA)</text>
+
+  <!-- row 3: NGINX -->
+  <rect x="70" y="682" width="940" height="180" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <text x="100" y="734" font-size="34" font-weight="700" fill="#22262b">NGINX</text>
+  <text x="100" y="766" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" fill="#8a8a80">CVE-2026-15176 and four more</text>
+  <text x="100" y="804" font-size="22" fill="#5a5a52">Memory bugs behind specific configs.</text>
+  <text x="100" y="832" font-size="22" fill="#5a5a52">Same bugs, two severities.</text>
+  <rect x="790" y="710" width="92" height="72" fill="#e8692a"/>
+  <text x="836" y="756" font-size="28" font-weight="700" fill="#ffffff" text-anchor="middle">9.2</text>
+  <rect x="888" y="710" width="92" height="72" fill="#ffffff" stroke="#1f6f73" stroke-width="3"/>
+  <text x="934" y="754" font-size="19" font-weight="700" fill="#1f6f73" text-anchor="middle">MED</text>
+  <text x="836" y="812" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="16" font-weight="700" fill="#e8692a" text-anchor="middle">F5</text>
+  <text x="934" y="812" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="16" font-weight="700" fill="#1f6f73" text-anchor="middle">nginx.org</text>
+
+  <!-- row 4: Next.js -->
+  <rect x="70" y="878" width="940" height="180" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <text x="100" y="930" font-size="34" font-weight="700" fill="#22262b">Next.js</text>
+  <text x="100" y="962" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" fill="#8a8a80">CVE-2026-96889 and two more</text>
+  <text x="100" y="1000" font-size="22" fill="#5a5a52">Two unauthenticated RCEs and a DoS.</text>
+  <text x="100" y="1028" font-size="22" fill="#5a5a52">The one that was in seven of my projects.</text>
+  <rect x="790" y="906" width="190" height="72" fill="#e8692a"/>
+  <text x="885" y="952" font-size="34" font-weight="700" fill="#ffffff" text-anchor="middle">9.5</text>
+  <text x="885" y="1008" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="16" font-weight="700" fill="#e8692a" text-anchor="middle">CRITICAL</text>
+
+  <!-- row 5: Node.js -->
+  <rect x="70" y="1074" width="940" height="180" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <text x="100" y="1126" font-size="34" font-weight="700" fill="#22262b">Node.js</text>
+  <text x="100" y="1158" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" fill="#8a8a80">10 CVEs across 22.x, 24.x and 26.x</text>
+  <text x="100" y="1196" font-size="22" fill="#5a5a52">None critical. Includes a Brotli decoder</text>
+  <text x="100" y="1224" font-size="22" fill="#5a5a52">bug that can allow RCE.</text>
+  <rect x="790" y="1102" width="190" height="72" fill="#ffffff" stroke="#22262b" stroke-width="3"/>
+  <text x="885" y="1148" font-size="30" font-weight="700" fill="#22262b" text-anchor="middle">HIGH</text>
+  <text x="885" y="1204" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="16" font-weight="700" fill="#22262b" text-anchor="middle">4 OF 10 CVEs</text>
+
+  <text x="70" y="1302" font-size="19" fill="#5a5a52">Disclosed between 14 and 21 October 2026. Scores are CVSS v4 where one is given.</text>
+</svg>
