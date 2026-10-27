@@ -127,6 +127,29 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     ],
   },
   {
+    category: "Security",
+    tools: [
+      { name: "Kali Linux", icon: si("kalilinux"), color: "#557c94" },
+      { name: "nmap", icon: "https://nmap.org/favicon.ico", color: "#4f8fd6" },
+      { name: "Metasploit", icon: si("metasploit"), color: "#2596cd" },
+      { name: "Burp Suite", icon: si("burpsuite"), color: "#ff6633" },
+      { name: "Wazuh", icon: "https://wazuh.com/favicon.ico", color: "#3d82f1" },
+      {
+        name: "Suricata",
+        icon: "https://suricata.io/favicon.ico",
+        color: "#ef9b2d",
+      },
+      { name: "OWASP CRS", icon: si("owasp"), color: "#ffffff" },
+      {
+        name: "gitleaks",
+        icon: "https://gitleaks.io/favicon.ico",
+        color: "#e8443a",
+      },
+      { name: "Dependabot", icon: si("dependabot"), color: "#025e8c" },
+      { name: "VirusTotal", icon: si("virustotal"), color: "#394eff" },
+    ],
+  },
+  {
     category: "Frontend & UI",
     tools: [
       { name: "Tailwind CSS", icon: si("tailwindcss"), color: "#06b6d4" },
@@ -186,29 +209,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { name: "Cloudinary", icon: si("cloudinary"), color: "#3448c5" },
       { name: "PostHog", icon: si("posthog"), color: "#f76707" },
       { name: "pnpm", icon: si("pnpm"), color: "#f69220" },
-    ],
-  },
-  {
-    category: "Security",
-    tools: [
-      { name: "Kali Linux", icon: si("kalilinux"), color: "#557c94" },
-      { name: "nmap", icon: "https://nmap.org/favicon.ico", color: "#4f8fd6" },
-      { name: "Metasploit", icon: si("metasploit"), color: "#2596cd" },
-      { name: "Burp Suite", icon: si("burpsuite"), color: "#ff6633" },
-      { name: "Wazuh", icon: "https://wazuh.com/favicon.ico", color: "#3d82f1" },
-      {
-        name: "Suricata",
-        icon: "https://suricata.io/favicon.ico",
-        color: "#ef9b2d",
-      },
-      { name: "OWASP CRS", icon: si("owasp"), color: "#ffffff" },
-      {
-        name: "gitleaks",
-        icon: "https://gitleaks.io/favicon.ico",
-        color: "#e8443a",
-      },
-      { name: "Dependabot", icon: si("dependabot"), color: "#025e8c" },
-      { name: "VirusTotal", icon: si("virustotal"), color: "#394eff" },
     ],
   },
   {
