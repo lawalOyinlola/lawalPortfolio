@@ -161,10 +161,13 @@ trivy image --scanners vuln --format json \
 **Secrets, across the whole history.** A secret that was committed and later deleted is still in every clone, so a working-tree scan misses the case that matters most:
 
 ```bash
-gitleaks detect --source . --log-opts="--all" --redact \
+gitleaks detect --source . \
+  --log-opts="--full-history --all --diff-filter=tuxdb --diff-merges=separate" --redact \
   --report-format json --report-path ~/scan-baseline/gitleaks.json
 jq length ~/scan-baseline/gitleaks.json
 ```
+
+`--log-opts` replaces gitleaks' own `git log` arguments, so the first three restate its defaults. `--diff-merges=separate` is the one that matters: without it, `git log -p` prints no patch for a merge commit, and a secret added while resolving a merge conflict is never scanned. I found that gap after publishing this lab, in my own pipeline, and every copy here now carries the fix. On the real product, turning it on surfaced 13 merge-commit copies of findings that were already triaged, so expect to suppress some duplicates the first time.
 
 **Then read the code yourself.** Scanners match patterns. They do not know which of your behaviours are only meant to exist in development. Search for anything that changes behaviour based on a request header, a flag or an environment check, and read each hit:
 
