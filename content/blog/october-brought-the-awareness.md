@@ -1,7 +1,7 @@
 ---
 title: "October brought the awareness after all"
 description: "Cybersecurity Awareness Month 2026 brought PHP2Shell, an exploited BeyondTrust zero-day and two critical Next.js RCEs. My dependency audit stayed green for eight days while the Next.js fix sat on npm, and on a repository I had not patched yet, Dependabot was still silent days after the database caught up."
-date: 2026-10-27
+date: 2026-10-28
 tags: [security, webdev, devops, cybersecurity]
 cover: /images/blog/october-brought-the-awareness/coverimage.jpg
 coverAlt: "Four old brass alarm bells in a row on a whitewashed brick wall inside a fire station at dusk. Cloth-covered cables run down from each bell into one grey steel junction box whose heavy lever sits at OFF, with a fallen orange maple leaf on top. Through an arched window and doorway, an autumn street with orange trees and lit lamps. Headline in large cream type, top left: Four tools and one source."
@@ -40,8 +40,8 @@ I went back and pulled the timestamps, expecting to write about a gap of a few h
 | 14 Oct, 17:46 | Next.js publishes the three advisories in its own repository. 16.4.1 ships a minute later, with release notes naming all three. |
 | 22 Oct, 14:54 | The last CI run on this site's main branch passes, dependency audit included. |
 | 22 Oct, 15:50 to 16:42 | The three advisories enter the GitHub Advisory Database. |
-| 23 Oct, 11:16 | I commit the fix for this site, 19 hours and 26 minutes after the first of them was listed. |
 | 23 Oct, 09:22 to 14:46 | I patch three of my projects, 17 to 23 hours after the listing. None of them had received a Dependabot alert for any of the three advisories, in any state, before its fix landed. |
+| 23 Oct, 11:16 | I commit the fix for this site, 19 hours and 26 minutes after the first of them was listed. |
 | 26 Oct | A fourth project, still on a vulnerable version with Dependabot alerts switched on, has no alert for any of the three, almost four days after the listing. |
 
 The row that matters is not the one I sat down to write about. I came for a 19-hour gap and found an eight-day one: the fix was on npm, with its advisories linked from the release notes, for eight days before any scanner I use could know it existed.
@@ -76,11 +76,11 @@ Here is what would have closed the gap in my case, starting with the one that cl
 
 On this site, as far as I can tell, none of the three flaws was reachable. The image flaw lives in an upstream library, and the advisory's own workaround is `sharp` 0.35.5 or later, which this site's lockfile already resolved. I do not use `use cache`, and there are no Server Actions. That is luck rather than design, and I patched anyway, partly because the `use cache` advisory tells you to upgrade even if you have no such functions.
 
-I also do not know why the advisories took eight days to reach the global database, or why Dependabot stayed silent after they did. GitHub reviews advisories before they enter that database, and I cannot see the queue. Dependabot also does not raise an alert once the vulnerable version is already gone from the default branch, so the three projects I patched within a day tell you the alert had not arrived by then, not that it never would. The fourth project is the clearer evidence, and it is one repository, not a survey. And I have not compared commercial feeds such as Snyk or Socket on this incident, so I cannot tell you whether they were faster. If you have that data, I would like to see it.
+I also do not know why the advisories took eight days to reach the global database, or why Dependabot stayed silent after they did. The GitHub Advisory Database holds two kinds of entry: reviewed advisories, which GitHub curates, and unreviewed ones, which are published automatically from the National Vulnerability Database. Dependabot alerts are generated from the reviewed ones, and I cannot see the review queue. Dependabot also does not raise an alert once the vulnerable version is already gone from the default branch, so the three projects I patched within a day tell you the alert had not arrived by then, not that it never would. The fourth project is the clearer evidence, and it is one repository, not a survey. And I have not compared commercial feeds such as Snyk or Socket on this incident, so I cannot tell you whether they were faster. If you have that data, I would like to see it.
 
 ## Check yours in two minutes
 
-Pick a framework you depend on and one of its recent advisories. This compares when the vendor published it with when your scanner could first have known:
+This example uses the Next.js advisory GHSA-2464-fhr4-w9xw, so the queries below are hard-coded to it. To check your own stack, swap in the repository and advisory ID of a framework you depend on. The commands compare when the vendor published the advisory with when your scanner could first have known:
 
 ```bash
 # when the vendor published it
@@ -95,4 +95,4 @@ pnpm why next   # or: npm ls next
 
 ![Terminal output of the two commands. The vendor advisory GHSA-2464-fhr4-w9xw in the Next.js repository was published at 2026-10-14T17:46:48Z. The same advisory in the GitHub Advisory Database was published at 2026-10-22T15:52:53Z.](/images/blog/october-brought-the-awareness/two-dates.png)
 
-For this advisory the first command prints `2026-10-14T17:46:48Z` and the second prints `2026-10-22T15:52:53Z`. The distance between your two dates is how long every scanner reading that database was blind, and if your scanner and your Dependabot agree with each other, that is not two opinions. It is one, quoted twice.
+For this advisory the first command prints `2026-10-14T17:46:48Z` and the second prints `2026-10-22T15:52:53Z`. The distance between your two dates is a lower bound on the lag between the vendor and the database. It is not the exact period every scanner was blind, because how quickly each scanner refreshed or ingested the listing is something this post did not measure. If your scanner and your Dependabot agree with each other, that is not two opinions. It is one, quoted twice.
