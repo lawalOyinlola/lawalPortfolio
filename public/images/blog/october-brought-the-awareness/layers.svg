@@ -1,0 +1,54 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <rect width="1600" height="900" fill="#f4efe3"/>
+
+  <text x="80" y="88" font-size="40" font-weight="700" fill="#22262b">Defence in depth, applied to finding out</text>
+  <text x="80" y="126" font-size="21" fill="#5a5a52">Each layer catches what the one before it misses, in order of how much of the eight days it closes.</text>
+  <line x1="80" y1="150" x2="1520" y2="150" stroke="#e8692a" stroke-width="3"/>
+
+  <text x="1080" y="176" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="14" font-weight="700" fill="#8a8a80" letter-spacing="1.5">IN THIS INCIDENT</text>
+
+  <!-- row 1 -->
+  <rect x="80" y="190" width="1440" height="150" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <rect x="80" y="190" width="10" height="150" fill="#e8692a"/>
+  <circle cx="148" cy="265" r="28" fill="#22262b"/>
+  <text x="148" y="275" font-size="28" font-weight="700" fill="#f4efe3" text-anchor="middle">1</text>
+  <text x="200" y="250" font-size="26" font-weight="700" fill="#22262b">Watch the vendor's releases</text>
+  <text x="200" y="284" font-size="18" fill="#5a5a52">Day 0. On GitHub: Watch, then Custom, then Releases,</text>
+  <text x="200" y="308" font-size="18" fill="#5a5a52">on the repository of each framework you depend on.</text>
+  <text x="1080" y="252" font-size="19" font-weight="700" fill="#e8692a">14 Oct: would have been 8 days</text>
+  <text x="1080" y="278" font-size="19" font-weight="700" fill="#e8692a">ahead of every scanner I ran</text>
+
+  <!-- row 2 -->
+  <rect x="80" y="352" width="1440" height="150" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <rect x="80" y="352" width="10" height="150" fill="#1f6f73"/>
+  <circle cx="148" cy="427" r="28" fill="#22262b"/>
+  <text x="148" y="437" font-size="28" font-weight="700" fill="#f4efe3" text-anchor="middle">2</text>
+  <text x="200" y="412" font-size="26" font-weight="700" fill="#22262b">Scan on a schedule, not only on a push</text>
+  <text x="200" y="446" font-size="18" fill="#5a5a52">Within a day of the database listing, even on a quiet repository.</text>
+  <text x="200" y="470" font-size="18" fill="#5a5a52">It reads the same database, so it does not touch the eight days.</text>
+  <text x="1080" y="414" font-size="19" font-weight="700" fill="#1f6f73">24 Oct: the first daily run failed</text>
+  <text x="1080" y="440" font-size="19" font-weight="700" fill="#1f6f73">on 3 newer high advisories</text>
+
+  <!-- row 3 -->
+  <rect x="80" y="514" width="1440" height="150" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <rect x="80" y="514" width="10" height="150" fill="#22262b"/>
+  <circle cx="148" cy="589" r="28" fill="#22262b"/>
+  <text x="148" y="599" font-size="28" font-weight="700" fill="#f4efe3" text-anchor="middle">3</text>
+  <text x="200" y="574" font-size="26" font-weight="700" fill="#22262b">Something in front of the app</text>
+  <text x="200" y="608" font-size="18" fill="#5a5a52">A WAF rule, or a smaller surface such as a tight images.remotePatterns.</text>
+  <text x="200" y="632" font-size="18" fill="#5a5a52">It buys time. The patch still has to arrive.</text>
+  <text x="1080" y="576" font-size="19" font-weight="700" fill="#22262b">PHP2Shell: Cloudflare rules about</text>
+  <text x="1080" y="602" font-size="19" font-weight="700" fill="#22262b">9 hours before disclosure. No vendor</text>
+  <text x="1080" y="628" font-size="19" font-weight="700" fill="#22262b">rule found for these Next.js flaws.</text>
+
+  <!-- row 4 -->
+  <rect x="80" y="676" width="1440" height="150" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
+  <rect x="80" y="676" width="10" height="150" fill="#c9a54a"/>
+  <circle cx="148" cy="751" r="28" fill="#22262b"/>
+  <text x="148" y="761" font-size="28" font-weight="700" fill="#f4efe3" text-anchor="middle">4</text>
+  <text x="200" y="736" font-size="26" font-weight="700" fill="#22262b">An alert that reaches a person</text>
+  <text x="200" y="770" font-size="18" fill="#5a5a52">Email, Slack or a webhook, wherever you already look.</text>
+  <text x="200" y="794" font-size="18" fill="#5a5a52">Not a dashboard nobody opens.</text>
+  <text x="1080" y="738" font-size="19" font-weight="700" fill="#8a6d1a">A failed scheduled run emails</text>
+  <text x="1080" y="764" font-size="19" font-weight="700" fill="#8a6d1a">whoever last changed the schedule</text>
+</svg>

@@ -1,0 +1,72 @@
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <g id="bell">
+      <circle r="38" fill="#f4efe3" stroke="#22262b" stroke-width="3"/>
+      <path d="M-15 9 Q-15 -15 0 -17 Q15 -15 15 9 L20 14 H-20 Z" fill="#c9a54a" stroke="#22262b" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cy="19" r="4" fill="#22262b"/>
+    </g>
+  </defs>
+  <rect width="1600" height="900" fill="#f4efe3"/>
+  <g stroke="#e4dccb" stroke-width="1">
+    <line x1="0" y1="150" x2="1600" y2="150"/><line x1="0" y1="300" x2="1600" y2="300"/>
+    <line x1="0" y1="450" x2="1600" y2="450"/><line x1="0" y1="600" x2="1600" y2="600"/>
+    <line x1="0" y1="750" x2="1600" y2="750"/>
+  </g>
+
+  <text x="80" y="88" font-size="40" font-weight="700" fill="#22262b">Four tools and one source</text>
+  <text x="80" y="126" font-size="21" fill="#5a5a52">Every scanner I ran learned about the Next.js advisories when the database did, not when the vendor published them.</text>
+  <line x1="80" y1="150" x2="1520" y2="150" stroke="#e8692a" stroke-width="3"/>
+
+  <!-- vendor -->
+  <rect x="80" y="330" width="300" height="150" fill="#ffffff" stroke="#22262b" stroke-width="3"/>
+  <text x="104" y="364" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="15" font-weight="700" fill="#8a8a80" letter-spacing="1.5">VENDOR</text>
+  <text x="104" y="398" font-size="23" font-weight="700" fill="#22262b">Next.js advisories</text>
+  <text x="104" y="426" font-size="18" fill="#5a5a52">and the 16.4.1 release notes</text>
+  <text x="104" y="460" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#e8692a">14 OCT 17:46</text>
+
+  <!-- review wire -->
+  <line x1="380" y1="405" x2="640" y2="405" stroke="#e8692a" stroke-width="6"/>
+  <text x="510" y="372" font-size="34" font-weight="700" fill="#e8692a" text-anchor="middle">8 days</text>
+  <text x="510" y="440" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="15" fill="#5a5a52" text-anchor="middle">review, then listing</text>
+
+  <!-- database -->
+  <rect x="640" y="330" width="350" height="150" fill="#22262b"/>
+  <text x="664" y="364" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="15" font-weight="700" fill="#c9a54a" letter-spacing="1.5">ONE SOURCE</text>
+  <text x="664" y="398" font-size="23" font-weight="700" fill="#f4efe3">GitHub Advisory Database</text>
+  <text x="664" y="426" font-size="18" fill="#cfc8b8">the feed every tool on the right reads</text>
+  <text x="664" y="460" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#e8692a">22 OCT 15:50</text>
+
+  <!-- fan-out wires to the four bells -->
+  <g fill="none" stroke="#1f6f73" stroke-width="4">
+    <path d="M990 405 H1080 V220 H1222"/>
+    <path d="M990 405 H1080 V340 H1222"/>
+    <path d="M990 405 H1080 V460 H1222"/>
+    <path d="M990 405 H1080 V580 H1222"/>
+  </g>
+  <circle cx="1080" cy="405" r="7" fill="#1f6f73"/>
+
+  <use href="#bell" x="1260" y="220"/>
+  <use href="#bell" x="1260" y="340"/>
+  <use href="#bell" x="1260" y="460"/>
+  <use href="#bell" x="1260" y="580"/>
+  <g font-size="23" font-weight="700" fill="#22262b">
+    <text x="1318" y="214" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">pnpm audit</text>
+    <text x="1318" y="334" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace">npm audit</text>
+    <text x="1318" y="454">Dependabot</text>
+    <text x="1318" y="574">OSV</text>
+  </g>
+  <g font-size="16" fill="#5a5a52">
+    <text x="1318" y="240">through the npm registry</text>
+    <text x="1318" y="360">through the npm registry</text>
+    <text x="1318" y="480">reads it directly</text>
+    <text x="1318" y="600">same times, to the second</text>
+  </g>
+
+  <!-- the second source -->
+  <path d="M230 480 V800 H1200" fill="none" stroke="#e8692a" stroke-width="4" stroke-dasharray="14 9"/>
+  <text x="260" y="784" font-size="19" fill="#22262b">A second source: the vendor's own release, announced the minute it ships</text>
+  <rect x="1200" y="752" width="320" height="96" fill="#ffffff" stroke="#e8692a" stroke-width="3"/>
+  <text x="1224" y="786" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="15" font-weight="700" fill="#e8692a" letter-spacing="1.5">YOU, ON DAY 0</text>
+  <text x="1224" y="816" font-size="18" fill="#22262b">Watch, then Custom, then</text>
+  <text x="1224" y="838" font-size="18" fill="#22262b">Releases on the repository</text>
+</svg>
