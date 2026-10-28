@@ -5,10 +5,10 @@
     <img src="./public/og-image.png" alt="LAWAL Portfolio Banner" width="30%" height="auto">
   </a>
 
-  <h1 align="center">LAWAL | Portfolio, Blog & Security Labs</h1>
+  <h1 align="center"><a href="https://lawaloyinlola.com" aria-label="LAWAL">⅃AWA⅃</a> | Portfolio, Blog & Security Labs</h1>
 
   <p align="center">
-    The digital home of Oyinlola Lawal, a software engineer working in application
+    The digital home of Lawal Oyinlola, a software engineer working in application
     security: I build web products, then test them before anyone relies on them.
     <br />
     Part showcase, part workbench: high-performance interfaces, a writing habit, and
@@ -239,12 +239,12 @@ run `pnpm sync:devto` for blog posts. A post lands on dev.to as a draft until yo
 
 ## 📮 Contact
 
-Oyinlola Lawal. [LinkedIn](https://www.linkedin.com/in/lawaloyinlola) · [GitHub](https://github.com/lawalOyinlola) · oyinlolalawal1705@gmail.com
+Lawal Oyinlola. [LinkedIn](https://www.linkedin.com/in/lawaloyinlola) · [GitHub](https://github.com/lawalOyinlola) · oyinlolalawal1705@gmail.com
 
 Project link: [github.com/lawalOyinlola/lawalPortfolio](https://github.com/lawalOyinlola/lawalPortfolio)
 
 ---
 
 <div align="center">
-  <p>Built with precision and a little too much care by <a href="https://lawaloyinlola.com">LAWAL</a>.</p>
+  <p>Built with precision and a little too much care by <a href="https://lawaloyinlola.com" aria-label="LAWAL">⅃AWA⅃</a>.</p>
 </div>
