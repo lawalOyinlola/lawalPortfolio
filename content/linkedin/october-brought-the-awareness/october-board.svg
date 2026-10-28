@@ -30,8 +30,8 @@
   <rect x="70" y="682" width="940" height="180" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
   <text x="100" y="734" font-size="34" font-weight="700" fill="#22262b">NGINX</text>
   <text x="100" y="766" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" fill="#8a8a80">CVE-2026-15176 and four more</text>
-  <text x="100" y="804" font-size="22" fill="#5a5a52">Memory bugs behind specific configs.</text>
-  <text x="100" y="832" font-size="22" fill="#5a5a52">Same bugs, two severities.</text>
+  <text x="100" y="804" font-size="22" fill="#5a5a52">Three memory bugs, scored two ways.</text>
+  <text x="100" y="832" font-size="22" fill="#5a5a52">Plus HTTP/3 body injection, session forgery.</text>
   <rect x="790" y="710" width="92" height="72" fill="#e8692a"/>
   <text x="836" y="756" font-size="28" font-weight="700" fill="#ffffff" text-anchor="middle">9.2</text>
   <rect x="888" y="710" width="92" height="72" fill="#ffffff" stroke="#1f6f73" stroke-width="3"/>
@@ -43,7 +43,7 @@
   <rect x="70" y="878" width="940" height="180" fill="#ffffff" stroke="#22262b" stroke-width="2"/>
   <text x="100" y="930" font-size="34" font-weight="700" fill="#22262b">Next.js</text>
   <text x="100" y="962" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" fill="#8a8a80">CVE-2026-96889 and two more</text>
-  <text x="100" y="1000" font-size="22" fill="#5a5a52">Two unauthenticated RCEs and a DoS.</text>
+  <text x="100" y="1000" font-size="22" fill="#5a5a52">Two unauthenticated RCEs and an 8.2 DoS.</text>
   <text x="100" y="1028" font-size="22" fill="#5a5a52">The one that was in seven of my projects.</text>
   <rect x="790" y="906" width="190" height="72" fill="#e8692a"/>
   <text x="885" y="952" font-size="34" font-weight="700" fill="#ffffff" text-anchor="middle">9.5</text>
