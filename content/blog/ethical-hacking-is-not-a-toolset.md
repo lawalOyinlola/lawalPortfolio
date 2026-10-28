@@ -100,16 +100,16 @@ There is a temptation to treat black box as the serious option because it feels 
 
 A penetration test is not one activity. The target decides the tools, the techniques and the skills you need.
 
-| Target | What it covers |
-| --- | --- |
-| Network | Servers, firewalls, internal and external infrastructure |
-| Web application | Websites, portals, APIs |
-| Mobile | Android and iOS applications |
-| Wireless | Wi-Fi networks and their authentication |
-| Cloud | AWS, Azure, GCP configuration and identity |
-| Social engineering | Phishing and the human layer |
-| Configuration review | Settings, builds, hardening baselines |
-| Everything else | IoT, hardware, physical access |
+| Target               | What it covers                                           |
+| -------------------- | -------------------------------------------------------- |
+| Network              | Servers, firewalls, internal and external infrastructure |
+| Web application      | Websites, portals, APIs                                  |
+| Mobile               | Android and iOS applications                             |
+| Wireless             | Wi-Fi networks and their authentication                  |
+| Cloud                | AWS, Azure, GCP configuration and identity               |
+| Social engineering   | Phishing and the human layer                             |
+| Configuration review | Settings, builds, hardening baselines                    |
+| Everything else      | IoT, hardware, physical access                           |
 
 Coming from frontend and full stack engineering, the web application and cloud rows are where existing knowledge transfers most directly, and that is deliberately where I am aiming.
 
