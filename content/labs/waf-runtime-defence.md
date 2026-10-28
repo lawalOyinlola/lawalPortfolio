@@ -624,9 +624,11 @@ docker compose down -v
 
 ## What it found on a production app
 
-The first version of this rig ran against a production NestJS and Next.js app, with a synthetic database. There the picture was nearly the opposite, and the writeup is in [What my WAF actually blocked](/blog/what-my-waf-actually-blocked): 26 payloads, 12 blocked at tuned level 1, of which five were requests the app already rejected on its own and seven were stopped a step earlier than the app's own downstream defences. Level 2 caught nothing level 1 had missed and added two false positives. A tenant-isolation attack, the same class as A1 here, returned the identical `404` with the firewall on and off.
+The first version of this rig ran against a local, production-mode build of a NestJS and Next.js app, with a synthetic database. There the picture was nearly the opposite, and the writeup is in [What my WAF actually blocked](/blog/what-my-waf-actually-blocked): 26 payloads, 12 blocked at tuned level 1, of which five were requests the app already rejected on its own and seven were stopped a step earlier than the app's own downstream defences. Level 2 caught nothing level 1 had missed and added two false positives. A tenant-isolation attack, the same class as A1 here, returned the identical `404` with the firewall on and off.
 
 Run the two side by side and the lesson is the same from opposite directions. On a deliberately broken app, the firewall looks heroic, because there is so much to stop. On a sound one, it mostly agrees with the code it sits in front of. In both, the class that decides real breaches never appeared in the firewall's column. A WAF is a compensating control: it helps most where the application is weakest, and it never takes the place of fixing it.
+
+So I did not put it in front of that app. After measuring it, the case for running it in production was thin. Every payload it blocked, the app already stopped. It missed the attack that decides a breach. Untuned, it blocked every legitimate `PATCH` and `DELETE`, and a false positive on the tracking devices' traffic would drop location data without an error anyone sees, which is a worse failure than anything it caught. The edge got a per-client rate limit instead, and the tuned rule set stays ready as a virtual patch for the day a dependency ships a vulnerability faster than I can upgrade it.
 
 ---
 
