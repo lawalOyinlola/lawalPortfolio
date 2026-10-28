@@ -24,7 +24,7 @@ re-render, never the PNG:
 October 2026 is Cybersecurity Awareness Month, and nobody could say they missed it. Between 14 and 21 October alone:
 
 • PHP2Shell: two unauthenticated remote code execution flaws in PHP itself, rated 9.2. Details leaked before the coordinated release, Amazon reported exploitation attempts four days before the patch, and PHP says updating is the only safe choice.
-• NGINX: five fixes on 14 October, three of them memory bugs that F5 scores 9.2 and nginx.org rates medium. Same bugs, two opinions, and only your config decides which one is right.
+• NGINX: five fixes on 14 October, three of them memory bugs that F5 scores 9.2 and nginx.org rates medium. Same bugs, two opinions, and your config decides which assessment applies to your setup.
 • BeyondTrust Remote Support: a critical authentication bypass, already exploited and added to CISA's Known Exploited Vulnerabilities catalogue on 16 October.
 • Next.js: two critical unauthenticated remote code execution flaws rated 9.5, one in image optimisation and one in use cache, plus a denial of service rated 8.2.
 • Node.js: ten CVEs fixed across three release lines. None critical, four rated high, one of them a Brotli decoder bug that can allow remote code execution.
@@ -66,7 +66,7 @@ A card titled "October 2026: Awareness month, in five advisories". PHP2Shell, CV
 
 | Claim | Verified at |
 | --- | --- |
-| National Cybersecurity Alliance 2026 theme "Don't Make It Easy for Them", updates is one of four habits | Search results citing NCA, 2026-10-23 |
+| National Cybersecurity Alliance 2026 theme "Don't Make It Easy for Them", updating is one of the four habits | Search results citing NCA, 2026-10-23 |
 | PHP2Shell: CVE-2026-109618 and CVE-2026-109619, CVSS v4 9.2, fixed in 8.5.12, 8.4.27, 8.3.36, 8.2.35 on 21 Oct; "no complete mitigations, updating is the only safe choice" | php.net news and release notes |
 | Details leaked before coordinated release; Amazon saw exploitation attempts four days before patches | SecurityWeek, "PHP2Shell: Mass Exploitation Looms for Leaked Critical PHP Flaws", updated 22 Oct |
 | BeyondTrust CVE-2026-102764: CISA calls it critical, actively exploited, added to KEV 16 Oct | cisa.gov alerts, 16 Oct 2026 |
