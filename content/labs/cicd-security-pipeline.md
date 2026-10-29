@@ -167,7 +167,7 @@ gitleaks detect --source . \
 jq length ~/scan-baseline/gitleaks.json
 ```
 
-`--log-opts` replaces gitleaks' own `git log` arguments, so the first three restate its defaults. `--diff-merges=separate` is the one that matters: without it, `git log -p` prints no patch for a merge commit, and a secret added while resolving a merge conflict is never scanned. I found that gap after publishing this lab, in my own pipeline, and every copy here now carries the fix. On the real product, turning it on surfaced 13 merge-commit copies of findings that were already triaged, so expect to suppress some duplicates the first time.
+`--log-opts` replaces gitleaks' own `git log` arguments, so the first three restate its defaults. `--diff-merges=separate` is the one that matters: without it, `git log -p` prints no patch for a merge commit, and a secret added while resolving a merge conflict is never scanned. The option needs Git 2.31 or newer (check with `git --version`). On an older Git, use `-m` in its place: it also prints a separate patch for each parent of a merge commit. I found that gap after publishing this lab, in my own pipeline, and every copy here now carries the fix. On the real product, turning it on surfaced 13 merge-commit copies of findings that were already triaged. A copy repeats lines that an earlier commit already added, but its fingerprint carries the merge's SHA, so it does not match the entry you wrote for the original. Do not add broad ignore entries for them. In the baseline, read a merge-commit finding as a duplicate when the same file and rule already appear under an earlier commit. The workflow in module 4 applies that rule for you.
 
 **Then read the code yourself.** Scanners match patterns. They do not know which of your behaviours are only meant to exist in development. Search for anything that changes behaviour based on a request header, a flag or an environment check, and read each hit:
 
@@ -334,7 +334,9 @@ The gate counts only critical findings that have a fixed version. A critical wit
     tar -xzf "$archive" -C /usr/local/bin gitleaks
 ```
 
-Bump the version without updating the checksum and the install fails outright, which is the right direction for a supply-chain check to fail in. The report is written with `--redact`, because it is uploaded as an artifact that anyone with access to the repository can download.
+Bump the version without updating the checksum and the install fails outright, which is the right direction for a supply-chain check to fail in.
+
+**The scan runs twice, so merge-commit copies do not slip past your suppressions.** The first run includes merge commits. The second, with the ignore file switched off, lists every secret already in a non-merge commit. A merge-commit finding is dropped only when the same secret in the same file is on that list, so a secret that first appears in a merge still blocks. Both runs stay unredacted in the runner's temporary folder, which is never uploaded. The report that is uploaded has the secret values replaced, because anyone with access to the repository can download it.
 
 **Results go where people already look.** The last job collects the result of every scan and posts one table to the pull request, updating it in place on each push rather than adding a new comment. A hidden marker in the comment body is how it finds its own comment again. It is the only job with `pull-requests: write`.
 
