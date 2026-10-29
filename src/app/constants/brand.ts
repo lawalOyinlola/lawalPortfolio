@@ -2,7 +2,7 @@ const PHONE_E164 = "+2348163992628";
 const PHONE_DIGITS = PHONE_E164.replace(/\D/g, "");
 
 export const BRAND = {
-  name: "Oyinlola Lawal",
+  name: "Lawal Oyinlola",
   shortName: "LAWAL",
   title: "Software Engineer & Application Security",
   description:
@@ -48,7 +48,7 @@ export const BRAND = {
   // Also feeds the Person JSON-LD `knowsAbout`: only list what the site's
   // projects, posts or labs back up.
   keywords: [
-    "Oyinlola Lawal",
+    "Lawal Oyinlola",
     "Software Engineer",
     "Application Security",
     "Frontend Engineer",

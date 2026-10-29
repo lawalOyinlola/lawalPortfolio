@@ -11,7 +11,7 @@ export default function JsonLd() {
     description: BRAND.description,
     alternateName: [
       "Oyinlola Ibrahim Lawal",
-      "Lawal Oyinlola",
+      "Oyinlola Lawal",
       "honeyzrich",
       "HoneyzRich",
     ],
@@ -25,7 +25,7 @@ export default function JsonLd() {
     name: BRAND.name,
     alternateName: [
       "Oyinlola Ibrahim Lawal",
-      "Lawal Oyinlola",
+      "Oyinlola Lawal",
       "honeyzrich",
       "HoneyzRich",
     ],

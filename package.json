@@ -60,7 +60,9 @@
       "baseline-browser-mapping": "^2.11.0",
       "@babel/core@7": "^7.29.6",
       "source-map-js": "^1.2.2",
-      "js-yaml@3>argparse": "-"
+      "js-yaml@3>argparse": "-",
+      "systeminformation@5": "^5.33.16",
+      "qs@6": "^6.16.1"
     },
     "auditConfig": {
       "ignoreGhsas": [

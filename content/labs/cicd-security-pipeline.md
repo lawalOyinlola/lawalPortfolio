@@ -161,10 +161,13 @@ trivy image --scanners vuln --format json \
 **Secrets, across the whole history.** A secret that was committed and later deleted is still in every clone, so a working-tree scan misses the case that matters most:
 
 ```bash
-gitleaks detect --source . --log-opts="--all" --redact \
+gitleaks detect --source . \
+  --log-opts="--full-history --all --diff-filter=uxdb --diff-merges=separate" --redact \
   --report-format json --report-path ~/scan-baseline/gitleaks.json
 jq length ~/scan-baseline/gitleaks.json
 ```
+
+`--log-opts` replaces gitleaks' own `git log` arguments, so it restates the defaults with two changes. `--diff-merges=separate` is the one that matters: without it, `git log -p` prints no patch for a merge commit, so a secret added while resolving a conflict is never scanned. It needs Git 2.31 or newer, and `-m` does the same on older versions. I found that gap in my own pipeline after publishing this lab. The other change drops the `t` from gitleaks' default `--diff-filter=tuxdb`, which skips type changes, such as a symlink turned into a file that holds a key. Scanning merges has one side effect: every line a merged branch brought in appears again under the merge commit's SHA, so a secret you have already triaged comes back with a fingerprint your ignore file does not match. On the real product that was 13 copies. Treat them as duplicates in the baseline rather than adding broad ignore entries, because the workflow in module 4 filters them out.
 
 **Then read the code yourself.** Scanners match patterns. They do not know which of your behaviours are only meant to exist in development. Search for anything that changes behaviour based on a request header, a flag or an environment check, and read each hit:
 
@@ -331,7 +334,9 @@ The gate counts only critical findings that have a fixed version. A critical wit
     tar -xzf "$archive" -C /usr/local/bin gitleaks
 ```
 
-Bump the version without updating the checksum and the install fails outright, which is the right direction for a supply-chain check to fail in. The report is written with `--redact`, because it is uploaded as an artifact that anyone with access to the repository can download.
+Bump the version without updating the checksum and the install fails outright, which is the right direction for a supply-chain check to fail in.
+
+**A second scan keeps those merge-commit copies out of the gate.** It switches the ignore file off and lists every secret already in an ordinary commit. A merge-commit finding is dropped when its secret and rule are on that list, whatever the file is now called, so a secret that first appears in a merge still blocks. Both raw reports stay in the runner's temporary folder, which is never uploaded, and the uploaded report has the values replaced.
 
 **Results go where people already look.** The last job collects the result of every scan and posts one table to the pull request, updating it in place on each push rather than adding a new comment. A hidden marker in the comment body is how it finds its own comment again. It is the only job with `pull-requests: write`.
 
