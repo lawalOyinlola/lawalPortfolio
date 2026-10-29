@@ -162,12 +162,12 @@ trivy image --scanners vuln --format json \
 
 ```bash
 gitleaks detect --source . \
-  --log-opts="--full-history --all --diff-filter=tuxdb --diff-merges=separate" --redact \
+  --log-opts="--full-history --all --diff-filter=uxdb --diff-merges=separate" --redact \
   --report-format json --report-path ~/scan-baseline/gitleaks.json
 jq length ~/scan-baseline/gitleaks.json
 ```
 
-`--log-opts` replaces gitleaks' own `git log` arguments, so the first three restate its defaults. `--diff-merges=separate` is the one that matters: without it, `git log -p` prints no patch for a merge commit, and a secret added while resolving a merge conflict is never scanned. The option needs Git 2.31 or newer (check with `git --version`). On an older Git, use `-m` in its place: it also prints a separate patch for each parent of a merge commit. I found that gap after publishing this lab, in my own pipeline, and every copy here now carries the fix. On the real product, turning it on surfaced 13 merge-commit copies of findings that were already triaged. A copy repeats lines that an earlier commit already added, but its fingerprint carries the merge's SHA, so it does not match the entry you wrote for the original. Do not add broad ignore entries for them. In the baseline, read a merge-commit finding as a duplicate when the same file and rule already appear under an earlier commit. The workflow in module 4 applies that rule for you.
+`--log-opts` replaces gitleaks' own `git log` arguments, so it restates the defaults with two changes. `--diff-merges=separate` is the one that matters: without it, `git log -p` prints no patch for a merge commit, so a secret added while resolving a conflict is never scanned. It needs Git 2.31 or newer, and `-m` does the same on older versions. I found that gap in my own pipeline after publishing this lab. The other change drops the `t` from gitleaks' default `--diff-filter=tuxdb`, which skips type changes, such as a symlink turned into a file that holds a key. Scanning merges has one side effect: every line a merged branch brought in appears again under the merge commit's SHA, so a secret you have already triaged comes back with a fingerprint your ignore file does not match. On the real product that was 13 copies. Treat them as duplicates in the baseline rather than adding broad ignore entries, because the workflow in module 4 filters them out.
 
 **Then read the code yourself.** Scanners match patterns. They do not know which of your behaviours are only meant to exist in development. Search for anything that changes behaviour based on a request header, a flag or an environment check, and read each hit:
 
@@ -336,7 +336,7 @@ The gate counts only critical findings that have a fixed version. A critical wit
 
 Bump the version without updating the checksum and the install fails outright, which is the right direction for a supply-chain check to fail in.
 
-**The scan runs twice, so merge-commit copies do not slip past your suppressions.** The first run includes merge commits. The second, with the ignore file switched off, lists every secret already in a non-merge commit. A merge-commit finding is dropped only when the same secret in the same file is on that list, so a secret that first appears in a merge still blocks. Both runs stay unredacted in the runner's temporary folder, which is never uploaded. The report that is uploaded has the secret values replaced, because anyone with access to the repository can download it.
+**A second scan keeps those merge-commit copies out of the gate.** It switches the ignore file off and lists every secret already in an ordinary commit. A merge-commit finding is dropped when its secret and rule are on that list, whatever the file is now called, so a secret that first appears in a merge still blocks. Both raw reports stay in the runner's temporary folder, which is never uploaded, and the uploaded report has the values replaced.
 
 **Results go where people already look.** The last job collects the result of every scan and posts one table to the pull request, updating it in place on each push rather than adding a new comment. A hidden marker in the comment body is how it finds its own comment again. It is the only job with `pull-requests: write`.
 
