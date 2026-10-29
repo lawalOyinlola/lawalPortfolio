@@ -6,7 +6,9 @@ tags: [security, webdev, devops, cybersecurity]
 cover: /images/blog/october-brought-the-awareness/coverimage.jpg
 coverAlt: "Four old brass alarm bells in a row on a whitewashed brick wall inside a fire station at dusk. Cloth-covered cables run down from each bell into one grey steel junction box whose heavy lever sits at OFF, with a fallen orange maple leaf on top. Through an arched window and doorway, an autumn street with orange trees and lit lamps. Headline in large cream type, top left: Four tools and one source."
 draft: false
-devto_published: false
+devto_id: 4933452
+devto_url: https://dev.to/lawaloyinlola/october-brought-the-awareness-after-all-59i4
+devto_published: true
 ---
 
 October 2026 is Cybersecurity Awareness Month, and it delivered the awareness in the least comfortable way it could: a month's worth of critical vulnerabilities in a single week. I read most of it as someone else's problem, right up until one of them turned out to be sitting in seven of the projects I run, and the tools I trusted to tell me about exactly that had not said a word.
@@ -35,14 +37,14 @@ I went back and pulled the timestamps, expecting to write about a gap of a few h
 
 ![Timeline from 14 to 26 October 2026, in UTC. On 14 October at 17:46 Next.js publishes the three advisories and 16.4.1 ships a minute later. An orange bracket of 8 days runs from there to 22 October, 15:50 to 16:42, when the GitHub Advisory Database lists them: during those 8 days the fix is on npm and every scanner reading that database is blind. The last CI run passes at 14:54 on 22 October, 56 minutes before the listing. Three projects are patched on 23 October between 09:22 and 14:46, with no Dependabot alert before any fix. The new daily audit fails on 3 newer high advisories at 10:23 on 24 October. On 26 October a fourth project, still vulnerable with alerts on, has no Dependabot alert almost four days after the listing.](/images/blog/october-brought-the-awareness/timeline.png)
 
-| When (UTC, 2026) | What happened |
-| --- | --- |
-| 14 Oct, 17:46 | Next.js publishes the three advisories in its own repository. 16.4.1 ships a minute later, with release notes naming all three. |
-| 22 Oct, 14:54 | The last CI run on this site's main branch passes, dependency audit included. |
-| 22 Oct, 15:50 to 16:42 | The three advisories enter the GitHub Advisory Database. |
+| When (UTC, 2026)       | What happened                                                                                                                                                                      |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 14 Oct, 17:46          | Next.js publishes the three advisories in its own repository. 16.4.1 ships a minute later, with release notes naming all three.                                                    |
+| 22 Oct, 14:54          | The last CI run on this site's main branch passes, dependency audit included.                                                                                                      |
+| 22 Oct, 15:50 to 16:42 | The three advisories enter the GitHub Advisory Database.                                                                                                                           |
 | 23 Oct, 09:22 to 14:46 | I patch three of my projects, 17 to 23 hours after the listing. None of them had received a Dependabot alert for any of the three advisories, in any state, before its fix landed. |
-| 23 Oct, 11:16 | I commit the fix for this site, 19 hours and 26 minutes after the first of them was listed. |
-| 26 Oct | A fourth project, still on a vulnerable version with Dependabot alerts switched on, has no alert for any of the three, almost four days after the listing. |
+| 23 Oct, 11:16          | I commit the fix for this site, 19 hours and 26 minutes after the first of them was listed.                                                                                        |
+| 26 Oct                 | A fourth project, still on a vulnerable version with Dependabot alerts switched on, has no alert for any of the three, almost four days after the listing.                         |
 
 The row that matters is not the one I sat down to write about. I came for a 19-hour gap and found an eight-day one: the fix was on npm, with its advisories linked from the release notes, for eight days before any scanner I use could know it existed.
 
