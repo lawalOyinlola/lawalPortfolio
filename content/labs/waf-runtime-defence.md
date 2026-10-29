@@ -21,7 +21,7 @@ draft: false
 
 This lab puts a web application firewall in front of an app and measures what it does, instead of assuming. You run the same 29 requests through two identical proxies, one with the rule engine off and one with it on, so every block is a difference between two observations. You watch the firewall without letting it block, turn blocking on and see what it breaks, tune it one rule at a time, raise its sensitivity and count the cost, write a virtual patch for a hole it cannot see, and finish by turning the whole policy into a test that fails when the configuration drifts.
 
-I first built this rig against a production app and wrote the results up in [What my WAF actually blocked](/blog/what-my-waf-actually-blocked). A rig that targets a private product cannot be followed by anyone else, so this is the same method rebuilt on [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/), which you can run yourself. The numbers here are from running this lab, not from that app. Where the two disagree, that is in the lab on purpose.
+I first built this rig against a local, production-mode build of a real app and wrote the results up in [What my WAF actually blocked](/blog/what-my-waf-actually-blocked). A rig that targets a private product cannot be followed by anyone else, so this is the same method rebuilt on [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/), which you can run yourself. The numbers here are from running this lab, not from that app. Where the two disagree, that is in the lab on purpose.
 
 > **Attack only what you own.** Juice Shop is deliberately vulnerable. Nothing in this lab publishes it beyond your own machine: the target has no published port, and both proxies bind to `127.0.0.1`. Keep it that way, and do not point these payloads at anything you do not control.
 
@@ -622,7 +622,7 @@ docker compose down -v
 
 ---
 
-## What it found on a production app
+## What it found on a local production-mode build
 
 The first version of this rig ran against a local, production-mode build of a NestJS and Next.js app, with a synthetic database. There the picture was nearly the opposite, and the writeup is in [What my WAF actually blocked](/blog/what-my-waf-actually-blocked): 26 payloads, 12 blocked at tuned level 1, of which five were requests the app already rejected on its own and seven were stopped a step earlier than the app's own downstream defences. Level 2 caught nothing level 1 had missed and added two false positives. A tenant-isolation attack, the same class as A1 here, returned the identical `404` with the firewall on and off.
 
