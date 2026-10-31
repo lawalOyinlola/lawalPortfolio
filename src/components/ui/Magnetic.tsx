@@ -37,11 +37,27 @@ export default function Magnetic({
       ease: "elastic.out(1, 0.3)",
     });
 
+    // The resting centre, measured once and kept until the page scrolls or
+    // resizes, rather than on every mouse move: a layout read per move,
+    // between GSAP's writes, made each frame wait on layout. The pull already
+    // applied is taken back out, so a measure taken mid-pull is still true.
+    let centre: { x: number; y: number } | null = null;
+    const forgetRect = () => {
+      centre = null;
+    };
+    const measure = () => {
+      const { height, width, left, top } = el.getBoundingClientRect();
+      return {
+        x: left + width / 2 - Number(gsap.getProperty(el, "x")),
+        y: top + height / 2 - Number(gsap.getProperty(el, "y")),
+      };
+    };
+
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
-      const { height, width, left, top } = el.getBoundingClientRect();
-      const x = clientX - (left + width / 2);
-      const y = clientY - (top + height / 2);
+      centre ??= measure();
+      const x = clientX - centre.x;
+      const y = clientY - centre.y;
 
       // Calculate distance
       const distance = Math.sqrt(x * x + y * y);
@@ -61,10 +77,14 @@ export default function Magnetic({
     };
 
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("scroll", forgetRect, { passive: true });
+    window.addEventListener("resize", forgetRect);
     el.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", forgetRect);
+      window.removeEventListener("resize", forgetRect);
       el.removeEventListener("mouseleave", handleMouseLeave);
       gsap.set(el, { x: 0, y: 0, clearProps: "transform" });
     };
