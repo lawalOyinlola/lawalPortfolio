@@ -11,7 +11,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FEATURED_PROJECTS } from "@/app/constants";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { EASE } from "@/lib/motion";
+import { EASE, prefersLiteMotion } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollToPlugin, ScrollTrigger, SplitText);
@@ -74,6 +74,7 @@ function Projects() {
       if (prefersReducedMotion) {
         gsap.set(".project-panel", { autoAlpha: 0 });
         gsap.set(`.panel-${target}`, { autoAlpha: 1 });
+        gsap.set(".project-img, .project-img-inner", { xPercent: 0 });
         return;
       }
 
@@ -112,13 +113,18 @@ function Projects() {
           },
           "exit",
         )
+        // The image wipe is a mask, not a clip-path: the frame slides out
+        // one way while the photo inside slides back the other, so the photo
+        // holds still and only its visible edge moves. Transforms only, so a
+        // phone composites it instead of repainting the photo every frame.
         .to(
           `.img-${prev}`,
-          {
-            clipPath: dir > 0 ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)",
-            duration: 0.35,
-            ease: "power2.inOut",
-          },
+          { xPercent: -dir * 100, duration: 0.35, ease: "power2.inOut" },
+          "exit",
+        )
+        .to(
+          `.img-inner-${prev}`,
+          { xPercent: dir * 100, duration: 0.35, ease: "power2.inOut" },
           "exit",
         )
         .to(
@@ -133,8 +139,14 @@ function Projects() {
         .set(`.panel-${target}`, { autoAlpha: 1 }, "enter")
         .fromTo(
           `.img-${target}`,
-          { clipPath: dir > 0 ? "inset(0 0 0 100%)" : "inset(0 100% 0 0)" },
-          { clipPath: "inset(0 0% 0 0%)", duration: 0.5, ease: EASE.out },
+          { xPercent: dir * 100 },
+          { xPercent: 0, duration: 0.5, ease: EASE.out },
+          "enter",
+        )
+        .fromTo(
+          `.img-inner-${target}`,
+          { xPercent: -dir * 100 },
+          { xPercent: 0, duration: 0.5, ease: EASE.out },
           "enter",
         )
         .fromTo(
@@ -187,17 +199,20 @@ function Projects() {
         onUpdate: (self) => {
           showProject(Math.round(self.progress * (COUNT - 1)));
         },
-        snap: prefersReducedMotion
-          ? undefined
-          : {
-              snapTo: 1 / (COUNT - 1),
-              // Nearest project, not the next one in the scroll direction:
-              // a small nudge shouldn't pull the page a whole step.
-              directional: false,
-              duration: { min: 0.2, max: 0.45 },
-              delay: 0.12,
-              ease: EASE.soft,
-            },
+        // No snap on touch: it lands while a fling is still running down,
+        // and the two scrolls fight. The fling settles it well enough.
+        snap:
+          prefersReducedMotion || prefersLiteMotion()
+            ? undefined
+            : {
+                snapTo: 1 / (COUNT - 1),
+                // Nearest project, not the next one in the scroll direction:
+                // a small nudge shouldn't pull the page a whole step.
+                directional: false,
+                duration: { min: 0.2, max: 0.45 },
+                delay: 0.12,
+                ease: EASE.soft,
+              },
       });
 
       // A reload part-way down the page starts on the right project. Applied
@@ -211,6 +226,7 @@ function Projects() {
       setActiveIndex(initial);
       gsap.set(".project-panel", { autoAlpha: 0 });
       gsap.set(`.panel-${initial}`, { autoAlpha: 1 });
+      gsap.set(".project-img, .project-img-inner", { xPercent: 0 });
 
       return () => trigger.kill();
     },
@@ -444,17 +460,22 @@ function Projects() {
               aria-hidden={activeIndex !== i}
             >
               <div className="flex flex-col md:flex-row flex-1 gap-4 md:gap-10">
+                {/* The tint sits on the inner layer: the frame slides off its
+                    own box during the wipe, and a tint on it would show there. */}
                 <div
-                  className={`img-${i} relative w-full md:w-3/5 min-h-[35vh] md:min-h-0 overflow-hidden bg-foreground/5`}
-                  style={{ clipPath: "inset(0 0 0 0)" }}
+                  className={`img-${i} project-img relative w-full md:w-3/5 min-h-[35vh] md:min-h-0 overflow-hidden`}
                 >
-                  <Image
-                    src={project.image}
-                    alt={project.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 57vw"
-                  />
+                  <div
+                    className={`img-inner-${i} project-img-inner absolute inset-0 bg-foreground/5`}
+                  >
+                    <Image
+                      src={project.image}
+                      alt={project.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 57vw"
+                    />
+                  </div>
                 </div>
                 <div className="w-full md:w-2/5 flex flex-col justify-between py-0 md:py-2 sm:flex-1">
                   <div className="flex flex-col gap-2 md:gap-5">
