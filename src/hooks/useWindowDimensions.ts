@@ -21,8 +21,26 @@ function subscribe(onChange: () => void) {
   };
 }
 
+// A phone resizes the window each time its toolbar slides in or out on
+// scroll. On touch screens the height is only re-read when the width changes
+// too (a rotation, a split view), so that slide never flips the layout flags
+// below mid-scroll and rebuilds what depends on them.
+let stableHeight = 0;
+let stableHeightWidth = 0;
+
 const getWidth = () => window.innerWidth;
-const getHeight = () => window.innerHeight;
+const getHeight = () => {
+  const width = window.innerWidth;
+  if (
+    !stableHeight ||
+    width !== stableHeightWidth ||
+    !window.matchMedia("(pointer: coarse)").matches
+  ) {
+    stableHeight = window.innerHeight;
+    stableHeightWidth = width;
+  }
+  return stableHeight;
+};
 const getServerSize = () => 0;
 
 export function useWindowDimensions() {
