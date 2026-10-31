@@ -8,6 +8,7 @@ import { SplitText } from "gsap/SplitText";
 import { cn } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { usePageRevealed } from "@/lib/pageReveal";
+import { prefersLiteMotion } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
@@ -81,11 +82,16 @@ export function SectionHeader({
         return;
       }
 
+      // On touch screens the entrance plays once. Reversing it each time the
+      // header dips back under the start line makes a slow or jittery thumb
+      // flip the title back and forth.
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 85%",
-          toggleActions: "play none none reverse",
+          ...(prefersLiteMotion()
+            ? { once: true }
+            : { toggleActions: "play none none reverse" }),
         },
       });
 

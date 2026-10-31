@@ -271,6 +271,12 @@ html[data-intro="skip"] .pl-line {
   animation: tv-jitter 90ms steps(2) infinite;
 }
 
+/* Held while off screen (ContactsRef sets data-paused) */
+.tv-static[data-paused],
+.tv-static[data-paused] .tv-static-overlay {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tv-static {
     animation: none;

@@ -54,7 +54,11 @@ const Hero = ({ ready = true }: HeroProps) => {
   return (
     <section
       ref={sectionRef}
-      className="relative z-1 h-dvh w-full flex-center items-end overflow-hidden bg-background"
+      // svh, not dvh: a dvh hero grows and shrinks as a phone's toolbar
+      // slides in and out, which moves everything below it mid-scroll. A
+      // minimum, so a short screen (a phone on its side) grows to fit the
+      // heading instead of cutting off its top.
+      className="relative z-1 min-h-svh w-full flex-center items-end overflow-hidden bg-background"
     >
       {/* V-shape grid animation */}
       <div className="absolute inset-0 z-2">

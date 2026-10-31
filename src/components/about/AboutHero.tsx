@@ -182,7 +182,9 @@ const AboutHero = ({ ready = true }: { ready?: boolean }) => {
     <section
       id="introduction"
       ref={aboutRef}
-      className="relative z-1 flex h-dvh min-h-160 w-full overflow-hidden bg-foreground text-background"
+      // svh, not dvh: see the home hero. A dvh height moves the page under
+      // the finger each time a phone's toolbar slides in or out.
+      className="relative z-1 flex h-svh min-h-160 w-full overflow-hidden bg-foreground text-background"
     >
       {/* Dusk grid animation, showing either side of the portrait */}
       <div className="absolute inset-0 z-2 opacity-80">

@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BRAND_STATS } from "@/app/constants";
+import { prefersLiteMotion } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -51,6 +52,11 @@ function BrandStats() {
       // The labels and descriptions either side of each figure come out of a
       // haze as they reach the middle of the screen and go back into it on the
       // way up, while the figures themselves stay clear the whole way.
+      // On touch screens the haze is a fade alone: a blur redrawn every
+      // scroll frame, inside the difference blend above the photo, is more
+      // than a phone can keep up with.
+      const haze = prefersLiteMotion() ? {} : { filter: "blur(12px)" };
+      const clear = prefersLiteMotion() ? {} : { filter: "blur(0px)" };
       gsap.utils.toArray<HTMLElement>(".stat-side").forEach((el) => {
         gsap
           .timeline({
@@ -63,10 +69,10 @@ function BrandStats() {
           })
           .fromTo(
             el,
-            { autoAlpha: 0, filter: "blur(12px)" },
+            { autoAlpha: 0, ...haze },
             {
               autoAlpha: 1,
-              filter: "blur(0px)",
+              ...clear,
               // Late on the way in, early on the way out: clear only in a
               // narrow band around the middle of the screen.
               ease: "power2.in",
@@ -75,7 +81,7 @@ function BrandStats() {
           )
           .to(el, {
             autoAlpha: 0,
-            filter: "blur(12px)",
+            ...haze,
             ease: "power2.out",
             duration: 0.45,
             delay: 0.1,
@@ -95,17 +101,26 @@ function BrandStats() {
             invalidateOnRefresh: true,
           },
         })
-        // An explicit start filter: tweening from the computed "none" would
-        // snap straight to the end value, darkening the image before it zooms.
         .fromTo(
           imageFrameEl,
-          { scale: 1, filter: "grayscale(0) brightness(1)" },
-          {
-            scale: coverScale,
-            filter: "grayscale(1) brightness(0.55)",
-            ease: "power2.inOut",
-            duration: 0.8,
-          },
+          { scale: 1 },
+          { scale: coverScale, ease: "power2.inOut", duration: 0.8 },
+          0,
+        )
+        // The photo greys and darkens as it zooms. Both are fades rather than
+        // an animated filter, so nothing is repainted per frame: a grey copy
+        // fades in over it (the same as grayscale(0 → 1)), and a black layer
+        // to 45% gives brightness(1 → 0.55).
+        .fromTo(
+          ".stats-image-grey",
+          { opacity: 0 },
+          { opacity: 1, ease: "power2.inOut", duration: 0.8 },
+          0,
+        )
+        .fromTo(
+          ".stats-image-shade",
+          { opacity: 0 },
+          { opacity: 0.45, ease: "power2.inOut", duration: 0.8 },
           0,
         );
 
@@ -146,6 +161,24 @@ function BrandStats() {
             fill
             className="object-cover"
             sizes="100vw"
+          />
+          {/* Each on its own layer, so the static filter is drawn once and
+              only the opacity changes on scroll */}
+          <div
+            className="stats-image-grey absolute inset-0 opacity-0 grayscale will-change-[opacity]"
+            aria-hidden="true"
+          >
+            <Image
+              src="/stats_image.webp"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="100vw"
+            />
+          </div>
+          <div
+            className="stats-image-shade absolute inset-0 bg-black opacity-0 will-change-[opacity]"
+            aria-hidden="true"
           />
         </div>
       </div>
