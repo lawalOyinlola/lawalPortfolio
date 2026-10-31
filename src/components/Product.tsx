@@ -65,12 +65,14 @@ const Product = ({ imageSrc = "/projects/my_projects.webp" }: ProductProps) => {
 
       // Most of the photo is a dark desk, which would leave the letters
       // nearly black. It lifts while the panel slides over, by which point
-      // only the strip above the panel still shows it unmasked.
+      // only the strip above the panel still shows it unmasked. The lift is
+      // a brighter copy fading in, not an animated filter: the copy's filter
+      // is drawn once, and only its opacity changes on scroll.
       gsap.fromTo(
-        imageEl,
-        { filter: "brightness(1) saturate(1)" },
+        ".product-image-lift",
+        { opacity: 0 },
         {
-          filter: "brightness(1.5) saturate(1.2)",
+          opacity: 1,
           ease: "none",
           scrollTrigger: {
             trigger: sectionEl,
@@ -100,6 +102,18 @@ const Product = ({ imageSrc = "/projects/my_projects.webp" }: ProductProps) => {
               className="object-cover object-top"
               sizes="100vw"
             />
+            <div
+              className="product-image-lift absolute inset-0 opacity-0 brightness-150 saturate-120 will-change-[opacity]"
+              aria-hidden="true"
+            >
+              <Image
+                src={imageSrc}
+                alt=""
+                fill
+                className="object-cover object-top"
+                sizes="100vw"
+              />
+            </div>
           </div>
         </div>
       </div>

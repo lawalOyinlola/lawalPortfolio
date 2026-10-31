@@ -28,11 +28,16 @@ const FIXED_DELAYS: number[] = V_HEIGHTS.map(
   (_, i) => ((i * 53 + 7) % 100) / 66.7,
 );
 
-// Hero mode closes with the scroll rather than on a timer, so it can never
-// lag behind a fast scroll. The outermost columns start this far into the
-// scroll range after the centre ones.
-const HERO_CLOSE_STAGGER = 0.2;
-const HERO_CLOSE_EASE = "power2.inOut";
+// Both modes move with the scroll rather than on a timer, so they can never
+// lag behind a fast scroll: hero mode closes, partners mode opens. Each
+// column eases on its own, and the outermost columns start this far into the
+// scroll range after the centre ones, so the grid moves as a wave rather than
+// one block sliding at a constant speed.
+// The open eases more gently than the close: it plays across the whole
+// section entering, and a steep curve there reads as a rush.
+const SCRUB_STAGGER = 0.2;
+const CLOSE_EASE = "power2.inOut";
+const OPEN_EASE = "sine.inOut";
 
 function getColumnConfig(
   i: number,
@@ -148,21 +153,28 @@ const GridAnimation = ({
       });
 
       // 0 → 1 as the section scrolls. Partners mode opens with it; hero mode
-      // closes with it, centre columns first.
+      // closes with it. Centre columns first in both.
       const scroll = { p: 0 };
-      const closeEase = gsap.parseEase(HERO_CLOSE_EASE);
-      const closeDelays = COLUMN_CONFIGS.map(
-        (_, i) => (Math.abs(i - CENTER) / CENTER) * HERO_CLOSE_STAGGER,
+      const scrubEase = gsap.parseEase(scrubStart ? OPEN_EASE : CLOSE_EASE);
+      const scrubDelays = COLUMN_CONFIGS.map(
+        (_, i) => (Math.abs(i - CENTER) / CENTER) * SCRUB_STAGGER,
       );
       const factor = (i: number) => {
-        if (scrubStart) return scroll.p;
         const local = gsap.utils.clamp(
           0,
           1,
-          (scroll.p - closeDelays[i]) / (1 - HERO_CLOSE_STAGGER),
+          (scroll.p - scrubDelays[i]) / (1 - SCRUB_STAGGER),
         );
-        return 1 - closeEase(local);
+        return scrubStart ? scrubEase(local) : 1 - scrubEase(local);
       };
+
+      // Below md every other column is hidden (see the markup): nothing is
+      // written to those, and their oscillation never plays. Read from the
+      // same media query as the max-md class, so the two always agree.
+      const belowMdQuery = window.matchMedia("(width < 48rem)");
+      let belowMd = belowMdQuery.matches;
+      const shown = (i: number) => !belowMd || i % 2 === 0;
+      let liveTweens = oscillationTweens.filter((_, i) => shown(i));
 
       // Fully closed, nothing moves: skip the writes until scrolling resumes.
       let wasSettled = false;
@@ -170,7 +182,9 @@ const GridAnimation = ({
         const settled = scrubStart ? scroll.p === 0 : scroll.p === 1;
         if (settled && wasSettled) return;
         wasSettled = settled;
-        heights.forEach((height, i) => setters[i](height.y * factor(i)));
+        heights.forEach((height, i) => {
+          if (shown(i)) setters[i](height.y * factor(i));
+        });
       };
 
       const scrollTween = gsap.to(scroll, {
@@ -196,10 +210,10 @@ const GridAnimation = ({
         if (active) {
           wasSettled = false;
           gsap.ticker.add(render);
-          if (oscillating) oscillationTweens.forEach((t) => t.play());
+          if (oscillating) liveTweens.forEach((t) => t.play());
         } else {
           gsap.ticker.remove(render);
-          oscillationTweens.forEach((t) => t.pause());
+          liveTweens.forEach((t) => t.pause());
         }
       };
       const visibility = ScrollTrigger.create({
@@ -209,12 +223,26 @@ const GridAnimation = ({
         onToggle: (self) => setActive(self.isActive),
       });
 
+      // The breakpoint can be crossed without isMobile changing (a browser
+      // font size other than 16px moves 48rem off 768px), so it is watched
+      // here too. Columns that come into view pick up their oscillation and
+      // are written on the next render, from the heights kept for them.
+      const onBreakpoint = (event: MediaQueryListEvent) => {
+        belowMd = event.matches;
+        liveTweens.forEach((t) => t.pause());
+        liveTweens = oscillationTweens.filter((_, i) => shown(i));
+        if (active && oscillating) liveTweens.forEach((t) => t.play());
+        wasSettled = false;
+        if (!active) render();
+      };
+      belowMdQuery.addEventListener("change", onBreakpoint);
+
       let introTimeline: gsap.core.Timeline | null = null;
       if (!scrubStart && ready) {
         introTimeline = gsap.timeline({
           onComplete: () => {
             oscillating = true;
-            if (active) oscillationTweens.forEach((t) => t.play());
+            if (active) liveTweens.forEach((t) => t.play());
           },
         });
         heights.forEach((height, i) => {
@@ -231,6 +259,7 @@ const GridAnimation = ({
       setActive(visibility.isActive);
 
       return () => {
+        belowMdQuery.removeEventListener("change", onBreakpoint);
         gsap.ticker.remove(render);
         visibility.kill();
         scrollTween.scrollTrigger?.kill();
@@ -265,8 +294,10 @@ const GridAnimation = ({
             i % 2 !== 0 ? "max-md:hidden" : ""
           }`}
         >
+          {/* Its own compositor layer: the setter writes a 2D translate every
+              frame, which would otherwise repaint the section each time. */}
           <div
-            className={`grid-shutter absolute inset-0 ${shutterClassName}`}
+            className={`grid-shutter absolute inset-0 will-change-transform ${shutterClassName}`}
           />
         </div>
       ))}

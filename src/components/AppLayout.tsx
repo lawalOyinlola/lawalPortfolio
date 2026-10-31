@@ -44,22 +44,38 @@ export default function AppLayout({ children }: AppLayoutProps) {
   // resize. Anything that changes height after mount (a layout waiting on the
   // motion preference, an FAQ opening, a late image) would leave every trigger
   // below it firing early, so re-measure whenever the page's height changes.
+  // Never mid-scroll: a refresh puts the scroll position back, which on a
+  // phone stops a fling dead and reads as the page shaking. A change made
+  // while scrolling waits for the scroll to end.
   useEffect(() => {
     const content = mainRef.current;
     if (!content) return;
     let frame = 0;
+    let pending = false;
     let lastHeight = content.offsetHeight;
+    const refresh = () => {
+      pending = false;
+      ScrollTrigger.refresh();
+    };
+    const onScrollEnd = () => {
+      if (pending) refresh();
+    };
     const observer = new ResizeObserver(() => {
       const height = content.offsetHeight;
       if (height === lastHeight) return;
       lastHeight = height;
+      pending = true;
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => ScrollTrigger.refresh());
+      frame = requestAnimationFrame(() => {
+        if (!ScrollTrigger.isScrolling()) refresh();
+      });
     });
     observer.observe(content);
+    ScrollTrigger.addEventListener("scrollEnd", onScrollEnd);
     return () => {
       observer.disconnect();
       cancelAnimationFrame(frame);
+      ScrollTrigger.removeEventListener("scrollEnd", onScrollEnd);
     };
   }, []);
 

@@ -17,3 +17,16 @@ export const DURATION = {
   base: 0.6,
   slow: 1,
 } as const;
+
+/**
+ * Touch screens get the lighter set of scroll motion: no snapping against the
+ * finger, no animated blur, entrances that play once rather than replaying at
+ * every small scroll back. The primary pointer doesn't change mid-session, so
+ * this is read once per effect rather than watched.
+ */
+export function prefersLiteMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}
