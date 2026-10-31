@@ -171,9 +171,10 @@ const GridAnimation = ({
       // Below md every other column is hidden (see the markup): nothing is
       // written to those, and their oscillation never plays. Read from the
       // same media query as the max-md class, so the two always agree.
-      const belowMd = window.matchMedia("(width < 48rem)").matches;
+      const belowMdQuery = window.matchMedia("(width < 48rem)");
+      let belowMd = belowMdQuery.matches;
       const shown = (i: number) => !belowMd || i % 2 === 0;
-      const liveTweens = oscillationTweens.filter((_, i) => shown(i));
+      let liveTweens = oscillationTweens.filter((_, i) => shown(i));
 
       // Fully closed, nothing moves: skip the writes until scrolling resumes.
       let wasSettled = false;
@@ -222,6 +223,20 @@ const GridAnimation = ({
         onToggle: (self) => setActive(self.isActive),
       });
 
+      // The breakpoint can be crossed without isMobile changing (a browser
+      // font size other than 16px moves 48rem off 768px), so it is watched
+      // here too. Columns that come into view pick up their oscillation and
+      // are written on the next render, from the heights kept for them.
+      const onBreakpoint = (event: MediaQueryListEvent) => {
+        belowMd = event.matches;
+        liveTweens.forEach((t) => t.pause());
+        liveTweens = oscillationTweens.filter((_, i) => shown(i));
+        if (active && oscillating) liveTweens.forEach((t) => t.play());
+        wasSettled = false;
+        if (!active) render();
+      };
+      belowMdQuery.addEventListener("change", onBreakpoint);
+
       let introTimeline: gsap.core.Timeline | null = null;
       if (!scrubStart && ready) {
         introTimeline = gsap.timeline({
@@ -244,6 +259,7 @@ const GridAnimation = ({
       setActive(visibility.isActive);
 
       return () => {
+        belowMdQuery.removeEventListener("change", onBreakpoint);
         gsap.ticker.remove(render);
         visibility.kill();
         scrollTween.scrollTrigger?.kill();
