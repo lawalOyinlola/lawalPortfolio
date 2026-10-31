@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,6 +8,7 @@ import { SplitText } from "gsap/SplitText";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import ContactButtons from "./ui/ContactButtons";
 import { handleEmailClick } from "@/lib/utils";
+import { prefersLiteMotion } from "@/lib/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP, SplitText);
@@ -25,8 +26,21 @@ function ContactsRef({
   const contactRef = useRef<HTMLDivElement>(null);
   const title1Ref = useRef<HTMLSpanElement>(null);
   const title2Ref = useRef<HTMLSpanElement>(null);
+  const staticRef = useRef<HTMLDivElement>(null);
   const { prefersReducedMotion, isHydrated: isMotionHydrated } =
     usePrefersReducedMotion();
+
+  // The static never stops on its own: hold it while it's off screen, so it
+  // isn't redrawn for a section nobody can see.
+  useEffect(() => {
+    const el = staticRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      el.toggleAttribute("data-paused", !entry.isIntersecting);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useGSAP(
     () => {
@@ -57,10 +71,13 @@ function ContactsRef({
             duration: 0.8,
             stagger: 0.05,
             ease: "expo.out",
+            // Once on touch screens, like the section headers: see there.
             scrollTrigger: {
               trigger: scrollTriggerSelector || contactRef.current,
               start: scrollTriggerStart || "top 40%",
-              toggleActions: "play none none reverse",
+              ...(prefersLiteMotion()
+                ? { once: true }
+                : { toggleActions: "play none none reverse" }),
             },
           });
         }
@@ -83,7 +100,10 @@ function ContactsRef({
       className="relative w-full h-full bg-background flex-center"
     >
       <div className="wrapper max-w-screen w-full min-h-screen pt-4.5 flex flex-col gap-19">
-        <div className="relative mt-2 grow w-full flex justify-end items-end overflow-hidden tv-static">
+        <div
+          ref={staticRef}
+          className="relative mt-2 grow w-full flex justify-end items-end overflow-hidden tv-static"
+        >
           <div className="tv-static-overlay" />
           <h2 className="contact-title leading-none">
             <button
