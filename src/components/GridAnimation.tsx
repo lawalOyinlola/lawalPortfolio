@@ -164,13 +164,20 @@ const GridAnimation = ({
         return 1 - closeEase(local);
       };
 
+      // Below md every other column is hidden (see the markup): nothing is
+      // written to those, and their oscillation never plays.
+      const shown = (i: number) => !isMobile || i % 2 === 0;
+      const liveTweens = oscillationTweens.filter((_, i) => shown(i));
+
       // Fully closed, nothing moves: skip the writes until scrolling resumes.
       let wasSettled = false;
       const render = () => {
         const settled = scrubStart ? scroll.p === 0 : scroll.p === 1;
         if (settled && wasSettled) return;
         wasSettled = settled;
-        heights.forEach((height, i) => setters[i](height.y * factor(i)));
+        heights.forEach((height, i) => {
+          if (shown(i)) setters[i](height.y * factor(i));
+        });
       };
 
       const scrollTween = gsap.to(scroll, {
@@ -196,10 +203,10 @@ const GridAnimation = ({
         if (active) {
           wasSettled = false;
           gsap.ticker.add(render);
-          if (oscillating) oscillationTweens.forEach((t) => t.play());
+          if (oscillating) liveTweens.forEach((t) => t.play());
         } else {
           gsap.ticker.remove(render);
-          oscillationTweens.forEach((t) => t.pause());
+          liveTweens.forEach((t) => t.pause());
         }
       };
       const visibility = ScrollTrigger.create({
@@ -214,7 +221,7 @@ const GridAnimation = ({
         introTimeline = gsap.timeline({
           onComplete: () => {
             oscillating = true;
-            if (active) oscillationTweens.forEach((t) => t.play());
+            if (active) liveTweens.forEach((t) => t.play());
           },
         });
         heights.forEach((height, i) => {
