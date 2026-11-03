@@ -1,12 +1,14 @@
 ---
 title: "The AI endpoint that charges you money when somebody abuses it"
 description: "Abuse of a normal endpoint costs you capacity. Abuse of an endpoint that calls a model costs you money per request while everything looks healthy. Four controls, and the quota bug that charges you for every rejection."
-date: 2026-11-02
+date: 2026-11-03
 tags: [security, ai, appsec, webdev]
 cover: /images/blog/the-ai-feature-that-bills-you/coverimage.jpg
 coverAlt: "A laptop on a dark desk shows a calm status screen of green dots and lines. Beside it, a brass meter behind glass glows amber as its number wheels turn. Headline: Everything looks healthy."
 draft: false
-devto_published: false
+devto_id: 4968688
+devto_url: https://dev.to/lawaloyinlola/the-ai-endpoint-that-charges-you-money-when-somebody-abuses-it-43j0
+devto_published: true
 ---
 
 Every other part of your product costs you capacity when someone abuses it. Servers work harder, response times climb, and if it gets bad enough you add machines. Unpleasant, recoverable, and broadly proportional to how much traffic you are getting.
