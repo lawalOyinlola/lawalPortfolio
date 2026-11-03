@@ -380,8 +380,10 @@ export function toPostSummaries(
   const newest = posts[0];
   if (!newest || newest.frontmatter.featured) return [...featured, ...rest];
 
-  const fresh =
-    now.getTime() - newest.frontmatter.date.getTime() < LATEST_WINDOW_MS;
+  // A future-dated post is live (only drafts are hidden) but has not reached
+  // its date yet, so its week has not started.
+  const age = now.getTime() - newest.frontmatter.date.getTime();
+  const fresh = age >= 0 && age < LATEST_WINDOW_MS;
   if (fresh) {
     const [latest, ...others] = rest;
     return [{ ...latest, badge: "Latest", pinned: true }, ...featured, ...others];
