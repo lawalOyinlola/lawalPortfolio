@@ -12,8 +12,9 @@ import TagPill from "./TagPill";
 export type { PostSummary };
 
 /**
- * The Featured or Latest label. Featured posts all carry one; with none
- * featured, only the newest is labelled Latest. See `toPostSummaries`.
+ * The Featured or Latest label. Featured posts all carry one; the newest is
+ * labelled Latest while under a week old, or when none is featured. See
+ * `toPostSummaries`.
  */
 function PostBadge({
   badge,

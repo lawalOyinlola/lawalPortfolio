@@ -105,9 +105,9 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
       else cmp = a.dateISO.localeCompare(b.dateISO);
       return sortDir === "asc" ? cmp : -cmp;
     });
-    // Featured posts sit on top of the default newest-first order, newest
-    // featured first, where the badge says why they are out of date order.
-    // Any other sort is literal.
+    // Pinned posts (featured, plus a Latest post under a week old) sit on top
+    // of the default newest-first order, newest first, where the badge says
+    // why they are out of date order. Any other sort is literal.
     if (sortKey === "date" && sortDir === "desc") {
       return [
         ...arr.filter((post) => post.pinned),
