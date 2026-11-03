@@ -7,6 +7,7 @@ tags: [security, webdev, devops, cybersecurity]
 cover: /images/blog/what-my-waf-actually-blocked/coverimage.jpg
 coverAlt: "An empty airport security checkpoint at night under yellow overhead signs. On the X-ray monitor, two identical envelopes pass through side by side. Headline: A WAF buys you time."
 draft: false
+featured: true
 devto_id: 4651595
 devto_url: https://dev.to/lawaloyinlola/what-my-waf-actually-blocked-and-what-my-app-already-stops-on-its-own-2ij2
 devto_published: true

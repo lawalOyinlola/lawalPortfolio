@@ -7,6 +7,7 @@ tags: [security, ai, appsec, webdev]
 cover: /images/blog/the-skill-you-installed/coverimage.jpg
 coverAlt: "A weathered wooden signpost at dusk with a cardboard tag showing a green tick tied to it. Its blank arrow points down a wet country road that disappears into fog. Headline: The scanners were right."
 draft: false
+featured: true
 devto_id: 4837402
 devto_url: https://dev.to/lawaloyinlola/your-coding-agent-runs-as-you-so-does-everything-you-install-into-it-4ii3
 devto_published: true

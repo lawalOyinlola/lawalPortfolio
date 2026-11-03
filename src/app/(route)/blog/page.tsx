@@ -7,6 +7,10 @@ import BlogTypewriter from "@/components/content/BlogTypewriter";
 import ContactsRef from "@/components/ContactsRef";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
+// Hourly, so a new post's Latest slot ends a week after it is published, not
+// at the next deploy. See `toPostSummaries`.
+export const revalidate = 3600;
+
 const title = "Blog";
 const description = `Writing by ${BRAND.name} on software and frontend engineering, performance, accessibility and security, and on the communication and leadership that hold technical work together.`;
 
@@ -47,7 +51,7 @@ export default function BlogPage() {
   const allPosts = getBlogPosts();
   const posts = toPostSummaries(allPosts);
   // Looked up by slug rather than taken as posts[0]: a featured post is
-  // pinned above newer ones.
+  // pinned above newer ones once the newest is past its Latest window.
   const newest = posts.find((post) => post.slug === allPosts[0]?.slug);
 
   return (

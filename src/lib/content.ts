@@ -324,7 +324,10 @@ export type PostSummary = {
   cover: string | null;
   /** See `toPostSummaries` for which posts carry one. */
   badge: "Featured" | "Latest" | null;
-  /** Marked `featured: true`: held above the rest in newest-first order. */
+  /**
+   * Held above the rest in newest-first order: marked `featured: true`, or the
+   * Latest post while it is within `LATEST_WINDOW_MS`.
+   */
   pinned: boolean;
 };
 
@@ -347,14 +350,24 @@ function toPostSummary(post: BlogPost): PostSummary {
   };
 }
 
+/** How long a new post leads the list as Latest before featured posts take the top slot back. */
+export const LATEST_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
 /**
  * Flatten a newest-first list and call out what leads it. Every post marked
  * `featured: true` takes a Featured badge and moves to the top, newest
- * featured first, ahead of the rest in their usual newest-first order. With
- * none marked, the newest post is labelled Latest instead, so the two badges
- * never appear together.
+ * featured first, ahead of the rest in their usual newest-first order.
+ *
+ * The newest post, if not featured itself, is labelled Latest when nothing is
+ * featured, or when it is less than `LATEST_WINDOW_MS` old. A fresh post leads
+ * above the featured ones; after the window it drops back into date order and
+ * loses its badge. Pages calling this must revalidate, or `now` stays frozen
+ * at build time.
  */
-export function toPostSummaries(posts: BlogPost[]): PostSummary[] {
+export function toPostSummaries(
+  posts: BlogPost[],
+  now: Date = new Date(),
+): PostSummary[] {
   const featured: PostSummary[] = [];
   const rest: PostSummary[] = [];
   for (const post of posts) {
@@ -364,7 +377,18 @@ export function toPostSummaries(posts: BlogPost[]): PostSummary[] {
       rest.push(toPostSummary(post));
     }
   }
-  if (featured.length === 0 && rest[0]) {
+  const newest = posts[0];
+  if (!newest || newest.frontmatter.featured) return [...featured, ...rest];
+
+  // A future-dated post is live (only drafts are hidden) but has not reached
+  // its date yet, so its week has not started.
+  const age = now.getTime() - newest.frontmatter.date.getTime();
+  const fresh = age >= 0 && age < LATEST_WINDOW_MS;
+  if (fresh) {
+    const [latest, ...others] = rest;
+    return [{ ...latest, badge: "Latest", pinned: true }, ...featured, ...others];
+  }
+  if (featured.length === 0) {
     rest[0] = { ...rest[0], badge: "Latest" };
   }
   return [...featured, ...rest];

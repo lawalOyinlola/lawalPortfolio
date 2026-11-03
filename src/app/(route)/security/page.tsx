@@ -14,6 +14,10 @@ import ToolMarquee from "@/components/security/ToolMarquee";
 import WritingCarousel from "@/components/security/WritingCarousel";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 
+// Hourly, so a new post's Latest slot in Writing ends a week after it is
+// published, not at the next deploy. See `toPostSummaries`.
+export const revalidate = 3600;
+
 const title = "Security";
 const description = `The security side of ${BRAND.name}'s work: application security from the builder's side, hands-on lab writeups, and the method behind them — permission, scope, and a report anyone can act on.`;
 
@@ -123,8 +127,9 @@ export default function SecurityPage() {
   const securityPosts = getBlogPosts().filter((post) =>
     post.frontmatter.tags.some((tag) => SECURITY_TAGS.has(tag.toLowerCase())),
   );
-  // Featured security posts first (newest featured leading), then the newest
-  // of the rest to fill the row; with none featured, the newest is Latest.
+  // A security post under a week old leads as Latest, then featured security
+  // posts (newest featured leading), then the newest of the rest to fill the
+  // row; with none featured, the newest is Latest at any age.
   const writing = toPostSummaries(securityPosts).slice(0, WRITING_LIMIT);
 
   // Every tool the labs used, then every CVE they exploited, once each.
