@@ -226,7 +226,7 @@ the old file in a follow-up commit.
 | `cover` | Optional. Also becomes the social card and the dev.to cover. |
 | `coverAlt` | **Required whenever `cover` is set.** |
 | `draft` | `true` keeps it off the live site and out of the sync. Still visible in `pnpm dev`. |
-| `featured` | Optional. `true` pins the post to the top of `/blog` and the Writing row on `/security`, with a Featured badge. Several featured posts lead newest first. With none marked, the newest post gets a Latest badge instead. Keep it to two or three: every pinned post pushes new ones down. Site-only, never sent to dev.to. |
+| `featured` | Optional. `true` pins the post to the top of `/blog` and the Writing row on `/security`, with a Featured badge. Several featured posts lead newest first. A new post leads above them with a Latest badge for 7 days after its `date`, then drops back into date order. With none featured, the newest post keeps the Latest badge at any age. The pages revalidate hourly, so the switch happens without a deploy. Keep it to two or three: after the first week, every pinned post pushes new ones down. Site-only, never sent to dev.to. |
 | `devto_published` | Your publish switch for dev.to. `false` = draft over there, `true` = public. |
 
 ### The sync writes these
