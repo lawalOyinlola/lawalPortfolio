@@ -2,7 +2,7 @@
 title: "The Foundation Lab: One Security Lab Environment on Apple Silicon"
 description: "The shared base every lab in this portfolio builds on: UTM on an Apple Silicon Mac, an ARM-native Kali attacker, an Ubuntu Server box for the SIEM, x86 targets under emulation, an isolated network, and snapshots. Set it up once, then branch into any track."
 date: 2026-10-01
-updated: 2026-10-05
+updated: 2026-11-04
 tags: [apple-silicon, utm, kali, homelab, virtualization]
 cover: /images/labs/apple-silicon-lab-foundation/utm-overview.png
 coverAlt: "The UTM app on macOS showing the lab's virtual machines: an ARM Kali attacker and emulated x86 targets on an isolated network."
@@ -98,8 +98,21 @@ Kali publishes an official ARM64 image, so this VM runs natively.
    - **RAM:** 4 GB minimum (6–8 GB if your Mac has 32 GB+)
    - **Storage:** 40 GB (Kali plus tooling needs room)
    - **Network:** Shared Network (critical, see section 4)
-4. Mount the ISO, boot, and run through the installer normally.
-5. Eject the ISO from VM settings afterward so it boots from disk.
+4. Attach the ISO and save the VM. Do not start the installer yet.
+
+Do not use the graphical installer here. GRUB appears as normal, but after you pick **Graphical install** the screen can change to "Display output is not active" and stay there. [Kali's UTM guide](https://www.kali.org/docs/virtualization/install-utm-guest-vm/) puts this down to a UTM bug and installs in console mode instead, so that is what these steps do:
+
+1. Shut down the Kali VM if it is running, and open its settings.
+2. Under **Devices**, click **New** and add a **Serial** device. Save.
+3. Start the VM.
+4. In GRUB, choose **Install**, not **Graphical install**.
+5. Complete the installer in the Serial window.
+6. When the install finishes, shut down the VM.
+7. Open **USB Drive** in settings and click **Clear** to remove the ISO. Otherwise the VM boots the installer again.
+8. Remove the Serial device.
+9. Set the display card to `virtio-gpu-pci`, then boot.
+
+**If the screen stays blank at step 5:** switch the VM window's display to the Serial device, and give it a moment to start.
 
 **Checkpoint:** after first boot, open a terminal and run:
 
@@ -300,6 +313,7 @@ Each track guide opens with a short foundation checklist that links back here, s
 | Symptom | Cause | Fix |
 |---|---|---|
 | x86 VM won't boot, lands in a UEFI shell | Old image expects BIOS | Uncheck QEMU → UEFI Boot |
+| "Display output is not active" after choosing Graphical install on the Kali ARM64 installer | UTM bug, per Kali's UTM guide | Add a Serial device and choose **Install** (see section 1) |
 | "Display output is not active" on an old guest | No driver for UTM's default display card | Switch the display card to plain VGA |
 | Root filesystem much smaller than the disk | LVM guided-install only claimed part of it | `lvextend -l +100%FREE` then `resize2fs` |
 | VMs cannot ping each other | Mixed or wrong network modes | Put every VM on the same Shared Network |
