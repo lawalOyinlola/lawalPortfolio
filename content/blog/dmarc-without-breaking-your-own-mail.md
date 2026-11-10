@@ -35,7 +35,7 @@ My relay is a pass-through. It forwards mail without signing it, so the signing 
 
 When you rotate the key, publish the new public key in DNS before you deploy the new private key. The other order gives receivers signatures they cannot verify until DNS catches up.
 
-Also decide what happens when the key is missing. If any of the three variables is unset, my app logs a warning and sends unsigned mail, so local development and CI work without the key. In production that fallback is weaker than it looks: under a strict policy, an unsigned message passes DMARC only if SPF passes and aligns, so a production deploy without the key should fail instead of warning. Mine now does. In production the backend refuses to start if any of the three is empty or the key does not parse, and development and CI still get the warning.
+Also decide what happens when the key is missing. In local development and CI, if any of the three variables is unset, my app logs a warning and sends unsigned mail, so both work without the key. In production that fallback would be weaker than it looks: under a strict policy, an unsigned message passes DMARC only if SPF passes and aligns, so a production deploy without the key should fail instead of warning. Mine does. In production the backend refuses to start if any of the three is empty or the key does not parse.
 
 Before going any stricter I checked the one thing that proves the setup is coherent: the private key on the server derives to exactly the public key published in DNS.
 
