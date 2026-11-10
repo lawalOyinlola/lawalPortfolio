@@ -28,6 +28,7 @@ as one piece and looks different from its neighbours on the index.
 | `ethical-hacking-is-not-a-toolset` | lock picks and a signed letter | white report cards, navy, mustard and red |
 | `from-zero-to-tech-lead` | gouache illustration, desk at night | no diagrams; real screenshots only |
 | `october-brought-the-awareness` | four brass alarm bells wired to one switched-off junction box, fire station at dusk | wiring schematic on cream paper, charcoal, teal wires, signal orange |
+| `dmarc-without-breaking-your-own-mail` | airmail envelopes and a cracked wax seal beside an empty brass tray, burgundy desk | airmail paper with a red and blue border, stamps as lookups |
 | `cicd-security-pipeline` (lab) | the refused-deploy screenshot, framed on navy with gold outlines | navy and brass gold, themed |
 | `waf-runtime-defence` (lab) | two terminal screenshots, the level 2 false positives with the 200-against-403 pair laid over them, on plum with rose outlines | navy and brass gold, themed |
 
