@@ -3,7 +3,7 @@ title: "DMARC without breaking your own mail"
 description: "How I took a small SaaS from a monitoring-only DMARC record to p=reject on evidence: an SPF record one lookup over the limit, DKIM signed in the app, a tag that quietly cancels the policy, and what 3,718 report messages did and did not prove."
 date: 2026-11-10
 tags: [security, devops, email, webdev]
-cover: /images/blog/dmarc-without-breaking-your-own-mail/coverimage.jpg
+cover: /images/blog/dmarc-without-breaking-your-own-mail/coverimage-v2.jpg
 coverAlt: "Three pale blue airmail envelopes with red and blue striped borders lie on a dark burgundy desk: one shows a stamp, one has an intact red wax seal and the one on top has a cracked seal. Beside them, a brass wire tray sits empty. Headline: Not yet protecting anything."
 draft: false
 devto_id: 5010659
@@ -27,7 +27,7 @@ Mine needed eleven. It was a single lookup over and nothing visibly broke, which
 
 The fix was to flatten part of the chain: replace the nested includes with the addresses they resolve to, kept in records I control. That brought it to five lookups out of ten, on the root domain and the sending subdomain alike. The cost is that those addresses are now mine to keep current, so they sit on a list of things to recheck.
 
-![Two rows of numbered stamps, one per DNS lookup, against a frame that holds SPF's limit of ten. Before: eleven stamps, with the eleventh in red outside the frame, over the limit. After flattening: five stamps and five empty spaces, on the root domain and the sending subdomain alike. Over ten, a receiver may stop evaluating and return a permanent error, which counts as an SPF failure. Flattening's cost is that the addresses drift if the provider changes theirs, so they go on a recheck list.](/images/blog/dmarc-without-breaking-your-own-mail/spf-lookups.png)
+![Two rows of numbered stamps, one per DNS lookup, against a frame that holds SPF's limit of ten. Before: eleven stamps, with the eleventh in red outside the frame, over the limit. After flattening: five stamps and five empty spaces, on the root domain and the sending subdomain alike. Over ten, a receiver may stop evaluating and return a permanent error, which counts as an SPF failure. Flattening's cost is that the addresses drift if the provider changes theirs, so they go on a recheck list.](/images/blog/dmarc-without-breaking-your-own-mail/spf-lookups-v2.png)
 
 ## DKIM, signed by the app
 
@@ -35,7 +35,7 @@ My relay is a pass-through. It forwards mail without signing it, so the signing 
 
 When you rotate the key, publish the new public key in DNS before you deploy the new private key. The other order gives receivers signatures they cannot verify until DNS catches up.
 
-Also decide what happens when the key is missing. If any of the three variables is unset, my app logs a warning and sends unsigned mail, so local development and CI work without the key. In production that fallback is weaker than it looks: under a strict policy, an unsigned message passes DMARC only if SPF passes and aligns, so a production deploy without the key should fail instead of warning. Mine only warns today.
+Also decide what happens when the key is missing. In local development and CI, if any of the three variables is unset, my app logs a warning and sends unsigned mail, so both work without the key. In production that fallback would be weaker than it looks: under a strict policy, an unsigned message passes DMARC only if SPF passes and aligns, so a production deploy without the key should fail instead of warning. Mine does. In production the backend refuses to start if any of the three is empty or the key does not parse.
 
 Before going any stricter I checked the one thing that proves the setup is coherent: the private key on the server derives to exactly the public key published in DNS.
 
@@ -47,7 +47,7 @@ The setting that matters most here is one I deliberately left out. The `sp=` tag
 
 The second trap is quieter still. Add a new DMARC record beside the old one instead of editing it, and receivers discard both, so the domain behaves as if it had no policy at all. The setup notes now warn whoever edits that record next about both.
 
-![Two DMARC records side by side. With no sp= tag, the root domain is at quarantine and the sending subdomain inherits quarantine, so the policy covers the mail. With sp=none added, the root domain is still at quarantine but the sending subdomain is at none, so the policy stops applying to the very mail it was there for. In both cases the record still looks like it says quarantine.](/images/blog/dmarc-without-breaking-your-own-mail/sp-tag-trap.png)
+![Two DMARC records side by side. With no sp= tag, the root domain is at quarantine and the sending subdomain inherits quarantine, so the policy covers the mail. With sp=none added, the root domain is still at quarantine but the sending subdomain is at none, so the policy stops applying to the very mail it was there for. In both cases the record still looks like it says quarantine.](/images/blog/dmarc-without-breaking-your-own-mail/sp-tag-trap-v2.png)
 
 ## Reading the evidence, then reject
 
@@ -63,7 +63,7 @@ v=DMARC1; p=reject; rua=mailto:dmarc@example.com; fo=1; adkim=r; aspf=r
 
 My earlier plan was to stage it with `pct=25` and raise the percentage over a week or two. I dropped that, because not every receiver honoured `pct`, and the updated DMARC standard published in May 2026, RFC 9989, removes the tag altogether. What made going straight to reject reasonable is the record's TTL of 60 seconds. If my own mail starts bouncing, rolling back is a one-line DNS edit that most receivers should see within minutes, though a resolver that cannot refresh the record may keep serving the old one for longer. What a rollback cannot do is bring back mail that was already refused, which is why the reports get read every day for the first few weeks.
 
-![What 59 days of reports show: 3,718 messages in 60 unique reports from 11 September to 8 November, with a bar to scale splitting 30 under p=none from 3,688 under p=quarantine, zero dispositions other than none, zero DKIM failures and zero SPF failures, at 20 to 116 messages a day. What they do not show: all 60 reports came from Google, so mail to Gmail addresses is measured and mail to Outlook, Yahoo and company mailboxes is not, and rarely sent mail may not have appeared at all. The policy moved from p=none, to p=quarantine from 12 September, to p=reject since 10 November. Rolling back is a one-line DNS edit with a 60-second TTL, but mail already refused cannot be recovered.](/images/blog/dmarc-without-breaking-your-own-mail/report-evidence.png)
+![What 59 days of reports show: 3,718 messages in 60 unique reports from 11 September to 8 November, with a bar to scale splitting 30 under p=none from 3,688 under p=quarantine, zero dispositions other than none, zero DKIM failures and zero SPF failures, at 20 to 116 messages a day. What they do not show: all 60 reports came from Google, so mail to Gmail addresses is measured and mail to Outlook, Yahoo and company mailboxes is not, and rarely sent mail may not have appeared at all. The policy moved from p=none, to p=quarantine from 12 September, to p=reject since 10 November. Rolling back is a one-line DNS edit with a 60-second TTL, but mail already refused cannot be recovered.](/images/blog/dmarc-without-breaking-your-own-mail/report-evidence-v2.png)
 
 ## What that evidence does not show
 
