@@ -62,7 +62,8 @@
       "source-map-js": "^1.2.2",
       "js-yaml@3>argparse": "-",
       "systeminformation@5": "^5.33.16",
-      "qs@6": "^6.16.1"
+      "qs@6": "^6.16.1",
+      "minimatch@10": "11.0.4"
     },
     "auditConfig": {
       "ignoreGhsas": [
