@@ -1,0 +1,71 @@
+<svg viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <rect width="1080" height="1350" fill="#f1ebdd"/>
+  <rect x="40" y="40" width="1000" height="1270" fill="none" stroke="#1d2b24" stroke-width="3"/>
+  <rect x="52" y="52" width="976" height="1246" fill="none" stroke="#1d2b24" stroke-width="1"/>
+
+  <!-- header -->
+  <text x="100" y="128" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="24" font-weight="700" fill="#b3362c" letter-spacing="4">NAME CHECK</text>
+  <text x="980" y="128" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" fill="#6b6a5e" text-anchor="end">Time taken: an entire day</text>
+  <line x1="100" y1="152" x2="980" y2="152" stroke="#1d2b24" stroke-width="2"/>
+
+  <text x="100" y="206" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" fill="#6b6a5e">Proposed name</text>
+  <text x="100" y="304" font-size="104" font-weight="700" fill="#1d2b24" letter-spacing="-2">SigKollect</text>
+  <text x="100" y="356" font-size="28" fill="#3d4a42">A payments company in Lagos. It does not exist.</text>
+
+  <!-- stamp -->
+  <g transform="rotate(-8 830 250)">
+    <rect x="700" y="196" width="262" height="104" rx="8" fill="none" stroke="#1f7a4d" stroke-width="6"/>
+    <text x="831" y="242" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="30" font-weight="700" fill="#1f7a4d" text-anchor="middle" letter-spacing="2">NO MATCH</text>
+    <text x="831" y="280" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="30" font-weight="700" fill="#1f7a4d" text-anchor="middle" letter-spacing="2">FOUND</text>
+  </g>
+
+  <!-- searches -->
+  <text x="100" y="440" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" fill="#6b6a5e">Searches</text>
+  <line x1="100" y1="456" x2="980" y2="456" stroke="#c9bfa8" stroke-width="2"/>
+
+  <text x="100" y="506" font-size="30" fill="#1d2b24">Web search</text>
+  <text x="980" y="506" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="24" font-weight="700" fill="#1f7a4d" text-anchor="end">no match</text>
+  <line x1="100" y1="530" x2="980" y2="530" stroke="#c9bfa8" stroke-width="1"/>
+
+  <text x="100" y="578" font-size="30" fill="#1d2b24">Company register, Nigeria</text>
+  <text x="980" y="578" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="24" font-weight="700" fill="#1f7a4d" text-anchor="end">no match</text>
+  <line x1="100" y1="602" x2="980" y2="602" stroke="#c9bfa8" stroke-width="1"/>
+
+  <text x="100" y="650" font-size="30" fill="#1d2b24">Company register, Ireland</text>
+  <text x="980" y="650" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="24" font-weight="700" fill="#1f7a4d" text-anchor="end">no match</text>
+  <line x1="100" y1="674" x2="980" y2="674" stroke="#c9bfa8" stroke-width="1"/>
+
+  <text x="100" y="722" font-size="30" fill="#1d2b24">Company register, UK</text>
+  <text x="980" y="722" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="24" font-weight="700" fill="#1f7a4d" text-anchor="end">no match</text>
+  <line x1="100" y1="746" x2="980" y2="746" stroke="#c9bfa8" stroke-width="1"/>
+
+  <text x="100" y="794" font-size="30" fill="#1d2b24">Domain lookup (.com)</text>
+  <text x="980" y="794" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="24" font-weight="700" fill="#1f7a4d" text-anchor="end">unregistered</text>
+  <line x1="100" y1="818" x2="980" y2="818" stroke="#c9bfa8" stroke-width="1"/>
+
+  <text x="100" y="866" font-size="30" fill="#1d2b24">EU trademark database</text>
+  <text x="980" y="866" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="24" font-weight="700" fill="#1f7a4d" text-anchor="end">no match</text>
+  <line x1="100" y1="890" x2="980" y2="890" stroke="#1d2b24" stroke-width="2"/>
+
+  <!-- rejected -->
+  <text x="100" y="958" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" fill="#6b6a5e">Names rejected before this one</text>
+
+  <rect x="100" y="986" width="250" height="40" fill="#1d2b24"/>
+  <rect x="415" y="986" width="250" height="40" fill="#1d2b24"/>
+  <rect x="730" y="986" width="250" height="40" fill="#1d2b24"/>
+  <rect x="100" y="1050" width="250" height="40" fill="#1d2b24"/>
+  <rect x="415" y="1050" width="250" height="40" fill="#1d2b24"/>
+  <rect x="730" y="1050" width="250" height="40" fill="#1d2b24"/>
+  <line x1="88" y1="1006" x2="362" y2="1006" stroke="#b3362c" stroke-width="5"/>
+  <line x1="403" y1="1006" x2="677" y2="1006" stroke="#b3362c" stroke-width="5"/>
+  <line x1="718" y1="1006" x2="992" y2="1006" stroke="#b3362c" stroke-width="5"/>
+  <line x1="88" y1="1070" x2="362" y2="1070" stroke="#b3362c" stroke-width="5"/>
+  <line x1="403" y1="1070" x2="677" y2="1070" stroke="#b3362c" stroke-width="5"/>
+  <line x1="718" y1="1070" x2="992" y2="1070" stroke="#b3362c" stroke-width="5"/>
+
+  <!-- footer quote -->
+  <line x1="100" y1="1140" x2="980" y2="1140" stroke="#1d2b24" stroke-width="2"/>
+  <text x="100" y="1196" font-size="30" font-weight="700" fill="#1d2b24">A fictional company that shares its name with a</text>
+  <text x="100" y="1236" font-size="30" font-weight="700" fill="#1d2b24">real one isn't fiction. It's an accusation with a</text>
+  <text x="100" y="1276" font-size="30" font-weight="700" fill="#b3362c">disclaimer.</text>
+</svg>
