@@ -1,0 +1,41 @@
+<svg viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<rect width="1080" height="1350" fill="#22302b"/>
+<circle cx="30" cy="30" r="10" fill="#6c7f76"/><line x1="23" y1="28" x2="37" y2="32" stroke="#22302b" stroke-width="2.5"/>
+<circle cx="1050" cy="30" r="10" fill="#6c7f76"/><line x1="1043" y1="28" x2="1057" y2="32" stroke="#22302b" stroke-width="2.5"/>
+<circle cx="30" cy="1320" r="10" fill="#6c7f76"/><line x1="23" y1="1318" x2="37" y2="1322" stroke="#22302b" stroke-width="2.5"/>
+<circle cx="1050" cy="1320" r="10" fill="#6c7f76"/><line x1="1043" y1="1318" x2="1057" y2="1322" stroke="#22302b" stroke-width="2.5"/>
+<text x="70" y="108" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="22" font-weight="700" fill="#6fe39a" letter-spacing="3">CONFIGURED, REVIEWED AND PASSING</text>
+<text x="70" y="176" font-size="54" font-weight="700" fill="#dfe7dd">Three controls that</text>
+<text x="70" y="240" font-size="54" font-weight="700" fill="#dfe7dd">looked switched on</text>
+<line x1="70" y1="276" x2="1010" y2="276" stroke="#bcd1c3" stroke-width="2"/>
+<rect x="70" y="304" width="940" height="272" rx="6" fill="#2d3e38" stroke="#3b4f48" stroke-width="2"/>
+<circle cx="122" cy="360" r="24" fill="#0d1412" stroke="#6c7f76" stroke-width="2"/><circle cx="122" cy="360" r="16" fill="#6fe39a"/>
+<text x="166" y="372" font-size="36" font-weight="700" fill="#dfe7dd">Deploy gate</text>
+<text x="1000" y="370" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="18" font-weight="700" fill="#6fe39a" text-anchor="end" letter-spacing="2">PASSING</text>
+<text x="100" y="426" font-size="23" fill="#bcd1c3">Checked: the security scan on the commit that triggered it</text>
+<text x="100" y="466" font-size="23" fill="#ff7a4d">Missed: the server ran git reset --hard origin/main,</text>
+<text x="100" y="496" font-size="23" fill="#ff7a4d">which on a busy day is the next commit, still unscanned</text>
+<line x1="100" y1="518" x2="980" y2="518" stroke="#3b4f48" stroke-width="2"/>
+<text x="100" y="554" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" fill="#dfe7dd">fix: reset to the SHA the gate verified</text>
+<rect x="70" y="592" width="940" height="272" rx="6" fill="#2d3e38" stroke="#3b4f48" stroke-width="2"/>
+<circle cx="122" cy="648" r="24" fill="#0d1412" stroke="#6c7f76" stroke-width="2"/><circle cx="122" cy="648" r="16" fill="#6fe39a"/>
+<text x="166" y="660" font-size="36" font-weight="700" fill="#dfe7dd">Secrets scanner</text>
+<text x="1000" y="658" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="18" font-weight="700" fill="#6fe39a" text-anchor="end" letter-spacing="2">PASSING</text>
+<text x="100" y="714" font-size="23" fill="#bcd1c3">Checked: every commit in the full git history</text>
+<text x="100" y="754" font-size="23" fill="#ff7a4d">Missed: git prints no diff for a merge, so a key pasted</text>
+<text x="100" y="784" font-size="23" fill="#ff7a4d">in while resolving a conflict was never read</text>
+<line x1="100" y1="806" x2="980" y2="806" stroke="#3b4f48" stroke-width="2"/>
+<text x="100" y="842" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" fill="#dfe7dd">fix: --diff-merges=separate</text>
+<rect x="70" y="880" width="940" height="272" rx="6" fill="#2d3e38" stroke="#3b4f48" stroke-width="2"/>
+<circle cx="122" cy="936" r="24" fill="#0d1412" stroke="#6c7f76" stroke-width="2"/><circle cx="122" cy="936" r="16" fill="#6fe39a"/>
+<text x="166" y="948" font-size="36" font-weight="700" fill="#dfe7dd">Rate limiter</text>
+<text x="1000" y="946" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="18" font-weight="700" fill="#6fe39a" text-anchor="end" letter-spacing="2">PASSING</text>
+<text x="100" y="1002" font-size="23" fill="#bcd1c3">Checked: trust exactly one proxy hop</text>
+<text x="100" y="1042" font-size="23" fill="#ff7a4d">Missed: the live NGINX never set X-Forwarded-For, so every</text>
+<text x="100" y="1072" font-size="23" fill="#ff7a4d">visitor was 127.0.0.1, or whatever address they sent</text>
+<line x1="100" y1="1094" x2="980" y2="1094" stroke="#3b4f48" stroke-width="2"/>
+<text x="100" y="1130" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" fill="#dfe7dd">fix: proxy_set_header X-Forwarded-For</text>
+<text x="70" y="1214" font-size="25" fill="#dfe7dd">None was a missing control. Each one leaned on a fact</text>
+<text x="70" y="1248" font-size="25" fill="#dfe7dd">next door that nobody checked.</text>
+<text x="70" y="1292" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="18" fill="#9db3a8">Lawal Oyinlola</text>
+</svg>
