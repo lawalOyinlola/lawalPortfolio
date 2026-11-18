@@ -61,7 +61,7 @@ The repair was one line in the API's NGINX block:
 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 ```
 
-With the app trusting exactly one hop, the address it reads is the one NGINX appended, which the client cannot forge. While I was in there I added a coarse per-client limit at the edge as well, then tested it from outside: of 200 requests fired in a burst at a health endpoint, 17 came back `429`, and the next request a few seconds later was served normally.
+With the app trusting exactly one hop, the address it reads is the one NGINX appended, which the client cannot forge. That holds only while NGINX is the one way in: if the API's port is reachable directly, a client can send the header itself and be trusted as the hop. While I was in there I added a coarse per-client limit at the edge as well, then tested it from outside: of 200 requests fired in a burst at a health endpoint, 17 came back `429`, and the next request a few seconds later was served normally.
 
 ![A table of three cases. When the live NGINX never set the header and the client sends nothing, the app reads 127.0.0.1, so every visitor shares one bucket per route and one busy client can use up the login limit for everyone. When the client sends 203.0.113.7, NGINX passes it on and the app reads 203.0.113.7, so a client picks its own address in the rate limiter and the audit log. When NGINX sets the header and the app trusts exactly one hop, the app reads the address NGINX appended, which the client cannot forge. The repair was one proxy_set_header line, and of 200 requests fired in a burst at a health endpoint, 17 came back 429.](/images/blog/three-controls-that-looked-switched-on/one-visitor.png)
 
