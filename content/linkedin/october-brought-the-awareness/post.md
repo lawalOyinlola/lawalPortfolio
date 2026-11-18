@@ -2,7 +2,9 @@
 title: "October brought the awareness after all"
 platform: linkedin
 companion_to: ../../blog/october-brought-the-awareness.md
-status: draft
+status: posted
+posted_url: https://lnkd.in/p/ebSccJDe
+posted_date: 2026-10-28
 ---
 
 # LinkedIn: October brought the awareness after all
