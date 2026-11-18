@@ -6,7 +6,9 @@ tags: [security, appsec, devops, webdev]
 cover: /images/blog/three-controls-that-looked-switched-on/coverimage.jpg
 coverAlt: "A dark green hammered-metal control panel with three glowing green lamps and three toggle switches all thrown up. A glass window below them shows three coloured wires hanging from the switches, frayed and stopping short of their brass terminals. Headline: Configured, reviewed and passing."
 draft: false
-devto_published: false
+devto_id: 5065397
+devto_url: https://dev.to/lawaloyinlola/three-controls-that-looked-switched-on-174n
+devto_published: true
 ---
 
 Picture a pull request merging, the pipeline going green, and the deploy job waiting for the security checks on that exact commit before it touches the server. While it waits, a second pull request merges. The checks for the first commit pass, the gate opens, and the server runs `git reset --hard origin/main`. It is now running the second commit, whose security scan has not finished yet.
