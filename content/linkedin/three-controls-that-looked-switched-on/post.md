@@ -12,6 +12,7 @@ then add the first comment straight after this. The image's source is `controls-
 re-render, never the PNG:
 
 ```bash
+cd content/linkedin/three-controls-that-looked-switched-on
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
   --force-device-scale-factor=2 --window-size=1080,1350 \
   --screenshot="$PWD/controls-card.png" "file://$PWD/controls-card.svg"
