@@ -1,0 +1,58 @@
+<svg class="dg" viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The 72-hour clock: the security lead hears within 1 hour, the CEO and Head of Compliance within 4 hours, and the regulator limits fall at 72 hours. ngCERT must be told immediately" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <!-- band: assess and decide -->
+  <rect class="dg-f-cream dg-s-line" x="420" y="296" width="680" height="40" fill="#f1ebdd" stroke="#d6cdb8"/>
+  <text class="dg-t-ink" x="760" y="321" font-size="15" fill="#1d2b24" text-anchor="middle">Assess the risk · contain · decide who must be told (Head of Compliance)</text>
+
+  <!-- axis -->
+  <line class="dg-s-ink" x1="60" y1="235" x2="465" y2="235" stroke="#1d2b24" stroke-width="3"/>
+  <line class="dg-s-ink" x1="505" y1="235" x2="1130" y2="235" stroke="#1d2b24" stroke-width="3"/>
+  <line class="dg-s-ink" x1="462" y1="246" x2="474" y2="224" stroke="#1d2b24" stroke-width="2"/>
+  <line class="dg-s-ink" x1="496" y1="246" x2="508" y2="224" stroke="#1d2b24" stroke-width="2"/>
+
+  <!-- milestones -->
+  <g class="dg-f-ink-fill" font-size="14.5" fill="#1d2b25">
+    <circle class="dg-f-ink-fill" cx="80" cy="235" r="9" fill="#1d2b25"/>
+    <text x="80" y="272" font-size="17" font-weight="700" text-anchor="middle">0</text>
+    <text x="80" y="170" font-weight="700" text-anchor="middle">Someone notices</text>
+    <text class="dg-t-body" x="80" y="190" text-anchor="middle" fill="#3d4a42">Reports at once,</text>
+    <text class="dg-t-body" x="80" y="208" text-anchor="middle" fill="#3d4a42">without blame</text>
+
+    <circle class="dg-f-ink-fill" cx="250" cy="235" r="9" fill="#1d2b25"/>
+    <text x="250" y="272" font-size="17" font-weight="700" text-anchor="middle">1 h</text>
+    <text x="250" y="170" font-weight="700" text-anchor="middle">Security lead told</text>
+    <text class="dg-t-body" x="250" y="190" text-anchor="middle" fill="#3d4a42">by whoever</text>
+    <text class="dg-t-body" x="250" y="208" text-anchor="middle" fill="#3d4a42">finds it</text>
+
+    <circle class="dg-f-ink-fill" cx="420" cy="235" r="9" fill="#1d2b25"/>
+    <text x="420" y="272" font-size="17" font-weight="700" text-anchor="middle">4 h</text>
+    <text x="420" y="152" font-weight="700" text-anchor="middle">CEO and Head of</text>
+    <text x="420" y="170" font-weight="700" text-anchor="middle">Compliance told</text>
+    <text class="dg-t-body" x="420" y="190" text-anchor="middle" fill="#3d4a42">by the security</text>
+    <text class="dg-t-body" x="420" y="208" text-anchor="middle" fill="#3d4a42">lead</text>
+
+    <circle cx="1100" cy="235" r="12" fill="#b3362c"/>
+    <text class="dg-t-red" x="1100" y="276" font-size="20" font-weight="700" fill="#b3362c" text-anchor="middle">72 h</text>
+  </g>
+
+  <!-- regulator deadlines -->
+  <line class="dg-s-red" x1="1100" y1="200" x2="1100" y2="222" stroke="#b3362c" stroke-width="2.5"/>
+  <rect class="dg-f-paper dg-s-red" x="770" y="18" width="400" height="182" rx="6" fill="#ffffff" stroke="#b3362c" stroke-width="2.5"/>
+  <text class="dg-t-red" x="790" y="48" font-size="13" font-weight="700" fill="#b3362c" letter-spacing="2">REGULATOR DEADLINES</text>
+  <g class="dg-f-ink-fill" font-size="15" fill="#1d2b25">
+    <text x="790" y="84" font-weight="700">NDPC</text>
+    <text class="dg-t-muted" x="1150" y="84" text-anchor="end" fill="#6b6a5e" font-size="13.5">NDPA s.40(2)</text>
+    <line class="dg-s-red-soft" x1="790" y1="98" x2="1150" y2="98" stroke="#ecd7d3"/>
+    <text x="790" y="126" font-weight="700">EU supervisory authority</text>
+    <text class="dg-t-muted" x="1150" y="126" text-anchor="end" fill="#6b6a5e" font-size="13.5">GDPR Art. 33(1)</text>
+    <line class="dg-s-red-soft" x1="790" y1="140" x2="1150" y2="140" stroke="#ecd7d3"/>
+    <text x="790" y="168" font-weight="700">ngCERT, via sector CERT</text>
+    <text class="dg-t-muted" x="1150" y="168" text-anchor="end" fill="#6b6a5e" font-size="13.5">Cybercrimes Act s.21</text>
+  </g>
+
+  <!-- high risk note -->
+  <rect x="420" y="356" width="6" height="44" fill="#b3362c"/>
+  <text class="dg-t-red" x="440" y="375" font-size="15" font-weight="700" fill="#b3362c">High risk to people? Tell them immediately.</text>
+  <text class="dg-t-body" x="440" y="395" font-size="14" fill="#3d4a42">NDPA s.40(3). Do not wait for the 72-hour deadline.</text>
+
+  <text class="dg-t-muted" x="60" y="448" font-size="13" fill="#6b6a5e">Every clock starts when SigKollect becomes aware of, or detects, the event. ngCERT must be told immediately; 72 hours is the latest. Not to scale after 4 hours.</text>
+</svg>

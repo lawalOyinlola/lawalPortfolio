@@ -1,0 +1,67 @@
+<svg class="dg" viewBox="0 0 1000 610" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SigKollect governance structure: the board oversees the CEO, the security lead reports to the CEO with a direct line to the board, and the three lines of defence" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="gov-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#b3362c"/></marker>
+    <marker id="gov-arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-m-ink" d="M0 0 L10 5 L0 10 z" fill="#6b6a5e"/></marker>
+  </defs>
+
+  <!-- connectors -->
+  <line class="dg-s-ink" x1="500" y1="90" x2="500" y2="150" stroke="#1d2b24" stroke-width="2"/>
+  <line class="dg-s-ink" x1="500" y1="220" x2="500" y2="280" stroke="#1d2b24" stroke-width="2"/>
+  <text class="dg-t-muted" x="510" y="256" font-size="14" fill="#6b6a5e">reports to</text>
+  <line class="dg-s-body" x1="650" y1="185" x2="690" y2="185" stroke="#6b6a5e" stroke-width="2" stroke-dasharray="5 4"/>
+  <line class="dg-s-ink" x1="500" y1="350" x2="500" y2="420" stroke="#1d2b24" stroke-width="2"/>
+  <path class="dg-s-red" d="M350 315 H230 V55 H344" fill="none" stroke="#b3362c" stroke-width="2.5" stroke-dasharray="8 5" marker-end="url(#gov-arrow)"/>
+  <text class="dg-t-red" x="220" y="160" font-size="15" font-weight="700" fill="#b3362c" text-anchor="end">Direct line</text>
+  <text class="dg-t-red" x="220" y="180" font-size="13.5" fill="#b3362c" text-anchor="end">Quarterly report.</text>
+  <text class="dg-t-red" x="220" y="197" font-size="13.5" fill="#b3362c" text-anchor="end">Escalation to the</text>
+  <text class="dg-t-red" x="220" y="214" font-size="13.5" fill="#b3362c" text-anchor="end">investor-appointed</text>
+  <text class="dg-t-red" x="220" y="231" font-size="13.5" fill="#b3362c" text-anchor="end">director</text>
+  <path class="dg-s-body" d="M955 420 V55 H656" fill="none" stroke="#6b6a5e" stroke-width="2" marker-end="url(#gov-arrow-grey)"/>
+  <text class="dg-t-muted" x="945" y="390" font-size="13.5" fill="#6b6a5e" text-anchor="end">reports to the board</text>
+
+  <!-- board -->
+  <rect x="350" y="20" width="300" height="70" rx="6" fill="#1d2b24"/>
+  <text x="500" y="50" font-size="19" font-weight="700" fill="#f1ebdd" text-anchor="middle">Board of Directors</text>
+  <text x="500" y="73" font-size="13.5" fill="#d6cdb8" text-anchor="middle">Approves the charter and the risk appetite</text>
+
+  <!-- CEO -->
+  <rect class="dg-f-cream dg-s-ink" x="350" y="150" width="300" height="70" rx="6" fill="#f1ebdd" stroke="#1d2b24" stroke-width="2"/>
+  <text class="dg-t-ink" x="500" y="180" font-size="18" font-weight="700" fill="#1d2b24" text-anchor="middle">Chief Executive Officer</text>
+  <text class="dg-t-body" x="500" y="203" font-size="13.5" fill="#3d4a42" text-anchor="middle">Executive sponsor. Funds the programme</text>
+
+  <!-- steering committee -->
+  <rect class="dg-f-cream dg-s-body" x="690" y="150" width="250" height="70" rx="6" fill="#f1ebdd" stroke="#6b6a5e" stroke-width="1.5"/>
+  <text class="dg-t-ink" x="815" y="178" font-size="16" font-weight="700" fill="#1d2b24" text-anchor="middle">Steering committee</text>
+  <text class="dg-t-body" x="815" y="200" font-size="13" fill="#3d4a42" text-anchor="middle">Monthly. The CEO chairs it</text>
+
+  <!-- security lead -->
+  <rect x="350" y="280" width="300" height="70" rx="6" fill="#b3362c"/>
+  <text x="500" y="310" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">Security lead</text>
+  <text x="500" y="333" font-size="13.5" fill="#f6dcd8" text-anchor="middle">Runs the programme. CEO until April 2027</text>
+
+  <!-- three lines -->
+  <g font-size="14.5">
+    <rect x="30" y="420" width="300" height="36" fill="#1d2b24"/>
+    <text x="180" y="443" font-size="15" font-weight="700" fill="#f1ebdd" text-anchor="middle">1st line · own the risk</text>
+    <rect class="dg-f-cream dg-s-line" x="30" y="456" width="300" height="134" fill="#faf7f0" stroke="#d6cdb8"/>
+    <text class="dg-t-ink" x="48" y="486" fill="#1d2b24">CTO and Head of Engineering</text>
+    <text class="dg-t-ink" x="48" y="514" fill="#1d2b24">IT and Systems Lead</text>
+    <text class="dg-t-ink" x="48" y="542" fill="#1d2b24">System and data owners</text>
+    <text class="dg-t-ink" x="48" y="570" fill="#1d2b24">All staff</text>
+
+    <rect x="350" y="420" width="300" height="36" fill="#1d2b24"/>
+    <text x="500" y="443" font-size="15" font-weight="700" fill="#f1ebdd" text-anchor="middle">2nd line · oversee and challenge</text>
+    <rect class="dg-f-cream dg-s-line" x="350" y="456" width="300" height="134" fill="#faf7f0" stroke="#d6cdb8"/>
+    <text class="dg-t-ink" x="368" y="486" fill="#1d2b24">Security lead</text>
+    <text class="dg-t-ink" x="368" y="514" fill="#1d2b24">Head of Compliance, also the</text>
+    <text class="dg-t-ink" x="368" y="534" fill="#1d2b24">data protection officer</text>
+    <text class="dg-t-ink" x="368" y="562" fill="#1d2b24">Monthly risk review</text>
+
+    <rect x="670" y="420" width="300" height="36" fill="#1d2b24"/>
+    <text x="820" y="443" font-size="15" font-weight="700" fill="#f1ebdd" text-anchor="middle">3rd line · independent assurance</text>
+    <rect class="dg-f-cream dg-s-line" x="670" y="456" width="300" height="134" fill="#faf7f0" stroke="#d6cdb8"/>
+    <text class="dg-t-ink" x="688" y="486" fill="#1d2b24">External review, once a year</text>
+    <text class="dg-t-muted" x="688" y="510" font-size="13.5" fill="#6b6a5e">Stands in for internal audit</text>
+    <text class="dg-t-muted" x="688" y="530" font-size="13.5" fill="#6b6a5e">until SigKollect has one</text>
+  </g>
+</svg>
