@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useRef, useState } from "react";
 import { CaretDownIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
+import { useHeldHeight } from "@/hooks/useHeldHeight";
 import { getTagColor } from "@/lib/tag-colors";
 import Pagination from "./Pagination";
 import PostCard, { type PostSummary } from "./PostCard";
@@ -46,6 +47,12 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
   const searchId = useId();
   const filtersId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
+  // A short last page keeps the height of a full one, so the page controls
+  // stay where they were clicked. A new search, tag or sort is a new list,
+  // which may rightly be short.
+  const { outerRef: listHoldRef, innerRef: listRef } = useHeldHeight(
+    `${query}|${activeTags.join(",")}|${sortKey}|${sortDir}`,
+  );
 
   /**
    * Bring the results back into view after a filter changes.
@@ -302,38 +309,41 @@ export default function BlogExplorer({ posts }: { posts: PostSummary[] }) {
             `${isFiltered ? " · " : ""}page ${currentPage} of ${pageCount}`}
         </p>
 
-        {results.length > 0 ? (
-          <>
-            <ul className="mt-6 divide-y divide-border/60 border-y border-border/25">
-              {pageItems.map((post, index) => (
-                <li key={post.slug}>
-                  <PostCard post={post} index={index} lead={post === lead} />
-                </li>
-              ))}
-            </ul>
-            <Pagination
-              page={currentPage}
-              pageCount={pageCount}
-              onChange={changePage}
-              label="Posts"
-            />
-          </>
-        ) : (
-          <div className="mt-6 border-y border-border/25 py-20 text-center">
-            <p className="text-base text-primary">Nothing matches that yet.</p>
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Try a looser word, or drop a filter. Everything here is tagged by
-              what it is actually about rather than by what it mentions once.
-            </p>
-            <button
-              type="button"
-              onClick={clearAll}
-              className="mt-6 rounded-full border border-border/40 px-4 py-2 text-xs uppercase tracking-widest text-primary transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.98]"
-            >
-              Clear filters
-            </button>
+        <div ref={listHoldRef}>
+          <div ref={listRef}>
+            {results.length > 0 ? (
+              <ul className="mt-6 divide-y divide-border/60 border-y border-border/25">
+                {pageItems.map((post, index) => (
+                  <li key={post.slug}>
+                    <PostCard post={post} index={index} lead={post === lead} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="mt-6 border-y border-border/25 py-20 text-center">
+                <p className="text-base text-primary">Nothing matches that yet.</p>
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+                  Try a looser word, or drop a filter. Everything here is tagged by
+                  what it is actually about rather than by what it mentions once.
+                </p>
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="mt-6 rounded-full border border-border/40 px-4 py-2 text-xs uppercase tracking-widest text-primary transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.98]"
+                >
+                  Clear filters
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        <Pagination
+          page={currentPage}
+          pageCount={pageCount}
+          onChange={changePage}
+          label="Posts"
+        />
       </div>
     </div>
   );
