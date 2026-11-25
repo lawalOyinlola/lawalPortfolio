@@ -5,6 +5,7 @@ import { useId, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { CaretDownIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
+import { useHeldHeight } from "@/hooks/useHeldHeight";
 import { getTagColor } from "@/lib/tag-colors";
 import CoverReveal from "./CoverReveal";
 import Pagination from "./Pagination";
@@ -169,6 +170,12 @@ export default function LabsExplorer({
   const searchId = useId();
   const filtersId = useId();
   const resultsRef = useRef<HTMLDivElement>(null);
+  // A short last page keeps the height of a full one, so the page controls
+  // stay where they were clicked. A new search, tag or sort is a new list,
+  // which may rightly be short.
+  const { outerRef: listHoldRef, innerRef: listRef } = useHeldHeight(
+    `${query}|${activeTags.join(",")}|${sortKey}|${sortDir}`,
+  );
 
   function scrollToResults() {
     const top = resultsRef.current?.getBoundingClientRect().top;
@@ -476,54 +483,58 @@ export default function LabsExplorer({
           {pageCount > 1 && ` · page ${currentPage} of ${pageCount}`}
         </p>
 
-        {!showGrouped ? (
-          sortedResults.length > 0 ? (
-            <div className="mt-6">
-              <Grid labs={pageItems} />
-            </div>
-          ) : (
-            <div className="mt-6 border-y border-border/25 py-20 text-center">
-              <p className="text-base text-primary">Nothing matches that yet.</p>
-              <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                Try a looser word, or drop a filter.
-              </p>
-              <button
-                type="button"
-                onClick={clearAll}
-                className="mt-6 rounded-full border border-border/40 px-4 py-2 text-xs uppercase tracking-widest text-primary transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.98]"
-              >
-                Clear filters
-              </button>
-            </div>
-          )
-        ) : (
-          <div className="mt-6 flex flex-col gap-12">
-            {grouped.sections.map((section) => (
-              <section key={section.name} aria-label={section.name}>
-                <div className="mb-4 flex flex-col gap-1">
-                  <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                    {section.name}
-                  </h2>
-                  <p className="max-w-[60ch] text-sm leading-relaxed text-muted-foreground">
-                    {section.blurb}
-                  </p>
+        <div ref={listHoldRef}>
+          <div ref={listRef}>
+            {!showGrouped ? (
+              sortedResults.length > 0 ? (
+                <div className="mt-6">
+                  <Grid labs={pageItems} />
                 </div>
-                <Grid labs={section.labs} />
-              </section>
-            ))}
+              ) : (
+                <div className="mt-6 border-y border-border/25 py-20 text-center">
+                  <p className="text-base text-primary">Nothing matches that yet.</p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+                    Try a looser word, or drop a filter.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={clearAll}
+                    className="mt-6 rounded-full border border-border/40 px-4 py-2 text-xs uppercase tracking-widest text-primary transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.98]"
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              )
+            ) : (
+              <div className="mt-6 flex flex-col gap-12">
+                {grouped.sections.map((section) => (
+                  <section key={section.name} aria-label={section.name}>
+                    <div className="mb-4 flex flex-col gap-1">
+                      <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                        {section.name}
+                      </h2>
+                      <p className="max-w-[60ch] text-sm leading-relaxed text-muted-foreground">
+                        {section.blurb}
+                      </p>
+                    </div>
+                    <Grid labs={section.labs} />
+                  </section>
+                ))}
 
-            {grouped.ungrouped.length > 0 && (
-              <section aria-label="More labs">
-                {grouped.sections.length > 0 && (
-                  <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                    More
-                  </h2>
+                {grouped.ungrouped.length > 0 && (
+                  <section aria-label="More labs">
+                    {grouped.sections.length > 0 && (
+                      <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                        More
+                      </h2>
+                    )}
+                    <Grid labs={grouped.ungrouped} />
+                  </section>
                 )}
-                <Grid labs={grouped.ungrouped} />
-              </section>
+              </div>
             )}
           </div>
-        )}
+        </div>
 
         <Pagination
           page={currentPage}

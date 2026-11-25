@@ -6,7 +6,7 @@ import {
   ArrowUpRightIcon,
   GithubLogoIcon,
 } from "@phosphor-icons/react/dist/ssr";
-import { BRAND, LAB_SERIES } from "@/app/constants";
+import { BRAND } from "@/app/constants";
 import { getBlogPosts, getLabPosts, toPostSummaries } from "@/lib/content";
 import ContactsRef from "@/components/ContactsRef";
 import LabIndex from "@/components/security/LabIndex";
@@ -112,18 +112,20 @@ const CREDENTIAL = {
 /** How many posts the Writing carousel holds before handing off to /blog. */
 const WRITING_LIMIT = 8;
 
+/** How many labs the index shows before handing off to /security/labs. */
+const LABS_LIMIT = 5;
+
 export default function SecurityPage() {
-  // Series order, then build order within a series: the same reading order
-  // the labs page and its map use, AppSec first.
-  const seriesRank = (series?: string) => {
-    const i = LAB_SERIES.findIndex((s) => s.name === series);
-    return i === -1 ? LAB_SERIES.length : i;
-  };
-  const labs = [...getLabPosts()].sort(
-    (a, b) =>
-      seriesRank(a.frontmatter.series) - seriesRank(b.frontmatter.series) ||
-      (a.frontmatter.order ?? 99) - (b.frontmatter.order ?? 99),
-  );
+  const labs = getLabPosts();
+  // Featured labs first, then the newest, cut to a few: the full set, its
+  // series and the map live on /security/labs.
+  const shownLabs = [...labs]
+    .sort(
+      (a, b) =>
+        Number(b.frontmatter.featured) - Number(a.frontmatter.featured) ||
+        b.frontmatter.date.getTime() - a.frontmatter.date.getTime(),
+    )
+    .slice(0, LABS_LIMIT);
   const securityPosts = getBlogPosts().filter((post) =>
     post.frontmatter.tags.some((tag) => SECURITY_TAGS.has(tag.toLowerCase())),
   );
@@ -193,7 +195,7 @@ export default function SecurityPage() {
                   alt=""
                   width={56}
                   height={54}
-                  className="size-14 shrink-0 object-contain"
+                  className="h-auto w-14 shrink-0"
                 />
                 <div className="flex flex-col gap-1.5">
                   <span className="text-sm font-semibold leading-snug">
@@ -257,7 +259,7 @@ export default function SecurityPage() {
           ) : (
             <div className="mt-10 md:mt-14">
               <LabIndex
-                labs={labs.map((lab) => ({
+                labs={shownLabs.map((lab) => ({
                   slug: lab.slug,
                   title: lab.frontmatter.title,
                   platform: lab.frontmatter.platform,
@@ -267,6 +269,19 @@ export default function SecurityPage() {
                   coverAlt: lab.frontmatter.coverAlt ?? null,
                 }))}
               />
+              {labs.length > shownLabs.length && (
+                <Link
+                  href="/security/labs"
+                  className="group mt-8 inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary"
+                >
+                  All {labs.length} labs
+                  <ArrowRightIcon
+                    weight="bold"
+                    aria-hidden
+                    className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                  />
+                </Link>
+              )}
             </div>
           )}
         </section>
