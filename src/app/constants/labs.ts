@@ -32,6 +32,11 @@ export const LAB_SERIES = [
     blurb:
       "The same discipline in the cloud: securing the AI infrastructure companies are actually deploying.",
   },
+  {
+    name: "GRC labs · The SigKollect programme",
+    blurb:
+      "One fictional payments company in Lagos, run as a security programme: governance first, then the risk register and identity, with every document traced to the evidence before it.",
+  },
 ] as const;
 
 export type LabNode = {
