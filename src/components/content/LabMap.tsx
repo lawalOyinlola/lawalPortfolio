@@ -16,7 +16,7 @@ import { LAB_EDGES, LAB_NODES, type LabNode } from "@/app/constants";
  */
 
 const VIEW_W = 960;
-const VIEW_H = 750;
+const VIEW_H = 920;
 const NODE_W = 176;
 const NODE_H = 66;
 
@@ -32,14 +32,19 @@ const POS: Record<string, { x: number; y: number }> = {
   aisoc: { x: 452, y: 588 },
   "cloud-foundation": { x: 718, y: 286 },
   rag: { x: 718, y: 440 },
+  governance: { x: 100, y: 820 },
+  risk: { x: 392, y: 820 },
+  iam: { x: 684, y: 820 },
 };
 
 // AppSec runs across the top so the map reads in the same order as the labs
-// page: the work on a real app first, then the home lab, then the cloud.
+// page: the work on a real app first, then the home lab, then the cloud, and
+// the GRC programme across the bottom.
 const GROUPS = [
   { label: "AppSec · Securing what I build", x: 20, y: 40, w: 916, h: 150 },
   { label: "Local · UTM on Apple Silicon", x: 20, y: 230, w: 616, h: 500 },
   { label: "Cloud · Azure", x: 680, y: 230, w: 256, h: 360 },
+  { label: "GRC · The SigKollect programme", x: 20, y: 766, w: 916, h: 140 },
 ];
 
 function center(id: string) {
