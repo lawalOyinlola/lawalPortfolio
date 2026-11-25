@@ -18,8 +18,8 @@ export type LabIndexItem = {
 /**
  * The labs on /security as a numbered index. On wide screens the row under the
  * pointer (or keyboard focus) swaps the preview beside the list; on narrow
- * ones each row carries its own cover instead. Numbers follow the build order
- * the labs page and its map use, Foundation first.
+ * ones each row carries its own cover instead. The page passes a short list,
+ * featured labs first and then the newest, so the numbers are list positions.
  */
 export default function LabIndex({ labs }: { labs: LabIndexItem[] }) {
   const [active, setActive] = useState(0);

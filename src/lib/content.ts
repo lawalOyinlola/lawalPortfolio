@@ -119,6 +119,11 @@ export const labFrontmatterSchema = baseFrontmatter.extend({
    */
   series: z.string().optional(),
   order: z.number().optional(),
+  /**
+   * Leads the lab list on /security, ahead of the newest. That list shows
+   * only a few labs, so this is how an older lab keeps a place on it.
+   */
+  featured: z.boolean().default(false),
 }).superRefine(requireCoverAlt);
 
 export type BlogFrontmatter = z.infer<typeof blogFrontmatterSchema>;
