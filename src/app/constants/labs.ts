@@ -9,7 +9,7 @@
  * lab's `.md` is all it takes to activate its node.
  */
 
-export type LabEnv = "appsec" | "local" | "cloud";
+export type LabEnv = "appsec" | "local" | "cloud" | "grc";
 
 /**
  * Series are the sections the labs landing page groups into, in this order.
@@ -143,6 +143,30 @@ export const LAB_NODES: LabNode[] = [
     env: "cloud",
     kind: "track",
   },
+  {
+    id: "governance",
+    label: "Governance",
+    kicker: "Charter to regulators",
+    slug: "security-governance-from-nothing",
+    env: "grc",
+    kind: "foundation",
+  },
+  {
+    id: "risk",
+    label: "Risk Register",
+    kicker: "Evidence to scored risks",
+    slug: "sigkollect-risk-register",
+    env: "grc",
+    kind: "track",
+  },
+  {
+    id: "iam",
+    label: "Identity",
+    kicker: "Keycloak, joiners to leavers",
+    slug: "keycloak-access-governance",
+    env: "grc",
+    kind: "track",
+  },
 ];
 
 export const LAB_EDGES: LabEdge[] = [
@@ -154,4 +178,6 @@ export const LAB_EDGES: LabEdge[] = [
   { from: "detection", to: "aisoc" },
   { from: "pentest", to: "phishing", soft: true },
   { from: "cloud-foundation", to: "rag" },
+  { from: "governance", to: "risk" },
+  { from: "risk", to: "iam" },
 ];
