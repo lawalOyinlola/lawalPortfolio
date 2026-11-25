@@ -32,6 +32,7 @@ as one piece and looks different from its neighbours on the index.
 | `three-controls-that-looked-switched-on` | enamel control panel, three lamps lit, wires stopping short of their terminals | instrument panel, dark green, lamp green and fault orange |
 | `cicd-security-pipeline` (lab) | the refused-deploy screenshot, framed on navy with gold outlines | navy and brass gold, themed |
 | `waf-runtime-defence` (lab) | two terminal screenshots, the level 2 false positives with the 200-against-403 pair laid over them, on plum with rose outlines | navy and brass gold, themed |
+| `security-governance-from-nothing` (lab) | the pack cover with the RACI page laid over its corner, on deep green with cream outlines | the pack palette (dark green, cream, brick red), themed |
 
 Add a row when a post gets its imagery.
 
