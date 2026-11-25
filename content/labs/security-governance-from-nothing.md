@@ -436,8 +436,9 @@ Then the rules that matter:
    Google Workspace, GitHub and Azure, but each feature is still assessed, because an AI feature can
    have different data terms from the product it sits in.
 2. **A named approval path.** The security lead assesses, the CTO approves (the appetite's
-   technology row), and the CEO approves if the tool will receive Restricted data (the customer data
-   row). This is the appetite from module 5 doing its job.
+   technology row), and the CEO approves if the tool will receive Restricted data. Restricted is
+   exactly the identity, bank and card data that the appetite's customer data row covers, so the
+   row's approver approves the tool. This is the appetite from module 5 doing its job.
 3. **A person is responsible for every output,** and AI does not make a final decision about a
    person without human review. The NDPA (section 37) gives people the right not to be subject to a
    decision based solely on automated processing with significant effects.
@@ -500,7 +501,7 @@ started at once:
 | Notification | Decided by | Sent by |
 |---|---|---|
 | ngCERT, through the sectoral CERT | As soon as a detected incident meets the section 21(1) test, without waiting for the investigation | Immediately. 24 hours after detection is the outer limit |
-| NDPC, and the EU authority where SigKollect is the controller | Without undue delay, within 24 hours of being told at most | Within 48 hours at most, with what is known first and the rest in phases (NDPA section 40(9), GDPR Article 33(4)). Immediately if the breach may affect members of the general public (GAID Article 33(4)) |
+| NDPC, and the EU authority where SigKollect is the controller | Without undue delay, within 24 hours of being told at most | Within 48 hours at most, with what is known first and the rest in phases (NDPA section 40(9), GDPR Article 33(4)). Immediately if the breach may affect members of the general public, or needs containment at national, sectoral or individual level (GAID Article 33(4)) |
 | Affected people, where the risk to them is high | As soon as the risk is judged high | Immediately (NDPA section 40(3)) |
 
 **Checkpoint:** every row says where its answer came from, how sure you are, and when it will be
