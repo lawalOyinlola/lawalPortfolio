@@ -2,7 +2,7 @@
 title: "Security Governance From Nothing: A Ten-Document Pack for a Payments Company"
 description: "Build the governance layer of a security programme for a fictional Lagos payments company: a gap analysis, a charter, a RACI, a risk appetite, a framework choice, a meeting cadence, KPIs, an AI use policy and a regulatory assessment read against the primary texts, then publish it as one versioned pack."
 date: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 cover: /images/labs/security-governance-from-nothing/coverimage.png
 coverAlt: "Two pages from the governance pack, framed on a deep green background and outlined in cream. On the left, the pack's cover: SigKollect Limited, Information Security Governance Pack, a worn red stamp reading Fictional, lab exercise, and a document control table for version 1.0, 25 November 2026, issued for approval, prepared by Lawal Oyinlola of IAM LAWAL Ltd. Overlapping its lower right is page 14 of 43, the RACI matrix: twenty security activities against twelve roles, each row with one A, and below it the note on who accepts a risk within the appetite."
 tags: [grc, governance, risk-appetite, nist-csf, cis-controls, ndpa, gdpr, pci-dss]
@@ -249,7 +249,7 @@ For each category, write five things:
 
 | Category | Appetite | Statement | Tolerance | Who may accept |
 |---|---|---|---|---|
-| Customer and merchant data | Averse | No known exposure is accepted. Only the smallest residual risks may stay while the controls work | Zero confirmed exposures. MFA for every user of systems holding this data. Every suspected exposure reaches the security lead within 1 hour | The CEO only |
+| Customer and merchant data (identity, bank, card data) | Averse | No known exposure is accepted. Only the smallest residual risks may stay while the controls work | Zero confirmed exposures. MFA for every user of systems holding this data. Every suspected exposure reaches the security lead within 1 hour | The CEO only |
 
 The tolerance is the part that matters. "We take data protection seriously" cannot be measured. "Zero
 confirmed exposures, MFA for every user, one hour to the security lead" can, and module 8 measures it.
@@ -426,7 +426,7 @@ until the information security policy replaces them:
 | Class | Examples | Allowed in |
 |---|---|---|
 | Restricted | Card data, BVN, NIN, bank details, secrets, security logs | Only a SigKollect-controlled deployment approved for Restricted data |
-| Confidential | Customer records, staff records, contracts, source code | Approved tools whose register entry allows it |
+| Confidential | Customer records other than identity, bank and card data, staff records, contracts, source code | Approved tools whose register entry allows it |
 | Internal | Internal documents and notes with no customer or staff data | Approved tools |
 | Public | Published content | Any tool |
 
@@ -501,8 +501,9 @@ started at once:
 | Notification | Decided by | Sent by |
 |---|---|---|
 | ngCERT, through the sectoral CERT | As soon as a detected incident meets the section 21(1) test, without waiting for the investigation | Immediately. 24 hours after detection is the outer limit |
-| NDPC, and the EU authority where SigKollect is the controller | Without undue delay, within 24 hours of being told at most | Within 48 hours at most, with what is known first and the rest in phases (NDPA section 40(9), GDPR Article 33(4)). |
+| NDPC, and the EU authority where SigKollect is the controller | Without undue delay, within 24 hours of being told at most | Without undue delay, and within 48 hours at most, with what is known first and the rest in phases (NDPA section 40(9), GDPR Article 33(4)) |
 | NDPC and every other relevant authority (GAID Article 33(4)) | As soon as immediate information may help contain imminent breaches on a national scale, containment measures may be necessary at national, sectoral or individual level, or the breach may affect members of the general public. No finding of risk to individuals is needed first | Immediately |
+| The controller that engaged SigKollect, where SigKollect is a processor (NDPA section 40(1), GDPR Article 33(2)) | Without undue delay, within 24 hours of being told at most | At once after the decision, and within 48 hours at most |
 | Affected people, where the risk to them is high | As soon as the risk is judged high | Immediately (NDPA section 40(3)) |
 
 **Checkpoint:** every row says where its answer came from, how sure you are, and when it will be
