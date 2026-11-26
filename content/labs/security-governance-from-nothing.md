@@ -501,7 +501,7 @@ started at once:
 | Notification | Decided by | Sent by |
 |---|---|---|
 | ngCERT, through the sectoral CERT | As soon as a detected incident meets the section 21(1) test, without waiting for the investigation | Immediately. 24 hours after detection is the outer limit |
-| NDPC, and the EU authority where SigKollect is the controller | Without undue delay, within 24 hours of being told at most | Within 48 hours at most, with what is known first and the rest in phases (NDPA section 40(9), GDPR Article 33(4)). Immediately if the breach may affect members of the general public, or needs containment at national, sectoral or individual level (GAID Article 33(4)) |
+| NDPC, and the EU authority where SigKollect is the controller | Without undue delay, within 24 hours of being told at most | Within 48 hours at most, with what is known first and the rest in phases (NDPA section 40(9), GDPR Article 33(4)). Immediately, to all relevant authorities including the NDPC, if the breach may affect members of the general public, or needs containment at national, sectoral or individual level (GAID Article 33(4)) |
 | Affected people, where the risk to them is high | As soon as the risk is judged high | Immediately (NDPA section 40(3)) |
 
 **Checkpoint:** every row says where its answer came from, how sure you are, and when it will be
