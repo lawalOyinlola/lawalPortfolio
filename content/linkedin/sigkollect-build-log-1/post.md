@@ -60,7 +60,6 @@ A dark green card headed "SigKollect build log, Part 1". The headline reads "One
 ## Related
 
 - Earlier: [A whole day naming a company that doesn't exist](../a-day-naming-a-company/post.md)
-- Next: [Part 2, the company brief](../sigkollect-build-log-2/post.md)
 
 ## Claims
 
@@ -72,5 +71,7 @@ A dark green card headed "SigKollect build log, Part 1". The headline reads "One
 | A whole day choosing the name, written about in an earlier post | `content/linkedin/a-day-naming-a-company/post.md` (posted 2026-11-18) |
 | Primary legal texts reversed decisions | `labs_infra/programme/decisions.md` D-55, D-57; `labs/sigkollect-governance/analysis.md` key findings |
 | Card: six names rejected | `content/linkedin/a-day-naming-a-company/post.md` ("Six names failed") |
-| Card: 15 areas, 7 high; the stops in series order, the brief tagged Part 2 | gap analysis rows 1 to 15; part 1 teaser; `src/app/constants/labs.ts` |
+| Card: gap analysis, 15 areas, 7 of them high | `labs_infra/lab1-governance/gap-analysis.md` rows 1 to 15 (H: rows 1, 2, 4, 5, 11, 13 and 14) |
+| Card: the order of the stops (name, brief, gap analysis, governance pack, risk register, identity, AI assistant, cloud and SOC) | `labs_infra/programme/plan.md` §5 "Order of work" (name and brief, lab 1, lab 2, lab 3, the assistant, then cloud and the SOC) and §4 (the gap analysis is lab 1's first deliverable) |
+| Card: the brief tagged Part 2 | This post's copy: "part 2 is the company brief" |
 | No event pretends to be real client work | `labs_infra/programme/decisions.md` D-27 (option B) |
