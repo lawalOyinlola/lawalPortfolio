@@ -138,7 +138,7 @@ response, the asset inventory, access reviews, policies and the risk appetite.
 
 **Checkpoint:** every row has evidence, and you can name your top three with a reason for the order.
 Mine were the security lead and charter together (accountability first), then the incident response
-plan (three reporting clocks may apply, module 10), then the asset inventory (E-1).
+plan (reporting clocks under three laws may apply, module 10), then the asset inventory (E-1).
 
 ## 3. Write the charter
 
@@ -306,8 +306,8 @@ Critical Security Controls v8.1. Score them with a weighted matrix:
 
 My first attempt gave every criterion a weight of 3, which is the same as having no weights, and
 scored cost and effort the wrong way round, so the expensive, heavy framework scored highest on cost.
-That version gave ISO 27001 an 18-point lead (63, 45 and 42). Fixing both mistakes turned it into a
-near tie.
+That version gave ISO 27001 an 18-point lead (63, 45 and 42). Fixing both mistakes, and three scores
+that did not follow my own notes on the candidates, turned it into a near tie.
 
 A near tie means the totals do not decide, so **write the tie-breaker down before you look at which
 framework it favours.** SigKollect's was its situation: no security budget and no security lead until
@@ -367,7 +367,7 @@ deadline, not an internal step, and it would have left no time at all to decide 
 internal steps now take at most 4 hours, and each regulator notification has its own decision and
 sending limits, worked out in module 10.
 
-![The 72-hour clock. Someone notices at hour 0 and reports at once, without blame. The security lead is told within 1 hour. The CEO and Head of Compliance are told within 4 hours. Then a band for assessing the risk, containing it and deciding who must be told. Regulator limits fall at 72 hours for the NDPC under NDPA section 40(2), the EU supervisory authority under GDPR Article 33(1), and ngCERT through the sector CERT under the Cybercrimes Act section 21, which must be told immediately. If the risk to people is high, they are told immediately under NDPA section 40(3). Every clock starts when SigKollect becomes aware of, or detects, the event.](/images/labs/security-governance-from-nothing/breach-clock.svg)
+![The 72-hour clock. Someone notices at hour 0 and reports at once, without blame. The security lead is told within 1 hour. The CEO and Head of Compliance are told within 4 hours. Then a band for assessing the risk, containing it and deciding who must be told. Regulator limits fall at 72 hours for the NDPC under NDPA section 40(2), the EU supervisory authority under GDPR Article 33(1), and ngCERT through the sector CERT under the Cybercrimes Act section 21, which must be told immediately. Affected people are told immediately: under GAID Article 33(3) for a breach reportable to the NDPC, and under NDPA section 40(3) where the risk to them is high. Every clock starts when SigKollect becomes aware of, or detects, the event.](/images/labs/security-governance-from-nothing/breach-clock.svg)
 
 **Checkpoint:** every A that the board or the steering committee holds in the RACI has a meeting that
 takes it, and no internal step uses a regulator's deadline as its own.
@@ -495,8 +495,8 @@ service providers and fintechs at its highest level, which brings registration, 
 officer and yearly audit returns. That became objective h, and the Head of Compliance became the
 data protection officer.
 
-Then work through one real event as a test. At E-4, the phishing click, three clocks could have
-started at once:
+Then work through one real event as a test. At E-4, the phishing click, the clocks under three
+laws could have started at once:
 
 | Notification | Decided by | Sent by |
 |---|---|---|
