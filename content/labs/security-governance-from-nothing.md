@@ -17,7 +17,7 @@ skills: [gap-analysis, raci, risk-appetite, framework-selection, kpis, regulator
 status: own-lab
 series: "GRC labs · The SigKollect programme"
 order: 0
-draft: true
+draft: false
 ---
 
 > **⚠️ A lab, not legal advice.** SigKollect, its people, its figures and its history are invented,
