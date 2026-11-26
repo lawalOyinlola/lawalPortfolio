@@ -40,6 +40,10 @@ const ROLES = {
     "#5a4a2a": "brown", // headings on a pale card
     "#777777": "muted", // captions and notes
     "#4a7a4a": "green", // labels inside a pale green panel
+    "#1d2b24": "ink", // governance lab: headings and labels
+    "#3d4a42": "body", // governance lab: body copy
+    "#6b6a5e": "muted", // governance lab: notes and captions
+    "#b3362c": "red", // governance lab: warnings and deadlines
   },
   f: {
     "#f5f2e8": "callout", // pale gold callout panel
@@ -52,6 +56,10 @@ const ROLES = {
     "#ffffff": "paper", // white cards drawn on the page
     "#f4f7f1": "green-tint", // pale green panel
     "#e8edf3": "track", // empty bar tracks and the hatch behind them
+    "#f1ebdd": "cream", // governance lab: pale boxes and pills
+    "#faf7f0": "cream",
+    "#1d2b25": "ink-fill", // governance lab: timeline dots, and group fills that colour text
+    "#6b6a5e": "muted-text", // governance lab: a group fill that colours its text
   },
   s: {
     "#c8d3e0": "line", // outlines and frames
@@ -66,20 +74,30 @@ const ROLES = {
     "#a9c7b5": "green-soft", // outlines inside a green-themed panel
     "#555555": "body", // thin outlines on small labels
     "#4a7a4a": "green",
+    "#1d2b24": "ink", // governance lab: connectors and outlines
+    "#6b6a5e": "body",
+    "#d6cdb8": "line",
+    "#3d5a4a": "line",
+    "#6f8a78": "line",
+    "#b3362c": "red",
+    "#ecd7d3": "red-soft",
   },
   m: {
     "#1a3c5e": "ink",
     "#2e7d46": "green",
+    "#6b6a5e": "ink",
   },
 };
 
 // Colours that read the same on either page, so they are deliberately left
 // unclassed: solid box fills, and the light text that sits on them.
 const KEEP = {
-  t: ["#ffffff", "#d7e0ec", "#b9c7da", "#ece2cc", "#e2d6bb", "#f3d6d6", "#9fb0c6", "#c99a2e"],
-  f: ["#1a3c5e", "#2e7d46", "#5a4a2a", "#c99a2e", "#b23b3b", "none", "url(#hatch)"],
+  t: ["#ffffff", "#d7e0ec", "#b9c7da", "#ece2cc", "#e2d6bb", "#f3d6d6", "#9fb0c6", "#c99a2e",
+    "#f1ebdd", "#d6cdb8", "#f6dcd8", "#1a2620"],
+  f: ["#1a3c5e", "#2e7d46", "#5a4a2a", "#c99a2e", "#b23b3b", "none", "url(#hatch)",
+    "#1d2b24", "#3d5a4a", "#6f8a78", "#b9c8b9", "#e3e9dc", "#b3362c"],
   s: ["#c99a2e", "#3b5a7a", "none"],
-  m: ["#b23b3b", "#c99a2e"],
+  m: ["#b23b3b", "#c99a2e", "#b3362c"],
 };
 
 const TEXT = new Set(["text", "tspan"]);

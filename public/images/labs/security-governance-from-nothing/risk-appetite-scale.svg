@@ -1,0 +1,49 @@
+<svg class="dg" viewBox="0 0 1200 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Risk appetite scale from Averse to Eager, with SigKollect's seven categories placed on it" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="app-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#b3362c"/></marker>
+    <marker id="app-arrow-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="dg-m-ink" d="M0 0 L10 5 L0 10 z" fill="#6b6a5e"/></marker>
+  </defs>
+
+  <!-- direction -->
+  <line class="dg-s-body" x1="200" y1="28" x2="1000" y2="28" stroke="#6b6a5e" stroke-width="1.5" marker-start="url(#app-arrow-grey)" marker-end="url(#app-arrow-grey)"/>
+  <text class="dg-t-muted" x="60" y="33" font-size="14" fill="#6b6a5e">Less risk accepted</text>
+  <text class="dg-t-muted" x="1140" y="33" font-size="14" fill="#6b6a5e" text-anchor="end">More risk accepted</text>
+
+  <!-- scale -->
+  <g font-size="18" font-weight="700" text-anchor="middle">
+    <rect x="60" y="50" width="216" height="60" fill="#1d2b24"/><text x="168" y="86" fill="#f1ebdd">Averse</text>
+    <rect x="276" y="50" width="216" height="60" fill="#3d5a4a"/><text x="384" y="86" fill="#f1ebdd">Minimal</text>
+    <rect x="492" y="50" width="216" height="60" fill="#6f8a78"/><text x="600" y="86" fill="#ffffff">Cautious</text>
+    <rect x="708" y="50" width="216" height="60" fill="#b9c8b9"/><text x="816" y="86" fill="#1a2620">Open</text>
+    <rect x="924" y="50" width="216" height="60" fill="#e3e9dc"/><text x="1032" y="86" fill="#1a2620">Eager</text>
+  </g>
+  <g class="dg-f-muted-text" font-size="13.5" fill="#6b6a5e" text-anchor="middle">
+    <text x="168" y="134">treat if score above 4</text>
+    <text x="384" y="134">treat if score above 6</text>
+    <text x="600" y="134">treat if score above 9</text>
+    <text x="816" y="134">treat if score above 12</text>
+    <text x="1032" y="134">treat if score above 14</text>
+  </g>
+
+  <!-- categories -->
+  <g class="dg-f-ink-fill" font-size="14.5" fill="#1d2b25">
+    <rect class="dg-f-cream dg-s-ink" x="72" y="156" width="192" height="34" rx="17" fill="#f1ebdd" stroke="#1d2b24"/><text x="168" y="178" text-anchor="middle">1 · Customer data</text>
+    <rect class="dg-f-cream dg-s-ink" x="72" y="198" width="192" height="34" rx="17" fill="#f1ebdd" stroke="#1d2b24"/><text x="168" y="220" text-anchor="middle">2 · Legal and regulatory</text>
+
+    <rect class="dg-f-cream dg-s-line" x="288" y="156" width="192" height="34" rx="17" fill="#f1ebdd" stroke="#3d5a4a"/><text x="384" y="178" text-anchor="middle">3 · Availability</text>
+    <rect class="dg-f-cream dg-s-line" x="288" y="198" width="192" height="34" rx="17" fill="#f1ebdd" stroke="#3d5a4a"/><text x="384" y="220" text-anchor="middle">4 · Financial loss</text>
+    <rect class="dg-f-cream dg-s-line" x="288" y="240" width="192" height="34" rx="17" fill="#f1ebdd" stroke="#3d5a4a"/><text x="384" y="262" text-anchor="middle">5 · Suppliers</text>
+    <rect class="dg-f-cream dg-s-line" x="288" y="282" width="192" height="34" rx="17" fill="#f1ebdd" stroke="#3d5a4a"/><text x="384" y="304" text-anchor="middle">7 · Reputation</text>
+
+    <text class="dg-t-muted" x="600" y="178" text-anchor="middle" font-style="italic" fill="#6b6a5e">none</text>
+
+    <rect class="dg-f-cream dg-s-line" x="720" y="156" width="192" height="34" rx="17" fill="#f1ebdd" stroke="#6f8a78"/><text x="816" y="178" text-anchor="middle">6 · Technology and AI</text>
+
+    <text class="dg-t-muted" x="1032" y="178" text-anchor="middle" font-style="italic" fill="#6b6a5e">none</text>
+  </g>
+
+  <!-- lower appetite wins -->
+  <path class="dg-s-red" d="M816 190 V345 H168 V240" fill="none" stroke="#b3362c" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#app-arrow)"/>
+  <text class="dg-t-red" x="500" y="372" font-size="14.5" font-weight="700" fill="#b3362c" text-anchor="middle">When a risk fits two categories, the lower appetite wins.</text>
+  <text class="dg-t-body" x="500" y="394" font-size="13.5" fill="#3d4a42" text-anchor="middle">An AI feature that reads customer data is handled under row 1, not row 6.</text>
+</svg>
