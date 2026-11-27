@@ -60,6 +60,7 @@ A dark green card headed "SigKollect build log, Part 1". The headline reads "One
 ## Related
 
 - Earlier: [A whole day naming a company that doesn't exist](../a-day-naming-a-company/post.md)
+- Next: [Part 2, the company brief](../sigkollect-build-log-2/post.md)
 
 ## Claims
 
