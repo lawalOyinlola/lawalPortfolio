@@ -2,9 +2,9 @@
 title: "Security Governance From Nothing: A Ten-Document Pack for a Payments Company"
 description: "Build the governance layer of a security programme for a fictional Lagos payments company: a gap analysis, a charter, a RACI, a risk appetite, a framework choice, a meeting cadence, KPIs, an AI use policy and a regulatory assessment read against the primary texts, then publish it as one versioned pack."
 date: 2026-11-25
-updated: 2026-11-26
+updated: 2026-11-27
 cover: /images/labs/security-governance-from-nothing/coverimage.png
-coverAlt: "Two pages from the governance pack, framed on a deep green background and outlined in cream. On the left, the pack's cover: SigKollect Limited, Information Security Governance Pack, a worn red stamp reading Fictional, lab exercise, and a document control table for version 1.0, 25 November 2026, issued for approval, prepared by Lawal Oyinlola of IAM LAWAL Ltd. Overlapping its lower right is page 14 of 43, the RACI matrix: twenty security activities against twelve roles, each row with one A, and below it the note on who accepts a risk within the appetite."
+coverAlt: "Two pages from the governance pack, framed on a deep green background and outlined in cream. On the left, the pack's cover: SigKollect Limited, Information Security Governance Pack, a worn red stamp reading Fictional, lab exercise, and a document control table for version 1.1, 27 November 2026, issued for approval, prepared by Lawal Oyinlola of IAM LAWAL Ltd. Overlapping its lower right is page 14 of 44, the RACI matrix: twenty security activities against twelve roles, each row with one A, and below it the note on who accepts a risk within the appetite."
 tags: [grc, governance, risk-appetite, nist-csf, cis-controls, ndpa, gdpr, pci-dss]
 platform: "Self-hosted"
 target: "A fictional payments company (SigKollect)"
@@ -138,7 +138,7 @@ response, the asset inventory, access reviews, policies and the risk appetite.
 
 **Checkpoint:** every row has evidence, and you can name your top three with a reason for the order.
 Mine were the security lead and charter together (accountability first), then the incident response
-plan (reporting clocks under three laws may apply, module 10), then the asset inventory (E-1).
+plan (reporting clocks under four rules may apply, module 10), then the asset inventory (E-1).
 
 ## 3. Write the charter
 
@@ -367,7 +367,7 @@ deadline, not an internal step, and it would have left no time at all to decide 
 internal steps now take at most 4 hours, and each regulator notification has its own decision and
 sending limits, worked out in module 10.
 
-![The 72-hour clock. Someone notices at hour 0 and reports at once, without blame. The security lead is told within 1 hour. The CEO and Head of Compliance are told within 4 hours. Then a band for assessing the risk, containing it and deciding who must be told. Regulator limits fall at 72 hours for the NDPC under NDPA section 40(2), the EU supervisory authority under GDPR Article 33(1), and ngCERT through the sector CERT under the Cybercrimes Act section 21, which must be told immediately. Affected people are told immediately: under GAID Article 33(3) for a breach reportable to the NDPC, and under NDPA section 40(3) where the risk to them is high. Every clock starts when SigKollect becomes aware of, or detects, the event.](/images/labs/security-governance-from-nothing/breach-clock.svg)
+![The 72-hour clock. Someone notices at hour 0 and reports at once, without blame. The security lead is told within 1 hour. The CEO and Head of Compliance are told within 4 hours. Then a band for assessing the risk, containing it and deciding who must be told. Regulator limits fall at 72 hours for the NDPC under NDPA section 40(2), the EU supervisory authority under GDPR Article 33(1), and ngCERT through the sector CERT under the Cybercrimes Act section 21, which must be told immediately. The CBN is told within 24 hours, under the stricter reading of its framework, until a lawyer advises. Affected people are told immediately: under GAID Article 33(3) for a breach reportable to the NDPC, and under NDPA section 40(3) where the risk to them is high. Every clock starts when SigKollect becomes aware of, or detects, the event.](/images/labs/security-governance-from-nothing/breach-clock.svg)
 
 **Checkpoint:** every A that the board or the steering committee holds in the RACI has a meeting that
 takes it, and no internal step uses a regulator's deadline as its own.
@@ -467,7 +467,7 @@ the primary text, and label the row as secondary.
 | # | Rule | Result | Confidence |
 |---|---|---|---|
 | R-1 | Nigeria Data Protection Act 2023 and the GAID 2025 | Applies. A data controller of major importance at the highest level | High |
-| R-2 | CBN Risk-Based Cybersecurity Framework 2024 | Unclear. It covers banks only | Medium |
+| R-2 | CBN Risk-Based Cybersecurity Framework 2024 | Unclear. It covers banks only, so the stricter reading applies to reporting: the CBN within 24 hours | Medium |
 | R-3 | Cybercrimes Act 2015, amended 2024, section 21 | Applies. Report to ngCERT immediately | High |
 | R-4 | EU GDPR | Likely applies (Article 3(2)), with an EU representative (Article 27) | Medium |
 | R-5 | PCI DSS v4.0.1 | Applies by contract, as a service provider | Medium |
@@ -479,7 +479,10 @@ The primary texts overturned three of my first assumptions:
 - **The CBN framework.** I assumed the Central Bank's 2024 cybersecurity framework covered payment
   companies. Its own scope covers commercial, merchant, non-interest and payment service banks. It
   replaced a 2018 framework that did name payment service providers, so what covers SigKollect now
-  is genuinely unclear, and the pack says so instead of guessing.
+  is genuinely unclear. The pack says so instead of guessing, and then applies its own rule for
+  unclear rules, from the risk appetite: follow the stricter reading until there is advice. So the
+  CBN hears about a cyber incident within 24 hours of detection, as the framework asks of the banks
+  it covers. Reporting is the part that is costly to get wrong; the rest stays good practice.
 - **PCI DSS.** A payment gateway is a PCI service provider, not a merchant. The PCI Council says SAQ
   D for Service Providers is the only self-assessment questionnaire for service providers, so the
   merchant questionnaires were never an option.
@@ -495,12 +498,13 @@ service providers and fintechs at its highest level, which brings registration, 
 officer and yearly audit returns. That became objective h, and the Head of Compliance became the
 data protection officer.
 
-Then work through one real event as a test. At E-4, the phishing click, the clocks under three
-laws could have started at once:
+Then work through one real event as a test. At E-4, the phishing click, the clocks under four
+rules could have started at once:
 
 | Notification | Decided by | Sent by |
 |---|---|---|
 | ngCERT, through the sectoral CERT | As soon as a detected incident meets the section 21(1) test, without waiting for the investigation | Immediately. 24 hours after detection is the outer limit |
+| CBN, under the stricter reading until advised | Every detected cyber incident, whether or not it meets the section 21(1) test. Do not wait for the ngCERT decision or the investigation | Within 24 hours of detection at most, through a route the CBN has confirmed |
 | NDPC, and the EU authority where SigKollect is the controller | Without undue delay, within 24 hours of being told at most | Without undue delay, and within 48 hours at most, with what is known first and the rest in phases (NDPA section 40(9), GDPR Article 33(4)) |
 | NDPC and every other relevant authority (GAID Article 33(4)) | As soon as immediate information may help contain imminent breaches on a national scale, containment measures may be necessary at national, sectoral or individual level, or the breach may affect members of the general public. No finding of risk to individuals is needed first | Immediately |
 | The controller that engaged SigKollect (GDPR Article 33(2)), or under the NDPA the controller or processor that engaged it (section 40(1)), where SigKollect is a processor | No separate decision: the notice is owed as soon as SigKollect becomes aware of a breach in data it processes for them | At once on becoming aware, with what is known. New information goes as soon as it is available, without waiting to be asked, and their requests are answered. 48 hours is the outer limit, not the deadline |
@@ -548,8 +552,8 @@ The pack is a design. It has not been run: no meeting has met, and no KPI has a 
 gaps from module 2 are not fixed here; they go to the risk register. The regulatory module is an
 analysis for a lab, and two of its questions (what now covers a payment company under the CBN, and
 whether SigKollect is a controller or a processor for each EU data set) would need a Nigerian payments
-lawyer and an EU data protection lawyer. The sectoral CERT that takes a payment company's reports is
-not checked against a primary source.
+lawyer and an EU data protection lawyer. The sectoral CERT and the CBN channel that take a payment company's
+reports are not checked against a primary source.
 
 ## Lab status
 
