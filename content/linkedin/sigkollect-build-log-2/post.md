@@ -14,18 +14,20 @@ posted_date: 2026-11-27
 Post as a document (carousel): upload `carousel.pdf` (2 pages: the events ledger, then finding and evidence). Fallback: a two-image post with `events-ledger.png`, then `finding-evidence.png` (both 2160×2700, 4:5 portrait). No first comment needed. Next in the series: part 3, the gap analysis. The image sources are the `.svg` files; edit those and re-render, never the PNGs:
 
 ```bash
-cd content/linkedin/sigkollect-build-log-2
-for f in events-ledger finding-evidence; do
-  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
-    --force-device-scale-factor=2 --window-size=1080,1350 \
-    --screenshot="$PWD/$f.png" "file://$PWD/$f.svg"
-done
+(
+  cd content/linkedin/sigkollect-build-log-2
+  for f in events-ledger finding-evidence; do
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --hide-scrollbars \
+      --force-device-scale-factor=2 --window-size=1080,1350 \
+      --screenshot="$PWD/$f.png" "file://$PWD/$f.svg"
+  done
+)
 ```
 
 The carousel PDF is built from the same SVGs, so its text stays vector. Rebuild it after any SVG change:
 
 ```bash
-python3 tasks/linkedin-carousel.py content/linkedin/sigkollect-build-log-2 "SigKollect build log, part 2" events-ledger finding-evidence
+python3 tasks/linkedin-carousel.py content/linkedin/sigkollect-build-log-2 "SigKollect log 2: Five events, none found by a control." events-ledger finding-evidence
 ```
 
 `tasks/` is gitignored; if the script is gone, put the PNGs into a PDF in any tool, one per page, in the order above. The IAM ⅃AWA⅃ LTD wordmark on the cards comes from `tasks/linkedin-wordmark.py` (real L's flipped with `scale(-1 1)`).
@@ -82,7 +84,7 @@ A kraft-paper card headed "Finding and evidence" and "Decision D-27". The headli
 ## Related
 
 - Earlier: [Part 1, what I'm building](../sigkollect-build-log-1/post.md)
-- Next: [Part 3, the gap analysis](../sigkollect-build-log-3/post.md)
+- Next: Part 3, the gap analysis (link added when it is posted)
 
 ## Claims
 
