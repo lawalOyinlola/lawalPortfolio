@@ -6,7 +6,9 @@ tags: [security, appsec, webdev, nextjs]
 cover: /images/blog/eleven-fixes-from-one-code-review/coverimage.jpg
 coverAlt: "A printer's proof sheet on a bright yellow desk, its lines shown as abstract black bars indented like code, with eleven red proofreading marks each ticked in the margin. A red pencil lies beside it with its point touching the page. Headline: None had been flagged by a scanner."
 draft: false
-devto_published: false
+devto_id: 5133256
+devto_url: https://dev.to/lawaloyinlola/eleven-fixes-from-one-code-review-5cif
+devto_published: true
 ---
 
 A map popup on a fleet-tracking dashboard shows a vehicle's name, its status and its type. The code that builds it looks like this:
