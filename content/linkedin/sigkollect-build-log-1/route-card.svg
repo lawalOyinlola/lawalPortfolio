@@ -1,0 +1,45 @@
+<svg viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<rect width="1080" height="1350" fill="#16251e"/>
+<text x="100" y="118" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="22" font-weight="700" fill="#c0533a" letter-spacing="4">SIGKOLLECT BUILD LOG</text>
+<text x="980" y="118" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" fill="#93a79b" text-anchor="end">Part 1</text>
+<line x1="100" y1="142" x2="980" y2="142" stroke="#33483d" stroke-width="2"/>
+<text x="100" y="246" font-size="86" font-weight="700" fill="#efe7d6" letter-spacing="-2">One company.</text>
+<text x="100" y="342" font-size="86" font-weight="700" fill="#c0533a" letter-spacing="-2">Every lab feeds</text>
+<text x="100" y="438" font-size="86" font-weight="700" fill="#c0533a" letter-spacing="-2">the next.</text>
+<text x="100" y="494" font-size="23" fill="#93a79b">A made-up payments firm in Lagos, about 150 staff, nobody in charge of security.</text>
+<line x1="150" y1="560" x2="150" y2="642" stroke="#efe7d6" stroke-width="6"/>
+<line x1="150" y1="642" x2="150" y2="1134" stroke="#93a79b" stroke-width="4" stroke-dasharray="10 10"/>
+<circle cx="150" cy="560" r="15" fill="#efe7d6"/>
+<text x="200" y="562" font-size="31" font-weight="700" fill="#efe7d6">The name</text>
+<text x="200" y="592" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" fill="#93a79b">an entire day, six names rejected</text>
+<text x="110" y="568" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#93a79b" text-anchor="end">GRC</text>
+<circle cx="150" cy="642" r="19" fill="#16251e" stroke="#c0533a" stroke-width="7"/>
+<rect x="842" y="620" width="138" height="40" rx="6" fill="#c0533a"/>
+<text x="911" y="648" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" font-weight="700" fill="#16251e" text-anchor="middle" letter-spacing="2">PART 2</text>
+<text x="200" y="644" font-size="31" font-weight="700" fill="#efe7d6">Company brief</text>
+<text x="200" y="674" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" fill="#93a79b">five events, none found by a control</text>
+<circle cx="150" cy="724" r="13" fill="#16251e" stroke="#93a79b" stroke-width="4"/>
+<text x="200" y="726" font-size="31" font-weight="700" fill="#c9cfc4">Gap analysis</text>
+<text x="200" y="756" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" fill="#7d9085">15 areas, 7 of them high</text>
+<circle cx="150" cy="806" r="13" fill="#16251e" stroke="#93a79b" stroke-width="4"/>
+<text x="200" y="808" font-size="31" font-weight="700" fill="#c9cfc4">Governance pack</text>
+<text x="200" y="838" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" fill="#7d9085">charter, RACI, appetite, regulators</text>
+<circle cx="150" cy="888" r="13" fill="#16251e" stroke="#93a79b" stroke-width="4"/>
+<text x="200" y="890" font-size="31" font-weight="700" fill="#c9cfc4">Risk register</text>
+<text x="200" y="920" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" fill="#7d9085">evidence to scored risks</text>
+<circle cx="150" cy="970" r="13" fill="#16251e" stroke="#93a79b" stroke-width="4"/>
+<text x="200" y="972" font-size="31" font-weight="700" fill="#c9cfc4">Identity and access</text>
+<text x="200" y="1002" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" fill="#7d9085">joiners, movers, leavers, reviews</text>
+<text x="110" y="978" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#93a79b" text-anchor="end">IAM</text>
+<circle cx="150" cy="1052" r="13" fill="#16251e" stroke="#93a79b" stroke-width="4"/>
+<text x="200" y="1054" font-size="31" font-weight="700" fill="#c9cfc4">AI email assistant</text>
+<text x="200" y="1084" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" fill="#7d9085">attack it, then contain it</text>
+<text x="110" y="1060" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#93a79b" text-anchor="end">AppSec</text>
+<circle cx="150" cy="1134" r="13" fill="#16251e" stroke="#93a79b" stroke-width="4"/>
+<text x="200" y="1136" font-size="31" font-weight="700" fill="#c9cfc4">Cloud and SOC</text>
+<text x="200" y="1166" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" fill="#7d9085">Azure, and AI reading the alerts</text>
+<text x="110" y="1142" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#93a79b" text-anchor="end">Later</text>
+<line x1="100" y1="1236" x2="980" y2="1236" stroke="#33483d" stroke-width="2"/>
+<text x="100" y="1286" font-size="24" fill="#efe7d6">SigKollect is fictional. The documents and the decisions are real.</text>
+<text x="980" y="1270" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="18" fill="#93a79b" text-anchor="end">Lawal Oyinlola</text><g aria-label="IAM LAWAL LTD" role="img"><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(816.5 1298)">I</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(829.7 1298)">A</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(842.9 1298)">M</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(869.3 1298) scale(-1 1)">L</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(882.5 1298)">A</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(895.7 1298)">W</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(908.9 1298)">A</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(922.1 1298) scale(-1 1)">L</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(948.5 1298)">L</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(961.7 1298)">T</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="700" fill="#c0533a" text-anchor="middle" transform="translate(974.9 1298)">D</text></g>
+</svg>
