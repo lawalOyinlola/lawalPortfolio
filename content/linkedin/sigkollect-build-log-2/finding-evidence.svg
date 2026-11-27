@@ -1,0 +1,57 @@
+<svg viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<rect width="1080" height="1350" fill="#eadcbf"/>
+<rect x="40" y="40" width="1000" height="1270" fill="none" stroke="#2b2620" stroke-width="3"/>
+<text x="80" y="104" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="start" letter-spacing="3">FINDING AND EVIDENCE</text>
+<text x="1000" y="104" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="19" font-weight="400" fill="#6f6453" text-anchor="end" >Decision D-27</text>
+<line x1="80" y1="124" x2="1000" y2="124" stroke="#2b2620" stroke-width="2"/>
+<text x="80" y="206" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="700" fill="#2b2620" text-anchor="start" letter-spacing="-1">A finding is true at the client.</text>
+<text x="80" y="272" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="700" fill="#b0352a" text-anchor="start" letter-spacing="-1">Evidence shows the control works.</text>
+<text x="80" y="360" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="18" font-weight="400" fill="#6f6453" text-anchor="start" >Finding, at SigKollect</text>
+<text x="560" y="360" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="18" font-weight="400" fill="#6f6453" text-anchor="start" >Evidence, a published lab</text>
+<line x1="80" y1="376" x2="1000" y2="376" stroke="#2b2620" stroke-width="2"/>
+<rect x="80" y="420" width="400" height="104" fill="#f4ead3" stroke="#2b2620" stroke-width="2"/>
+<text x="100" y="460" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" font-weight="700" fill="#b0352a" text-anchor="start" >E-1</text>
+<text x="100" y="498" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700" fill="#2b2620" text-anchor="start" >The forgotten server</text>
+<line x1="484" y1="472" x2="548" y2="472" stroke="#2b2620" stroke-width="3" stroke-dasharray="8 7"/>
+<path d="M 546 463 L 560 472 L 546 481 Z" fill="#2b2620"/>
+<rect x="560" y="420" width="440" height="104" fill="none" stroke="#2b2620" stroke-width="2" stroke-dasharray="2 6"/>
+<text x="580" y="462" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#2b2620" text-anchor="start" >Pentest lab</text>
+<text x="580" y="498" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="400" fill="#6f6453" text-anchor="start" >root on an unsupported OS, two paths</text>
+<rect x="80" y="570" width="400" height="104" fill="#f4ead3" stroke="#2b2620" stroke-width="2"/>
+<text x="100" y="610" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" font-weight="700" fill="#b0352a" text-anchor="start" >E-2</text>
+<text x="100" y="648" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700" fill="#2b2620" text-anchor="start" >Five weeks to patch</text>
+<line x1="484" y1="622" x2="548" y2="622" stroke="#2b2620" stroke-width="3" stroke-dasharray="8 7"/>
+<path d="M 546 613 L 560 622 L 546 631 Z" fill="#2b2620"/>
+<rect x="560" y="570" width="440" height="104" fill="none" stroke="#2b2620" stroke-width="2" stroke-dasharray="2 6"/>
+<text x="580" y="612" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#2b2620" text-anchor="start" >CI/CD lab</text>
+<text x="580" y="648" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="400" fill="#6f6453" text-anchor="start" >Semgrep, Trivy, Gitleaks, a deploy gate</text>
+<rect x="80" y="720" width="400" height="104" fill="#f4ead3" stroke="#2b2620" stroke-width="2"/>
+<text x="100" y="760" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" font-weight="700" fill="#b0352a" text-anchor="start" >E-3</text>
+<text x="100" y="798" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700" fill="#2b2620" text-anchor="start" >Probes on the payment page</text>
+<line x1="484" y1="772" x2="548" y2="772" stroke="#2b2620" stroke-width="3" stroke-dasharray="8 7"/>
+<path d="M 546 763 L 560 772 L 546 781 Z" fill="#2b2620"/>
+<rect x="560" y="720" width="440" height="104" fill="none" stroke="#2b2620" stroke-width="2" stroke-dasharray="2 6"/>
+<text x="580" y="762" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#2b2620" text-anchor="start" >WAF lab</text>
+<text x="580" y="798" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="400" fill="#6f6453" text-anchor="start" >ModSecurity and the OWASP Core Rule Set</text>
+<rect x="80" y="870" width="400" height="104" fill="#f4ead3" stroke="#2b2620" stroke-width="2"/>
+<text x="100" y="910" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" font-weight="700" fill="#b0352a" text-anchor="start" >E-4</text>
+<text x="100" y="948" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700" fill="#2b2620" text-anchor="start" >The merchant dispute email</text>
+<line x1="484" y1="922" x2="548" y2="922" stroke="#2b2620" stroke-width="3" stroke-dasharray="8 7"/>
+<path d="M 546 913 L 560 922 L 546 931 Z" fill="#2b2620"/>
+<rect x="560" y="870" width="440" height="104" fill="none" stroke="#2b2620" stroke-width="2" stroke-dasharray="2 6"/>
+<text x="580" y="912" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#2b2620" text-anchor="start" >Phishing bridge lab</text>
+<text x="580" y="948" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="400" fill="#6f6453" text-anchor="start" >a campaign, the click caught in Wazuh</text>
+<rect x="80" y="1020" width="400" height="104" fill="#f4ead3" stroke="#2b2620" stroke-width="2"/>
+<text x="100" y="1060" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="20" font-weight="700" fill="#b0352a" text-anchor="start" >E-5</text>
+<text x="100" y="1098" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700" fill="#2b2620" text-anchor="start" >The unanswered question</text>
+<line x1="484" y1="1072" x2="548" y2="1072" stroke="#2b2620" stroke-width="3" stroke-dasharray="8 7"/>
+<path d="M 546 1063 L 560 1072 L 546 1081 Z" fill="#2b2620"/>
+<rect x="560" y="1020" width="440" height="104" fill="none" stroke="#2b2620" stroke-width="2" stroke-dasharray="2 6"/>
+<text x="580" y="1062" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#2b2620" text-anchor="start" >Detection lab</text>
+<text x="580" y="1098" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="17" font-weight="400" fill="#6f6453" text-anchor="start" >Wazuh, Suricata, attack to alert</text>
+<text x="80" y="1180" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700" fill="#2b2620" text-anchor="start" >The labs ran against practice</text>
+<text x="80" y="1214" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700" fill="#2b2620" text-anchor="start" >targets, not SigKollect.</text>
+<text x="80" y="1248" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="400" fill="#2b2620" text-anchor="start" >They prove the technique and the control.</text>
+<text x="80" y="1282" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="18" font-weight="400" fill="#6f6453" text-anchor="start" >SigKollect build log · Part 2</text>
+<g transform="rotate(-6 860 1218)" opacity="0.9"><rect x="725.0" y="1162.0" width="270" height="112" rx="8" fill="none" stroke="#b0352a" stroke-width="4"/><rect x="733.0" y="1170.0" width="254" height="96" rx="5" fill="none" stroke="#b0352a" stroke-width="1.5"/><text x="860" y="1200" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="13" font-weight="700" fill="#b0352a" text-anchor="middle" letter-spacing="4">PREPARED BY</text><g aria-label="IAM LAWAL LTD" role="img"><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(772.4 1230)">I</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(787.0 1230)">A</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(801.6 1230)">M</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(830.8 1230) scale(-1 1)">L</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(845.4 1230)">A</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(860.0 1230)">W</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(874.6 1230)">A</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(889.2 1230) scale(-1 1)">L</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(918.4 1230)">L</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(933.0 1230)">T</text><text x="0" y="0" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="21" font-weight="700" fill="#b0352a" text-anchor="middle" transform="translate(947.6 1230)">D</text></g><text x="860" y="1256" font-family="SFMono-Regular, Menlo, Consolas, Courier New, monospace" font-size="16" font-weight="400" fill="#b0352a" text-anchor="middle" >Lawal Oyinlola</text></g>
+</svg>
