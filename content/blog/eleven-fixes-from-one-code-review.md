@@ -45,9 +45,12 @@ if (!csrfHeader || !csrfCookie || csrfHeader !== csrfCookie) {
 }
 ```
 
-`!==` on strings returns as soon as it finds the first character that differs, so in principle the time it takes leaks how much of a guess was right. Over the internet that signal is very faint, and I would not rank this as the most dangerous line in the codebase. But a secret comparison is the one place where the careful version costs nothing, so it became a constant-time comparison with a length check first, because `timingSafeEqual` throws on buffers of different sizes:
+`!==` on strings returns as soon as it finds the first character that differs, so in principle the time it takes leaks how much of a guess was right. Over the internet that signal is very faint, and I would not rank this as the most dangerous line in the codebase. But a secret comparison is the one place where the careful version costs nothing, so it became a constant-time comparison. The missing-token check stays in front of it, and a length check comes first, because `timingSafeEqual` throws on buffers of different sizes:
 
 ```ts
+if (!csrfHeader || !csrfCookie) {
+  throw new ForbiddenException('Invalid or missing CSRF token');
+}
 const a = Buffer.from(csrfHeader);
 const b = Buffer.from(csrfCookie);
 if (a.length !== b.length || !timingSafeEqual(a, b)) {
@@ -75,7 +78,7 @@ A login field with no maximum length let anyone send a megabyte-long password fo
 
 ## What none of this was
 
-A review like this does not replace the scanners. The same app runs static analysis, dependency scanning and secrets scanning in CI, and those catch a different class of problem, one that does not need anyone to read anything. What they cannot do is notice that a string is being used as markup, or that a token is trusted without asking who made it, because those are properties of how the code is used, not of what it contains.
+A review like this does not replace the scanners. The same app runs static analysis, dependency scanning and secrets scanning in CI, and those catch a different class of problem, one that does not need anyone to read anything. What the ones in this pipeline did not do was notice that a string was being used as markup, or that a token was trusted without asking who made it. Some static analysers can follow user input into an HTML sink, and a better-tuned rule might have caught the popup. But both are properties of how the code is used rather than of what it contains, and that is where a reader is more reliable than a pattern.
 
 It also does not cover everything. The review covered the parts of the app that handle identity, input and tenant boundaries, which is a narrow slice. I did not test any of this against an attacker, and a few of the fixes, the timing comparison above all, close risks that are more theoretical than practical.
 
